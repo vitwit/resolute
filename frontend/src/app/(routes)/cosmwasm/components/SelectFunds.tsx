@@ -5,7 +5,7 @@ import {
   SelectChangeEvent,
   TextField,
 } from '@mui/material';
-import React, { useState } from 'react';
+import React from 'react';
 import { customTextFieldStyles, assetsDropDownStyle } from '../styles';
 import Image from 'next/image';
 
@@ -33,6 +33,7 @@ const SelectFunds = ({
     <div className="space-y-6">
       {funds.map((fund, index) => (
         <Fund
+          key={index}
           assetsList={assetsList}
           fund={fund}
           onDelete={() => onDelete(index)}
@@ -149,7 +150,9 @@ const TokensList = ({
         fullWidth
       >
         {assetsList.map((asset) => (
-          <MenuItem value={asset.coinMinimalDenom}>{asset.symbol}</MenuItem>
+          <MenuItem key={asset.coinMinimalDenom} value={asset.coinMinimalDenom}>
+            {asset.symbol}
+          </MenuItem>
         ))}
       </Select>
     </div>

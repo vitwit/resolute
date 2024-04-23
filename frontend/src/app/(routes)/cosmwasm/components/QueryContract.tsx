@@ -16,7 +16,7 @@ const QueryContract = ({
   chainID: string;
 }) => {
   const dispatch = useAppDispatch();
-  const { getContractMessages, messagesLoading, getQueryContractOutput } =
+  const { getContractMessages, getQueryContractOutput } =
     useContracts();
   const [contractMessages, setContractMessages] = useState<string[]>([]);
   const queryOutput = useAppSelector(

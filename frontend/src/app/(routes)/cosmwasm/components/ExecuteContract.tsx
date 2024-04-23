@@ -30,6 +30,7 @@ const getFormattedFundsList = (
     try {
       const parsedFunds = JSON.parse(fundsInput);
       return parsedFunds;
+      /* eslint-disable @typescript-eslint/no-explicit-any */
     } catch (error: any) {
       console.log(error);
     }
