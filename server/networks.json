@@ -1,7 +1,10 @@
 [
   {
     "chainId": "passage-2",
-    "restURIs": ["https://api.passage.vitwit.com"]
+    "restURIs": [
+      "https://rest-passage.ecostake.com",
+      "https://api.passage.vitwit.com"
+    ]
   },
   {
     "chainId": "osmosis-1",
@@ -22,9 +25,9 @@
   {
     "chainId": "akashnet-2",
     "restURIs": [
+      "https://rest-akash.ecostake.com",
       "https://api.resolute.vitwit.com/akash_api",
-      "https://akash-api.polkachu.com",
-      "https://rest-akash.ecostake.com"
+      "https://akash-api.polkachu.com"
     ]
   },
   {
@@ -34,14 +37,6 @@
       "https://cosmos-lcd.quickapi.com:443",
       "https://cosmos-rest.staketab.org",
       "https://lcd-cosmoshub.blockapsis.com"
-    ]
-  },
-  {
-    "chainId": "juno-1",
-    "restURIs": [
-      "https://api.resolute.vitwit.com/juno_api",
-      "https://rest-juno.ecostake.com",
-      "https://juno-api.polkachu.com"
     ]
   },
   {
@@ -74,6 +69,115 @@
       "https://public-celestia-lcd.numia.xyz",
       "https://api.celestia.nodestake.top",
       "https://celestia-api.lavenderfive.com:443"
+    ]
+  },
+  {
+    "chainId": "desmos-mainnet",
+    "restURIs": [
+      "https://api.mainnet.desmos.network",
+      "https://desmos-api.lavenderfive.com",
+      "https://api.resolute.vitwit.com/desmos_api"
+    ]
+  },
+  {
+    "chainId": "evmos_9001-2",
+    "restURIs": [
+      "https://api-evmos-ia.cosmosia.notional.ventures",
+      "https://evmos-api.polkachu.com",
+      "https://evmos-rest.publicnode.com"
+    ]
+  },
+  {
+    "chainId": "juno-1",
+    "restURIs": [
+      "https://juno-api.lavenderfive.com:443",
+      "https://rest-juno.ecostake.com",
+      "https://juno-api.polkachu.com",
+      "https://api.resolute.vitwit.com/juno_api"
+    ]
+  },
+  {
+    "chainId": "omniflixhub-1",
+    "restURIs": [
+      "https://omniflix-rest.publicnode.com",
+      "https://omniflixhub-api.lavenderfive.com",
+      "https://api-omniflixhub-ia.cosmosia.notional.ventures",
+      "https://api.resolute.vitwit.com/omniflix_api"
+    ]
+  },
+  {
+    "chainId": "quicksilver-2",
+    "restURIs": [
+      "https://quicksilver-rest.staketab.org",
+      "https://quicksilver-api.lavenderfive.com:443",
+      "https://quicksilver-rest.publicnode.com",
+      "https://api.resolute.vitwit.com/quicksilver_api"
+    ]
+  },
+  {
+    "chainId": "regen-1",
+    "restURIs": [
+      "https://regen-mainnet-lcd.autostake.com:443",
+      "https://api-regen-ia.cosmosia.notional.ventures",
+      "https://regen-rest.publicnode.com",
+      "https://api.resolute.vitwit.com/regen_api"
+    ]
+  },
+  {
+    "chainId": "stargaze-1",
+    "restURIs": [
+      "https://stargaze-api.polkachu.com",
+      "https://stargaze-rest.publicnode.com",
+      "https://api-stargaze-ia.cosmosia.notional.ventures"
+    ]
+  },
+  {
+    "chainId": "umee-1",
+    "restURIs": [
+      "https://umee-lcd.quantnode.tech",
+      "https://api-umee-ia.cosmosia.notional.ventures",
+      "https://umee-api.polkachu.com",
+      "https://api.resolute.vitwit.com/umee_api"
+    ]
+  },
+  {
+    "chainId": "quasar-1",
+    "restURIs": [
+      "https://quasar-rest.publicnode.com",
+      "https://quasar-api.polkachu.com",
+      "https://quasar-mainnet-lcd.autostake.com:443"
+    ]
+  },
+  {
+    "chainId": "comdex-1",
+    "restURIs": [
+      "https://rest.comdex.one",
+      "https://comdex-api.polkachu.com",
+      "https://comdex-rest.publicnode.com"
+    ]
+  },
+  {
+    "chainId": "gravity-bridge-3",
+    "restURIs": [
+      "https://gravitybridge-api.lavenderfive.com",
+      "https://gravity-api.polkachu.com",
+      "https://api-gravitybridge-ia.cosmosia.notional.ventures"
+    ]
+  },
+  {
+    "chainId": "mars-1",
+    "restURIs": [
+      "https://rest.marsprotocol.io:443",
+      "https://mars-api.lavenderfive.com:443",
+      "https://api-gravitybridge-ia.cosmosia.notional.ventures"
+    ]
+  },
+  {
+    "chainId": "archway-1",
+    "restURIs": [
+      "https://api.mainnet.archway.io",
+      "https://archway-api.lavenderfive.com:443",
+      "https://api.archway.nodestake.top"
     ]
   }
 ]
