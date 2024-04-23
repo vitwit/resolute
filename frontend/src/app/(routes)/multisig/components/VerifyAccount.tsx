@@ -1,6 +1,5 @@
-import TopNav from '@/components/TopNav';
-import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
-import { verifyAccount } from '@/store/features/multisig/multisigSlice';
+import { useAppSelector } from '@/custom-hooks/StateHooks';
+import useVerifyAccount from '@/custom-hooks/useVerifyAccount';
 import { RootState } from '@/store/store';
 import { TxStatus } from '@/types/enums';
 import { CircularProgress } from '@mui/material';
@@ -14,26 +13,27 @@ interface VerifyAccountProps {
 
 const VerifyAccount: React.FC<VerifyAccountProps> = (props) => {
   const { chainID, walletAddress } = props;
-  const dispatch = useAppDispatch();
+  const { verifyOwnership } = useVerifyAccount({
+    chainID,
+    address: walletAddress,
+  });
   const handleVerifyAccountEvent = () => {
-    dispatch(verifyAccount({ chainID, address: walletAddress }));
+    verifyOwnership();
   };
+
   const loading = useAppSelector(
     (state: RootState) => state.multisig.verifyAccountRes.status
   );
   return (
     <div className="verify-account relative">
-      <div className="w-fit absolute top-6 right-6">
-        <TopNav />
-      </div>
       <Image
         src="/verify-illustration.png"
-        height={290}
-        width={400}
+        height={200}
+        width={275}
         alt="Verify Ownership"
         draggable={false}
       />
-      <div className="empty-screen-text">
+      <div className="italic my-6">
         Please verify your account ownership to proceed.
       </div>
       <button

@@ -25,6 +25,11 @@ type GetRecentTransactionsRequest struct {
 	Addresses []ChainAddress `json:"addresses"`
 }
 
+type TxnsData struct {
+	Data  interface{} `json:"data"`
+	Total string      `json:"total"`
+}
+
 func (h *Handler) GetRecentTransactions(c echo.Context) error {
 	module := c.QueryParams().Get("module")
 	req := &GetRecentTransactionsRequest{}
@@ -69,6 +74,83 @@ func (h *Handler) GetRecentTransactions(c echo.Context) error {
 		Status: "success",
 		Data:   recentTxns,
 	})
+}
+
+func (h *Handler) GetAllTransactions(c echo.Context) error {
+	chainId := c.Param("chainId")
+	address := c.Param("address")
+	limit := c.QueryParams().Get("limit")
+	offset := c.QueryParams().Get("offset")
+	req := &GetRecentTransactionsRequest{}
+
+	if err := c.Bind(req); err != nil {
+		return c.JSON(http.StatusBadRequest, model.ErrorResponse{
+			Status:  "error",
+			Message: err.Error(),
+		})
+	}
+	result := []txn_types.ParsedTxn{}
+	res, err := getTransactions(chainId, address, limit, offset)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, model.ErrorResponse{
+			Status:  "error",
+			Message: "Failed to fetch transactions",
+		})
+	}
+	parsedTxns, err := GetParsedTransactions(*res, chainId)
+	if err != nil {
+		log.Printf("Error parsing transactions: %v", err)
+		return c.JSON(http.StatusInternalServerError, model.ErrorResponse{
+			Status:  "error",
+			Message: "Failed to parse transactions",
+		})
+	}
+	result = append(result, parsedTxns...)
+
+	responseData := TxnsData{
+		Data:  result,
+		Total: res.Pagination.Total,
+	}
+	return c.JSON(http.StatusOK, model.SuccessResponse{
+		Status: "success",
+		Data:   responseData,
+	})
+}
+
+func getTransactions(chainId string, address string, limit string, offset string) (*txn_types.TransactionResponses, error) {
+	config, err := config.ParseConfig()
+	if err != nil {
+		log.Fatal(err)
+	}
+	bearerToken := config.NUMIA_BEARER_TOKEN.Token
+	var authorization = "Bearer " + bearerToken
+	networkURIs, err := utils.GetChainAPIs(chainId)
+	if err == nil {
+		requestURI := utils.CreateAllTxnsRequestURI(networkURIs[0], address, limit, offset)
+		req, _ := http.NewRequest("GET", requestURI, nil)
+		if err != nil {
+			return nil, err
+		}
+		req.Header.Add("Authorization", authorization)
+		client := &http.Client{}
+		resp, err := client.Do(req)
+		if err != nil {
+			return nil, err
+		}
+		defer resp.Body.Close()
+		body, err := io.ReadAll(resp.Body)
+		if err != nil {
+			return nil, err
+		}
+
+		var result txn_types.TransactionResponses
+		if err := json.Unmarshal(body, &result); err != nil {
+			return nil, err
+		}
+
+		return &result, nil
+	}
+	return nil, err
 }
 
 func getNetworkRecentTransactions(chainId string, module string, address string) (*txn_types.TransactionResponses, error) {

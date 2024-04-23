@@ -2,6 +2,7 @@ import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import {
   getMultisigAccounts,
   resetCreateMultisigRes,
+  setVerifyDialogOpen,
 } from '@/store/features/multisig/multisigSlice';
 import { RootState } from '@/store/store';
 import { TxStatus } from '@/types/enums';
@@ -15,6 +16,7 @@ import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import Link from 'next/link';
 import { copyToClipboard } from '@/utils/copyToClipboard';
 import { setError } from '@/store/features/common/commonSlice';
+import useVerifyAccount from '@/custom-hooks/useVerifyAccount';
 
 interface AllMultisigsProps {
   address: string;
@@ -40,6 +42,7 @@ const AllMultisigs: React.FC<AllMultisigsProps> = (props) => {
   const { pubkey } = accountInfo;
   const { getChainInfo } = useGetChainInfo();
   const { prefix, restURLs } = getChainInfo(chainID);
+  const { isAccountVerified } = useVerifyAccount({ chainID, address });
 
   useEffect(() => {
     if (address) {
@@ -59,6 +62,14 @@ const AllMultisigs: React.FC<AllMultisigsProps> = (props) => {
     }
   }, [createMultiAccRes]);
 
+  const handleCreateMultisig = () => {
+    if (isAccountVerified()) {
+      setDialogOpen(true);
+    } else {
+      dispatch(setVerifyDialogOpen(true));
+    }
+  };
+
   return (
     <div className="flex-1 pl-10 py-6 text-white space-y-6 max-h-screen overflow-y-scroll">
       <div>
@@ -70,7 +81,7 @@ const AllMultisigs: React.FC<AllMultisigsProps> = (props) => {
               <div>
                 <button
                   className="create-multisig-btn"
-                  onClick={() => setDialogOpen(true)}
+                  onClick={() => handleCreateMultisig()}
                 >
                   Create Multisig
                 </button>
@@ -100,7 +111,7 @@ const AllMultisigs: React.FC<AllMultisigsProps> = (props) => {
                 <div>
                   <button
                     className="create-multisig-btn-2"
-                    onClick={() => setDialogOpen(true)}
+                    onClick={() => handleCreateMultisig()}
                   >
                     Create Multisig
                   </button>
