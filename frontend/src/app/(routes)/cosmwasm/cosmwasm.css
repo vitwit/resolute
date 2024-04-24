@@ -17,7 +17,7 @@
 }
 
 .search-contract-input {
-  @apply w-full pl-2 border-none focus:outline-none bg-transparent placeholder:text-[16px] placeholder:text-[#FFFFFFBF];
+  @apply w-full pl-2 border-none focus:outline-none bg-transparent placeholder:text-[16px] placeholder:text-[#FFFFFFBF] focus:border-[1px];
 }
 
 .styled-btn-wrapper {
@@ -49,4 +49,24 @@
 
 .execute-output-box {
   @apply flex flex-col gap-6 pt-0;
+}
+
+.search-btn {
+  @apply font-medium rounded-lg px-3 py-[6px];
+}
+
+.search-error {
+  @apply text-red-500 font-light text-center;
+}
+
+.search-contract {
+  @apply mb-10 flex gap-6 px-10 items-center flex-col;
+}
+
+.search-contract-header {
+  @apply flex flex-col gap-4 w-full pb-2 border-b-[1px] border-[#ffffff33];
+}
+
+.contract-item {
+  @apply flex gap-4 justify-between items-center px-3 py-3 pr-1 rounded-full cursor-pointer border-[1px] border-[#ffffff32] hover:bg-[#ffffff32];
 }

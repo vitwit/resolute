@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import SelectDeploymenyType from './SelectDeploymentType';
+import SelectDeploymentType from './SelectDeploymentType';
 import UploadContract from './UploadContract';
 import InstantiateContract from './InstantiateContract';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
@@ -17,7 +17,7 @@ const DeployContract = ({ chainID }: { chainID: string }) => {
         <div className="pb-4 border-b-[1px] border-[#ffffff60] text-[18px] font-bold">
           Deploy Contract
         </div>
-        <SelectDeploymenyType isFileUpload={isFileUpload} onSelect={onSelect} />
+        <SelectDeploymentType isFileUpload={isFileUpload} onSelect={onSelect} />
       </div>
       {isFileUpload ? (
         <UploadContract

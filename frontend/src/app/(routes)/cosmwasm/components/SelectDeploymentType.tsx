@@ -1,11 +1,11 @@
 import React from 'react';
 
-interface SelectDeploymenyTypeProps {
+interface SelectDeploymentTypeProps {
   isFileUpload: boolean;
   onSelect: (value: boolean) => void;
 }
 
-const SelectDeploymenyType: React.FC<SelectDeploymenyTypeProps> = (props) => {
+const SelectDeploymentType: React.FC<SelectDeploymentTypeProps> = (props) => {
   const { isFileUpload, onSelect } = props;
   return (
     <div className="my-6 flex items-center gap-6 text-white">
@@ -32,4 +32,4 @@ const SelectDeploymenyType: React.FC<SelectDeploymenyTypeProps> = (props) => {
   );
 };
 
-export default SelectDeploymenyType;
+export default SelectDeploymentType;
