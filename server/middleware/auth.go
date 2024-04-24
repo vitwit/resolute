@@ -12,7 +12,7 @@ import (
 func (h *Handler) AuthMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		signature := c.QueryParams().Get("signature")
-		address := c.QueryParams().Get("address")
+		address := c.QueryParams().Get("cosmos_address")
 
 		if address == "" {
 			return c.JSON(http.StatusNotAcceptable, model.ErrorResponse{

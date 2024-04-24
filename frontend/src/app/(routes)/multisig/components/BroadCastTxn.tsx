@@ -19,6 +19,7 @@ import { MultisigTxStatus } from '@/types/enums';
 import { FAILED_TO_BROADCAST_ERROR } from '@/utils/errors';
 import { CircularProgress } from '@mui/material';
 import useVerifyAccount from '@/custom-hooks/useVerifyAccount';
+import { COSMOS_CHAIN_ID } from '@/utils/constants';
 
 interface BroadCastTxnProps {
   txn: Txn;
@@ -67,7 +68,7 @@ const BroadCastTxn: React.FC<BroadCastTxnProps> = (props) => {
       return;
     }
     setLoad(true);
-    const authToken = getAuthToken(chainID);
+    const authToken = getAuthToken(COSMOS_CHAIN_ID);
     const queryParams = {
       address: walletAddress,
       signature: authToken?.signature || '',

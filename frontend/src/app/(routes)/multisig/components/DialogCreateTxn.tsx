@@ -1,5 +1,6 @@
 import {
   CLOSE_ICON_PATH,
+  COSMOS_CHAIN_ID,
   DELEGATE_TYPE_URL,
   MULTISIG_DELEGATE_TEMPLATE,
   MULTISIG_REDELEGATE_TEMPLATE,
@@ -418,7 +419,7 @@ const DialogCreateTxn: React.FC<DialogCreateTxnProps> = (props) => {
       data.fees.toString(),
       data.gas
     );
-    const authToken = getAuthToken(chainID);
+    const authToken = getAuthToken(COSMOS_CHAIN_ID);
     dispatch(
       createTxn({
         data: {

@@ -9,6 +9,7 @@ import Image from 'next/image';
 import React, { useState } from 'react';
 import DialogDeleteTxn from './DialogDeleteTxn';
 import useVerifyAccount from '@/custom-hooks/useVerifyAccount';
+import { COSMOS_CHAIN_ID } from '@/utils/constants';
 
 interface DeleteTxnProps {
   txId: number;
@@ -23,7 +24,7 @@ const DeleteTxn: React.FC<DeleteTxnProps> = (props) => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
   const { getChainInfo } = useGetChainInfo();
   const { address: walletAddress } = getChainInfo(chainID);
-  const authToken = getAuthToken(chainID);
+  const authToken = getAuthToken(COSMOS_CHAIN_ID);
   const { isAccountVerified } = useVerifyAccount({
     chainID,
     address: walletAddress,

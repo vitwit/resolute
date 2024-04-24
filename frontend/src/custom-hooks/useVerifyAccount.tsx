@@ -8,6 +8,8 @@ import {
 import { setAuthToken } from '@/utils/localStorage';
 import { setError } from '@/store/features/common/commonSlice';
 import { isVerified } from '@/utils/util';
+import { COSMOS_CHAIN_ID } from '@/utils/constants';
+import { getAddressByPrefix } from '@/utils/address';
 
 const useVerifyAccount = ({
   address,
@@ -20,11 +22,12 @@ const useVerifyAccount = ({
   const verifyAccountRes = useAppSelector(
     (state) => state.multisig.verifyAccountRes
   );
+  const cosmosAddresss = getAddressByPrefix(address, 'cosmos');
   useEffect(() => {
     if (verifyAccountRes.status === 'idle') {
       setAuthToken({
-        chainID: chainID,
-        address: address,
+        chainID: COSMOS_CHAIN_ID,
+        address: cosmosAddresss,
         signature: verifyAccountRes.token,
       });
       dispatch(setVerifyDialogOpen(false));
@@ -46,11 +49,16 @@ const useVerifyAccount = ({
   }, [verifyAccountRes]);
 
   const verifyOwnership = () => {
-    dispatch(verifyAccount({ chainID, address }));
+    dispatch(
+      verifyAccount({ chainID: COSMOS_CHAIN_ID, address: cosmosAddresss })
+    );
   };
 
   const isAccountVerified = () => {
-    const verified = isVerified({ chainID, address });
+    const verified = isVerified({
+      chainID: COSMOS_CHAIN_ID,
+      address: cosmosAddresss,
+    });
     return verified;
   };
   return { verifyOwnership, isAccountVerified };

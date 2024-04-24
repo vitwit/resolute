@@ -15,6 +15,7 @@ import { getTimeDifferenceToFutureDate } from '@/utils/dataTime';
 import CommonCopy from '@/components/CommonCopy';
 import { getAuthToken } from '@/utils/localStorage';
 import useVerifyAccount from '@/custom-hooks/useVerifyAccount';
+import { COSMOS_CHAIN_ID } from '@/utils/constants';
 
 interface AccountInfoProps {
   chainID: string;
@@ -159,7 +160,7 @@ const AccountDetails = ({
     }
   }, [deleteMultisigRes?.status]);
 
-  const authToken = getAuthToken(chainID);
+  const authToken = getAuthToken(COSMOS_CHAIN_ID);
 
   const handleDelete = () => {
     if (isAdmin) {
