@@ -46,8 +46,8 @@ const ContractInfo = ({ chainID }: { chainID: string }) => {
           />
         </div>
       </div>
-      <div className="space-y-10">
-        <div className="flex gap-10 items-center justify-center border-b-[1px] border-[#ffffff1e] mt-6">
+      <div className="space-y-10 pb-10">
+        <div className="tabs">
           {tabs.map((tab) => (
             <div key={tab} className="flex flex-col justify-center">
               <div
@@ -71,13 +71,6 @@ const ContractInfo = ({ chainID }: { chainID: string }) => {
               ></div>
             </div>
           ))}
-        </div>
-        <div className="flex justify-end">
-          <div className="styled-btn-wrapper">
-            <button className="styled-btn w-[144px]">
-              {true ? 'Default Format' : 'JSON Format'}
-            </button>
-          </div>
         </div>
         <div>
           {selectedTab === 'Query Contract' ? (
@@ -112,9 +105,13 @@ const ContractInfoAttribute = ({
   value: string;
 }) => {
   return (
-    <div className="space-y-2 text-[14px]">
-      <div>{name}</div>
-      <div className="bg-[#FFFFFF0D] rounded-lg px-4 py-2">{value}</div>
-    </div>
+    <>
+      {value ? (
+        <div className="space-y-2 text-[14px]">
+          <div>{name}</div>
+          <div className="bg-[#FFFFFF0D] rounded-lg px-4 py-2">{value}</div>
+        </div>
+      ) : null}
+    </>
   );
 };

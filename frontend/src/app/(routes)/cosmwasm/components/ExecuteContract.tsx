@@ -6,6 +6,9 @@ import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { TxStatus } from '@/types/enums';
 import { executeContract } from '@/store/features/cosmwasm/cosmwasmSlice';
+import { getFormattedFundsList } from '@/utils/util';
+import { queryInputStyles } from '../styles';
+import { setError } from '@/store/features/common/commonSlice';
 
 interface ExecuteContractI {
   address: string;
@@ -16,48 +19,23 @@ interface ExecuteContractI {
   chainName: string;
 }
 
-const getFormattedFundsList = (
-  funds: FundInfo[],
-  fundsInput: string,
-  attachFundType: string
-) => {
-  if (attachFundType === 'select') {
-    const result: {
-      denom: string;
-      amount: string;
-    }[] = [];
-    funds.forEach((fund) => {
-      if (fund.amount.length) {
-        result.push({
-          denom: fund.denom,
-          amount: (Number(fund.amount) * 10 ** fund.decimals).toString(),
-        });
-      }
-    });
-    return result;
-  } else if (attachFundType === 'json') {
-    try {
-      const parsedFunds = JSON.parse(fundsInput);
-      return parsedFunds;
-      /* eslint-disable @typescript-eslint/no-explicit-any */
-    } catch (error: any) {
-      console.log(error);
-    }
-  }
-};
-
 const ExecuteContract = (props: ExecuteContractI) => {
   const { address, baseURLs, chainID, rpcURLs, walletAddress, chainName } =
     props;
+
+  // ------------------------------------------//
+  // ---------------DEPENDENCIES---------------//
+  // ------------------------------------------//
   const dispatch = useAppDispatch();
   const { getExecutionOutput } = useContracts();
-  const [executeInput, setExecuteInput] = useState('');
-  const [attachFundType, setAttachFundType] = useState('no-funds');
   const { getDenomInfo } = useGetChainInfo();
   const { decimals, minimalDenom } = getDenomInfo(chainID);
-  const txExecuteLoading = useAppSelector(
-    (state) => state.cosmwasm.chains?.[chainID].txExecute.status
-  );
+
+  // ------------------------------------------//
+  // ------------------STATES------------------//
+  // ------------------------------------------//
+  const [executeInput, setExecuteInput] = useState('');
+  const [attachFundType, setAttachFundType] = useState('no-funds');
   const [funds, setFunds] = useState<FundInfo[]>([
     {
       amount: '',
@@ -67,26 +45,82 @@ const ExecuteContract = (props: ExecuteContractI) => {
   ]);
   const [fundsInput, setFundsInput] = useState('');
 
+  const txExecuteLoading = useAppSelector(
+    (state) => state.cosmwasm.chains?.[chainID].txExecute.status
+  );
+
+  // ------------------------------------------------//
+  // -----------------CHANGE HANDLERS----------------//
+  // ------------------------------------------------//
   const handleQueryChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     setExecuteInput(e.target.value);
   };
 
+  const handleAttachFundTypeChange = (event: SelectChangeEvent<string>) => {
+    setAttachFundType(event.target.value);
+  };
+
+  // ----------------------------------------------------//
+  // -----------------CUSTOM VALIDATIONS-----------------//
+  // ----------------------------------------------------//
+  const validateJSONInput = (
+    input: string,
+    setInput: React.Dispatch<React.SetStateAction<string>>,
+    errorMessagePrefix: string
+  ): boolean => {
+    try {
+      if (!input?.length) {
+        dispatch(
+          setError({
+            type: 'error',
+            message: `Please enter ${errorMessagePrefix}`,
+          })
+        );
+        return false;
+      }
+      const parsed = JSON.parse(input);
+      const formattedJSON = JSON.stringify(parsed, undefined, 4);
+      setInput(formattedJSON);
+      return true;
+      /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+    } catch (error: any) {
+      dispatch(
+        setError({
+          type: 'error',
+          message: `Invalid JSON input: (${errorMessagePrefix}) ${error?.message || ''}`,
+        })
+      );
+      return false;
+    }
+  };
+
+  const formatExecutionMessage = () => {
+    return validateJSONInput(
+      executeInput,
+      setExecuteInput,
+      'Execution Message'
+    );
+  };
+
+  const validateFunds = () => {
+    return validateJSONInput(fundsInput, setFundsInput, 'Attach Funds List');
+  };
+
+  // ------------------------------------------//
+  // ---------------TRANSACTION----------------//
+  // ------------------------------------------//
   const onExecute = async () => {
+    if (!formatExecutionMessage()) return;
+    if (attachFundType === 'json' && !validateFunds()) return;
+
     const attachedFunds = getFormattedFundsList(
       funds,
       fundsInput,
       attachFundType
     );
-    // await getExecutionOutput({
-    //   chainID,
-    //   contractAddress: address,
-    //   msgs: executeInput,
-    //   rpcURLs,
-    //   walletAddress,
-    //   funds: attachedFunds,
-    // });
+
     dispatch(
       executeContract({
         chainID,
@@ -101,25 +135,10 @@ const ExecuteContract = (props: ExecuteContractI) => {
     );
   };
 
-  const formatJSON = () => {
-    try {
-      const parsed = JSON.parse(executeInput);
-      const formattedJSON = JSON.stringify(parsed, undefined, 4);
-      setExecuteInput(formattedJSON);
-      /* eslint-disable @typescript-eslint/no-explicit-any */
-    } catch (error: any) {
-      console.log(error);
-    }
-  };
-
-  const handleAttachFundTypeChange = (event: SelectChangeEvent<string>) => {
-    setAttachFundType(event.target.value);
-  };
-
   return (
     <div className="flex gap-10">
-      <div className="execute-field flex flex-col gap-4">
-        <div className="relative flex-1 border-[1px] rounded-2xl border-[#ffffff1e] hover:border-[#ffffff50]">
+      <div className="execute-field-wrapper">
+        <div className="execute-input-field">
           <TextField
             value={executeInput}
             name="executeInputsField"
@@ -136,51 +155,28 @@ const ExecuteContract = (props: ExecuteContractI) => {
                 },
               },
             }}
-            sx={{
-              '& .MuiTypography-body1': {
-                color: 'white',
-                fontSize: '12px',
-                fontWeight: 200,
-              },
-              '& .MuiOutlinedInput-notchedOutline': {
-                border: 'none',
-              },
-              '& .MuiOutlinedInput-root': {
-                border: 'none',
-                borderRadius: '16px',
-                color: 'white',
-              },
-              '& .Mui-focused': {
-                border: 'none',
-                borderRadius: '16px',
-              },
-            }}
+            sx={queryInputStyles}
           />
-          <button
-            onClick={onExecute}
-            className="primary-gradient h-10 rounded-lg px-3 py-[6px] absolute bottom-6 right-6 min-w-[85px]"
-          >
+          <button onClick={onExecute} className="primary-gradient execute-btn">
             {txExecuteLoading === TxStatus.PENDING ? (
               <CircularProgress size={18} sx={{ color: 'white' }} />
             ) : (
               'Execute'
             )}
           </button>
-          <div className="styled-btn-wrapper absolute top-6 right-6">
-            <button
-              onClick={formatJSON}
-              className="styled-btn w-[144px] !bg-[#232034]"
-            >
-              Format JSON
-            </button>
-          </div>
+          <button
+            onClick={formatExecutionMessage}
+            className="format-json-btn !bg-[#232034]"
+          >
+            Format JSON
+          </button>
         </div>
       </div>
       <div className="execute-output-box">
-        <div className="border-b-[1px] border-[#ffffff1e] pb-4 space-y-2">
+        <div className="attach-funds-header">
           <div className="text-[18px] font-bold">Attach Funds</div>
           {/* TODO: Update the dummy description */}
-          <div className="leading-[18px] text-[12px] font-extralight">
+          <div className="attach-funds-description">
             Lorem ipsum dolor sit amet consectetur adipisicing elit.
             Necessitatibus fuga consectetur reiciendis fugit suscipit ab.
           </div>

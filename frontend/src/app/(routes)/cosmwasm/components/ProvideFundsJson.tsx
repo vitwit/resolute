@@ -1,5 +1,8 @@
 import { TextField } from '@mui/material';
 import React from 'react';
+import { queryInputStyles } from '../styles';
+import { useAppDispatch } from '@/custom-hooks/StateHooks';
+import { setError } from '@/store/features/common/commonSlice';
 
 interface ProvideFundsJsonI {
   fundsInput: string;
@@ -8,6 +11,7 @@ interface ProvideFundsJsonI {
 
 const ProvideFundsJson = (props: ProvideFundsJsonI) => {
   const { fundsInput, setFundsInput } = props;
+  const dispatch = useAppDispatch();
   const handleFundsChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -18,18 +22,30 @@ const ProvideFundsJson = (props: ProvideFundsJsonI) => {
       const parsed = JSON.parse(fundsInput);
       const formattedJSON = JSON.stringify(parsed, undefined, 4);
       setFundsInput(formattedJSON);
+      return;
       /* eslint-disable @typescript-eslint/no-explicit-any */
     } catch (error: any) {
-      console.log(error);
+      dispatch(
+        setError({
+          type: 'error',
+          message:
+            'Invalid JSON input: (Attach Funds) ' + (error?.message || ''),
+        })
+      );
     }
   };
 
   return (
-    <div className="bg-[#FFFFFF0D] p-4 rounded-2xl">
-      <div className=" border-[1px] border-[#ffffff1e] hover:border-[#ffffff50] rounded-2xl relative">
+    <div className="provide-funds-input-wrapper">
+      <div className="provide-funds-input">
         <TextField
           value={fundsInput}
           onChange={handleFundsChange}
+          placeholder={JSON.stringify(
+            [{ amount: '100000', denom: 'uosmo' }],
+            undefined,
+            2
+          )}
           fullWidth
           multiline
           rows={7}
@@ -42,31 +58,9 @@ const ProvideFundsJson = (props: ProvideFundsJsonI) => {
               },
             },
           }}
-          sx={{
-            '& .MuiTypography-body1': {
-              color: 'white',
-              fontSize: '12px',
-              fontWeight: 200,
-            },
-            '& .MuiOutlinedInput-notchedOutline': {
-              border: 'none',
-            },
-            '& .MuiOutlinedInput-root': {
-              border: 'none',
-              borderRadius: '16px',
-              color: 'white',
-            },
-            '& .Mui-focused': {
-              border: 'none',
-              borderRadius: '16px',
-            },
-          }}
+          sx={queryInputStyles}
         />
-        <button
-          type="button"
-          onClick={formatJSON}
-          className="border-[1px] border-[#FFFFFF33] rounded-full p-2 text-[12px] font-extralight top-4 right-4 absolute"
-        >
+        <button type="button" onClick={formatJSON} className="format-json-btn">
           Format JSON
         </button>
       </div>

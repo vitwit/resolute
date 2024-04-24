@@ -16,12 +16,14 @@ import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { uploadCode } from '@/store/features/cosmwasm/cosmwasmSlice';
 import { TxStatus } from '@/types/enums';
 import { setError } from '@/store/features/common/commonSlice';
+import AddAddresses from './AddAddresses';
 
 interface UploadContractI {
   chainID: string;
   walletAddress: string;
   restURLs: string[];
 }
+
 interface UploadContractInput {
   wasmFile?: File;
   permission: AccessType;
@@ -30,16 +32,52 @@ interface UploadContractInput {
 
 const UploadContract = (props: UploadContractI) => {
   const { chainID, walletAddress, restURLs } = props;
+
+  // ------------------------------------------//
+  // ---------------DEPENDENCIES---------------//
+  // ------------------------------------------//
   const dispatch = useAppDispatch();
   const { uploadContract } = useContracts();
+
+  // ------------------------------------------//
+  // -----------------STATES-------------------//
+  // ------------------------------------------//
+  const [uploadedFileName, setUploadedFileName] = useState<string>('');
+  const [accessType, setAccessType] = useState<AccessType>(3);
+  const [addresses, setAddresses] = useState<string[]>(['']);
 
   const uploadContractStatus = useAppSelector(
     (state) => state.cosmwasm.chains?.[chainID]?.txUpload.status
   );
   const uploadContractLoading = uploadContractStatus === TxStatus.PENDING;
 
-  const [uploadedFileName, setUploadedFileName] = useState<string>('');
-  const [accessType, setAccessType] = useState<AccessType>(3);
+  // ------------------------------------------------//
+  // -----------------FORM HOOKS---------------------//
+  // ------------------------------------------------//
+  const { setValue, handleSubmit, getValues } = useForm<UploadContractInput>({
+    defaultValues: {
+      wasmFile: undefined,
+      permission: AccessType.ACCESS_TYPE_EVERYBODY,
+      allowedAddresses: [{ address: '' }],
+    },
+  });
+
+  const validateAddresses = () => {
+    for (const addr of addresses) {
+      if (addr.length === 0) {
+        return false;
+      }
+    }
+    return true;
+  };
+
+  // ------------------------------------------------//
+  // -----------------CHANGE HANDLERS----------------//
+  // ------------------------------------------------//
+  const handleAccessTypeChange = (event: SelectChangeEvent<AccessType>) => {
+    setAccessType(event.target.value as AccessType);
+    setValue('permission', event.target.value as AccessType);
+  };
 
   const resetUploadedFile = () => {
     const fileInputElement = document.getElementById(
@@ -49,51 +87,45 @@ const UploadContract = (props: UploadContractI) => {
     setValue('wasmFile', undefined);
   };
 
-  const { setValue, handleSubmit, getValues } = useForm<UploadContractInput>({
-    defaultValues: {
-      wasmFile: undefined,
-      permission: AccessType.ACCESS_TYPE_EVERYBODY,
-      allowedAddresses: [{ address: '' }],
-    },
-  });
-
-  const handleAccessTypeChange = (event: SelectChangeEvent<AccessType>) => {
-    setAccessType(event.target.value as AccessType);
-    setValue('permission', event.target.value as AccessType);
-  };
-
+  // ------------------------------------------//
+  // ---------------TRANSACTION----------------//
+  // ------------------------------------------//
   const onUpload = async (data: UploadContractInput) => {
     const wasmcode = getValues('wasmFile')?.arrayBuffer();
-    if (wasmcode) {
-      const msg: Msg = {
-        typeUrl: '/cosmwasm.wasm.v1.MsgStoreCode',
-        value: {
-          sender: walletAddress,
-          wasmByteCode: await gzip(new Uint8Array(await wasmcode)),
-          instantiatePermission: {
-            permission: data.permission,
-            addresses: [],
-            address: '',
-          },
-        },
-      };
+    if (!wasmcode) {
       dispatch(
-        uploadCode({
-          chainID,
-          address: walletAddress,
-          messages: [msg],
-          baseURLs: restURLs,
-          uploadContract,
-        })
+        setError({ type: 'error', message: 'Please upload the wasm file' })
       );
-    } else {
-      dispatch(
-        setError({
-          type: 'error',
-          message: 'Please upload the wasm file',
-        })
-      );
+      return;
     }
+    if (
+      data.permission === AccessType.ACCESS_TYPE_ANY_OF_ADDRESSES &&
+      !validateAddresses()
+    ) {
+      dispatch(setError({ type: 'error', message: 'Address cannot be empty' }));
+      return;
+    }
+    const msg: Msg = {
+      typeUrl: '/cosmwasm.wasm.v1.MsgStoreCode',
+      value: {
+        sender: walletAddress,
+        wasmByteCode: await gzip(new Uint8Array(await wasmcode)),
+        instantiatePermission: {
+          permission: data.permission,
+          addresses,
+          address: '',
+        },
+      },
+    };
+    dispatch(
+      uploadCode({
+        chainID,
+        address: walletAddress,
+        messages: [msg],
+        baseURLs: restURLs,
+        uploadContract,
+      })
+    );
   };
 
   return (
@@ -157,12 +189,12 @@ const UploadContract = (props: UploadContractI) => {
         </div>
         <div className="w-1/2 flex flex-col gap-6">
           <div className="space-y-6">
-            <div className="border-b-[1px] border-[#ffffff1e] pb-4 space-y-2">
+            <div className="attach-funds-header">
               <div className="text-[18px] font-bold">
                 Select Instantiate Permission
               </div>
               {/* TODO: Update the dummy description */}
-              <div className="leading-[18px] text-[12px] font-extralight">
+              <div className="attach-funds-description">
                 Lorem ipsum dolor sit amet consectetur adipisicing elit.
                 Necessitatibus fuga consectetur reiciendis fugit suscipit ab.
               </div>
@@ -172,15 +204,19 @@ const UploadContract = (props: UploadContractI) => {
               accessType={accessType}
             />
           </div>
-          <div className="flex-1 overflow-y-scroll"></div>
+          {accessType === AccessType.ACCESS_TYPE_ANY_OF_ADDRESSES ? (
+            <div className="flex-1 min-h-40">
+              <AddAddresses addresses={addresses} setAddresses={setAddresses} />
+            </div>
+          ) : null}
         </div>
       </div>
       <button
         disabled={uploadContractLoading}
-        className="primary-gradient rounded-lg py-[6px] flex-1 w-full"
+        className="primary-gradient upload-btn"
       >
         {uploadContractLoading ? (
-          <CircularProgress size={16} sx={{ color: 'white' }} />
+          <CircularProgress size={18} sx={{ color: 'white' }} />
         ) : (
           <>Upload Contract</>
         )}
