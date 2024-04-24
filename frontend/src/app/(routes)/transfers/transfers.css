@@ -64,3 +64,22 @@
 .drop-down {
   box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
 }
+
+.multisend-input-box {
+  @apply flex justify-center items-center px-4 py-4 bg-[#FFFFFF1A] min-h-[152px] rounded-3xl w-full cursor-pointer;
+}
+
+.multisend-toggle-btn-group {
+  @apply bg-[#FFFFFF1A] rounded-2xl flex h-[34px];
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25) inset;
+}
+
+.multisend-btn {
+  @apply text-[#FFFFFF80] text-[12px] text-center px-4 min-w-[127px];
+}
+
+.multisend-btn-active {
+  @apply text-white rounded-2xl;
+  background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
+  box-shadow: 0px 4px 4px 0px #100;
+}
