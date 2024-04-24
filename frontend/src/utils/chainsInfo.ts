@@ -446,11 +446,10 @@ export const networks: Network[] = [
       rest: 'https://juno-api.lavenderfive.com:443',
       rpc: 'https://juno-rpc.lavenderfive.com:443',
       restURIs: [
-        'https://www.google.com',
         'https://juno-api.lavenderfive.com:443',
         'https://rest-juno.ecostake.com',
-        // 'https://juno-api.polkachu.com',
-        // 'https://api.resolute.vitwit.com/juno_api',
+        'https://juno-api.polkachu.com',
+        'https://api.resolute.vitwit.com/juno_api',
       ],
       rpcURIs: [
         'https://juno-rpc.lavenderfive.com:443',
