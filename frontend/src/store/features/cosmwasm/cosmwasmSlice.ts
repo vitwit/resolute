@@ -114,29 +114,9 @@ const initialState: CosmwasmState = {
 
 export const queryContractInfo = createAsyncThunk(
   'cosmwasm/query-contract',
-  async (
-    data: {
-      address: string;
-      baseURLs: string[];
-      queryData: string;
-      chainID: string;
-      getQueryContractOutput: ({
-        address,
-        baseURLs,
-        queryData,
-      }: {
-        address: string;
-        baseURLs: string[];
-        queryData: string;
-      }) => Promise<{
-        data: any;
-      }>;
-    },
-    { rejectWithValue, dispatch }
-  ) => {
-    // const { getQueryContractOutput } = useContracts();
+  async (data: QueryContractInfoInputs, { rejectWithValue, dispatch }) => {
     try {
-      const response = await data.getQueryContractOutput(data);
+      const response = await data.getQueryContract(data);
       return {
         data: response.data,
         chainID: data.chainID,
@@ -156,40 +136,7 @@ export const queryContractInfo = createAsyncThunk(
 
 export const executeContract = createAsyncThunk(
   'cosmwasm/execute-contract',
-  async (
-    data: {
-      rpcURLs: string[];
-      chainID: string;
-      contractAddress: string;
-      walletAddress: string;
-      msgs: any;
-      baseURLs: string[];
-      funds: { amount: string; denom: string }[] | undefined;
-      getExecutionOutput: ({
-        rpcURLs,
-        chainID,
-        contractAddress,
-        walletAddress,
-        msgs,
-        funds,
-      }: {
-        rpcURLs: string[];
-        chainID: string;
-        contractAddress: string;
-        walletAddress: string;
-        msgs: any;
-        funds:
-          | {
-              amount: string;
-              denom: string;
-            }[]
-          | undefined;
-      }) => Promise<{
-        txHash: string;
-      }>;
-    },
-    { rejectWithValue, dispatch }
-  ) => {
+  async (data: ExecuteContractInputs, { rejectWithValue, dispatch }) => {
     try {
       const response = await data.getExecutionOutput(data);
       const txn = await axios.get(
@@ -221,27 +168,7 @@ export const executeContract = createAsyncThunk(
 
 export const uploadCode = createAsyncThunk(
   'cosmwasm/upload-code',
-  async (
-    data: {
-      chainID: string;
-      address: string;
-      messages: Msg[];
-      baseURLs: string[];
-      uploadContract: ({
-        chainID,
-        address,
-        messages,
-      }: {
-        chainID: string;
-        address: string;
-        messages: Msg[];
-      }) => Promise<{
-        codeId: string;
-        txHash: string;
-      }>;
-    },
-    { rejectWithValue, dispatch }
-  ) => {
+  async (data: UploadCodeInputs, { rejectWithValue, dispatch }) => {
     try {
       const response = await data.uploadContract(data);
       const txn = await axios.get(
@@ -280,37 +207,7 @@ export const uploadCode = createAsyncThunk(
 
 export const txInstantiateContract = createAsyncThunk(
   'cosmwasm/instantiate-contract',
-  async (
-    data: {
-      chainID: string;
-      codeId: number;
-      msg: any;
-      label: string;
-      admin?: string;
-      funds?: Coin[];
-      baseURLs: string[];
-      instantiateContract: ({
-        chainID,
-        codeId,
-        msg,
-        label,
-        admin,
-        funds,
-      }: {
-        chainID: string;
-        codeId: number;
-        msg: any;
-        label: string;
-        admin?: string;
-        funds?: Coin[];
-      }) => Promise<{
-        codeId: string;
-        contractAddress: string;
-        txHash: string;
-      }>;
-    },
-    { rejectWithValue, dispatch }
-  ) => {
+  async (data: InstantiateContractInputs, { rejectWithValue, dispatch }) => {
     try {
       const response = await data.instantiateContract(data);
       const txn = await axios.get(

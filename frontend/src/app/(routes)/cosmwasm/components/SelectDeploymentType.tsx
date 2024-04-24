@@ -18,7 +18,7 @@ const SelectDeploymentType: React.FC<SelectDeploymentTypeProps> = (props) => {
             <div className="custom-radio-button-checked"></div>
           ) : null}
         </button>
-        <div className="text-[14px] font-light">Use existing Code IDs</div>
+        <div className="text-[14px] font-light">Use existing Code ID</div>
       </div>
       <div className="custom-radio-button-label" onClick={() => onSelect(true)}>
         <button className="custom-radio-button">

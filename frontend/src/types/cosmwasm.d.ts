@@ -43,3 +43,114 @@ interface ParsedUploadTxnResponse extends ParsedExecuteTxnResponse {
 interface ParsedInstatiateTxnResponse extends ParsedUploadTxnResponse {
   contractAddress: string;
 }
+
+interface GetQueryContractFunctionInputs {
+  address: string;
+  baseURLs: string[];
+  queryData: string;
+}
+
+interface QueryContractInfoInputs {
+  address: string;
+  baseURLs: string[];
+  queryData: string;
+  chainID: string;
+  getQueryContract: ({
+    address,
+    baseURLs,
+    queryData,
+  }: GetQueryContractFunctionInputs) => Promise<{
+    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+    data: any;
+  }>;
+}
+
+interface GetExecutionOutputFunctionInputs {
+  rpcURLs: string[];
+  chainID: string;
+  contractAddress: string;
+  walletAddress: string;
+  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+  msgs: any;
+  funds:
+    | {
+        amount: string;
+        denom: string;
+      }[]
+    | undefined;
+}
+
+interface ExecuteContractInputs {
+  rpcURLs: string[];
+  chainID: string;
+  contractAddress: string;
+  walletAddress: string;
+  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+  msgs: any;
+  baseURLs: string[];
+  funds: { amount: string; denom: string }[] | undefined;
+  getExecutionOutput: ({
+    rpcURLs,
+    chainID,
+    contractAddress,
+    walletAddress,
+    msgs,
+    funds,
+  }: GetExecutionOutputFunctionInputs) => Promise<{
+    txHash: string;
+  }>;
+}
+
+interface UploadContractFunctionInputs {
+  chainID: string;
+  address: string;
+  messages: Msg[];
+}
+
+interface UploadCodeInputs {
+  chainID: string;
+  address: string;
+  messages: Msg[];
+  baseURLs: string[];
+  uploadContract: ({
+    chainID,
+    address,
+    messages,
+  }: UploadContractFunctionInputs) => Promise<{
+    codeId: string;
+    txHash: string;
+  }>;
+}
+
+interface InstantiateContractFunctionInputs {
+  chainID: string;
+  codeId: number;
+  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+  msg: any;
+  label: string;
+  admin?: string;
+  funds?: Coin[];
+}
+
+interface InstantiateContractInputs {
+  chainID: string;
+  codeId: number;
+  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+  msg: any;
+  label: string;
+  admin?: string;
+  funds?: Coin[];
+  baseURLs: string[];
+  instantiateContract: ({
+    chainID,
+    codeId,
+    msg,
+    label,
+    admin,
+    funds,
+  }: InstantiateContractFunctionInputs) => Promise<{
+    codeId: string;
+    contractAddress: string;
+    txHash: string;
+  }>;
+}

@@ -1,7 +1,6 @@
 import { CircularProgress, SelectChangeEvent, TextField } from '@mui/material';
 import React, { useState } from 'react';
-import { Control, Controller, useForm } from 'react-hook-form';
-import { customTextFieldStyles } from '../styles';
+import { Controller, useForm } from 'react-hook-form';
 import useContracts from '@/custom-hooks/useContracts';
 import AttachFunds from './AttachFunds';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
@@ -9,6 +8,9 @@ import { getFormattedFundsList } from '@/utils/util';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { txInstantiateContract } from '@/store/features/cosmwasm/cosmwasmSlice';
 import { TxStatus } from '@/types/enums';
+import CustomTextField from './CustomTextField';
+import { queryInputStyles } from '../styles';
+import { setError } from '@/store/features/common/commonSlice';
 
 interface InstantiateContractI {
   chainID: string;
@@ -24,13 +26,35 @@ interface InstatiateContractInputs {
 
 const InstantiateContract = (props: InstantiateContractI) => {
   const { chainID, walletAddress, restURLs } = props;
+
+  // ------------------------------------------//
+  // ---------------DEPENDENCIES---------------//
+  // ------------------------------------------//
   const dispatch = useAppDispatch();
   const { instantiateContract } = useContracts();
+  const { getDenomInfo } = useGetChainInfo();
+  const { decimals, minimalDenom, chainName } = getDenomInfo(chainID);
+
+  // ------------------------------------------//
+  // ------------------STATES------------------//
+  // ------------------------------------------//
+  const [attachFundType, setAttachFundType] = useState('no-funds');
+  const [funds, setFunds] = useState<FundInfo[]>([
+    {
+      amount: '',
+      denom: minimalDenom,
+      decimals: decimals,
+    },
+  ]);
+  const [fundsInput, setFundsInput] = useState('');
 
   const txInstantiateStatus = useAppSelector(
     (state) => state.cosmwasm.chains?.[chainID]?.txInstantiate?.status
   );
 
+  // ------------------------------------------------//
+  // -----------------FORM HOOKS---------------------//
+  // ------------------------------------------------//
   const { handleSubmit, control, setValue, getValues } =
     useForm<InstatiateContractInputs>({
       defaultValues: {
@@ -41,24 +65,40 @@ const InstantiateContract = (props: InstantiateContractI) => {
       },
     });
 
-  // Attach funds logic
-  const [attachFundType, setAttachFundType] = useState('no-funds');
-  const { getDenomInfo } = useGetChainInfo();
-  const { decimals, minimalDenom, chainName } = getDenomInfo(chainID);
-  const [funds, setFunds] = useState<FundInfo[]>([
-    {
-      amount: '',
-      denom: minimalDenom,
-      decimals: decimals,
-    },
-  ]);
-  const [fundsInput, setFundsInput] = useState('');
-
+  // ------------------------------------------------//
+  // -----------------CHANGE HANDLER-----------------//
+  // ------------------------------------------------//
   const handleAttachFundTypeChange = (event: SelectChangeEvent<string>) => {
     setAttachFundType(event.target.value);
   };
 
+  const formatJSON = () => {
+    try {
+      const parsed = JSON.parse(getValues('message'));
+      const formattedJSON = JSON.stringify(parsed, undefined, 4);
+      setValue('message', formattedJSON);
+      return true;
+      /* eslint-disable @typescript-eslint/no-explicit-any */
+    } catch (error: any) {
+      dispatch(
+        setError({
+          type: 'error',
+          message: 'Invalid JSON input: ' + (error?.message || ''),
+        })
+      );
+    }
+    return false;
+  };
+
+  // ------------------------------------------//
+  // ---------------TRANSACTION----------------//
+  // ------------------------------------------//
   const onSubmit = (data: InstatiateContractInputs) => {
+    if (data.message?.length) {
+      if (!formatJSON()) {
+        return;
+      }
+    }
     const attachedFunds = getFormattedFundsList(
       funds,
       fundsInput,
@@ -77,17 +117,6 @@ const InstantiateContract = (props: InstantiateContractI) => {
         funds: attachedFunds,
       })
     );
-  };
-
-  const formatJSON = () => {
-    try {
-      const parsed = JSON.parse(getValues('message'));
-      const formattedJSON = JSON.stringify(parsed, undefined, 4);
-      setValue('message', formattedJSON);
-      /* eslint-disable @typescript-eslint/no-explicit-any */
-    } catch (error: any) {
-      console.log(error);
-    }
   };
 
   return (
@@ -121,7 +150,7 @@ const InstantiateContract = (props: InstantiateContractI) => {
                 onClick={() => {
                   setValue('adminAddress', walletAddress);
                 }}
-                className="font-bold underline underline-offset-[3px] cursor-pointer"
+                className="styled-underlined-text"
               >
                 Assign Me
               </span>
@@ -152,8 +181,8 @@ const InstantiateContract = (props: InstantiateContractI) => {
             <div className="font-extralight text-[14px]">
               Instantiate Message
             </div>
-            <div className="bg-[#ffffff0d] p-4 rounded-2xl flex-1">
-              <div className="relative h-full border-[1px] rounded-2xl border-[#ffffff1e] hover:border-[#ffffff50]">
+            <div className="instantiate-input-wrapper">
+              <div className="instantiate-input">
                 <Controller
                   name="message"
                   control={control}
@@ -163,7 +192,6 @@ const InstantiateContract = (props: InstantiateContractI) => {
                       fullWidth
                       multiline
                       rows={7}
-                      required
                       InputProps={{
                         sx: {
                           input: {
@@ -173,32 +201,14 @@ const InstantiateContract = (props: InstantiateContractI) => {
                           },
                         },
                       }}
-                      sx={{
-                        '& .MuiTypography-body1': {
-                          color: 'white',
-                          fontSize: '12px',
-                          fontWeight: 200,
-                        },
-                        '& .MuiOutlinedInput-notchedOutline': {
-                          border: 'none',
-                        },
-                        '& .MuiOutlinedInput-root': {
-                          border: 'none',
-                          borderRadius: '16px',
-                          color: 'white',
-                        },
-                        '& .Mui-focused': {
-                          border: 'none',
-                          borderRadius: '16px',
-                        },
-                      }}
+                      sx={queryInputStyles}
                     />
                   )}
                 />
                 <button
                   onClick={formatJSON}
                   type="button"
-                  className="border-[1px] border-[#FFFFFF33] rounded-full p-2 text-[12px] font-extralight top-4 right-4 absolute"
+                  className="format-json-btn"
                 >
                   Format JSON
                 </button>
@@ -214,44 +224,9 @@ const InstantiateContract = (props: InstantiateContractI) => {
 
 export default InstantiateContract;
 
-const CustomTextField = ({
-  control,
-  name,
-  placeHolder,
-  rules,
-  required,
-}: {
-  control: Control<any, any>;
-  rules?: any;
-  name: string;
-  placeHolder: string;
-  required: boolean;
-}) => {
-  return (
-    <Controller
-      name={name}
-      control={control}
-      rules={rules}
-      render={({ field }) => (
-        <TextField
-          className="rounded-lg bg-[#ffffff0D]"
-          {...field}
-          required={required}
-          fullWidth
-          placeholder={placeHolder}
-          sx={customTextFieldStyles}
-        />
-      )}
-    />
-  );
-};
-
 const InstatiateButton = ({ loading }: { loading: boolean }) => {
   return (
-    <button
-      type="submit"
-      className="primary-gradient text-[12px] font-medium px-3 py-[6px] rounded-lg h-10 w-full"
-    >
+    <button type="submit" className="primary-gradient instantiate-btn">
       {loading ? (
         <CircularProgress size={18} sx={{ color: 'white' }} />
       ) : (

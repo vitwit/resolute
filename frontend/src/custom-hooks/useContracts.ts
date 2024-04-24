@@ -19,6 +19,8 @@ const dummyQuery = {
 
 const assetsData = chainDenoms as AssetData;
 
+const GAS = '900000';
+
 const getCodeIdFromEvents = (events: Event[]) => {
   let codeId = '';
   for (let i = 0; i < events.length; i++) {
@@ -38,8 +40,7 @@ const getCodeIdFromEvents = (events: Event[]) => {
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const getCodeId = (txData: any) => {
-  const codeID = getCodeIdFromEvents(txData?.events || []);
-  return codeID;
+  return getCodeIdFromEvents(txData?.events || []);
 };
 
 const useContracts = () => {
@@ -103,15 +104,11 @@ const useContracts = () => {
     };
   };
 
-  const getQueryContractOutput = async ({
+  const getQueryContract = async ({
     address,
     baseURLs,
     queryData,
-  }: {
-    address: string;
-    baseURLs: string[];
-    queryData: string;
-  }) => {
+  }: GetQueryContractFunctionInputs) => {
     try {
       const respose = await queryContract(baseURLs, address, btoa(queryData));
       return {
@@ -162,14 +159,7 @@ const useContracts = () => {
     walletAddress,
     msgs,
     funds,
-  }: {
-    rpcURLs: string[];
-    chainID: string;
-    contractAddress: string;
-    walletAddress: string;
-    msgs: any;
-    funds: { amount: string; denom: string }[] | undefined;
-  }) => {
+  }: GetExecutionOutputFunctionInputs) => {
     const offlineSigner = window.wallet.getOfflineSigner(chainID);
     const client = await connectWithSigner(rpcURLs, offlineSigner);
     const { feeAmount, feeCurrencies } = getChainInfo(chainID);
@@ -181,7 +171,7 @@ const useContracts = () => {
           denom: coinDenom,
         },
       ],
-      gas: '900000',
+      gas: GAS,
     };
     try {
       const response = await client.signAndBroadcast(
@@ -210,11 +200,7 @@ const useContracts = () => {
     chainID,
     address,
     messages,
-  }: {
-    chainID: string;
-    address: string;
-    messages: Msg[];
-  }) => {
+  }: UploadContractFunctionInputs) => {
     const { feeAmount, feeCurrencies, rpcURLs } = getChainInfo(chainID);
     const { coinDecimals, coinDenom } = feeCurrencies[0];
     const offlineSigner = window.wallet.getOfflineSigner(chainID);
@@ -251,14 +237,7 @@ const useContracts = () => {
     label,
     admin,
     funds,
-  }: {
-    chainID: string;
-    codeId: number;
-    msg: any;
-    label: string;
-    admin?: string;
-    funds?: Coin[];
-  }) => {
+  }: InstantiateContractFunctionInputs) => {
     const {
       feeAmount,
       feeCurrencies,
@@ -275,20 +254,9 @@ const useContracts = () => {
           denom: coinDenom,
         },
       ],
-      gas: '900000',
+      gas: GAS,
     };
     try {
-      // const response = await client.instantiate(
-      //   senderAddress,
-      //   codeId,
-      //   msg,
-      //   label,
-      //   fee,
-      //   {
-      //     admin,
-      //     funds,
-      //   }
-      // );
       const response = await client.signAndBroadcast(
         senderAddress,
         [
@@ -350,7 +318,7 @@ const useContracts = () => {
     contractError,
     getContractMessages,
     messagesLoading,
-    getQueryContractOutput,
+    getQueryContract,
     getExecuteMessages,
     getExecutionOutput,
     getChainAssets,

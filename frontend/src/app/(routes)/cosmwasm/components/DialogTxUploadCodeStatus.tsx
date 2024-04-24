@@ -1,19 +1,16 @@
-import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
+import { useAppSelector } from '@/custom-hooks/StateHooks';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
-import { setError } from '@/store/features/common/commonSlice';
 import { TxStatus } from '@/types/enums';
 import { dialogBoxPaperPropStyles } from '@/utils/commonStyles';
 import { TXN_FAILED_ICON, TXN_SUCCESS_ICON } from '@/utils/constants';
-import { copyToClipboard } from '@/utils/copyToClipboard';
 import { parseBalance } from '@/utils/denom';
-import { getTxnURL } from '@/utils/util';
 import { Box, Dialog, DialogContent } from '@mui/material';
 import Image from 'next/image';
-import Link from 'next/link';
 import React, { useEffect, useMemo, useState } from 'react';
+import CustomCopyField from './txn-status-components/CustomCopyField';
+import ActionButtonsGroup from './txn-status-components/ActionButtonsGroup';
 
 const DialogTxUploadCodeStatus = ({ chainID }: { chainID: string }) => {
-  const dispatch = useAppDispatch();
   const { getChainInfo, getDenomInfo } = useGetChainInfo();
   const { explorerTxHashEndpoint } = getChainInfo(chainID);
   const {
@@ -29,6 +26,7 @@ const DialogTxUploadCodeStatus = ({ chainID }: { chainID: string }) => {
     }),
     [minimalDenom, decimals, displayDenom]
   );
+
   const [open, setOpen] = useState(false);
   const txUploadStatus = useAppSelector(
     (state) => state.cosmwasm.chains?.[chainID]?.txUpload?.status
@@ -109,58 +107,8 @@ const DialogTxUploadCodeStatus = ({ chainID }: { chainID: string }) => {
             </div>
             <div className="px-[60px] w-full">
               <div className="txn-details">
-                <div className="txn-details-item">
-                  <div className="txn-details-item-title">Code ID</div>
-                  <div className="truncate">
-                    <div className="w-full common-copy">
-                      <span className="truncate">
-                        {txResponse?.codeId || '-'}
-                      </span>
-                      <Image
-                        className="cursor-pointer"
-                        onClick={(e) => {
-                          copyToClipboard(txResponse?.codeId || '-');
-                          dispatch(
-                            setError({
-                              type: 'success',
-                              message: 'Copied',
-                            })
-                          );
-                          e.stopPropagation();
-                        }}
-                        src="/copy-icon-plain.svg"
-                        width={24}
-                        height={24}
-                        alt="copy"
-                      />
-                    </div>
-                  </div>
-                </div>
-                <div className="txn-details-item">
-                  <div className="txn-details-item-title">Transaction Hash</div>
-                  <div className="truncate">
-                    <div className="w-full common-copy">
-                      <span className="truncate">{txUploadHash || '-'}</span>
-                      <Image
-                        className="cursor-pointer"
-                        onClick={(e) => {
-                          copyToClipboard(txUploadHash || '-');
-                          dispatch(
-                            setError({
-                              type: 'success',
-                              message: 'Copied',
-                            })
-                          );
-                          e.stopPropagation();
-                        }}
-                        src="/copy-icon-plain.svg"
-                        width={24}
-                        height={24}
-                        alt="copy"
-                      />
-                    </div>
-                  </div>
-                </div>
+                <CustomCopyField name="Code ID" value={txResponse?.codeId} />
+                <CustomCopyField name="Transaction Hash" value={txUploadHash} />
                 <div className="txn-details-item">
                   <div className="txn-details-item-title">Fees</div>
                   <div className="txn-details-item-content">
@@ -189,26 +137,10 @@ const DialogTxUploadCodeStatus = ({ chainID }: { chainID: string }) => {
                   </div>
                 )}
               </div>
-              <div className="flex gap-10 mt-6">
-                <button
-                  className="txn-receipt-btn"
-                  onClick={() => {
-                    copyToClipboard(
-                      getTxnURL(explorerTxHashEndpoint, txUploadHash || '')
-                    );
-                    dispatch(setError({ type: 'success', message: 'Copied' }));
-                  }}
-                >
-                  Share
-                </button>
-                <Link
-                  className="txn-receipt-btn"
-                  href={getTxnURL(explorerTxHashEndpoint, txUploadHash || '')}
-                  target="_blank"
-                >
-                  View
-                </Link>
-              </div>
+              <ActionButtonsGroup
+                explorer={explorerTxHashEndpoint}
+                txHash={txUploadHash}
+              />
             </div>
           </div>
         </Box>
