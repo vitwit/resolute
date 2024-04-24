@@ -135,7 +135,8 @@
   @apply px-4 py-2 rounded-2xl bg-[#FFFFFF14] cursor-pointer hover:bg-[#ffffff26];
 }
 
-.add-funds-btn {
+.add-funds-btn,
+.add-address-btn {
   @apply rounded-lg px-3 py-[6px] font-medium leading-[20px] text-[12px];
 }
 

@@ -16,6 +16,7 @@ import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { uploadCode } from '@/store/features/cosmwasm/cosmwasmSlice';
 import { TxStatus } from '@/types/enums';
 import { setError } from '@/store/features/common/commonSlice';
+import AddAddresses from './AddAddresses';
 
 interface UploadContractI {
   chainID: string;
@@ -43,6 +44,7 @@ const UploadContract = (props: UploadContractI) => {
   // ------------------------------------------//
   const [uploadedFileName, setUploadedFileName] = useState<string>('');
   const [accessType, setAccessType] = useState<AccessType>(3);
+  const [addresses, setAddresses] = useState<string[]>(['']);
 
   const uploadContractStatus = useAppSelector(
     (state) => state.cosmwasm.chains?.[chainID]?.txUpload.status
@@ -59,6 +61,15 @@ const UploadContract = (props: UploadContractI) => {
       allowedAddresses: [{ address: '' }],
     },
   });
+
+  const validateAddresses = () => {
+    for (const addr of addresses) {
+      if (addr.length === 0) {
+        return false;
+      }
+    }
+    return true;
+  };
 
   // ------------------------------------------------//
   // -----------------CHANGE HANDLERS----------------//
@@ -81,36 +92,40 @@ const UploadContract = (props: UploadContractI) => {
   // ------------------------------------------//
   const onUpload = async (data: UploadContractInput) => {
     const wasmcode = getValues('wasmFile')?.arrayBuffer();
-    if (wasmcode) {
-      const msg: Msg = {
-        typeUrl: '/cosmwasm.wasm.v1.MsgStoreCode',
-        value: {
-          sender: walletAddress,
-          wasmByteCode: await gzip(new Uint8Array(await wasmcode)),
-          instantiatePermission: {
-            permission: data.permission,
-            addresses: [],
-            address: '',
-          },
-        },
-      };
+    if (!wasmcode) {
       dispatch(
-        uploadCode({
-          chainID,
-          address: walletAddress,
-          messages: [msg],
-          baseURLs: restURLs,
-          uploadContract,
-        })
+        setError({ type: 'error', message: 'Please upload the wasm file' })
       );
-    } else {
-      dispatch(
-        setError({
-          type: 'error',
-          message: 'Please upload the wasm file',
-        })
-      );
+      return;
     }
+    if (
+      data.permission === AccessType.ACCESS_TYPE_ANY_OF_ADDRESSES &&
+      !validateAddresses()
+    ) {
+      dispatch(setError({ type: 'error', message: 'Address cannot be empty' }));
+      return;
+    }
+    const msg: Msg = {
+      typeUrl: '/cosmwasm.wasm.v1.MsgStoreCode',
+      value: {
+        sender: walletAddress,
+        wasmByteCode: await gzip(new Uint8Array(await wasmcode)),
+        instantiatePermission: {
+          permission: data.permission,
+          addresses,
+          address: '',
+        },
+      },
+    };
+    dispatch(
+      uploadCode({
+        chainID,
+        address: walletAddress,
+        messages: [msg],
+        baseURLs: restURLs,
+        uploadContract,
+      })
+    );
   };
 
   return (
@@ -189,7 +204,11 @@ const UploadContract = (props: UploadContractI) => {
               accessType={accessType}
             />
           </div>
-          <div className="flex-1 overflow-y-scroll"></div>
+          {accessType === AccessType.ACCESS_TYPE_ANY_OF_ADDRESSES ? (
+            <div className="flex-1 min-h-40">
+              <AddAddresses addresses={addresses} setAddresess={setAddresses} />
+            </div>
+          ) : null}
         </div>
       </div>
       <button
