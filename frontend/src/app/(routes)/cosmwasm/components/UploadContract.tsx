@@ -206,7 +206,7 @@ const UploadContract = (props: UploadContractI) => {
           </div>
           {accessType === AccessType.ACCESS_TYPE_ANY_OF_ADDRESSES ? (
             <div className="flex-1 min-h-40">
-              <AddAddresses addresses={addresses} setAddresess={setAddresses} />
+              <AddAddresses addresses={addresses} setAddresses={setAddresses} />
             </div>
           ) : null}
         </div>

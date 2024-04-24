@@ -19,22 +19,18 @@ export const getContract = async (
     const uri = getContractURL(url, address);
     try {
       const response = await fetch(uri);
-      console.log(response);
-      if (!response.ok) {
-        console.log('hrer.e.re.r');
-        if (response.status === 500) {
-          console.log('herere..');
-          continue;
-        } else {
-          const res = await response.json();
-          throw new Error(res.message || 'Failed to fetch contract');
-        }
+      if (response.status === 500) {
+        const errorBody = await response.json();
+        throw new Error(errorBody?.message || 'Failed to fetch contract', {
+          cause: 500,
+        });
+      } else if (response.ok) {
+        return response;
       }
-      return response;
-      /* eslint-disable @typescript-eslint/no-explicit-any */
+      /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     } catch (error: any) {
-      console.log(error);
-      throw new Error(error.message);
+      if (error.cause === 500) throw new Error(error.message);
+      continue;
     }
   }
   throw new Error('Failed to fetch contract');
@@ -49,17 +45,21 @@ export const queryContract = async (
     const uri = getContractQueryURL(url, address, queryData);
     try {
       const response = await fetch(uri);
-      if (!response.ok) {
-        const res = await response.json();
-        throw new Error(res.message || 'Failed to fetch contract');
+      if (response.status === 500) {
+        const errorBody = await response.json();
+        throw new Error(errorBody?.message || 'Failed to query contract', {
+          cause: 500,
+        });
+      } else if (response.ok) {
+        return response;
       }
-      return response;
-      /* eslint-disable @typescript-eslint/no-explicit-any */
+      /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     } catch (error: any) {
-      throw new Error(error.message);
+      if (error.cause === 500) throw new Error(error.message);
+      continue;
     }
   }
-  throw new Error('Failed to fetch contract');
+  throw new Error('Failed to query contract');
 };
 
 /* eslint-disable @typescript-eslint/no-explicit-any */

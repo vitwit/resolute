@@ -162,7 +162,7 @@ const QueryContract = (props: QueryContractI) => {
           </button>
         </div>
       </div>
-      <div className="query-output-box">
+      <div className="query-output-box overflow-y-scroll">
         <div className="qeury-output">
           <pre>{JSON.stringify(queryOutput, undefined, 2)}</pre>
         </div>

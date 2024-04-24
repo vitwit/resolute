@@ -3,19 +3,19 @@ import AddressInputField from './AddressInputField';
 
 interface AddAddressesI {
   addresses: string[];
-  setAddresess: React.Dispatch<React.SetStateAction<string[]>>;
+  setAddresses: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
 const AddAddresses = (props: AddAddressesI) => {
-  const { addresses, setAddresess } = props;
+  const { addresses, setAddresses } = props;
 
   const onAddAddress = (address: string) => {
-    setAddresess((prev) => [...prev, address]);
+    setAddresses((prev) => [...prev, address]);
   };
 
   const onDelete = (index: number) => {
     const newAddresses = addresses.filter((_, i) => i !== index);
-    setAddresess(newAddresses);
+    setAddresses(newAddresses);
   };
 
   const handleAddressChange = (
@@ -25,11 +25,11 @@ const AddAddresses = (props: AddAddressesI) => {
     const input = e.target.value;
     const newAddresses = addresses.map((value, key) => {
       if (index === key) {
-        value = input.trim();
+        input.trim();
       }
       return value;
     });
-    setAddresess(newAddresses);
+    setAddresses(newAddresses);
   };
 
   return (

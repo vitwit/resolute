@@ -1,6 +1,8 @@
 import { TextField } from '@mui/material';
 import React from 'react';
 import { queryInputStyles } from '../styles';
+import { useAppDispatch } from '@/custom-hooks/StateHooks';
+import { setError } from '@/store/features/common/commonSlice';
 
 interface ProvideFundsJsonI {
   fundsInput: string;
@@ -9,6 +11,7 @@ interface ProvideFundsJsonI {
 
 const ProvideFundsJson = (props: ProvideFundsJsonI) => {
   const { fundsInput, setFundsInput } = props;
+  const dispatch = useAppDispatch();
   const handleFundsChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -19,9 +22,16 @@ const ProvideFundsJson = (props: ProvideFundsJsonI) => {
       const parsed = JSON.parse(fundsInput);
       const formattedJSON = JSON.stringify(parsed, undefined, 4);
       setFundsInput(formattedJSON);
+      return;
       /* eslint-disable @typescript-eslint/no-explicit-any */
     } catch (error: any) {
-      console.log(error);
+      dispatch(
+        setError({
+          type: 'error',
+          message:
+            'Invalid JSON input: (Attach Funds) ' + (error?.message || ''),
+        })
+      );
     }
   };
 
@@ -31,6 +41,11 @@ const ProvideFundsJson = (props: ProvideFundsJsonI) => {
         <TextField
           value={fundsInput}
           onChange={handleFundsChange}
+          placeholder={JSON.stringify(
+            [{ amount: '100000', denom: 'uosmo' }],
+            undefined,
+            2
+          )}
           fullWidth
           multiline
           rows={7}

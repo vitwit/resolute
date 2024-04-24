@@ -131,9 +131,9 @@ const DialogSearchContract = (props: DialogSearchContractI) => {
                         <div className="space-y-2">
                           <div className="font-semibold">Contract found:</div>
                           <ContractItem
-                            key={searchResult.address}
-                            name={searchResult.contract_info.label}
-                            address={searchResult.address}
+                            key={searchResult?.address}
+                            name={searchResult?.contract_info?.label}
+                            address={searchResult?.address}
                             onSelectContract={onSelectContract}
                           />
                         </div>

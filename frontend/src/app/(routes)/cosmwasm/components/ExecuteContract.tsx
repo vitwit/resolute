@@ -62,40 +62,58 @@ const ExecuteContract = (props: ExecuteContractI) => {
     setAttachFundType(event.target.value);
   };
 
-  const formatJSON = () => {
+  // ----------------------------------------------------//
+  // -----------------CUSTOM VALIDATIONS-----------------//
+  // ----------------------------------------------------//
+  const validateJSONInput = (
+    input: string,
+    setInput: React.Dispatch<React.SetStateAction<string>>,
+    errorMessagePrefix: string
+  ): boolean => {
     try {
-      const parsed = JSON.parse(executeInput);
+      if (!input?.length) {
+        dispatch(
+          setError({
+            type: 'error',
+            message: `Please enter ${errorMessagePrefix}`,
+          })
+        );
+        return false;
+      }
+      const parsed = JSON.parse(input);
       const formattedJSON = JSON.stringify(parsed, undefined, 4);
-      setExecuteInput(formattedJSON);
+      setInput(formattedJSON);
       return true;
-      /* eslint-disable @typescript-eslint/no-explicit-any */
+      /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     } catch (error: any) {
       dispatch(
         setError({
           type: 'error',
-          message: 'Invalid JSON input: ' + (error?.message || ''),
+          message: `Invalid JSON input: (${errorMessagePrefix}) ${error?.message || ''}`,
         })
       );
+      return false;
     }
-    return false;
+  };
+
+  const formatExecutionMessage = () => {
+    return validateJSONInput(
+      executeInput,
+      setExecuteInput,
+      'Execution Message'
+    );
+  };
+
+  const validateFunds = () => {
+    return validateJSONInput(fundsInput, setFundsInput, 'Attach Funds List');
   };
 
   // ------------------------------------------//
   // ---------------TRANSACTION----------------//
   // ------------------------------------------//
   const onExecute = async () => {
-    if (!executeInput?.length) {
-      dispatch(
-        setError({
-          type: 'error',
-          message: 'Please enter query message',
-        })
-      );
-      return;
-    }
-    if (!formatJSON()) {
-      return;
-    }
+    if (!formatExecutionMessage()) return;
+    if (attachFundType === 'json' && !validateFunds()) return;
 
     const attachedFunds = getFormattedFundsList(
       funds,
@@ -147,7 +165,7 @@ const ExecuteContract = (props: ExecuteContractI) => {
             )}
           </button>
           <button
-            onClick={formatJSON}
+            onClick={formatExecutionMessage}
             className="format-json-btn !bg-[#232034]"
           >
             Format JSON

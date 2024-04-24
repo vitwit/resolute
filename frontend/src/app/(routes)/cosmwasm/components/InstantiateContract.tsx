@@ -72,33 +72,78 @@ const InstantiateContract = (props: InstantiateContractI) => {
     setAttachFundType(event.target.value);
   };
 
-  const formatJSON = () => {
+  // ----------------------------------------------------//
+  // -----------------CUSTOM VALIDATIONS-----------------//
+  // ----------------------------------------------------//
+  const validateJSONInput = (
+    input: string,
+    setInput: (value: string) => void,
+    errorMessagePrefix: string
+  ): boolean => {
     try {
-      const parsed = JSON.parse(getValues('message'));
+      if (!input?.length) {
+        dispatch(
+          setError({
+            type: 'error',
+            message: `Please enter ${errorMessagePrefix}`,
+          })
+        );
+        return false;
+      }
+      const parsed = JSON.parse(input);
       const formattedJSON = JSON.stringify(parsed, undefined, 4);
-      setValue('message', formattedJSON);
+      setInput(formattedJSON);
       return true;
-      /* eslint-disable @typescript-eslint/no-explicit-any */
+      /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     } catch (error: any) {
       dispatch(
         setError({
           type: 'error',
-          message: 'Invalid JSON input: ' + (error?.message || ''),
+          message: `Invalid JSON input: (${errorMessagePrefix}) ${error?.message || ''}`,
         })
       );
+      return false;
     }
-    return false;
+  };
+
+  const formatInstantiationMessage = () => {
+    return validateJSONInput(
+      getValues('message'),
+      (value: string) => {
+        setValue('message', value);
+      },
+      'Instatiation Message'
+    );
+  };
+
+  const validateFunds = () => {
+    return validateJSONInput(
+      fundsInput,
+      (value: string) => {
+        setFundsInput(value);
+      },
+      'Attach Funds List'
+    );
   };
 
   // ------------------------------------------//
   // ---------------TRANSACTION----------------//
   // ------------------------------------------//
   const onSubmit = (data: InstatiateContractInputs) => {
-    if (data.message?.length) {
-      if (!formatJSON()) {
-        return;
-      }
+    const parsedCodeId = Number(data.codeId);
+    if (isNaN(parsedCodeId)) {
+      dispatch(
+        setError({
+          type: 'error',
+          message: 'Invalid Code ID',
+        })
+      );
+      return;
     }
+
+    if (!formatInstantiationMessage()) return;
+    if (attachFundType === 'json' && !validateFunds()) return;
+
     const attachedFunds = getFormattedFundsList(
       funds,
       fundsInput,
@@ -191,6 +236,11 @@ const InstantiateContract = (props: InstantiateContractI) => {
                       {...field}
                       fullWidth
                       multiline
+                      placeholder={JSON.stringify(
+                        { sample_query: {} },
+                        undefined,
+                        2
+                      )}
                       rows={7}
                       InputProps={{
                         sx: {
@@ -206,7 +256,7 @@ const InstantiateContract = (props: InstantiateContractI) => {
                   )}
                 />
                 <button
-                  onClick={formatJSON}
+                  onClick={formatInstantiationMessage}
                   type="button"
                   className="format-json-btn"
                 >
