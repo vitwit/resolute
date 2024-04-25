@@ -1,7 +1,6 @@
 import { useCallback } from 'react';
 import { RootState } from '@/store/store';
 import { useAppSelector } from './StateHooks';
-import { COSMOS_CHAIN_ID } from '@/utils/constants';
 import { getAddressByPrefix } from '@/utils/address';
 
 export interface DenomInfo {
