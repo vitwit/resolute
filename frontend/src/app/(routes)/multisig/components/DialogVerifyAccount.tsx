@@ -7,13 +7,7 @@ import { setVerifyDialogOpen } from '@/store/features/multisig/multisigSlice';
 import Image from 'next/image';
 import { CLOSE_ICON_PATH } from '@/utils/constants';
 
-const DialogVerifyAccount = ({
-  address,
-  chainID,
-}: {
-  chainID: string;
-  address: string;
-}) => {
+const DialogVerifyAccount = ({ address }: { address: string }) => {
   const dispatch = useAppDispatch();
   const open = useAppSelector((state) => state.multisig.verifyDialogOpen);
   const handleClose = () => {
@@ -43,7 +37,7 @@ const DialogVerifyAccount = ({
             </div>
           </div>
           <div className="mb-10 flex gap-6 px-10 items-center">
-            <VerifyAccount chainID={chainID} walletAddress={address} />
+            <VerifyAccount walletAddress={address} />
           </div>
         </div>
       </DialogContent>

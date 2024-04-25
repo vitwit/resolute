@@ -42,7 +42,7 @@ const AllMultisigs: React.FC<AllMultisigsProps> = (props) => {
   const { pubkey } = accountInfo;
   const { getChainInfo } = useGetChainInfo();
   const { prefix, restURLs } = getChainInfo(chainID);
-  const { isAccountVerified } = useVerifyAccount({ chainID, address });
+  const { isAccountVerified } = useVerifyAccount({ address });
 
   useEffect(() => {
     if (address) {
