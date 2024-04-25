@@ -63,7 +63,6 @@ export const establishWalletConnection = createAsyncThunk(
     const networks = data.networks;
     if (!isWalletInstalled(data.walletName)) {
       dispatch(setError({ type: 'error', message: 'Wallet is not installed' }));
-
       return rejectWithValue('wallet is not installed');
     } else {
       window.wallet.defaultOptions = {

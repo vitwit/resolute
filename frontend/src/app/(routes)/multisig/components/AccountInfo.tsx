@@ -15,6 +15,7 @@ import { getTimeDifferenceToFutureDate } from '@/utils/dataTime';
 import CommonCopy from '@/components/CommonCopy';
 import { getAuthToken } from '@/utils/localStorage';
 import useVerifyAccount from '@/custom-hooks/useVerifyAccount';
+import { COSMOS_CHAIN_ID } from '@/utils/constants';
 
 interface AccountInfoProps {
   chainID: string;
@@ -101,7 +102,6 @@ const AccountInfo: React.FC<AccountInfoProps> = (props) => {
           coinMinimalDenom,
           coinDecimals,
         })}
-        chainID={chainID}
         isAdmin={isAdmin}
         walletAddress={walletAddress}
       />
@@ -117,7 +117,6 @@ const AccountDetails = ({
   balance,
   stakedBalance,
   chainName,
-  chainID,
   isAdmin,
   walletAddress,
 }: {
@@ -126,7 +125,6 @@ const AccountDetails = ({
   balance: string;
   stakedBalance: string;
   chainName: string;
-  chainID: string;
   isAdmin: boolean;
   walletAddress: string;
 }) => {
@@ -138,7 +136,6 @@ const AccountDetails = ({
     (state: RootState) => state.multisig.deleteMultisigRes
   );
   const { isAccountVerified } = useVerifyAccount({
-    chainID,
     address: walletAddress,
   });
 
@@ -159,7 +156,7 @@ const AccountDetails = ({
     }
   }, [deleteMultisigRes?.status]);
 
-  const authToken = getAuthToken(chainID);
+  const authToken = getAuthToken(COSMOS_CHAIN_ID);
 
   const handleDelete = () => {
     if (isAdmin) {
@@ -167,7 +164,7 @@ const AccountDetails = ({
         deleteMultisig({
           data: { address: multisigAccount?.account?.address },
           queryParams: {
-            address: authToken?.address || '',
+            address: walletAddress || '',
             signature: authToken?.signature || '',
           },
         })

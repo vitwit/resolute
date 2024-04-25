@@ -83,7 +83,7 @@ const PageMultisigInfo: React.FC<PageMultisigInfoProps> = (props) => {
         address={address}
         walletAddress={walletAddress}
       />
-      <DialogVerifyAccount address={walletAddress} chainID={chainID} />
+      <DialogVerifyAccount address={walletAddress} />
     </div>
   );
 };

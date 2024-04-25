@@ -41,7 +41,7 @@ import { TxStatus } from '@/types/enums';
 import { fromBech32 } from '@cosmjs/encoding';
 import { DialogCreateMultisigProps, PubKeyFields } from '@/types/multisig';
 import MultisigMemberTextField from './MultisigMemberTextField';
-import { MULTISIG_PUBKEY_OBJECT } from '@/utils/constants';
+import { COSMOS_CHAIN_ID, MULTISIG_PUBKEY_OBJECT } from '@/utils/constants';
 import useGetPubkey from '@/custom-hooks/useGetPubkey';
 
 const MAX_PUB_KEYS = 7;
@@ -253,7 +253,7 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
         Number(threshold),
         addressPrefix
       );
-      const authToken = getAuthToken(chainID);
+      const authToken = getAuthToken(COSMOS_CHAIN_ID);
       const queryParams = {
         address: address,
         signature: authToken?.signature || '',

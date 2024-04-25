@@ -15,6 +15,7 @@ import feegrantSlice from './features/feegrant/feegrantSlice';
 import recentTransactionsSlice from './features/recent-transactions/recentTransactionsSlice';
 import multiopsSlice from './features/multiops/multiopsSlice';
 import swapsSlice from './features/swaps/swapsSlice';
+import cosmwasmSlice from './features/cosmwasm/cosmwasmSlice';
 
 export const store = configureStore({
   reducer: {
@@ -32,6 +33,7 @@ export const store = configureStore({
     recentTransactions: recentTransactionsSlice,
     multiops: multiopsSlice,
     swaps: swapsSlice,
+    cosmwasm: cosmwasmSlice,
   },
 });
 
