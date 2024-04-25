@@ -175,10 +175,8 @@ const ExecuteContract = (props: ExecuteContractI) => {
       <div className="execute-output-box">
         <div className="attach-funds-header">
           <div className="text-[18px] font-bold">Attach Funds</div>
-          {/* TODO: Update the dummy description */}
           <div className="attach-funds-description">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit.
-            Necessitatibus fuga consectetur reiciendis fugit suscipit ab.
+            Provide the list of funds you would like to attach.
           </div>
         </div>
         <div className="flex-1 overflow-y-scroll">

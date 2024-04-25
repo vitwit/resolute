@@ -17,11 +17,10 @@ const Contracts = ({ chainID }: { chainID: string }) => {
   return (
     <div className="h-full flex flex-col gap-10">
       <div className="border-b-[1px] border-[#ffffff1e] pb-4 space-y-2">
-        <div className="text-[18px] font-bold">Smart Contracts</div>
-        {/* TODO: Update the dummy description */}
+        <div className="text-[18px] font-bold">CosmWasm Smart Contracts</div>
         <div className="leading-[18px] text-[12px] font-extralight">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit.
-          Necessitatibus fuga consectetur reiciendis fugit suscipit ab.
+          CosmWasm is a smart contracting platform built for the Cosmos
+          ecosystem.
         </div>
       </div>
       <div>

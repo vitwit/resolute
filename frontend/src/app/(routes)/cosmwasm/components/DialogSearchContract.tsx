@@ -88,11 +88,9 @@ const DialogSearchContract = (props: DialogSearchContractI) => {
                 <h2 className="text-[20px] font-bold leading-normal">
                   Select Contract
                 </h2>
-                {/* TODO: Update the dummy description */}
                 <div className="text-[14px] font-extralight">
-                  Lorem ipsum, dolor sit amet consectetur adipisicing elit.
-                  Animi dolorum consectetur veritatis Lorem ipsum dolor sit
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit..
+                  Provide the contract address to search. Once found select the
+                  contract to use it.
                 </div>
               </div>
               <div>

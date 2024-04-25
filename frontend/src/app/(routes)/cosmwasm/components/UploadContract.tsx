@@ -193,10 +193,8 @@ const UploadContract = (props: UploadContractI) => {
               <div className="text-[18px] font-bold">
                 Select Instantiate Permission
               </div>
-              {/* TODO: Update the dummy description */}
               <div className="attach-funds-description">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                Necessitatibus fuga consectetur reiciendis fugit suscipit ab.
+                Provide the list of funds you would like to attach.
               </div>
             </div>
             <SelectPermissionType

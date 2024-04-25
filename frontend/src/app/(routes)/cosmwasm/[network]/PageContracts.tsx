@@ -20,7 +20,7 @@ const PageContracts = ({ chainName }: { chainName: string }) => {
       <div className="flex flex-col gap-6">
         <div className="w-full flex justify-between items-center">
           <h2 className="text-[20px] leading-normal font-normal">
-            Smart Contracts
+            CosmWasm Smart Contracts
           </h2>
           <TopNav />
         </div>

@@ -77,6 +77,10 @@ export const getSelectedPartFromURL = (urlParts: string[]): string => {
       return 'History';
     case 'validator':
       return 'Staking';
+    case 'cosmwasm':
+      return 'Cosmwasm';
+    case 'multiops':
+      return 'Multiops';
     default:
       return 'Overview';
   }

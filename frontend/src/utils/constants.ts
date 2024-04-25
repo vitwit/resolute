@@ -184,6 +184,14 @@ export const SIDENAV_MENU_ITEMS = [
     authzSupported: false,
     isMetaMaskSupports: false,
   },
+  {
+    name: 'CosmWasm Contracts',
+    icon: '/cosmwasm-icon.svg',
+    activeIcon: '/cosmwasm-icon-active.svg',
+    link: '/cosmwasm',
+    authzSupported: false,
+    isMetaMaskSupports: false,
+  },
 ];
 export const ALL_NETWORKS_ICON = '/all-networks-icon.png';
 export const CHANGE_NETWORK_ICON = '/switch-icon.svg';
