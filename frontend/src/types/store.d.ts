@@ -1,5 +1,6 @@
 interface BasicChainInfo {
   restURLs: string[];
+  rpcURLs: string[];
   baseURL: string;
   chainID: string;
   aminoConfig: AminoConfig;

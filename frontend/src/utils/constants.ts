@@ -184,6 +184,14 @@ export const SIDENAV_MENU_ITEMS = [
     authzSupported: false,
     isMetaMaskSupports: false,
   },
+  {
+    name: 'CosmWasm Contracts',
+    icon: '/cosmwasm-icon.svg',
+    activeIcon: '/cosmwasm-icon-active.svg',
+    link: '/cosmwasm',
+    authzSupported: false,
+    isMetaMaskSupports: false,
+  },
 ];
 export const ALL_NETWORKS_ICON = '/all-networks-icon.png';
 export const CHANGE_NETWORK_ICON = '/switch-icon.svg';
@@ -321,3 +329,5 @@ export const MULTIOPS_SAMPLE_FILES = {
   vote: 'https://raw.githubusercontent.com/vitwit/resolute/a6a02cc1b74ee34604e6df35cfce7a46c39980ea/frontend/src/example-files/vote.csv',
 };
 export const SWAP_ROUTE_ERROR = 'Failed to fetch routes.';
+export const DUMMY_WALLET_MNEMONIC =
+  process.env.NEXT_PUBLIC_DUMMY_WALLET_MNEMONIC || '';
