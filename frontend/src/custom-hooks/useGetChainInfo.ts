@@ -74,6 +74,7 @@ const useGetChainInfo = () => {
 
     return {
       restURLs: config.restURIs,
+      rpcURLs: config.rpcURIs,
       baseURL: rest,
       chainID,
       aminoConfig: aminoCfg,
