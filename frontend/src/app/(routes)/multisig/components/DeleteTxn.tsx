@@ -26,7 +26,6 @@ const DeleteTxn: React.FC<DeleteTxnProps> = (props) => {
   const { address: walletAddress } = getChainInfo(chainID);
   const authToken = getAuthToken(COSMOS_CHAIN_ID);
   const { isAccountVerified } = useVerifyAccount({
-    chainID,
     address: walletAddress,
   });
 

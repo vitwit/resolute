@@ -37,7 +37,6 @@ const BroadCastTxn: React.FC<BroadCastTxnProps> = (props) => {
   const { getChainInfo } = useGetChainInfo();
   const { rpc, address: walletAddress } = getChainInfo(chainID);
   const { isAccountVerified } = useVerifyAccount({
-    chainID,
     address: walletAddress,
   });
 

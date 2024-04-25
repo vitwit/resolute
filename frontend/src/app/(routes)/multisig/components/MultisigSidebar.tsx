@@ -46,7 +46,6 @@ const MultisigSidebar: React.FC<MultisigSidebarProps> = (props) => {
     (state: RootState) => state.multisig.deleteTxnRes
   );
   const { isAccountVerified } = useVerifyAccount({
-    chainID,
     address: walletAddress,
   });
 

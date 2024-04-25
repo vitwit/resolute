@@ -33,7 +33,6 @@ const SignTxn: React.FC<SignTxnProps> = (props) => {
   const { getChainInfo } = useGetChainInfo();
   const { rpc, address: walletAddress } = getChainInfo(chainID);
   const { isAccountVerified } = useVerifyAccount({
-    chainID,
     address: walletAddress,
   });
 

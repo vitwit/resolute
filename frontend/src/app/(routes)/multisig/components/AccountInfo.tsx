@@ -102,7 +102,6 @@ const AccountInfo: React.FC<AccountInfoProps> = (props) => {
           coinMinimalDenom,
           coinDecimals,
         })}
-        chainID={chainID}
         isAdmin={isAdmin}
         walletAddress={walletAddress}
       />
@@ -118,7 +117,6 @@ const AccountDetails = ({
   balance,
   stakedBalance,
   chainName,
-  chainID,
   isAdmin,
   walletAddress,
 }: {
@@ -127,7 +125,6 @@ const AccountDetails = ({
   balance: string;
   stakedBalance: string;
   chainName: string;
-  chainID: string;
   isAdmin: boolean;
   walletAddress: string;
 }) => {
@@ -139,7 +136,6 @@ const AccountDetails = ({
     (state: RootState) => state.multisig.deleteMultisigRes
   );
   const { isAccountVerified } = useVerifyAccount({
-    chainID,
     address: walletAddress,
   });
 
@@ -168,7 +164,7 @@ const AccountDetails = ({
         deleteMultisig({
           data: { address: multisigAccount?.account?.address },
           queryParams: {
-            address: authToken?.address || '',
+            address: walletAddress || '',
             signature: authToken?.signature || '',
           },
         })

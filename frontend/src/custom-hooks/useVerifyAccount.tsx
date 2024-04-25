@@ -11,13 +11,7 @@ import { isVerified } from '@/utils/util';
 import { COSMOS_CHAIN_ID } from '@/utils/constants';
 import { getAddressByPrefix } from '@/utils/address';
 
-const useVerifyAccount = ({
-  address,
-  chainID,
-}: {
-  chainID: string;
-  address: string;
-}) => {
+const useVerifyAccount = ({ address }: { address: string }) => {
   const dispatch = useAppDispatch();
   const verifyAccountRes = useAppSelector(
     (state) => state.multisig.verifyAccountRes
