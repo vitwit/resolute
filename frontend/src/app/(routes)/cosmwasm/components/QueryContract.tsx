@@ -65,7 +65,7 @@ const QueryContract = (props: QueryContractI) => {
     setContractMessageInputs(messages);
   };
 
-  const hanldeSelectedMessageInputChange = (value: string) => {
+  const handleSelectedMessageInputChange = (value: string) => {
     setQueryText(
       JSON.stringify(
         {
@@ -144,7 +144,7 @@ const QueryContract = (props: QueryContractI) => {
         formatJSON={formatJSON}
         handleQueryChange={handleQueryChange}
         handleSelectMessage={handleSelectMessage}
-        hanldeSelectedMessageInputChange={hanldeSelectedMessageInputChange}
+        handleSelectedMessageInputChange={handleSelectedMessageInputChange}
         messagesLoading={messagesLoading}
         onQuery={onQuery}
         queryLoading={queryLoading}

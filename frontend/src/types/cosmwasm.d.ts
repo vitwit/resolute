@@ -161,7 +161,7 @@ interface QueryContractInputsI {
   handleSelectMessage: (msg: string) => Promise<void>;
   contractMessageInputs: string[];
   selectedMessage: string;
-  hanldeSelectedMessageInputChange: (value: string) => void;
+  handleSelectedMessageInputChange: (value: string) => void;
   queryText: string;
   handleQueryChange: (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>

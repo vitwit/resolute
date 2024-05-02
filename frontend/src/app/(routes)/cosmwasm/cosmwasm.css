@@ -146,7 +146,7 @@
 }
 
 .message-input-field {
-  @apply w-full border-none focus:outline-none bg-transparent placeholder:text-[16px] placeholder:text-[#FFFFFFBF] focus:border-[1px];
+  @apply w-full border-none bg-transparent placeholder:text-[16px] placeholder:text-[#FFFFFFBF] focus:border-[1px] focus:outline-none;
 }
 
 .message-input-wrapper {

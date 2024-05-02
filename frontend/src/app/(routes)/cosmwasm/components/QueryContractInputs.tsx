@@ -10,7 +10,7 @@ const QueryContractInputs = (props: QueryContractInputsI) => {
     contractMessages,
     handleQueryChange,
     handleSelectMessage,
-    hanldeSelectedMessageInputChange,
+    handleSelectedMessageInputChange,
     messagesLoading,
     queryText,
     selectedMessage,
@@ -117,7 +117,7 @@ const QueryContractInputs = (props: QueryContractInputsI) => {
           <div className="flex gap-4 flex-wrap">
             {contractMessageInputs?.map((msg) => (
               <div
-                onClick={() => hanldeSelectedMessageInputChange(msg)}
+                onClick={() => handleSelectedMessageInputChange(msg)}
                 key={msg}
                 className="query-shortcut-msg"
               >
