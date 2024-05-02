@@ -47,6 +47,7 @@ const useContracts = () => {
   const [contractLoading, setContractLoading] = useState(false);
   const [contractError, setContractError] = useState('');
   const [messagesLoading, setMessagesLoading] = useState(false);
+  const [messagesError, setMessagesError] = useState('');
   const [messageInputsLoading, setMessageInputsLoading] = useState(false);
   const [messageInputsError, setMessageInputsError] = useState('');
 
@@ -88,16 +89,26 @@ const useContracts = () => {
     baseURLs: string[];
     queryMsg?: any;
   }) => {
-    let messages = [];
+    let messages: string[] = [];
     try {
       setMessagesLoading(true);
+      setMessagesError('');
       await queryContract(baseURLs, address, btoa(JSON.stringify(queryMsg)));
       return {
         messages: [],
       };
       /* eslint-disable @typescript-eslint/no-explicit-any */
     } catch (error: any) {
-      messages = extractContractMessages(error.message);
+      const errMsg = error.message;
+      if (
+        errMsg?.includes('expected one of') ||
+        errMsg?.includes('missing field')
+      ) {
+        messages = extractContractMessages(error.message);
+      } else {
+        messages = [];
+        setMessagesError('Failed to fetch messages');
+      }
     } finally {
       setMessagesLoading(false);
     }
@@ -366,6 +377,7 @@ const useContracts = () => {
     getContractMessageInputs,
     messageInputsLoading,
     messageInputsError,
+    messagesError,
   };
 };
 

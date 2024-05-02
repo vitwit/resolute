@@ -25,6 +25,7 @@ const QueryContract = (props: QueryContractI) => {
     messagesLoading,
     messageInputsLoading,
     messageInputsError,
+    messagesError,
   } = useContracts();
 
   // ------------------------------------------//
@@ -151,6 +152,7 @@ const QueryContract = (props: QueryContractI) => {
         selectedMessage={selectedMessage}
         messageInputsLoading={messageInputsLoading}
         messageInputsError={messageInputsError}
+        messagesError={messagesError}
       />
       <div className="query-output-box overflow-y-scroll">
         <div className="qeury-output">

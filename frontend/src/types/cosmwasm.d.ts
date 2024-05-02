@@ -171,6 +171,7 @@ interface QueryContractInputsI {
   formatJSON: () => boolean;
   messageInputsLoading: boolean;
   messageInputsError: string;
+  messagesError: string;
 }
 
 interface MessageInputField {

@@ -19,6 +19,7 @@ const QueryContractInputs = (props: QueryContractInputsI) => {
     queryLoading,
     messageInputsLoading,
     messageInputsError,
+    messagesError,
   } = props;
 
   // ------------------------------------------//
@@ -92,7 +93,7 @@ const QueryContractInputs = (props: QueryContractInputsI) => {
               Fetching messages<span className="dots-flashing"></span>{' '}
             </span>
           ) : contractMessages?.length ? null : (
-            <span className=" italic">No messages found</span>
+            <span className=" italic">{' '}No messages found</span>
           )}
         </div>
         <div className="flex gap-4 flex-wrap">
@@ -190,8 +191,8 @@ const QueryContractInputs = (props: QueryContractInputsI) => {
           <span className="dots-flashing"></span>
         </div>
       ) : messageInputsError ? (
-        <div>
-          Couldn&apos;t fetch message input, Please switch to JSON format
+        <div className="flex-center-center py-6 text-red-400">
+          Couldn&apos;t fetch message inputs, Please switch to JSON format
         </div>
       ) : !messageInputFields.length ? (
         <div>
@@ -213,8 +214,14 @@ const QueryContractInputs = (props: QueryContractInputsI) => {
               </button>
             </div>
           ) : (
-            <div className="text-center py-10">
-              - Select a message to query -
+            <div className="flex-center-center py-6">
+              {messagesError ? (
+                <div className="text-red-400">
+                  Couldn&apos;t fetch messages, Please switch to JSON format
+                </div>
+              ) : (
+                <div className="text-center">- Select a message to query -</div>
+              )}
             </div>
           )}
         </div>
