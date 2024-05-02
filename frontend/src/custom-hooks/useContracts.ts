@@ -44,15 +44,21 @@ const getCodeId = (txData: any) => {
 };
 
 const useContracts = () => {
+  // ------------------------------------------//
+  // ---------------DEPENDENCIES---------------//
+  // ------------------------------------------//
+  const { getDummyWallet } = useDummyWallet();
+  const { getChainInfo } = useGetChainInfo();
+
+  // ------------------------------------------//
+  // ------------------STATES------------------//
+  // ------------------------------------------//
   const [contractLoading, setContractLoading] = useState(false);
   const [contractError, setContractError] = useState('');
   const [messagesLoading, setMessagesLoading] = useState(false);
   const [messagesError, setMessagesError] = useState('');
   const [messageInputsLoading, setMessageInputsLoading] = useState(false);
   const [messageInputsError, setMessageInputsError] = useState('');
-
-  const { getDummyWallet } = useDummyWallet();
-  const { getChainInfo } = useGetChainInfo();
 
   const getContractInfo = async ({
     address,
