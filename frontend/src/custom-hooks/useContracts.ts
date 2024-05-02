@@ -46,8 +46,9 @@ const getCodeId = (txData: any) => {
 const useContracts = () => {
   const [contractLoading, setContractLoading] = useState(false);
   const [contractError, setContractError] = useState('');
-
   const [messagesLoading, setMessagesLoading] = useState(false);
+  const [messageInputsLoading, setMessageInputsLoading] = useState(false);
+  const [messageInputsError, setMessageInputsError] = useState('');
 
   const { getDummyWallet } = useDummyWallet();
   const { getChainInfo } = useGetChainInfo();
@@ -81,15 +82,16 @@ const useContracts = () => {
   const getContractMessages = async ({
     address,
     baseURLs,
+    queryMsg = dummyQuery,
   }: {
     address: string;
     baseURLs: string[];
+    queryMsg?: any;
   }) => {
     let messages = [];
     try {
       setMessagesLoading(true);
-      setContractError('');
-      await queryContract(baseURLs, address, btoa(JSON.stringify(dummyQuery)));
+      await queryContract(baseURLs, address, btoa(JSON.stringify(queryMsg)));
       return {
         messages: [],
       };
@@ -98,6 +100,43 @@ const useContracts = () => {
       messages = extractContractMessages(error.message);
     } finally {
       setMessagesLoading(false);
+    }
+    return {
+      messages,
+    };
+  };
+
+  const getContractMessageInputs = async ({
+    address,
+    baseURLs,
+    queryMsg,
+  }: {
+    address: string;
+    baseURLs: string[];
+    queryMsg: any;
+  }) => {
+    let messages: string[] = [];
+    try {
+      setMessageInputsLoading(true);
+      setMessageInputsError('');
+      await queryContract(baseURLs, address, btoa(JSON.stringify(queryMsg)));
+      return {
+        messages: [],
+      };
+      /* eslint-disable @typescript-eslint/no-explicit-any */
+    } catch (error: any) {
+      const errMsg = error.message;
+      if (
+        errMsg?.includes('expected one of') ||
+        errMsg?.includes('missing field')
+      ) {
+        messages = extractContractMessages(error.message);
+      } else {
+        messages = [];
+        setMessageInputsError('Failed to fetch message inputs');
+      }
+    } finally {
+      setMessageInputsLoading(false);
     }
     return {
       messages,
@@ -324,6 +363,9 @@ const useContracts = () => {
     getChainAssets,
     uploadContract,
     instantiateContract,
+    getContractMessageInputs,
+    messageInputsLoading,
+    messageInputsError,
   };
 };
 

@@ -154,3 +154,27 @@ interface InstantiateContractInputs {
     txHash: string;
   }>;
 }
+
+interface QueryContractInputsI {
+  messagesLoading: boolean;
+  contractMessages: string[];
+  handleSelectMessage: (msg: string) => Promise<void>;
+  contractMessageInputs: string[];
+  selectedMessage: string;
+  hanldeSelectedMessageInputChange: (value: string) => void;
+  queryText: string;
+  handleQueryChange: (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => void;
+  onQuery: (queryInput: string) => void;
+  queryLoading: TxStatus;
+  formatJSON: () => boolean;
+  messageInputsLoading: boolean;
+  messageInputsError: string;
+}
+
+interface MessageInputField {
+  name: string;
+  value: string;
+  open: boolean;
+}

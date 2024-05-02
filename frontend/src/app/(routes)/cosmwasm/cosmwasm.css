@@ -47,7 +47,7 @@
 
 .query-input-wrapper,
 .query-output-box {
-  @apply w-[50%] bg-[#FFFFFF0D] rounded-2xl min-h-[380px] p-4  flex flex-col gap-4;
+  @apply bg-[#FFFFFF0D] rounded-2xl min-h-[380px] p-4  flex flex-col gap-4;
 }
 
 .execute-field-wrapper,
@@ -143,4 +143,29 @@
 .instantiate-btn,
 .upload-btn {
   @apply flex justify-center items-center text-[12px] font-medium px-3 py-[6px] rounded-lg h-10 w-full;
+}
+
+.message-input-field {
+  @apply w-full border-none focus:outline-none bg-transparent placeholder:text-[16px] placeholder:text-[#FFFFFFBF] focus:border-[1px];
+}
+
+.message-input-wrapper {
+  @apply h-12 flex bg-transparent items-center px-6 py-2 rounded-lg flex-1 border-[1px] border-[#ffffff1e] hover:border-[#ffffff50];
+}
+
+.search-contract-wrapper:focus-within {
+  border: 1px solid #ffffff4a;
+}
+
+.change-input-type-btn-wrapper {
+  @apply rounded-lg p-[1px];
+  background: linear-gradient(to right, #4aa29c, #8b3da7);
+}
+
+.change-input-type-btn-wrapper:hover {
+  background: linear-gradient(to right, #8b3da7, #4aa29c);
+}
+
+.change-input-type-btn {
+  @apply bg-[#232034] text-[12px] font-semibold px-3 py-[10px] flex justify-center items-center rounded-lg;
 }
