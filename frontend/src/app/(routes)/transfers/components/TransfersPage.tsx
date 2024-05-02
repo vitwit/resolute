@@ -27,6 +27,10 @@ const TransfersPage = ({ chainIDs }: { chainIDs: string[] }) => {
 
   const [tab, setTab] = useState<TransfersTab>(TRANSFERS_TAB1);
   const isAuthzMode = useAppSelector((state) => state.authz.authzModeEnabled);
+  const isFeegrantMode = useAppSelector(
+    (state) => state.feegrant.feegrantModeEnabled
+  );
+
   const changeTab = (tab: TransfersTab) => {
     if (tab === TRANSFERS_TAB1) setTab(TRANSFERS_TAB2);
     else setTab(TRANSFERS_TAB1);
@@ -77,6 +81,20 @@ const TransfersPage = ({ chainIDs }: { chainIDs: string[] }) => {
                         type: 'error',
                         message:
                           'Multi transfer is not available for All networks!',
+                      })
+                    );
+                  } else if (isAuthzMode) {
+                    dispatch(
+                      setError({
+                        type: 'error',
+                        message: 'Swap is not suppported in Authz Mode',
+                      })
+                    );
+                  } else if (isFeegrantMode) {
+                    dispatch(
+                      setError({
+                        type: 'error',
+                        message: 'Swap is not suppported in Feegrant Mode',
                       })
                     );
                   } else {
