@@ -23,6 +23,8 @@ const DialogSearchContract = (props: DialogSearchContractI) => {
   const dispatch = useAppDispatch();
   const handleClose = () => {
     onClose();
+    setSearchTerm('');
+    setSearchResult(null);
   };
   const [isEnterManually, setIsEnterManually] = useState(true);
   const [searchResult, setSearchResult] = useState<ContractInfoResponse | null>(
@@ -34,7 +36,8 @@ const DialogSearchContract = (props: DialogSearchContractI) => {
   const [searchTerm, setSearchTerm] = useState('');
   const { getContractInfo, contractLoading, contractError } = useContracts();
 
-  const onSearchContract = async () => {
+  const onSearchContract = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     const { data } = await getContractInfo({
       address: searchTerm,
       baseURLs: restURLs,
@@ -56,6 +59,8 @@ const DialogSearchContract = (props: DialogSearchContractI) => {
         searchResult?.contract_info?.label
       );
       onClose();
+      setSearchTerm('');
+      setSearchResult(null);
     }
   };
 
@@ -102,18 +107,18 @@ const DialogSearchContract = (props: DialogSearchContractI) => {
             </div>
             {isEnterManually ? (
               <>
-                <div className="w-full flex justify-between gap-4">
+                <form
+                  onSubmit={(e) => onSearchContract(e)}
+                  className="w-full flex justify-between gap-4"
+                >
                   <SearchInputField
                     searchTerm={searchTerm}
                     setSearchTerm={(value: string) => setSearchTerm(value)}
                   />
-                  <button
-                    onClick={() => onSearchContract()}
-                    className="primary-gradient search-btn"
-                  >
+                  <button type="submit" className="primary-gradient search-btn">
                     Search
                   </button>
-                </div>
+                </form>
                 <div className="w-full space-y-6 h-10">
                   {contractLoading ? (
                     <div className="flex-center-center gap-2">
@@ -127,7 +132,7 @@ const DialogSearchContract = (props: DialogSearchContractI) => {
                     <>
                       {searchResult ? (
                         <div className="space-y-2">
-                          <div className="font-semibold">Contract found:</div>
+                          <div className="font-semibold">Search Result:</div>
                           <ContractItem
                             key={searchResult?.address}
                             name={searchResult?.contract_info?.label}

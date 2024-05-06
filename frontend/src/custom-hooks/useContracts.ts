@@ -44,13 +44,21 @@ const getCodeId = (txData: any) => {
 };
 
 const useContracts = () => {
-  const [contractLoading, setContractLoading] = useState(false);
-  const [contractError, setContractError] = useState('');
-
-  const [messagesLoading, setMessagesLoading] = useState(false);
-
+  // ------------------------------------------//
+  // ---------------DEPENDENCIES---------------//
+  // ------------------------------------------//
   const { getDummyWallet } = useDummyWallet();
   const { getChainInfo } = useGetChainInfo();
+
+  // ------------------------------------------//
+  // ------------------STATES------------------//
+  // ------------------------------------------//
+  const [contractLoading, setContractLoading] = useState(false);
+  const [contractError, setContractError] = useState('');
+  const [messagesLoading, setMessagesLoading] = useState(false);
+  const [messagesError, setMessagesError] = useState('');
+  const [messageInputsLoading, setMessageInputsLoading] = useState(false);
+  const [messageInputsError, setMessageInputsError] = useState('');
 
   const getContractInfo = async ({
     address,
@@ -81,23 +89,71 @@ const useContracts = () => {
   const getContractMessages = async ({
     address,
     baseURLs,
+    queryMsg = dummyQuery,
   }: {
     address: string;
     baseURLs: string[];
+    queryMsg?: any;
   }) => {
-    let messages = [];
+    let messages: string[] = [];
     try {
       setMessagesLoading(true);
-      setContractError('');
-      await queryContract(baseURLs, address, btoa(JSON.stringify(dummyQuery)));
+      setMessagesError('');
+      await queryContract(baseURLs, address, btoa(JSON.stringify(queryMsg)));
       return {
         messages: [],
       };
       /* eslint-disable @typescript-eslint/no-explicit-any */
     } catch (error: any) {
-      messages = extractContractMessages(error.message);
+      const errMsg = error.message;
+      if (
+        errMsg?.includes('expected one of') ||
+        errMsg?.includes('missing field')
+      ) {
+        messages = extractContractMessages(error.message);
+      } else {
+        messages = [];
+        setMessagesError('Failed to fetch messages');
+      }
     } finally {
       setMessagesLoading(false);
+    }
+    return {
+      messages,
+    };
+  };
+
+  const getContractMessageInputs = async ({
+    address,
+    baseURLs,
+    queryMsg,
+  }: {
+    address: string;
+    baseURLs: string[];
+    queryMsg: any;
+  }) => {
+    let messages: string[] = [];
+    try {
+      setMessageInputsLoading(true);
+      setMessageInputsError('');
+      await queryContract(baseURLs, address, btoa(JSON.stringify(queryMsg)));
+      return {
+        messages: [],
+      };
+      /* eslint-disable @typescript-eslint/no-explicit-any */
+    } catch (error: any) {
+      const errMsg = error.message;
+      if (
+        errMsg?.includes('expected one of') ||
+        errMsg?.includes('missing field')
+      ) {
+        messages = extractContractMessages(error.message);
+      } else {
+        messages = [];
+        setMessageInputsError('Failed to fetch message inputs');
+      }
+    } finally {
+      setMessageInputsLoading(false);
     }
     return {
       messages,
@@ -324,6 +380,10 @@ const useContracts = () => {
     getChainAssets,
     uploadContract,
     instantiateContract,
+    getContractMessageInputs,
+    messageInputsLoading,
+    messageInputsError,
+    messagesError,
   };
 };
 
