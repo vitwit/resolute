@@ -1,11 +1,9 @@
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import useContracts from '@/custom-hooks/useContracts';
 import { queryContractInfo } from '@/store/features/cosmwasm/cosmwasmSlice';
-import { TxStatus } from '@/types/enums';
-import { CircularProgress, TextField } from '@mui/material';
 import React, { useEffect, useState } from 'react';
-import { queryInputStyles } from '../styles';
 import { setError } from '@/store/features/common/commonSlice';
+import QueryContractInputs from './QueryContractInputs';
 
 interface QueryContractI {
   address: string;
@@ -20,13 +18,25 @@ const QueryContract = (props: QueryContractI) => {
   // ---------------DEPENDENCIES---------------//
   // ------------------------------------------//
   const dispatch = useAppDispatch();
-  const { getContractMessages, getQueryContract } = useContracts();
+  const {
+    getContractMessages,
+    getQueryContract,
+    getContractMessageInputs,
+    messagesLoading,
+    messageInputsLoading,
+    messageInputsError,
+    messagesError,
+  } = useContracts();
 
   // ------------------------------------------//
   // ------------------STATES------------------//
   // ------------------------------------------//
   const [queryText, setQueryText] = useState('');
   const [contractMessages, setContractMessages] = useState<string[]>([]);
+  const [contractMessageInputs, setContractMessageInputs] = useState<string[]>(
+    []
+  );
+  const [selectedMessage, setSelectedMessage] = useState('');
 
   const queryOutput = useAppSelector(
     (state) => state.cosmwasm.chains?.[chainID]?.query.queryOutput
@@ -44,8 +54,29 @@ const QueryContract = (props: QueryContractI) => {
     setQueryText(e.target.value);
   };
 
-  const handleSelectMessage = (msg: string) => {
+  const handleSelectMessage = async (msg: string) => {
     setQueryText(`{\n\t"${msg}": {}\n}`);
+    setSelectedMessage(msg);
+    const { messages } = await getContractMessageInputs({
+      address,
+      baseURLs,
+      queryMsg: { [msg]: {} },
+    });
+    setContractMessageInputs(messages);
+  };
+
+  const handleSelectedMessageInputChange = (value: string) => {
+    setQueryText(
+      JSON.stringify(
+        {
+          [selectedMessage]: {
+            [value]: '',
+          },
+        },
+        undefined,
+        2
+      )
+    );
   };
 
   const formatJSON = () => {
@@ -69,8 +100,8 @@ const QueryContract = (props: QueryContractI) => {
   // --------------------------------------//
   // -----------------QUERY----------------//
   // --------------------------------------//
-  const onQuery = () => {
-    if (!queryText?.length) {
+  const onQuery = (queryInput: string) => {
+    if (!queryInput?.length) {
       dispatch(
         setError({
           type: 'error',
@@ -87,7 +118,7 @@ const QueryContract = (props: QueryContractI) => {
       queryContractInfo({
         address,
         baseURLs,
-        queryData: queryText,
+        queryData: queryInput,
         chainID,
         getQueryContract,
       })
@@ -106,62 +137,23 @@ const QueryContract = (props: QueryContractI) => {
   }, [address]);
 
   return (
-    <div className="flex gap-10">
-      <div className="query-input-wrapper">
-        <div className="space-y-4">
-          <div className="font-medium">Suggested Messages:</div>
-          <div className="flex gap-4 flex-wrap">
-            {contractMessages?.map((msg) => (
-              <div
-                onClick={() => handleSelectMessage(msg)}
-                key={msg}
-                className="query-shortcut-msg"
-              >
-                {msg}
-              </div>
-            ))}
-          </div>
-        </div>
-        <div className="query-input">
-          <TextField
-            value={queryText}
-            name="queryField"
-            placeholder={JSON.stringify({ test_query: {} }, undefined, 2)}
-            onChange={handleQueryChange}
-            fullWidth
-            multiline
-            rows={7}
-            InputProps={{
-              sx: {
-                input: {
-                  color: 'white',
-                  fontSize: '14px',
-                  padding: 2,
-                },
-              },
-            }}
-            sx={queryInputStyles}
-          />
-          <button
-            onClick={onQuery}
-            disabled={queryLoading === TxStatus.PENDING}
-            className="primary-gradient query-btn"
-          >
-            {queryLoading === TxStatus.PENDING ? (
-              <CircularProgress size={18} sx={{ color: 'white' }} />
-            ) : (
-              'Query'
-            )}
-          </button>
-          <button
-            type="button"
-            onClick={formatJSON}
-            className="format-json-btn"
-          >
-            Format JSON
-          </button>
-        </div>
-      </div>
+    <div className="grid grid-cols-2 gap-10">
+      <QueryContractInputs
+        contractMessageInputs={contractMessageInputs}
+        contractMessages={contractMessages}
+        formatJSON={formatJSON}
+        handleQueryChange={handleQueryChange}
+        handleSelectMessage={handleSelectMessage}
+        handleSelectedMessageInputChange={handleSelectedMessageInputChange}
+        messagesLoading={messagesLoading}
+        onQuery={onQuery}
+        queryLoading={queryLoading}
+        queryText={queryText}
+        selectedMessage={selectedMessage}
+        messageInputsLoading={messageInputsLoading}
+        messageInputsError={messageInputsError}
+        messagesError={messagesError}
+      />
       <div className="query-output-box overflow-y-scroll">
         <div className="qeury-output">
           <pre>{JSON.stringify(queryOutput, undefined, 2)}</pre>
