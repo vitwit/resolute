@@ -66,7 +66,7 @@ const RoutePreview = ({
                           fromName={path.value.fromChainName}
                           toLogo={path.value.toChainLogo}
                           toName={path.value.toChainName}
-                          tokenLogo={path.value.toChainLogo}
+                          tokenLogo={path.value.tokenLogo}
                           tokenSymbol={path.value.tokenSymbol}
                         />
                       )}
