@@ -26,7 +26,7 @@ const ContractInfo = ({ chainID }: { chainID: string }) => {
         <div className="pb-4 border-b-[1px] border-[#ffffff1e] font-bold text-[18px]">
           {selectedContractInfo.label || selectedContractAddress}
         </div>
-        <div className="flex gap-10 bg-[#FFFFFF0D] p-10 rounded-2xl">
+        <div className="flex gap-10 bg-[#FFFFFF0D] p-10 rounded-2xl flex-wrap">
           <ContractInfoAttribute name="Network" value={chainID} />
           <ContractInfoAttribute
             name="From Code"
