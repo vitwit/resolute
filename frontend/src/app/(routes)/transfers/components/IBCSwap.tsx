@@ -30,6 +30,7 @@ import { fromBech32 } from '@cosmjs/encoding';
 import { shortenAddress } from '@/utils/util';
 import { setError } from '@/store/features/common/commonSlice';
 import RoutePreview from './RoutePreview';
+import { SWAP_ROUTE_ERROR } from '@/utils/constants';
 
 const emptyBalance = {
   amount: 0,
@@ -643,17 +644,27 @@ const IBCSwap = () => {
               Fetching route <span className="dots-flashing"></span>{' '}
             </div>
           ) : routeError ? (
-            <div>{routeError}</div>
+            <div className="flex justify-between">
+              <div className='text-red-400'>{routeError}</div>
+              {routeError === SWAP_ROUTE_ERROR ? (
+                <div
+                  onClick={fetchSwapRoute}
+                  className="text-[14px] underline font-extralight underline-offset-[3px] cursor-pointer"
+                >
+                  Retry
+                </div>
+              ) : null}
+            </div>
           ) : (
             <div>
               {!routeLoading && swapRoute ? (
                 <div className="flex justify-between">
                   <div>Route found</div>
                   <div
-                    className="underline font-light underline-offset-[3px] cursor-pointer"
+                    className="text-[14px] underline font-extralight underline-offset-[3px] cursor-pointer"
                     onClick={() => setShowRoute((prev) => !prev)}
                   >
-                    {showRoute ? 'Close' : 'View route'}
+                    {showRoute ? 'Close Preview' : 'View route'}
                   </div>
                 </div>
               ) : (

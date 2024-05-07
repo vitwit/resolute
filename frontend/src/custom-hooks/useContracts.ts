@@ -106,10 +106,7 @@ const useContracts = () => {
       /* eslint-disable @typescript-eslint/no-explicit-any */
     } catch (error: any) {
       const errMsg = error.message;
-      if (
-        errMsg?.includes('expected one of') ||
-        errMsg?.includes('missing field')
-      ) {
+      if (errMsg?.includes('expected') || errMsg?.includes('missing field')) {
         messages = extractContractMessages(error.message);
       } else {
         messages = [];
@@ -144,7 +141,7 @@ const useContracts = () => {
     } catch (error: any) {
       const errMsg = error.message;
       if (
-        errMsg?.includes('expected one of') ||
+        errMsg?.includes('expected') ||
         errMsg?.includes('missing field')
       ) {
         messages = extractContractMessages(error.message);
