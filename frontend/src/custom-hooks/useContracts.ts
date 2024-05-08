@@ -59,6 +59,8 @@ const useContracts = () => {
   const [messagesError, setMessagesError] = useState('');
   const [messageInputsLoading, setMessageInputsLoading] = useState(false);
   const [messageInputsError, setMessageInputsError] = useState('');
+  const [executeMessagesLoading, setExecuteMessagesLoading] = useState(false);
+  const [executeMessagesError, setExecuteMessagesError] = useState('');
 
   const getContractInfo = async ({
     address,
@@ -140,10 +142,7 @@ const useContracts = () => {
       /* eslint-disable @typescript-eslint/no-explicit-any */
     } catch (error: any) {
       const errMsg = error.message;
-      if (
-        errMsg?.includes('expected') ||
-        errMsg?.includes('missing field')
-      ) {
+      if (errMsg?.includes('expected') || errMsg?.includes('missing field')) {
         messages = extractContractMessages(error.message);
       } else {
         messages = [];
@@ -183,8 +182,11 @@ const useContracts = () => {
     contractAddress: string;
   }) => {
     const { dummyAddress, dummyWallet } = await getDummyWallet({ chainID });
+    let messages: string[] = [];
     const client = await connectWithSigner(rpcURLs, dummyWallet);
     try {
+      setExecuteMessagesLoading(true);
+      setExecuteMessagesError('');
       await client.simulate(
         dummyAddress,
         [
@@ -200,9 +202,23 @@ const useContracts = () => {
         ],
         undefined
       );
+      return {
+        messages: [],
+      };
     } catch (error: any) {
-      console.log(error);
+      const errMsg = error.message;
+      if (errMsg?.includes('expected') || errMsg?.includes('missing field')) {
+        messages = extractContractMessages(error.message);
+      } else {
+        messages = [];
+        setExecuteMessagesError('Failed to fetch messages');
+      }
+    } finally {
+      setExecuteMessagesLoading(false);
     }
+    return {
+      messages,
+    };
   };
 
   const getExecutionOutput = async ({
@@ -381,6 +397,8 @@ const useContracts = () => {
     messageInputsLoading,
     messageInputsError,
     messagesError,
+    executeMessagesError,
+    executeMessagesLoading,
   };
 };
 

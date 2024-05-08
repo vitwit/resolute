@@ -5,25 +5,27 @@ import { DUMMY_WALLET_MNEMONIC } from '@/utils/constants';
 
 export const useDummyWallet = () => {
   const { getChainInfo } = useGetChainInfo();
-  const [dummyWallet, setDummyWallet] = useState<DirectSecp256k1HdWallet>();
-  const [dummyAddress, setDummyAddress] = useState('');
+  // const [dummyWallet, setDummyWallet] = useState<DirectSecp256k1HdWallet>();
+  // const [dummyAddress, setDummyAddress] = useState('');
   const getDummyWallet = async ({ chainID }: { chainID: string }) => {
-    console.log(DUMMY_WALLET_MNEMONIC)
+    console.log(DUMMY_WALLET_MNEMONIC);
     const { prefix } = getChainInfo(chainID);
-    if (DUMMY_WALLET_MNEMONIC) {
-      const wallet = await DirectSecp256k1HdWallet.fromMnemonic(
-        DUMMY_WALLET_MNEMONIC,
-        {
-          prefix,
-        }
-      );
+    const wallet = await DirectSecp256k1HdWallet.fromMnemonic(
+      DUMMY_WALLET_MNEMONIC,
+      {
+        prefix,
+      }
+    );
 
-      setDummyWallet(wallet);
+    // setDummyWallet(wallet);
 
-      const { address } = (await wallet.getAccounts())[0];
-      setDummyAddress(address);
-    }
-    return { dummyWallet, dummyAddress };
+    const allAccounts = await wallet.getAccounts();
+    const { address } = allAccounts[0];
+    // setDummyAddress(address);
+    console.log('==-=-==');
+    console.log(wallet, address);
+
+    return { dummyWallet: wallet, dummyAddress: address };
   };
   return { getDummyWallet };
 };

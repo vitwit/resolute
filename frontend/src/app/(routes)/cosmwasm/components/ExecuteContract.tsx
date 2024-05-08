@@ -1,6 +1,6 @@
 import useContracts from '@/custom-hooks/useContracts';
 import { CircularProgress, SelectChangeEvent, TextField } from '@mui/material';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import AttachFunds from './AttachFunds';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
@@ -27,7 +27,12 @@ const ExecuteContract = (props: ExecuteContractI) => {
   // ---------------DEPENDENCIES---------------//
   // ------------------------------------------//
   const dispatch = useAppDispatch();
-  const { getExecutionOutput } = useContracts();
+  const {
+    getExecutionOutput,
+    getExecuteMessages,
+    executeMessagesError,
+    executeMessagesLoading,
+  } = useContracts();
   const { getDenomInfo } = useGetChainInfo();
   const { decimals, minimalDenom } = getDenomInfo(chainID);
 
@@ -44,6 +49,8 @@ const ExecuteContract = (props: ExecuteContractI) => {
     },
   ]);
   const [fundsInput, setFundsInput] = useState('');
+  const [executeMessages, setExecuteMessages] = useState<string[]>([]);
+  const [selectedMessage, setSelectedMessage] = useState('');
 
   const txExecuteLoading = useAppSelector(
     (state) => state.cosmwasm.chains?.[chainID].txExecute.status
@@ -60,6 +67,11 @@ const ExecuteContract = (props: ExecuteContractI) => {
 
   const handleAttachFundTypeChange = (event: SelectChangeEvent<string>) => {
     setAttachFundType(event.target.value);
+  };
+
+  const handleSelectMessage = async (msg: string) => {
+    setExecuteInput(`{\n\t"${msg}": {}\n}`);
+    setSelectedMessage(msg);
   };
 
   // ----------------------------------------------------//
@@ -135,9 +147,51 @@ const ExecuteContract = (props: ExecuteContractI) => {
     );
   };
 
+  useEffect(() => {
+    getExecuteMessages({ chainID, contractAddress: address, rpcURLs });
+  }, [chainID]);
+
+  // ------------------------------------------//
+  // ---------------SIDE EFFECT----------------//
+  // ------------------------------------------//
+  useEffect(() => {
+    const fetchMessages = async () => {
+      const { messages } = await getExecuteMessages({
+        chainID,
+        contractAddress: address,
+        rpcURLs,
+      });
+      setExecuteMessages(messages);
+    };
+    fetchMessages();
+  }, [address]);
+
   return (
     <div className="flex gap-10">
       <div className="execute-field-wrapper">
+        <div className="space-y-4">
+          <div className="font-light">
+            Suggested Messages:
+            {executeMessagesLoading ? (
+              <span className="italic ">
+                Fetching messages<span className="dots-flashing"></span>{' '}
+              </span>
+            ) : executeMessages?.length ? null : (
+              <span className=" italic"> No messages found</span>
+            )}
+          </div>
+          <div className="flex gap-4 flex-wrap">
+            {executeMessages?.map((msg) => (
+              <div
+                onClick={() => handleSelectMessage(msg)}
+                key={msg}
+                className={`query-shortcut-msg`}
+              >
+                {msg}
+              </div>
+            ))}
+          </div>
+        </div>
         <div className="execute-input-field">
           <TextField
             value={executeInput}
