@@ -4,6 +4,7 @@ package main
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -19,6 +20,11 @@ import (
 	"fmt"
 
 	_ "github.com/lib/pq"
+)
+
+const (
+	maxRetries    = 5
+	retryInterval = time.Second * 5
 )
 
 func main() {
@@ -38,21 +44,37 @@ func main() {
 	// TODO: add ssl support
 	psqlconn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", cfg.Host, cfg.Port, cfg.User, cfg.Password, cfg.DatabaseName)
 
-	// open database
-	db, err := sql.Open("postgres", psqlconn)
-	if err != nil {
-		log.Fatal(err)
+	var db *sql.DB
+
+	for i := 0; i < maxRetries; i++ {
+
+		// open database
+		db, err = sql.Open("postgres", psqlconn)
+		if err != nil {
+			log.Printf("Error connecting to database: %v\n", err)
+			log.Printf("Retrying in %v...\n", retryInterval)
+			time.Sleep(retryInterval)
+			continue
+		}
+
+		// check db
+		err = db.Ping()
+		if err != nil {
+			log.Printf("Error pinging database: %v\n", err)
+			log.Printf("Retrying in %v...\n", retryInterval)
+			time.Sleep(retryInterval)
+			continue
+		}
+		break // Connection successful, exit loop
 	}
 
+	if err != nil {
+		log.Fatalf("Failed to connect to database after %d retries: %v\n", maxRetries, err)
+	}
 	defer db.Close()
 
 	db.SetMaxOpenConns(5)
 	db.SetMaxIdleConns(5)
-
-	// check db
-	if err := db.Ping(); err != nil {
-		log.Fatal(err)
-	}
 
 	// Initialize handler
 	h := &handler.Handler{DB: db}
