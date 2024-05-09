@@ -84,6 +84,7 @@ const ExecuteContract = (props: ExecuteContractI) => {
       contractAddress: address,
       rpcURLs,
       msg: { [msg]: {} },
+      msgName: msg,
     });
     setExecuteMessageInputs(messages);
   };

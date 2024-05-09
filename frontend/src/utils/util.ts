@@ -473,11 +473,19 @@ export function formatValidatorStatsValue(
 }
 
 export function extractContractMessages(inputString: string): string[] {
+  let errMsg = '';
+  if (inputString.includes('expected')) {
+    errMsg = inputString.split('expected')[1];
+  } else if (inputString.includes('missing')) {
+    errMsg = inputString.split('missing')[1];
+  } else {
+    errMsg = inputString;
+  }
   const pattern: RegExp = /`(\w+)`/g;
 
   const matches: string[] = [];
   let match: RegExpExecArray | null;
-  while ((match = pattern.exec(inputString)) !== null) {
+  while ((match = pattern.exec(errMsg)) !== null) {
     matches.push(match[1]);
   }
 

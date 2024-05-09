@@ -222,56 +222,87 @@ const useContracts = () => {
       messages,
     };
   };
-
   const getExecuteMessagesInputs = async ({
     rpcURLs,
     chainID,
     contractAddress,
     msg,
+    msgName,
+    extractedMessages = [],
   }: {
     rpcURLs: string[];
     chainID: string;
     contractAddress: string;
-    msg: any;
-  }) => {
+    msg: { [key: string]: any };
+    msgName: string;
+    extractedMessages?: string[];
+  }): Promise<{ messages: string[] }> => {
     const { dummyAddress, dummyWallet } = await getDummyWallet({ chainID });
     let messages: string[] = [];
     const client = await connectWithSigner(rpcURLs, dummyWallet);
-    try {
-      setExecuteInputsLoading(true);
-      setExecuteInputsError('');
-      await client.simulate(
-        dummyAddress,
-        [
-          {
-            typeUrl: '/cosmwasm.wasm.v1.MsgExecuteContract',
-            value: {
-              sender: dummyAddress,
-              contract: contractAddress,
-              msg: Buffer.from(JSON.stringify(msg)),
-              funds: [],
+
+    const executeWithRetry = async (msg: {
+      [key: string]: any;
+    }): Promise<void> => {
+      try {
+        setExecuteInputsLoading(true);
+        setExecuteInputsError('');
+        await client.simulate(
+          dummyAddress,
+          [
+            {
+              typeUrl: '/cosmwasm.wasm.v1.MsgExecuteContract',
+              value: {
+                sender: dummyAddress,
+                contract: contractAddress,
+                msg: Buffer.from(JSON.stringify(msg)),
+                funds: [],
+              },
             },
-          },
-        ],
-        undefined
-      );
-      return {
-        messages: [],
-      };
-    } catch (error: any) {
-      const errMsg = error.message;
-      if (errMsg?.includes('expected') || errMsg?.includes('missing field')) {
-        messages = extractContractMessages(error.message);
-      } else {
-        messages = [];
-        setExecuteInputsError('Failed to fetch messages');
+          ],
+          undefined
+        );
+
+        // If execution is successful and no messages extracted, return
+        return;
+      } catch (error: any) {
+        const errMsg = error.message;
+        if (errMsg?.includes('expected') || errMsg?.includes('missing field')) {
+          const newlyExtractedMessages = extractContractMessages(error.message);
+          if (newlyExtractedMessages.length === 0) {
+            // If no messages extracted, return
+            return;
+          } else {
+            // Update extractedMessages with newly extracted fields
+            extractedMessages.push(...newlyExtractedMessages);
+
+            // Update msg with extracted fields nested under the existing key
+            for (const field of extractedMessages) {
+              msg[msgName][field] = '1';
+            }
+
+            // Recursively call executeWithRetry
+            await executeWithRetry(msg);
+          }
+        } else if (
+          errMsg?.includes('Insufficient') ||
+          errMsg?.includes('Error parsing')
+        ) {
+          return;
+        } else {
+          setExecuteInputsError('Failed to fetch messages');
+          throw error;
+        }
+      } finally {
+        setExecuteInputsLoading(false);
       }
-    } finally {
-      setExecuteInputsLoading(false);
-    }
-    return {
-      messages,
     };
+
+    // Initial call to executeWithRetry
+    await executeWithRetry(msg);
+
+    // Return messages
+    return { messages: extractedMessages };
   };
 
   const getExecutionOutput = async ({
