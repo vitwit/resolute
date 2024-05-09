@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import QueryContract from './QueryContract';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import ExecuteContract from './ExecuteContract';
+import Image from 'next/image';
 
 const ContractInfo = ({ chainID }: { chainID: string }) => {
   const selectedContractAddress = useAppSelector(
@@ -11,8 +12,10 @@ const ContractInfo = ({ chainID }: { chainID: string }) => {
   const selectedContractInfo = useAppSelector(
     (state) => state.cosmwasm.chains?.[chainID]?.contractInfo
   );
-  const tabs = ['Query Contract', 'Execute Contract'];
-  const [selectedTab, setSelectedTab] = useState('Query Contract');
+  const tabs = ['Execute Contract', 'Query Contract'];
+  const [selectedTab, setSelectedTab] = useState('Execute Contract');
+  const [infoOpen, setInfoOpen] = useState(false);
+
   const { getChainInfo } = useGetChainInfo();
   const {
     restURLs,
@@ -20,30 +23,46 @@ const ContractInfo = ({ chainID }: { chainID: string }) => {
     address: walletAddress,
     chainName,
   } = getChainInfo(chainID);
+
   return (
-    <div className="space-y-20">
+    <div className="space-y-12">
       <div className="space-y-6">
         <div className="pb-4 border-b-[1px] border-[#ffffff1e] font-bold text-[18px]">
-          {selectedContractInfo.label || selectedContractAddress}
+          {selectedContractInfo?.label || selectedContractAddress}
         </div>
-        <div className="flex gap-10 bg-[#FFFFFF0D] p-10 rounded-2xl flex-wrap">
-          <ContractInfoAttribute name="Network" value={chainID} />
-          <ContractInfoAttribute
-            name="From Code"
-            value={selectedContractInfo.code_id}
-          />
-          <ContractInfoAttribute
-            name="Admin Address"
-            value={selectedContractInfo.admin}
-          />
-          <ContractInfoAttribute
-            name="Instantiated Block Height"
-            value={selectedContractInfo.created.block_height}
-          />
-          <ContractInfoAttribute
-            name="Instantiated By"
-            value={selectedContractInfo.creator}
-          />
+        <div className="bg-[#ffffff0D] rounded-2xl p-6 space-y-6">
+          <div className="flex justify-between items-center">
+            <div className="text-[14px]">Contract Info</div>
+            <Image
+              onClick={() => setInfoOpen((prev) => !prev)}
+              className="cursor-pointer"
+              src={'/expand-icon.svg'}
+              height={24}
+              width={24}
+              alt="Expand"
+            />
+          </div>
+          {infoOpen ? (
+            <div className="flex gap-10 flex-wrap">
+              <ContractInfoAttribute name="Network" value={chainID} />
+              <ContractInfoAttribute
+                name="From Code"
+                value={selectedContractInfo.code_id}
+              />
+              <ContractInfoAttribute
+                name="Admin Address"
+                value={selectedContractInfo.admin}
+              />
+              <ContractInfoAttribute
+                name="Instantiated Block Height"
+                value={selectedContractInfo.created.block_height}
+              />
+              <ContractInfoAttribute
+                name="Instantiated By"
+                value={selectedContractInfo.creator}
+              />
+            </div>
+          ) : null}
         </div>
       </div>
       <div className="space-y-10 pb-10">

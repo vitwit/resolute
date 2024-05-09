@@ -1,5 +1,5 @@
 .tabs {
-  @apply flex gap-10 items-center justify-center border-b-[1px] border-[#ffffff1e] mt-6;
+  @apply flex gap-10 items-center justify-start border-b-[1px] border-[#ffffff1e] mt-6;
 }
 
 .menu-item {
@@ -52,7 +52,7 @@
 
 .execute-field-wrapper,
 .execute-output-box {
-  @apply w-[50%] max-h-[440px] p-6;
+  @apply max-h-[440px] p-6;
 }
 
 .execute-field-wrapper {

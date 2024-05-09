@@ -155,6 +155,7 @@ const QueryContract = (props: QueryContractI) => {
         messagesError={messagesError}
       />
       <div className="query-output-box overflow-y-scroll">
+        <div className="text-[16px] font-light">Query Output:</div>
         <div className="qeury-output">
           <pre>{JSON.stringify(queryOutput, undefined, 2)}</pre>
         </div>

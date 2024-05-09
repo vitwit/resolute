@@ -61,6 +61,8 @@ const useContracts = () => {
   const [messageInputsError, setMessageInputsError] = useState('');
   const [executeMessagesLoading, setExecuteMessagesLoading] = useState(false);
   const [executeMessagesError, setExecuteMessagesError] = useState('');
+  const [executeInputsLoading, setExecuteInputsLoading] = useState(false);
+  const [executeInputsError, setExecuteInputsError] = useState('');
 
   const getContractInfo = async ({
     address,
@@ -215,6 +217,57 @@ const useContracts = () => {
       }
     } finally {
       setExecuteMessagesLoading(false);
+    }
+    return {
+      messages,
+    };
+  };
+
+  const getExecuteMessagesInputs = async ({
+    rpcURLs,
+    chainID,
+    contractAddress,
+    msg,
+  }: {
+    rpcURLs: string[];
+    chainID: string;
+    contractAddress: string;
+    msg: any;
+  }) => {
+    const { dummyAddress, dummyWallet } = await getDummyWallet({ chainID });
+    let messages: string[] = [];
+    const client = await connectWithSigner(rpcURLs, dummyWallet);
+    try {
+      setExecuteInputsLoading(true);
+      setExecuteInputsError('');
+      await client.simulate(
+        dummyAddress,
+        [
+          {
+            typeUrl: '/cosmwasm.wasm.v1.MsgExecuteContract',
+            value: {
+              sender: dummyAddress,
+              contract: contractAddress,
+              msg: Buffer.from(JSON.stringify(msg)),
+              funds: [],
+            },
+          },
+        ],
+        undefined
+      );
+      return {
+        messages: [],
+      };
+    } catch (error: any) {
+      const errMsg = error.message;
+      if (errMsg?.includes('expected') || errMsg?.includes('missing field')) {
+        messages = extractContractMessages(error.message);
+      } else {
+        messages = [];
+        setExecuteInputsError('Failed to fetch messages');
+      }
+    } finally {
+      setExecuteInputsLoading(false);
     }
     return {
       messages,
@@ -394,11 +447,14 @@ const useContracts = () => {
     uploadContract,
     instantiateContract,
     getContractMessageInputs,
+    getExecuteMessagesInputs,
     messageInputsLoading,
     messageInputsError,
     messagesError,
     executeMessagesError,
     executeMessagesLoading,
+    executeInputsError,
+    executeInputsLoading,
   };
 };
 
