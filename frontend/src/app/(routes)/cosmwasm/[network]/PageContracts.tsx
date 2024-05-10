@@ -7,9 +7,10 @@ import AllContracts from '../components/AllContracts';
 import DialogTxContractStatus from '../components/DialogTxUploadCodeStatus';
 import DialogTxExecuteStatus from '../components/DialogTxExecuteStatus';
 import DialogTxInstantiateStatus from '../components/DialogTxInstantiateStatus';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 const PageContracts = ({ chainName }: { chainName: string }) => {
+  const router = useRouter();
   const nameToChainIDs: Record<string, string> = useAppSelector(
     (state) => state.wallet.nameToChainIDs
   );
@@ -45,6 +46,7 @@ const PageContracts = ({ chainName }: { chainName: string }) => {
                 }
                 onClick={() => {
                   setSelectedTab(tab);
+                  router.push(`/cosmwasm/${chainName.toLowerCase()}`);
                 }}
               >
                 {tab}

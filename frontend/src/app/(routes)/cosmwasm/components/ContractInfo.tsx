@@ -1,16 +1,11 @@
-import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
-import React, { useEffect, useState } from 'react';
+import { useAppSelector } from '@/custom-hooks/StateHooks';
+import React, { useState } from 'react';
 import QueryContract from './QueryContract';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import ExecuteContract from './ExecuteContract';
 import Image from 'next/image';
-import { useSearchParams } from 'next/navigation';
-import useContracts from '@/custom-hooks/useContracts';
-import { setContract } from '@/store/features/cosmwasm/cosmwasmSlice';
 
 const ContractInfo = ({ chainID }: { chainID: string }) => {
-  const dispatch = useAppDispatch();
-  const { getContractInfo } = useContracts();
   const selectedContractAddress = useAppSelector(
     (state) => state.cosmwasm.chains?.[chainID]?.contractAddress
   );
@@ -29,30 +24,6 @@ const ContractInfo = ({ chainID }: { chainID: string }) => {
     chainName,
   } = getChainInfo(chainID);
 
-  const paramsContractAddress = useSearchParams().get('contract');
-
-  const fetchContractInfo = async () => {
-    const { data } = await getContractInfo({
-      address: paramsContractAddress || '',
-      baseURLs: restURLs,
-    });
-    if (data) {
-      dispatch(
-        setContract({
-          chainID,
-          contractAddress: data?.address,
-          contractInfo: data?.contract_info,
-        })
-      );
-    }
-  };
-
-  useEffect(() => {
-    if (paramsContractAddress?.length) {
-      console.log('herer');
-      fetchContractInfo();
-    }
-  }, [paramsContractAddress]);
 
   return (
     <div className="space-y-12">

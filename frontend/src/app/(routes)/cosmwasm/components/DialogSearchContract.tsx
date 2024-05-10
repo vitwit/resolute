@@ -9,6 +9,7 @@ import { setContract } from '@/store/features/cosmwasm/cosmwasmSlice';
 import useContracts from '@/custom-hooks/useContracts';
 import ContractItem from './ContractItem';
 import SearchInputField from './SearchInputField';
+import { useRouter } from 'next/navigation';
 
 interface DialogSearchContractI {
   open: boolean;
@@ -21,6 +22,7 @@ interface DialogSearchContractI {
 const DialogSearchContract = (props: DialogSearchContractI) => {
   const { onClose, open, chainID, restURLs, handleSelectContract } = props;
   const dispatch = useAppDispatch();
+  const router = useRouter();
   const handleClose = () => {
     onClose();
     setSearchTerm('');
@@ -54,6 +56,7 @@ const DialogSearchContract = (props: DialogSearchContractI) => {
           contractInfo: searchResult?.contract_info,
         })
       );
+      router.push(`?contract=${searchResult?.address}`);
       handleSelectContract(
         searchResult?.address,
         searchResult?.contract_info?.label
