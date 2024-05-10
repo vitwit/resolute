@@ -3,7 +3,7 @@ version: '3.8'
 services:
   frontend:
     build:
-      context: ./frontent
+      context: ./frontend
     ports:
       - "3000:3000"
     networks:
