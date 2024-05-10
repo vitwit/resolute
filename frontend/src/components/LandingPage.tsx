@@ -34,6 +34,17 @@ export const Landingpage = ({ children }: { children: React.ReactNode }) => {
   const connected = useAppSelector(
     (state: RootState) => state.wallet.connected
   );
+
+  const walletLoading = useAppSelector(
+    (state: RootState) => state.wallet.isLoading
+  )
+
+  useEffect(() => {
+    if (!walletLoading) {
+      setLoad(false);
+    }
+  }, [walletLoading])
+
   const isLoading = useAppSelector((state) => state.wallet.isLoading);
   const [connectWalletDialogOpen, setConnectWalletDialogOpen] =
     useState<boolean>(false);
@@ -71,8 +82,8 @@ export const Landingpage = ({ children }: { children: React.ReactNode }) => {
   };
 
   const tryConnectWallet = async (walletName: string) => {
-    setLoad(true);
     if (walletName === 'metamask') {
+      setLoad(true);
       try {
         for (let i = 0; i < networks.length; i++) {
           const chainId: string = networks[i].config.chainId;
@@ -173,7 +184,7 @@ export const Landingpage = ({ children }: { children: React.ReactNode }) => {
                       chains.
                     </div>
                   </div>
-                  {load ? (
+                  {walletLoading || load ? (
                     <div className="landingpage-button">
                       <CircularProgress size={24} sx={{ color: 'white' }} />
                     </div>
