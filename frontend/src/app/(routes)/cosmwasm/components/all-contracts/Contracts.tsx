@@ -20,6 +20,7 @@ const Contracts = ({
 }) => {
   const router = useRouter();
   const dispatch = useAppDispatch();
+
   useEffect(() => {
     dispatch(
       getAllContractsByCode({
@@ -29,6 +30,7 @@ const Contracts = ({
       })
     );
   }, [codeId]);
+
   const contractsLoading = useAppSelector(
     (state) => state.cosmwasm.chains?.[chainID]?.contracts.status
   );
