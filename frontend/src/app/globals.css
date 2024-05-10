@@ -307,6 +307,21 @@
     @apply flex;
   }
 
+  .more-options-menu {
+    @apply rounded-2xl;
+    background: #0e0b26;
+    backdrop-filter: blur(10px);
+    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.4);
+  }
+
+  .more-options-menu-item {
+    @apply px-4 text-[14px] font-medium leading-normal cursor-pointer flex items-center;
+  }
+
+  .more-options-menu-item:hover {
+    background: #221f38;
+  }
+
   /* Side ads styles */
   .ad-close {
     @apply absolute right-3 top-1 cursor-pointer rounded-full bg-[#ffffff1a];
