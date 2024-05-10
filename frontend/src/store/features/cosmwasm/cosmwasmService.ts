@@ -1,7 +1,6 @@
 'use client';
 
 import { axiosGetRequestWrapper } from '@/utils/RequestWrapper';
-import { cleanURL } from '@/utils/util';
 import { SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate';
 
 const getContractURL = (baseURL: string, address: string) =>

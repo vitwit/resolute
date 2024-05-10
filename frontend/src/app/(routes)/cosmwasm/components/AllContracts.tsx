@@ -12,7 +12,7 @@ import { shortenMsg } from '@/utils/util';
 import { CircularProgress, Dialog, DialogContent } from '@mui/material';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 
 const AllContracts = (props: { chainID: string }) => {
@@ -154,7 +154,6 @@ const Codes = ({
   chainID: string;
   baseURLs: string[];
 }) => {
-  const router = useRouter();
   const dispatch = useAppDispatch();
   const codesLoading = useAppSelector(
     (state) => state.cosmwasm.chains?.[chainID]?.codes.status
