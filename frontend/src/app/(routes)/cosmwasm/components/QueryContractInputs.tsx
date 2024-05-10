@@ -49,10 +49,13 @@ const QueryContractInputs = (props: QueryContractInputsI) => {
   };
 
   const queryContract = () => {
-    let messageInputs = {};
-    messageInputFields.forEach((field) => {
-      messageInputs = { ...messageInputs, [field.name]: field.value };
-    });
+    const messageInputs = messageInputFields.reduce(
+      (acc, field) => ({
+        ...acc,
+        [field.name]: field.value,
+      }),
+      {}
+    );
     const queryInput = JSON.stringify(
       {
         [selectedMessage]: messageInputs,
