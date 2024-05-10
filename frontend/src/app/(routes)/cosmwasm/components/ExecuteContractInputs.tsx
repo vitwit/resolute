@@ -4,21 +4,21 @@ import { queryInputStyles } from '../styles';
 import { TxStatus } from '@/types/enums';
 import MessageInputFields from './MessageInputFields';
 
-const QueryContractInputs = (props: QueryContractInputsI) => {
+const ExecuteContractInputs = (props: ExecuteContractInputsI) => {
   const {
-    contractMessageInputs,
-    contractMessages,
-    handleQueryChange,
-    handleSelectMessage,
-    handleSelectedMessageInputChange,
     messagesLoading,
-    queryText,
+    executeMessages,
+    handleSelectMessage,
+    executeMessageInputs,
     selectedMessage,
-    onQuery,
+    handleSelectedMessageInputChange,
+    executeInput,
+    handleExecuteInputChange,
+    onExecute,
+    executionLoading,
     formatJSON,
-    queryLoading,
-    messageInputsLoading,
-    messageInputsError,
+    executeInputsError,
+    executeInputsLoading,
     messagesError,
     contractAddress,
   } = props;
@@ -48,34 +48,31 @@ const QueryContractInputs = (props: QueryContractInputsI) => {
     setMessageInputFields(updatedFields);
   };
 
-  const queryContract = () => {
-    const messageInputs = messageInputFields.reduce(
-      (acc, field) => ({
-        ...acc,
-        [field.name]: field.value,
-      }),
-      {}
-    );
-    const queryInput = JSON.stringify(
+  const executeContract = () => {
+    let messageInputs = {};
+    messageInputFields.forEach((field) => {
+      messageInputs = { ...messageInputs, [field.name]: field.value };
+    });
+    const executionInput = JSON.stringify(
       {
         [selectedMessage]: messageInputs,
       },
       undefined,
       2
     );
-    onQuery(queryInput);
+    onExecute(executionInput);
   };
 
   // ------------------------------------------//
-  // ---------------SIDE EFFECT----------------//
+  // ---------------SIDE EFFECTS----------------//
   // ------------------------------------------//
   useEffect(() => {
     const inputFields: MessageInputField[] = [];
-    contractMessageInputs.forEach((messageInput) => {
+    executeMessageInputs.forEach((messageInput) => {
       inputFields.push({ name: messageInput, open: false, value: '' });
     });
     setMessageInputFields(inputFields);
-  }, [contractMessageInputs]);
+  }, [executeMessageInputs]);
 
   useEffect(() => {
     setMessageInputFields([]);
@@ -85,17 +82,18 @@ const QueryContractInputs = (props: QueryContractInputsI) => {
     <div className="query-input-wrapper">
       <div className="space-y-4">
         <div className="font-light">
-          Queries:
+          Execution Messages:
           {messagesLoading ? (
-            <span className="italic ">
+            <span className="italic">
+              {' '}
               Fetching messages<span className="dots-flashing"></span>{' '}
             </span>
-          ) : contractMessages?.length ? null : (
+          ) : executeMessages?.length ? null : (
             <span className=" italic"> No messages found</span>
           )}
         </div>
         <div className="flex gap-4 flex-wrap">
-          {contractMessages?.map((msg) => (
+          {executeMessages?.map((msg) => (
             <div
               onClick={() => handleSelectMessage(msg)}
               key={msg}
@@ -106,20 +104,14 @@ const QueryContractInputs = (props: QueryContractInputsI) => {
           ))}
         </div>
       </div>
-      {isJSONInput && messageInputsLoading ? (
-        <div className="flex-center-center gap-4 py-7 italic font-light">
-          <CircularProgress size={16} sx={{ color: 'white' }} />
-          <span>Fetching message inputs</span>
-          <span className="dots-flashing"></span>
-        </div>
-      ) : isJSONInput && contractMessageInputs?.length ? (
+      {isJSONInput && executeMessageInputs?.length ? (
         <div className="space-y-4">
           <div className="font-light">
             Suggested Inputs for{' '}
             <span className="font-bold">{selectedMessage}</span>:
           </div>
           <div className="flex gap-4 flex-wrap">
-            {contractMessageInputs?.map((msg) => (
+            {executeMessageInputs?.map((msg) => (
               <div
                 onClick={() => handleSelectedMessageInputChange(msg)}
                 key={msg}
@@ -134,10 +126,10 @@ const QueryContractInputs = (props: QueryContractInputsI) => {
       <div className="flex justify-between items-center font-extralight">
         <div>
           {isJSONInput
-            ? 'Enter query in JSON format:'
+            ? 'Enter execution message in JSON format:'
             : messageInputFields.length
-              ? 'Enter field value to query:'
-              : 'Query:'}
+              ? 'Enter fields to execute:'
+              : 'Execution Input:'}
         </div>
         <div className="change-input-type-btn-wrapper">
           <button
@@ -151,10 +143,10 @@ const QueryContractInputs = (props: QueryContractInputsI) => {
       {isJSONInput ? (
         <div className="query-input">
           <TextField
-            value={queryText}
+            value={executeInput}
             name="queryField"
             placeholder={JSON.stringify({ test_query: {} }, undefined, 2)}
-            onChange={handleQueryChange}
+            onChange={handleExecuteInputChange}
             fullWidth
             multiline
             rows={10}
@@ -170,14 +162,14 @@ const QueryContractInputs = (props: QueryContractInputsI) => {
             sx={queryInputStyles}
           />
           <button
-            onClick={() => onQuery(queryText)}
-            disabled={queryLoading === TxStatus.PENDING}
+            onClick={() => onExecute(executeInput)}
+            disabled={executionLoading === TxStatus.PENDING}
             className="primary-gradient query-btn"
           >
-            {queryLoading === TxStatus.PENDING ? (
+            {executionLoading === TxStatus.PENDING ? (
               <CircularProgress size={18} sx={{ color: 'white' }} />
             ) : (
-              'Query'
+              'Execute'
             )}
           </button>
           <button
@@ -188,32 +180,32 @@ const QueryContractInputs = (props: QueryContractInputsI) => {
             Format JSON
           </button>
         </div>
-      ) : messageInputsLoading ? (
+      ) : executeInputsLoading ? (
         <div className="flex-center-center gap-4 py-6 italic font-light">
           <CircularProgress size={16} sx={{ color: 'white' }} />
           <span>Fetching message inputs</span>
           <span className="dots-flashing"></span>
         </div>
-      ) : messageInputsError ? (
+      ) : executeInputsError ? (
         <div className="flex-center-center py-6 text-red-400">
           Couldn&apos;t fetch message inputs, Please switch to JSON format
         </div>
       ) : !messageInputFields.length ? (
         <div>
           {selectedMessage?.length ? (
-            <div className="bg-[#ffffff0D] rounded-2xl p-6 space-y-6">
+            <div className="bg-[#ffffff14] rounded-2xl p-6 space-y-6">
               <div className="flex justify-between items-center">
-                <div className="text-[14px] font-medium">{selectedMessage}</div>
+                <div className="text-[14px]">{selectedMessage}</div>
               </div>
               <button
                 type="button"
-                onClick={() => onQuery(queryText)}
+                onClick={() => onExecute(executeInput)}
                 className="primary-gradient text-[12px] font-medium py-[6px] px-6 leading-[20px] rounded-lg h-10 w-20 flex-center-center"
               >
-                {queryLoading === TxStatus.PENDING ? (
+                {executionLoading === TxStatus.PENDING ? (
                   <CircularProgress size={18} sx={{ color: 'white' }} />
                 ) : (
-                  'Query'
+                  'Execute'
                 )}
               </button>
             </div>
@@ -224,7 +216,9 @@ const QueryContractInputs = (props: QueryContractInputsI) => {
                   Couldn&apos;t fetch messages, Please switch to JSON format
                 </div>
               ) : (
-                <div className="text-center">- Select a message to query -</div>
+                <div className="text-center">
+                  - Select a message to execute -
+                </div>
               )}
             </div>
           )}
@@ -233,13 +227,13 @@ const QueryContractInputs = (props: QueryContractInputsI) => {
         <MessageInputFields
           fields={messageInputFields}
           handleChange={handleInputMessageChange}
-          onQuery={queryContract}
-          queryLoading={queryLoading}
-          isQuery={true}
+          onQuery={executeContract}
+          queryLoading={executionLoading}
+          isQuery={false}
         />
       )}
     </div>
   );
 };
 
-export default QueryContractInputs;
+export default ExecuteContractInputs;

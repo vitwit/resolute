@@ -1,40 +1,28 @@
 import { TxStatus } from '@/types/enums';
 import { CircularProgress } from '@mui/material';
-import Image from 'next/image';
 import React from 'react';
 
 const MessageInputFields = ({
   fields,
   handleChange,
   onQuery,
-  expandField,
   queryLoading,
+  isQuery,
 }: {
   fields: MessageInputField[];
   handleChange: (e: React.ChangeEvent<HTMLInputElement>, index: number) => void;
-  onQuery: (index: number) => void;
-  expandField: (index: number) => void;
+  onQuery: () => void;
   queryLoading: TxStatus;
+  isQuery: boolean;
 }) => {
   return (
     <div className="w-full flex flex-col gap-4">
-      {fields.map((field, index) => (
-        <div
-          key={field.name}
-          className="bg-[#ffffff14] rounded-2xl p-6 space-y-6"
-        >
-          <div className="flex justify-between items-center">
-            <div className="text-[14px]">{field.name}</div>
-            <Image
-              onClick={() => expandField(index)}
-              className="cursor-pointer"
-              src={'/expand-icon.svg'}
-              height={24}
-              width={24}
-              alt="Expand"
-            />
-          </div>
-          {field?.open ? (
+      <div className="bg-[#ffffff0D] rounded-2xl p-6 space-y-6">
+        {fields.map((field, index) => (
+          <div className="space-y-2" key={field.name}>
+            <div className="flex justify-between items-center">
+              <div className="text-[14px] font-medium">{field.name}</div>
+            </div>
             <div className="space-y-6">
               <div className="message-input-wrapper">
                 <input
@@ -46,21 +34,24 @@ const MessageInputFields = ({
                   autoFocus={true}
                 />
               </div>
-              <button
-                type="button"
-                onClick={() => onQuery(index)}
-                className="primary-gradient text-[12px] font-medium py-[6px] px-6 leading-[20px] rounded-lg h-10 w-20 flex-center-center"
-              >
-                {queryLoading === TxStatus.PENDING ? (
-                  <CircularProgress size={18} sx={{ color: 'white' }} />
-                ) : (
-                  'Query'
-                )}
-              </button>
             </div>
-          ) : null}
-        </div>
-      ))}
+          </div>
+        ))}
+      </div>
+
+      <button
+        type="button"
+        onClick={() => onQuery()}
+        className="primary-gradient text-[12px] font-medium py-[6px] px-6 leading-[20px] rounded-lg h-10 w-20 flex-center-center self-end"
+      >
+        {queryLoading === TxStatus.PENDING ? (
+          <CircularProgress size={18} sx={{ color: 'white' }} />
+        ) : isQuery ? (
+          'Query'
+        ) : (
+          'Execute'
+        )}
+      </button>
     </div>
   );
 };

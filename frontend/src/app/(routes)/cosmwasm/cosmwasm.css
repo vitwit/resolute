@@ -1,5 +1,5 @@
 .tabs {
-  @apply flex gap-10 items-center justify-center border-b-[1px] border-[#ffffff1e] mt-6;
+  @apply flex gap-10 items-center justify-start border-b-[1px] border-[#ffffff1e] mt-6;
 }
 
 .menu-item {
@@ -52,7 +52,7 @@
 
 .execute-field-wrapper,
 .execute-output-box {
-  @apply w-[50%] max-h-[440px] p-6;
+  @apply max-h-[440px] p-6;
 }
 
 .execute-field-wrapper {
@@ -168,4 +168,25 @@
 
 .change-input-type-btn {
   @apply bg-[#232034] text-[12px] font-semibold px-3 py-[10px] flex justify-center items-center rounded-lg;
+}
+
+.codes-table {
+  @apply rounded-3xl text-white flex flex-col flex-1;
+  backdrop-filter: blur(2px);
+}
+
+.codes-table th {
+  @apply pb-4;
+}
+
+.codes-table td {
+  @apply font-light leading-normal pt-4 pb-4 px-2;
+}
+
+.codes-table tbody tr {
+  @apply hover:bg-[#ffffff0D];
+}
+
+.select-btn {
+  @apply px-3 py-[6px] rounded-lg;
 }

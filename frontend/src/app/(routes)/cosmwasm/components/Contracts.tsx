@@ -1,9 +1,16 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import SearchContracts from './SearchContracts';
 import DeployContract from './DeployContract';
 import ContractInfo from './ContractInfo';
+import { useSearchParams } from 'next/navigation';
+import useContracts from '@/custom-hooks/useContracts';
+import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
+import { setContract } from '@/store/features/cosmwasm/cosmwasmSlice';
+import { useAppDispatch } from '@/custom-hooks/StateHooks';
+import { CircularProgress } from '@mui/material';
 
 const Contracts = ({ chainID }: { chainID: string }) => {
+  const dispatch = useAppDispatch();
   const [deployContractOpen, setDeployContractOpen] = useState(false);
   const [selectedContract, setSelectedContract] = useState({
     address: '',
@@ -13,6 +20,44 @@ const Contracts = ({ chainID }: { chainID: string }) => {
     setDeployContractOpen(false);
     setSelectedContract({ address, name });
   };
+
+  const { getChainInfo } = useGetChainInfo();
+  const { restURLs } = getChainInfo(chainID);
+
+  const { getContractInfo, contractError, contractLoading } = useContracts();
+
+  const paramsContractAddress = useSearchParams().get('contract');
+
+  const fetchContractInfo = async () => {
+    try {
+      const { data } = await getContractInfo({
+        address: paramsContractAddress || '',
+        baseURLs: restURLs,
+      });
+      if (data) {
+        dispatch(
+          setContract({
+            chainID,
+            contractAddress: data?.address,
+            contractInfo: data?.contract_info,
+          })
+        );
+        setSelectedContract({
+          address: data?.address,
+          name: data?.contract_info?.label,
+        });
+      }
+      /* eslint-disable @typescript-eslint/no-explicit-any */
+    } catch (error: any) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    if (paramsContractAddress?.length) {
+      fetchContractInfo();
+    }
+  }, [paramsContractAddress]);
 
   return (
     <div className="h-full flex flex-col gap-10">
@@ -51,6 +96,16 @@ const Contracts = ({ chainID }: { chainID: string }) => {
       </div>
       {deployContractOpen && !selectedContract.address ? (
         <DeployContract chainID={chainID} />
+      ) : null}
+      {contractLoading ? (
+        <div className="flex-center-center gap-2">
+          <CircularProgress sx={{ color: 'white' }} size={18} />
+          <div className="italic font-extralight text-[14px]">
+            Fetching contract info <span className="dots-flashing"></span>
+          </div>
+        </div>
+      ) : contractError ? (
+        <div className="text-red-300 text-center py-6">{contractError}</div>
       ) : null}
       {selectedContract.address ? <ContractInfo chainID={chainID} /> : null}
     </div>

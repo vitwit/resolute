@@ -8,6 +8,7 @@ import { setError } from '../common/commonSlice';
 import axios from 'axios';
 import { cleanURL } from '@/utils/util';
 import { parseTxResult } from '@/utils/signing';
+import { getCodes, getContractsByCode } from './cosmwasmService';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export const contractInfoEmptyState = {
@@ -48,6 +49,21 @@ interface Chain {
     status: TxStatus;
     error: string;
     queryOutput: string;
+  };
+  codes: {
+    status: TxStatus;
+    error: string;
+    data: {
+      codes: CodeInfo[];
+    };
+  };
+  contracts: {
+    status: TxStatus;
+    error: string;
+    data: {
+      contracts: string[];
+      codeId: string;
+    };
   };
 }
 
@@ -109,6 +125,19 @@ const initialState: CosmwasmState = {
       status: TxStatus.INIT,
       error: '',
     },
+    codes: {
+      data: { codes: [] },
+      error: '',
+      status: TxStatus.INIT,
+    },
+    contracts: {
+      data: {
+        codeId: '',
+        contracts: [],
+      },
+      error: '',
+      status: TxStatus.INIT,
+    },
   },
 };
 
@@ -123,6 +152,59 @@ export const queryContractInfo = createAsyncThunk(
       };
     } catch (error: any) {
       const errMsg = error?.message || 'Failed to query contract';
+      dispatch(
+        setError({
+          message: errMsg,
+          type: 'error',
+        })
+      );
+      return rejectWithValue(errMsg);
+    }
+  }
+);
+
+export const getAllCodes = createAsyncThunk(
+  'cosmwasm/get-codes',
+  async (
+    data: { baseURLs: string[]; chainID: string },
+    { rejectWithValue, dispatch }
+  ) => {
+    try {
+      const response = await getCodes(data.baseURLs);
+      return {
+        data: response.data,
+        chainID: data.chainID,
+      };
+    } catch (error: any) {
+      const errMsg = error?.message || 'Failed to fetch codes';
+      dispatch(
+        setError({
+          message: errMsg,
+          type: 'error',
+        })
+      );
+      return rejectWithValue(errMsg);
+    }
+  }
+);
+
+export const getAllContractsByCode = createAsyncThunk(
+  'cosmwasm/get-contract-by-code',
+  async (
+    data: { baseURLs: string[]; codeId: string; chainID: string },
+    { rejectWithValue, dispatch }
+  ) => {
+    try {
+      const response = await getContractsByCode(data.baseURLs, data.codeId);
+      return {
+        data: {
+          contracts: response.data,
+          code: data.codeId,
+        },
+        chainID: data.chainID,
+      };
+    } catch (error: any) {
+      const errMsg = error?.message || 'Failed to fetch contracts';
       dispatch(
         setError({
           message: errMsg,
@@ -286,6 +368,55 @@ export const cosmwasmSlice = createSlice({
         state.chains[chainID].query.status = TxStatus.REJECTED;
         state.chains[chainID].query.error = action.error.message || ERR_UNKNOWN;
         state.chains[chainID].query.queryOutput = '{}';
+      });
+
+    builder
+      .addCase(getAllCodes.pending, (state, action) => {
+        const chainID = action.meta.arg.chainID;
+        if (!state.chains[chainID]) {
+          state.chains[chainID] = cloneDeep(initialState.defaultState);
+        }
+        state.chains[chainID].codes.status = TxStatus.PENDING;
+        state.chains[chainID].codes.error = '';
+      })
+      .addCase(getAllCodes.fulfilled, (state, action) => {
+        const chainID = action.meta.arg.chainID;
+        state.chains[chainID].codes.status = TxStatus.IDLE;
+        state.chains[chainID].codes.error = '';
+        state.chains[chainID].codes.data.codes =
+          action.payload.data?.code_infos || [];
+      })
+      .addCase(getAllCodes.rejected, (state, action) => {
+        const chainID = action.meta.arg.chainID;
+        state.chains[chainID].codes.status = TxStatus.REJECTED;
+        state.chains[chainID].codes.error = action.error.message || ERR_UNKNOWN;
+        state.chains[chainID].codes.data.codes = [];
+      });
+    builder
+      .addCase(getAllContractsByCode.pending, (state, action) => {
+        const chainID = action.meta.arg.chainID;
+        if (!state.chains[chainID]) {
+          state.chains[chainID] = cloneDeep(initialState.defaultState);
+        }
+        state.chains[chainID].contracts.status = TxStatus.PENDING;
+        state.chains[chainID].contracts.error = '';
+      })
+      .addCase(getAllContractsByCode.fulfilled, (state, action) => {
+        const chainID = action.meta.arg.chainID;
+        state.chains[chainID].contracts.status = TxStatus.IDLE;
+        state.chains[chainID].contracts.error = '';
+        state.chains[chainID].contracts.data.contracts =
+          action.payload.data?.contracts?.contracts || [];
+        state.chains[chainID].contracts.data.codeId =
+          action.payload.data?.code || '';
+      })
+      .addCase(getAllContractsByCode.rejected, (state, action) => {
+        const chainID = action.meta.arg.chainID;
+        state.chains[chainID].contracts.status = TxStatus.REJECTED;
+        state.chains[chainID].contracts.error =
+          action.error.message || ERR_UNKNOWN;
+        state.chains[chainID].contracts.data.contracts = [];
+        state.chains[chainID].contracts.data.codeId = '';
       });
     builder
       .addCase(executeContract.pending, (state, action) => {
