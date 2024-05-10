@@ -1,9 +1,15 @@
 'use client';
 
+import { axiosGetRequestWrapper } from '@/utils/RequestWrapper';
+import { cleanURL } from '@/utils/util';
 import { SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate';
 
 const getContractURL = (baseURL: string, address: string) =>
   `${baseURL}/cosmwasm/wasm/v1/contract/${address}`;
+
+const codesURL = '/cosmwasm/wasm/v1/code';
+const contractsByCodeURL = (codeId: string) =>
+  `/cosmwasm/wasm/v1/code/${codeId}/contracts`;
 
 const getContractQueryURL = (
   baseURL: string,
@@ -77,6 +83,18 @@ export const connectWithSigner = async (urls: string[], offlineSigner: any) => {
     }
   }
   throw new Error('Unable to connect to any RPC URLs');
+};
+
+export const getCodes = async (baseURLs: string[]) => {
+  return axiosGetRequestWrapper(baseURLs, codesURL, 10);
+};
+
+export const getContractsByCode = async (
+  baseURLs: string[],
+  codeId: string
+) => {
+  const uri = contractsByCodeURL(codeId);
+  return axiosGetRequestWrapper(baseURLs, uri, 10);
 };
 
 const result = {

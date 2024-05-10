@@ -1,12 +1,13 @@
 'use client';
 import TopNav from '@/components/TopNav';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAppSelector } from '@/custom-hooks/StateHooks';
 import Contracts from '../components/Contracts';
 import AllContracts from '../components/AllContracts';
 import DialogTxContractStatus from '../components/DialogTxUploadCodeStatus';
 import DialogTxExecuteStatus from '../components/DialogTxExecuteStatus';
 import DialogTxInstantiateStatus from '../components/DialogTxInstantiateStatus';
+import { useSearchParams } from 'next/navigation';
 
 const PageContracts = ({ chainName }: { chainName: string }) => {
   const nameToChainIDs: Record<string, string> = useAppSelector(
@@ -15,6 +16,15 @@ const PageContracts = ({ chainName }: { chainName: string }) => {
   const chainID = nameToChainIDs[chainName];
   const tabs = ['Contracts', 'All Contracts'];
   const [selectedTab, setSelectedTab] = useState('Contracts');
+
+  const paramContractAddress = useSearchParams().get('contract');
+
+  useEffect(() => {
+    if (paramContractAddress?.length) {
+      setSelectedTab('Contracts');
+    }
+  }, [paramContractAddress]);
+
   return (
     <div className="h-screen flex flex-col p-6 px-10 gap-10">
       <div className="flex flex-col gap-6">
@@ -55,7 +65,7 @@ const PageContracts = ({ chainName }: { chainName: string }) => {
         {selectedTab === 'Contracts' ? (
           <Contracts chainID={chainID} />
         ) : (
-          <AllContracts />
+          <AllContracts chainID={chainID} />
         )}
       </div>
       <DialogTxContractStatus chainID={chainID} />

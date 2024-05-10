@@ -22,6 +22,7 @@ const ExecuteContractInputs = (props: ExecuteContractInputsI) => {
     messagesError,
     contractAddress,
   } = props;
+  
   // ------------------------------------------//
   // ------------------STATES------------------//
   // ------------------------------------------//
@@ -63,7 +64,7 @@ const ExecuteContractInputs = (props: ExecuteContractInputsI) => {
   };
 
   // ------------------------------------------//
-  // ---------------SIDE EFFECT----------------//
+  // ---------------SIDE EFFECTS----------------//
   // ------------------------------------------//
   useEffect(() => {
     const inputFields: MessageInputField[] = [];

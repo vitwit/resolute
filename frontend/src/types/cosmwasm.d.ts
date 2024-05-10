@@ -200,3 +200,15 @@ interface ExecuteContractInputsI {
   messagesError: string;
   contractAddress: string;
 }
+
+interface CodeInfo {
+  code_id: string;
+  creator: string;
+  data_hash: string;
+  instantiate_permission: InstantiatePermission;
+}
+
+interface InstantiatePermission {
+  permission: string;
+  addresses: string[];
+}
