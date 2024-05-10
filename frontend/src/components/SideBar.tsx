@@ -21,8 +21,12 @@ import {
 } from '@/utils/constants';
 // import useInitAuthz from '@/custom-hooks/useInitAuthz';
 // import useInitFeegrant from '@/custom-hooks/useInitFeegrant';
-import { getAllTokensPrice, setAllNetworksInfo } from '@/store/features/common/commonSlice';
+import {
+  getAllTokensPrice,
+  setAllNetworksInfo,
+} from '@/store/features/common/commonSlice';
 import IBCSwapTxStatus from './IBCSwapTxStatus';
+import MoreOptions from './MoreOptions';
 
 const SideBar = ({ children }: { children: React.ReactNode }) => {
   const pathName = usePathname();
@@ -36,17 +40,18 @@ const SideBar = ({ children }: { children: React.ReactNode }) => {
     dispatch(setAllNetworksInfo());
     dispatch(getAllTokensPrice());
   }, []);
+
   return (
     <div className="main">
       <TransactionSuccessPopup />
       <IBCSwapTxStatus />
 
-      <div className="sidebar overflow-y-scroll">
+      <div className="sidebar">
         <Link href="/">
           <Image src="/vitwit-logo.png" height={30} width={55} alt="Resolute" />
         </Link>
         <div className="flex flex-col gap-4 items-center">
-          {SIDENAV_MENU_ITEMS.map((item) => (
+          {SIDENAV_MENU_ITEMS.defaultOptions.map((item) => (
             <MenuItem
               key={item.name}
               pathName={selectedPart}
@@ -58,6 +63,7 @@ const SideBar = ({ children }: { children: React.ReactNode }) => {
               metamaskSupport={item.isMetaMaskSupports}
             />
           ))}
+          <MoreOptions />
         </div>
         <div className="flex flex-col gap-4">
           <Tooltip title="Report an issue" placement="right">
