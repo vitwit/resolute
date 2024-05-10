@@ -29,22 +29,27 @@ const Contracts = ({ chainID }: { chainID: string }) => {
   const paramsContractAddress = useSearchParams().get('contract');
 
   const fetchContractInfo = async () => {
-    const { data } = await getContractInfo({
-      address: paramsContractAddress || '',
-      baseURLs: restURLs,
-    });
-    if (data) {
-      dispatch(
-        setContract({
-          chainID,
-          contractAddress: data?.address,
-          contractInfo: data?.contract_info,
-        })
-      );
-      setSelectedContract({
-        address: data?.address,
-        name: data?.contract_info?.label,
+    try {
+      const { data } = await getContractInfo({
+        address: paramsContractAddress || '',
+        baseURLs: restURLs,
       });
+      if (data) {
+        dispatch(
+          setContract({
+            chainID,
+            contractAddress: data?.address,
+            contractInfo: data?.contract_info,
+          })
+        );
+        setSelectedContract({
+          address: data?.address,
+          name: data?.contract_info?.label,
+        });
+      }
+      /* eslint-disable @typescript-eslint/no-explicit-any */
+    } catch (error: any) {
+      console.log(error);
     }
   };
 
