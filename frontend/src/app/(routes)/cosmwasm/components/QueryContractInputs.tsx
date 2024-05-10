@@ -20,6 +20,7 @@ const QueryContractInputs = (props: QueryContractInputsI) => {
     messageInputsLoading,
     messageInputsError,
     messagesError,
+    contractAddress,
   } = props;
 
   // ------------------------------------------//
@@ -47,24 +48,14 @@ const QueryContractInputs = (props: QueryContractInputsI) => {
     setMessageInputFields(updatedFields);
   };
 
-  const expandField = (index: number) => {
-    const updatedFields = messageInputFields.map((field, i) => {
-      if (i === index) {
-        return { ...field, open: !field.open };
-      } else {
-        return { ...field, open: false };
-      }
+  const queryContract = () => {
+    let messageInputs = {};
+    messageInputFields.forEach((field) => {
+      messageInputs = { ...messageInputs, [field.name]: field.value };
     });
-
-    setMessageInputFields(updatedFields);
-  };
-
-  const queryContract = (index: number) => {
     const queryInput = JSON.stringify(
       {
-        [selectedMessage]: {
-          [messageInputFields[index].name]: messageInputFields[index].value,
-        },
+        [selectedMessage]: messageInputs,
       },
       undefined,
       2
@@ -83,17 +74,21 @@ const QueryContractInputs = (props: QueryContractInputsI) => {
     setMessageInputFields(inputFields);
   }, [contractMessageInputs]);
 
+  useEffect(() => {
+    setMessageInputFields([]);
+  }, [contractAddress]);
+
   return (
     <div className="query-input-wrapper">
       <div className="space-y-4">
         <div className="font-light">
-          Suggested Messages:
+          Queries:
           {messagesLoading ? (
             <span className="italic ">
               Fetching messages<span className="dots-flashing"></span>{' '}
             </span>
           ) : contractMessages?.length ? null : (
-            <span className=" italic">{' '}No messages found</span>
+            <span className=" italic"> No messages found</span>
           )}
         </div>
         <div className="flex gap-4 flex-wrap">
@@ -108,7 +103,13 @@ const QueryContractInputs = (props: QueryContractInputsI) => {
           ))}
         </div>
       </div>
-      {contractMessageInputs?.length ? (
+      {isJSONInput && messageInputsLoading ? (
+        <div className="flex-center-center gap-4 py-7 italic font-light">
+          <CircularProgress size={16} sx={{ color: 'white' }} />
+          <span>Fetching message inputs</span>
+          <span className="dots-flashing"></span>
+        </div>
+      ) : isJSONInput && contractMessageInputs?.length ? (
         <div className="space-y-4">
           <div className="font-light">
             Suggested Inputs for{' '}
@@ -197,9 +198,9 @@ const QueryContractInputs = (props: QueryContractInputsI) => {
       ) : !messageInputFields.length ? (
         <div>
           {selectedMessage?.length ? (
-            <div className="bg-[#ffffff14] rounded-2xl p-6 space-y-6">
+            <div className="bg-[#ffffff0D] rounded-2xl p-6 space-y-6">
               <div className="flex justify-between items-center">
-                <div className="text-[14px]">{selectedMessage}</div>
+                <div className="text-[14px] font-medium">{selectedMessage}</div>
               </div>
               <button
                 type="button"
@@ -230,8 +231,8 @@ const QueryContractInputs = (props: QueryContractInputsI) => {
           fields={messageInputFields}
           handleChange={handleInputMessageChange}
           onQuery={queryContract}
-          expandField={expandField}
           queryLoading={queryLoading}
+          isQuery={true}
         />
       )}
     </div>

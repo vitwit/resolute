@@ -1,13 +1,11 @@
 import useContracts from '@/custom-hooks/useContracts';
-import { CircularProgress, SelectChangeEvent, TextField } from '@mui/material';
+import { SelectChangeEvent } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import AttachFunds from './AttachFunds';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
-import { TxStatus } from '@/types/enums';
 import { executeContract } from '@/store/features/cosmwasm/cosmwasmSlice';
 import { getFormattedFundsList } from '@/utils/util';
-import { queryInputStyles } from '../styles';
 import { setError } from '@/store/features/common/commonSlice';
 import ExecuteContractInputs from './ExecuteContractInputs';
 
@@ -85,6 +83,7 @@ const ExecuteContract = (props: ExecuteContractI) => {
       rpcURLs,
       msg: { [msg]: {} },
       msgName: msg,
+      extractedMessages: [],
     });
     setExecuteMessageInputs(messages);
   };
@@ -189,6 +188,8 @@ const ExecuteContract = (props: ExecuteContractI) => {
   // ---------------SIDE EFFECT----------------//
   // ------------------------------------------//
   useEffect(() => {
+    setSelectedMessage('');
+    setExecuteMessageInputs([]);
     const fetchMessages = async () => {
       const { messages } = await getExecuteMessages({
         chainID,
@@ -217,8 +218,9 @@ const ExecuteContract = (props: ExecuteContractI) => {
         messagesLoading={executeMessagesLoading}
         onExecute={onExecute}
         selectedMessage={selectedMessage}
+        contractAddress={address}
       />
-      <div className="execute-output-box">
+      <div className="execute-output-box !p-0">
         <div className="attach-funds-header">
           <div className="text-[18px] font-bold">Attach Funds</div>
           <div className="attach-funds-description">

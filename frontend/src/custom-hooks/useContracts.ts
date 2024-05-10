@@ -10,6 +10,7 @@ import chainDenoms from '@/utils/chainDenoms.json';
 import useGetChainInfo from './useGetChainInfo';
 import { Event } from 'cosmjs-types/tendermint/abci/types';
 import { toUtf8 } from '@cosmjs/encoding';
+import { SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate';
 
 declare let window: WalletWindow;
 
@@ -128,33 +129,51 @@ const useContracts = () => {
     address,
     baseURLs,
     queryMsg,
+    extractedMessages,
+    msgName,
   }: {
     address: string;
     baseURLs: string[];
     queryMsg: any;
+    msgName: string;
+    extractedMessages: string[];
   }) => {
-    let messages: string[] = [];
-    try {
-      setMessageInputsLoading(true);
-      setMessageInputsError('');
-      await queryContract(baseURLs, address, btoa(JSON.stringify(queryMsg)));
-      return {
-        messages: [],
-      };
-      /* eslint-disable @typescript-eslint/no-explicit-any */
-    } catch (error: any) {
-      const errMsg = error.message;
-      if (errMsg?.includes('expected') || errMsg?.includes('missing field')) {
-        messages = extractContractMessages(error.message);
-      } else {
-        messages = [];
-        setMessageInputsError('Failed to fetch message inputs');
+    setMessageInputsLoading(true);
+    setMessageInputsError('');
+
+    const queryWithRetry = async (msg: {
+      [key: string]: any;
+    }): Promise<void> => {
+      try {
+        await queryContract(baseURLs, address, btoa(JSON.stringify(queryMsg)));
+        return;
+      } catch (error: any) {
+        const errMsg = error.message;
+        if (errMsg?.includes('Failed to query contract')) {
+          setMessageInputsError('Failed to fetch messages');
+          extractedMessages = [];
+        } else if (errMsg?.includes('expected')) {
+          setMessageInputsError('Failed to fetch messages');
+          extractedMessages = [];
+        } else {
+          const newlyExtractedMessages = extractContractMessages(error.message);
+          if (newlyExtractedMessages.length === 0) {
+            return;
+          } else {
+            extractedMessages.push(...newlyExtractedMessages);
+            for (const field of extractedMessages) {
+              msg[msgName][field] = '1';
+            }
+            await queryWithRetry(msg);
+          }
+        }
       }
-    } finally {
-      setMessageInputsLoading(false);
-    }
+    };
+
+    await queryWithRetry(queryMsg);
+    setMessageInputsLoading(false);
     return {
-      messages,
+      messages: extractedMessages,
     };
   };
 
@@ -185,10 +204,17 @@ const useContracts = () => {
   }) => {
     const { dummyAddress, dummyWallet } = await getDummyWallet({ chainID });
     let messages: string[] = [];
-    const client = await connectWithSigner(rpcURLs, dummyWallet);
+    setExecuteMessagesLoading(true);
+    setExecuteMessagesError('');
+    let client: SigningCosmWasmClient;
     try {
-      setExecuteMessagesLoading(true);
-      setExecuteMessagesError('');
+      client = await connectWithSigner(rpcURLs, dummyWallet);
+    } catch (error: any) {
+      setExecuteMessagesError('Failed to fetch messages');
+      setExecuteMessagesLoading(false);
+      return { messages: [] };
+    }
+    try {
       await client.simulate(
         dummyAddress,
         [
@@ -222,31 +248,38 @@ const useContracts = () => {
       messages,
     };
   };
+
   const getExecuteMessagesInputs = async ({
     rpcURLs,
     chainID,
     contractAddress,
     msg,
     msgName,
-    extractedMessages = [],
+    extractedMessages,
   }: {
     rpcURLs: string[];
     chainID: string;
     contractAddress: string;
     msg: { [key: string]: any };
     msgName: string;
-    extractedMessages?: string[];
+    extractedMessages: string[];
   }): Promise<{ messages: string[] }> => {
     const { dummyAddress, dummyWallet } = await getDummyWallet({ chainID });
-    let messages: string[] = [];
-    const client = await connectWithSigner(rpcURLs, dummyWallet);
+    setExecuteInputsLoading(true);
+    setExecuteInputsError('');
+    let client: SigningCosmWasmClient;
+    try {
+      client = await connectWithSigner(rpcURLs, dummyWallet);
+    } catch (error: any) {
+      setExecuteInputsError('Failed to fetch messages');
+      setExecuteInputsLoading(false);
+      return { messages: [] };
+    }
 
     const executeWithRetry = async (msg: {
       [key: string]: any;
     }): Promise<void> => {
       try {
-        setExecuteInputsLoading(true);
-        setExecuteInputsError('');
         await client.simulate(
           dummyAddress,
           [
@@ -263,45 +296,33 @@ const useContracts = () => {
           undefined
         );
 
-        // If execution is successful and no messages extracted, return
         return;
       } catch (error: any) {
         const errMsg = error.message;
-        if (errMsg?.includes('expected') || errMsg?.includes('missing field')) {
+        if (errMsg?.includes('expected') || errMsg?.includes('429')) {
+          setExecuteInputsError('Failed to fetch messages');
+          extractedMessages = [];
+        } else if (errMsg?.includes('Insufficient')) {
+          setExecuteInputsError('');
+          return;
+        } else {
           const newlyExtractedMessages = extractContractMessages(error.message);
+          setExecuteInputsError('');
           if (newlyExtractedMessages.length === 0) {
-            // If no messages extracted, return
             return;
           } else {
-            // Update extractedMessages with newly extracted fields
             extractedMessages.push(...newlyExtractedMessages);
-
-            // Update msg with extracted fields nested under the existing key
             for (const field of extractedMessages) {
               msg[msgName][field] = '1';
             }
-
-            // Recursively call executeWithRetry
             await executeWithRetry(msg);
           }
-        } else if (
-          errMsg?.includes('Insufficient') ||
-          errMsg?.includes('Error parsing')
-        ) {
-          return;
-        } else {
-          setExecuteInputsError('Failed to fetch messages');
-          throw error;
         }
-      } finally {
-        setExecuteInputsLoading(false);
       }
     };
 
-    // Initial call to executeWithRetry
     await executeWithRetry(msg);
-
-    // Return messages
+    setExecuteInputsLoading(false);
     return { messages: extractedMessages };
   };
 

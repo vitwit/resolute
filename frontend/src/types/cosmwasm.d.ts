@@ -172,10 +172,31 @@ interface QueryContractInputsI {
   messageInputsLoading: boolean;
   messageInputsError: string;
   messagesError: string;
+  contractAddress: string;
 }
 
 interface MessageInputField {
   name: string;
   value: string;
   open: boolean;
+}
+
+interface ExecuteContractInputsI {
+  messagesLoading: boolean;
+  executeMessages: string[];
+  handleSelectMessage: (msg: string) => Promise<void>;
+  selectedMessage: string;
+  executeMessageInputs: string[];
+  handleSelectedMessageInputChange: (value: string) => void;
+  executeInput: string;
+  handleExecuteInputChange: (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => void;
+  onExecute: (input: string) => void;
+  executionLoading: TxStatus;
+  formatJSON: () => void;
+  executeInputsLoading: boolean;
+  executeInputsError: string;
+  messagesError: string;
+  contractAddress: string;
 }

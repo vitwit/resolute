@@ -4,25 +4,6 @@ import { queryInputStyles } from '../styles';
 import { TxStatus } from '@/types/enums';
 import MessageInputFields from './MessageInputFields';
 
-interface ExecuteContractInputsI {
-  messagesLoading: boolean;
-  executeMessages: string[];
-  handleSelectMessage: (msg: string) => Promise<void>;
-  selectedMessage: string;
-  executeMessageInputs: string[];
-  handleSelectedMessageInputChange: (value: string) => void;
-  executeInput: string;
-  handleExecuteInputChange: (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => void;
-  onExecute: (input: string) => void;
-  executionLoading: TxStatus;
-  formatJSON: () => void;
-  executeInputsLoading: boolean;
-  executeInputsError: string;
-  messagesError: string;
-}
-
 const ExecuteContractInputs = (props: ExecuteContractInputsI) => {
   const {
     messagesLoading,
@@ -39,6 +20,7 @@ const ExecuteContractInputs = (props: ExecuteContractInputsI) => {
     executeInputsError,
     executeInputsLoading,
     messagesError,
+    contractAddress,
   } = props;
   // ------------------------------------------//
   // ------------------STATES------------------//
@@ -65,30 +47,19 @@ const ExecuteContractInputs = (props: ExecuteContractInputsI) => {
     setMessageInputFields(updatedFields);
   };
 
-  const executeContract = (index: number) => {
+  const executeContract = () => {
+    let messageInputs = {};
+    messageInputFields.forEach((field) => {
+      messageInputs = { ...messageInputs, [field.name]: field.value };
+    });
     const executionInput = JSON.stringify(
       {
-        [selectedMessage]: {
-          [messageInputFields[index].name]: messageInputFields[index].value,
-        },
+        [selectedMessage]: messageInputs,
       },
       undefined,
       2
     );
-    console.log(executionInput);
     onExecute(executionInput);
-  };
-
-  const expandField = (index: number) => {
-    const updatedFields = messageInputFields.map((field, i) => {
-      if (i === index) {
-        return { ...field, open: !field.open };
-      } else {
-        return { ...field, open: false };
-      }
-    });
-
-    setMessageInputFields(updatedFields);
   };
 
   // ------------------------------------------//
@@ -102,14 +73,18 @@ const ExecuteContractInputs = (props: ExecuteContractInputsI) => {
     setMessageInputFields(inputFields);
   }, [executeMessageInputs]);
 
+  useEffect(() => {
+    setMessageInputFields([]);
+  }, [contractAddress]);
+
   return (
     <div className="query-input-wrapper">
       <div className="space-y-4">
         <div className="font-light">
-          Suggested Messages:
+          Execution Messages:
           {messagesLoading ? (
-            <span className="italic ">
-              Fetching messages<span className="dots-flashing"></span>{' '}
+            <span className="italic">
+              {' '}Fetching messages<span className="dots-flashing"></span>{' '}
             </span>
           ) : executeMessages?.length ? null : (
             <span className=" italic"> No messages found</span>
@@ -127,7 +102,7 @@ const ExecuteContractInputs = (props: ExecuteContractInputsI) => {
           ))}
         </div>
       </div>
-      {executeMessageInputs?.length ? (
+      {isJSONInput && executeMessageInputs?.length ? (
         <div className="space-y-4">
           <div className="font-light">
             Suggested Inputs for{' '}
@@ -151,7 +126,7 @@ const ExecuteContractInputs = (props: ExecuteContractInputsI) => {
           {isJSONInput
             ? 'Enter execution message in JSON format:'
             : messageInputFields.length
-              ? 'Enter field value to execute:'
+              ? 'Enter fields to execute:'
               : 'Execution Input:'}
         </div>
         <div className="change-input-type-btn-wrapper">
@@ -251,8 +226,8 @@ const ExecuteContractInputs = (props: ExecuteContractInputsI) => {
           fields={messageInputFields}
           handleChange={handleInputMessageChange}
           onQuery={executeContract}
-          expandField={expandField}
           queryLoading={executionLoading}
+          isQuery={false}
         />
       )}
     </div>
