@@ -225,6 +225,7 @@ const walletSlice = createSlice({
     builder
       .addCase(establishWalletConnection.pending, (state) => {
         state.status = TxStatus.PENDING;
+        state.isLoading = true
       })
       .addCase(establishWalletConnection.fulfilled, (state, action) => {
         const networks = action.payload.chainInfos;
