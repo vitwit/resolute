@@ -38,7 +38,7 @@ const PageMultisig = ({ chainName }: { chainName: string }) => {
         walletAddress={address}
         accountSpecific={false}
       />
-      <DialogVerifyAccount address={address} chainID={chainID} />
+      <DialogVerifyAccount address={address} />
     </div>
   );
 };

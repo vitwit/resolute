@@ -1,18 +1,13 @@
 import Image from 'next/image';
 import React from 'react';
 import { useAppSelector } from '@/custom-hooks/StateHooks';
-import { TransfersTab } from './TransfersPage';
 
 const Summary = ({
   chainIDs,
   borderStyle,
-  tab,
-  handleTabChange,
 }: {
   chainIDs: string[];
   borderStyle: string;
-  tab: TransfersTab;
-  handleTabChange: () => void;
 }) => {
   const nameToChainIDs = useAppSelector((state) => state.wallet.nameToChainIDs);
   let chainName = 'All Networks';
@@ -59,14 +54,6 @@ const Summary = ({
           className="object-cover h-full w-full mr-[360px]"
         />
       </div>
-      {chainIDs.length === 1 && (
-        <button
-          className="secondary-custom-btn ml-auto"
-          onClick={handleTabChange}
-        >
-          {tab.to}
-        </button>
-      )}
     </div>
   );
 };

@@ -117,7 +117,7 @@ const MenuItem = ({
   authzSupport: boolean;
   metamaskSupport: boolean;
 }) => {
-  // Here when the url(pathName) includes validator, 
+  // Here when the url(pathName) includes validator,
   // we are setting the module to staking (to highlight the staking module)
   const path =
     pathName === 'overview'
@@ -167,8 +167,8 @@ const MenuItem = ({
           <div>
             <Image
               src={path === link ? activeIcon : icon}
-              height={45}
-              width={45}
+              height={link.includes('cosmwasm') ? 32 : 45}
+              width={link.includes('cosmwasm') ? 32 : 45}
               alt={itemName}
             />
           </div>

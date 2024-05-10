@@ -193,3 +193,7 @@ interface TxDepositInputs {
   feegranter: string;
   justification?: string;
 }
+
+interface VoteOptionNumber {
+  [key: string]: number;
+}

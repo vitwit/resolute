@@ -1,3 +1,5 @@
+import { VoteOptionNumber } from '@/types/gov';
+
 export const SUPPORTED_WALLETS = [
   {
     name: 'Keplr',
@@ -182,6 +184,14 @@ export const SIDENAV_MENU_ITEMS = [
     authzSupported: false,
     isMetaMaskSupports: false,
   },
+  {
+    name: 'CosmWasm Contracts',
+    icon: '/cosmwasm-icon.svg',
+    activeIcon: '/cosmwasm-icon-active.svg',
+    link: '/cosmwasm',
+    authzSupported: false,
+    isMetaMaskSupports: false,
+  },
 ];
 export const ALL_NETWORKS_ICON = '/all-networks-icon.png';
 export const CHANGE_NETWORK_ICON = '/switch-icon.svg';
@@ -277,6 +287,23 @@ export const COIN_GECKO_IDS: Record<string, string> = {
   ucmdx: 'cmdx',
 };
 
+export const MULTISEND_PLACEHOLDER = `Enter here\n\nExample:\ncosmos1hzq8fmhmd52fdhjprj2uj8ht3q0wxxc29th0l6, 35uatom\ncosmos1h0t3funxenm54ke2z9tfdtgrctex575ufpz3kw, 2506uatom`;
+
+export const voteOptionNumber: VoteOptionNumber = {
+  yes: 1,
+  no: 3,
+  abstain: 2,
+  veto: 4,
+};
+
+export const voteOptions: Record<string, string> = {
+  VOTE_OPTION_YES: 'yes',
+  VOTE_OPTION_ABSTAIN: 'abstain',
+  VOTE_OPTION_NO: 'no',
+  VOTE_OPTION_NO_WITH_VETO: 'veto',
+  VOTE_OPTION_UNSPECIFIED: '',
+};
+
 export const MULTIOPS_MSG_TYPES = {
   send: 'Send',
   delegate: 'Delegate',
@@ -285,12 +312,10 @@ export const MULTIOPS_MSG_TYPES = {
   vote: 'Vote',
   deposit: 'Deposit',
 };
-
 export const MULTIOPS_NOTE = `Note: Please ensure to allocate additional gas if the
 transaction involves multiple messages, and be sure to
 select the appropriate fee option in the signing
 wallet.`;
-
 export const MULTIOPS_SAMPLE_FILES = {
   delegate:
     'https://raw.githubusercontent.com/vitwit/resolute/a6a02cc1b74ee34604e6df35cfce7a46c39980ea/frontend/src/example-files/delegate.csv',
@@ -304,3 +329,5 @@ export const MULTIOPS_SAMPLE_FILES = {
   vote: 'https://raw.githubusercontent.com/vitwit/resolute/a6a02cc1b74ee34604e6df35cfce7a46c39980ea/frontend/src/example-files/vote.csv',
 };
 export const SWAP_ROUTE_ERROR = 'Failed to fetch routes.';
+export const DUMMY_WALLET_MNEMONIC =
+  process.env.NEXT_PUBLIC_DUMMY_WALLET_MNEMONIC || '';

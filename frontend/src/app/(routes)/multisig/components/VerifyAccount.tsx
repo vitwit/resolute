@@ -7,14 +7,12 @@ import Image from 'next/image';
 import React from 'react';
 
 interface VerifyAccountProps {
-  chainID: string;
   walletAddress: string;
 }
 
 const VerifyAccount: React.FC<VerifyAccountProps> = (props) => {
-  const { chainID, walletAddress } = props;
+  const { walletAddress } = props;
   const { verifyOwnership } = useVerifyAccount({
-    chainID,
     address: walletAddress,
   });
   const handleVerifyAccountEvent = () => {
