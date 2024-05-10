@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: ./frontent
+    ports:
+      - "3000:3000"
+    networks:
+      - my_network
+    environment:
+      - NEXT_PUBLIC_APP_API_URI=http://backend:1323
+
+  backend:
+    build:
+      context: ./server
+    environment:
+      - DATABASE_URL=postgresql://alice:password@database:5432/multisig
+    ports:
+      - "1323:1323"
+    depends_on:
+      - database
+    networks:
+      - my_network
+
+  database:
+    build:
+      context: ./db-docker
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=multisig
+      - POSTGRES_USER=alice
+      - POSTGRES_PASSWORD=password
+    networks:
+      - my_network
+
+networks:
+  my_network:
+    driver: bridge
