@@ -22,7 +22,7 @@ const ExecuteContractInputs = (props: ExecuteContractInputsI) => {
     messagesError,
     contractAddress,
   } = props;
-  
+
   // ------------------------------------------//
   // ------------------STATES------------------//
   // ------------------------------------------//
@@ -85,7 +85,8 @@ const ExecuteContractInputs = (props: ExecuteContractInputsI) => {
           Execution Messages:
           {messagesLoading ? (
             <span className="italic">
-              {' '}Fetching messages<span className="dots-flashing"></span>{' '}
+              {' '}
+              Fetching messages<span className="dots-flashing"></span>{' '}
             </span>
           ) : executeMessages?.length ? null : (
             <span className=" italic"> No messages found</span>
@@ -96,7 +97,7 @@ const ExecuteContractInputs = (props: ExecuteContractInputsI) => {
             <div
               onClick={() => handleSelectMessage(msg)}
               key={msg}
-              className={`query-shortcut-msg ${!isJSONInput && selectedMessage === msg ? 'primary-gradient' : ''}`}
+              className={`query-shortcut-msg ${selectedMessage === msg ? 'primary-gradient' : ''}`}
             >
               {msg}
             </div>

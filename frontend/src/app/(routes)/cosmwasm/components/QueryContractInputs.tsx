@@ -96,7 +96,7 @@ const QueryContractInputs = (props: QueryContractInputsI) => {
             <div
               onClick={() => handleSelectMessage(msg)}
               key={msg}
-              className={`query-shortcut-msg ${!isJSONInput && selectedMessage === msg ? 'primary-gradient' : ''}`}
+              className={`query-shortcut-msg ${selectedMessage === msg ? 'primary-gradient' : ''}`}
             >
               {msg}
             </div>
