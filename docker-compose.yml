@@ -22,6 +22,11 @@ services:
       - database
     networks:
       - my_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://database:5432", "||", "exit", "1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   database:
     build:
@@ -34,6 +39,11 @@ services:
       - POSTGRES_PASSWORD=password
     networks:
       - my_network
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "alice", "-d", "multisig", "-h", "localhost"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
 networks:
   my_network:
