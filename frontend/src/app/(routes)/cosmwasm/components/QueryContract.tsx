@@ -61,6 +61,8 @@ const QueryContract = (props: QueryContractI) => {
       address,
       baseURLs,
       queryMsg: { [msg]: {} },
+      msgName: msg,
+      extractedMessages: [],
     });
     setContractMessageInputs(messages);
   };
@@ -129,6 +131,8 @@ const QueryContract = (props: QueryContractI) => {
   // ---------------SIDE EFFECT----------------//
   // ------------------------------------------//
   useEffect(() => {
+    setSelectedMessage('');
+    setContractMessageInputs([]);
     const fetchMessages = async () => {
       const { messages } = await getContractMessages({ address, baseURLs });
       setContractMessages(messages);
@@ -153,8 +157,10 @@ const QueryContract = (props: QueryContractI) => {
         messageInputsLoading={messageInputsLoading}
         messageInputsError={messageInputsError}
         messagesError={messagesError}
+        contractAddress={address}
       />
       <div className="query-output-box overflow-y-scroll">
+        <div className="text-[16px] font-light">Query Output:</div>
         <div className="qeury-output">
           <pre>{JSON.stringify(queryOutput, undefined, 2)}</pre>
         </div>

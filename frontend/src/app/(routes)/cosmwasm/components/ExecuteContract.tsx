@@ -1,14 +1,13 @@
 import useContracts from '@/custom-hooks/useContracts';
-import { CircularProgress, SelectChangeEvent, TextField } from '@mui/material';
-import React, { useState } from 'react';
+import { SelectChangeEvent } from '@mui/material';
+import React, { useEffect, useState } from 'react';
 import AttachFunds from './AttachFunds';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
-import { TxStatus } from '@/types/enums';
 import { executeContract } from '@/store/features/cosmwasm/cosmwasmSlice';
 import { getFormattedFundsList } from '@/utils/util';
-import { queryInputStyles } from '../styles';
 import { setError } from '@/store/features/common/commonSlice';
+import ExecuteContractInputs from './ExecuteContractInputs';
 
 interface ExecuteContractI {
   address: string;
@@ -27,7 +26,15 @@ const ExecuteContract = (props: ExecuteContractI) => {
   // ---------------DEPENDENCIES---------------//
   // ------------------------------------------//
   const dispatch = useAppDispatch();
-  const { getExecutionOutput } = useContracts();
+  const {
+    getExecutionOutput,
+    getExecuteMessages,
+    executeMessagesError,
+    executeMessagesLoading,
+    getExecuteMessagesInputs,
+    executeInputsError,
+    executeInputsLoading,
+  } = useContracts();
   const { getDenomInfo } = useGetChainInfo();
   const { decimals, minimalDenom } = getDenomInfo(chainID);
 
@@ -44,6 +51,11 @@ const ExecuteContract = (props: ExecuteContractI) => {
     },
   ]);
   const [fundsInput, setFundsInput] = useState('');
+  const [executeMessages, setExecuteMessages] = useState<string[]>([]);
+  const [selectedMessage, setSelectedMessage] = useState('');
+  const [executeMessageInputs, setExecuteMessageInputs] = useState<string[]>(
+    []
+  );
 
   const txExecuteLoading = useAppSelector(
     (state) => state.cosmwasm.chains?.[chainID].txExecute.status
@@ -52,7 +64,7 @@ const ExecuteContract = (props: ExecuteContractI) => {
   // ------------------------------------------------//
   // -----------------CHANGE HANDLERS----------------//
   // ------------------------------------------------//
-  const handleQueryChange = (
+  const handleExecuteInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     setExecuteInput(e.target.value);
@@ -60,6 +72,34 @@ const ExecuteContract = (props: ExecuteContractI) => {
 
   const handleAttachFundTypeChange = (event: SelectChangeEvent<string>) => {
     setAttachFundType(event.target.value);
+  };
+
+  const handleSelectMessage = async (msg: string) => {
+    setExecuteInput(`{\n\t"${msg}": {}\n}`);
+    setSelectedMessage(msg);
+    const { messages } = await getExecuteMessagesInputs({
+      chainID,
+      contractAddress: address,
+      rpcURLs,
+      msg: { [msg]: {} },
+      msgName: msg,
+      extractedMessages: [],
+    });
+    setExecuteMessageInputs(messages);
+  };
+
+  const handleSelectedMessageInputChange = (value: string) => {
+    setExecuteInput(
+      JSON.stringify(
+        {
+          [selectedMessage]: {
+            [value]: '',
+          },
+        },
+        undefined,
+        2
+      )
+    );
   };
 
   // ----------------------------------------------------//
@@ -111,7 +151,16 @@ const ExecuteContract = (props: ExecuteContractI) => {
   // ------------------------------------------//
   // ---------------TRANSACTION----------------//
   // ------------------------------------------//
-  const onExecute = async () => {
+  const onExecute = async (input: string) => {
+    if (!input?.length) {
+      dispatch(
+        setError({
+          type: 'error',
+          message: 'Please enter execution message',
+        })
+      );
+      return;
+    }
     if (!formatExecutionMessage()) return;
     if (attachFundType === 'json' && !validateFunds()) return;
 
@@ -125,7 +174,7 @@ const ExecuteContract = (props: ExecuteContractI) => {
       executeContract({
         chainID,
         contractAddress: address,
-        msgs: executeInput,
+        msgs: input,
         rpcURLs,
         walletAddress,
         funds: attachedFunds,
@@ -135,44 +184,43 @@ const ExecuteContract = (props: ExecuteContractI) => {
     );
   };
 
+  // ------------------------------------------//
+  // ---------------SIDE EFFECT----------------//
+  // ------------------------------------------//
+  useEffect(() => {
+    setSelectedMessage('');
+    setExecuteMessageInputs([]);
+    const fetchMessages = async () => {
+      const { messages } = await getExecuteMessages({
+        chainID,
+        contractAddress: address,
+        rpcURLs,
+      });
+      setExecuteMessages(messages);
+    };
+    fetchMessages();
+  }, [address]);
+
   return (
-    <div className="flex gap-10">
-      <div className="execute-field-wrapper">
-        <div className="execute-input-field">
-          <TextField
-            value={executeInput}
-            name="executeInputsField"
-            onChange={handleQueryChange}
-            fullWidth
-            multiline
-            rows={7}
-            InputProps={{
-              sx: {
-                input: {
-                  color: 'white',
-                  fontSize: '14px',
-                  padding: 2,
-                },
-              },
-            }}
-            sx={queryInputStyles}
-          />
-          <button onClick={onExecute} className="primary-gradient execute-btn">
-            {txExecuteLoading === TxStatus.PENDING ? (
-              <CircularProgress size={18} sx={{ color: 'white' }} />
-            ) : (
-              'Execute'
-            )}
-          </button>
-          <button
-            onClick={formatExecutionMessage}
-            className="format-json-btn !bg-[#232034]"
-          >
-            Format JSON
-          </button>
-        </div>
-      </div>
-      <div className="execute-output-box">
+    <div className="grid grid-cols-2 gap-10">
+      <ExecuteContractInputs
+        executeInput={executeInput}
+        executeInputsError={executeInputsError}
+        executeInputsLoading={executeInputsLoading}
+        executeMessageInputs={executeMessageInputs}
+        executeMessages={executeMessages}
+        executionLoading={txExecuteLoading}
+        formatJSON={formatExecutionMessage}
+        handleExecuteInputChange={handleExecuteInputChange}
+        handleSelectMessage={handleSelectMessage}
+        handleSelectedMessageInputChange={handleSelectedMessageInputChange}
+        messagesError={executeMessagesError}
+        messagesLoading={executeMessagesLoading}
+        onExecute={onExecute}
+        selectedMessage={selectedMessage}
+        contractAddress={address}
+      />
+      <div className="execute-output-box !p-0">
         <div className="attach-funds-header">
           <div className="text-[18px] font-bold">Attach Funds</div>
           <div className="attach-funds-description">

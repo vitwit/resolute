@@ -10,6 +10,7 @@ import chainDenoms from '@/utils/chainDenoms.json';
 import useGetChainInfo from './useGetChainInfo';
 import { Event } from 'cosmjs-types/tendermint/abci/types';
 import { toUtf8 } from '@cosmjs/encoding';
+import { SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate';
 
 declare let window: WalletWindow;
 
@@ -59,6 +60,10 @@ const useContracts = () => {
   const [messagesError, setMessagesError] = useState('');
   const [messageInputsLoading, setMessageInputsLoading] = useState(false);
   const [messageInputsError, setMessageInputsError] = useState('');
+  const [executeMessagesLoading, setExecuteMessagesLoading] = useState(false);
+  const [executeMessagesError, setExecuteMessagesError] = useState('');
+  const [executeInputsLoading, setExecuteInputsLoading] = useState(false);
+  const [executeInputsError, setExecuteInputsError] = useState('');
 
   const getContractInfo = async ({
     address,
@@ -124,36 +129,51 @@ const useContracts = () => {
     address,
     baseURLs,
     queryMsg,
+    extractedMessages,
+    msgName,
   }: {
     address: string;
     baseURLs: string[];
     queryMsg: any;
+    msgName: string;
+    extractedMessages: string[];
   }) => {
-    let messages: string[] = [];
-    try {
-      setMessageInputsLoading(true);
-      setMessageInputsError('');
-      await queryContract(baseURLs, address, btoa(JSON.stringify(queryMsg)));
-      return {
-        messages: [],
-      };
-      /* eslint-disable @typescript-eslint/no-explicit-any */
-    } catch (error: any) {
-      const errMsg = error.message;
-      if (
-        errMsg?.includes('expected') ||
-        errMsg?.includes('missing field')
-      ) {
-        messages = extractContractMessages(error.message);
-      } else {
-        messages = [];
-        setMessageInputsError('Failed to fetch message inputs');
+    setMessageInputsLoading(true);
+    setMessageInputsError('');
+
+    const queryWithRetry = async (msg: {
+      [key: string]: any;
+    }): Promise<void> => {
+      try {
+        await queryContract(baseURLs, address, btoa(JSON.stringify(queryMsg)));
+        return;
+      } catch (error: any) {
+        const errMsg = error.message;
+        if (errMsg?.includes('Failed to query contract')) {
+          setMessageInputsError('Failed to fetch messages');
+          extractedMessages = [];
+        } else if (errMsg?.includes('expected')) {
+          setMessageInputsError('Failed to fetch messages');
+          extractedMessages = [];
+        } else {
+          const newlyExtractedMessages = extractContractMessages(error.message);
+          if (newlyExtractedMessages.length === 0) {
+            return;
+          } else {
+            extractedMessages.push(...newlyExtractedMessages);
+            for (const field of extractedMessages) {
+              msg[msgName][field] = '1';
+            }
+            await queryWithRetry(msg);
+          }
+        }
       }
-    } finally {
-      setMessageInputsLoading(false);
-    }
+    };
+
+    await queryWithRetry(queryMsg);
+    setMessageInputsLoading(false);
     return {
-      messages,
+      messages: extractedMessages,
     };
   };
 
@@ -183,7 +203,17 @@ const useContracts = () => {
     contractAddress: string;
   }) => {
     const { dummyAddress, dummyWallet } = await getDummyWallet({ chainID });
-    const client = await connectWithSigner(rpcURLs, dummyWallet);
+    let messages: string[] = [];
+    setExecuteMessagesLoading(true);
+    setExecuteMessagesError('');
+    let client: SigningCosmWasmClient;
+    try {
+      client = await connectWithSigner(rpcURLs, dummyWallet);
+    } catch (error: any) {
+      setExecuteMessagesError('Failed to fetch messages');
+      setExecuteMessagesLoading(false);
+      return { messages: [] };
+    }
     try {
       await client.simulate(
         dummyAddress,
@@ -200,9 +230,100 @@ const useContracts = () => {
         ],
         undefined
       );
+      return {
+        messages: [],
+      };
     } catch (error: any) {
-      console.log(error);
+      const errMsg = error.message;
+      if (errMsg?.includes('expected') || errMsg?.includes('missing field')) {
+        messages = extractContractMessages(error.message);
+      } else {
+        messages = [];
+        setExecuteMessagesError('Failed to fetch messages');
+      }
+    } finally {
+      setExecuteMessagesLoading(false);
     }
+    return {
+      messages,
+    };
+  };
+
+  const getExecuteMessagesInputs = async ({
+    rpcURLs,
+    chainID,
+    contractAddress,
+    msg,
+    msgName,
+    extractedMessages,
+  }: {
+    rpcURLs: string[];
+    chainID: string;
+    contractAddress: string;
+    msg: { [key: string]: any };
+    msgName: string;
+    extractedMessages: string[];
+  }): Promise<{ messages: string[] }> => {
+    const { dummyAddress, dummyWallet } = await getDummyWallet({ chainID });
+    setExecuteInputsLoading(true);
+    setExecuteInputsError('');
+    let client: SigningCosmWasmClient;
+    try {
+      client = await connectWithSigner(rpcURLs, dummyWallet);
+    } catch (error: any) {
+      setExecuteInputsError('Failed to fetch messages');
+      setExecuteInputsLoading(false);
+      return { messages: [] };
+    }
+
+    const executeWithRetry = async (msg: {
+      [key: string]: any;
+    }): Promise<void> => {
+      try {
+        await client.simulate(
+          dummyAddress,
+          [
+            {
+              typeUrl: '/cosmwasm.wasm.v1.MsgExecuteContract',
+              value: {
+                sender: dummyAddress,
+                contract: contractAddress,
+                msg: Buffer.from(JSON.stringify(msg)),
+                funds: [],
+              },
+            },
+          ],
+          undefined
+        );
+
+        return;
+      } catch (error: any) {
+        const errMsg = error.message;
+        if (errMsg?.includes('expected') || errMsg?.includes('429')) {
+          setExecuteInputsError('Failed to fetch messages');
+          extractedMessages = [];
+        } else if (errMsg?.includes('Insufficient')) {
+          setExecuteInputsError('');
+          return;
+        } else {
+          const newlyExtractedMessages = extractContractMessages(error.message);
+          setExecuteInputsError('');
+          if (newlyExtractedMessages.length === 0) {
+            return;
+          } else {
+            extractedMessages.push(...newlyExtractedMessages);
+            for (const field of extractedMessages) {
+              msg[msgName][field] = '1';
+            }
+            await executeWithRetry(msg);
+          }
+        }
+      }
+    };
+
+    await executeWithRetry(msg);
+    setExecuteInputsLoading(false);
+    return { messages: extractedMessages };
   };
 
   const getExecutionOutput = async ({
@@ -378,9 +499,14 @@ const useContracts = () => {
     uploadContract,
     instantiateContract,
     getContractMessageInputs,
+    getExecuteMessagesInputs,
     messageInputsLoading,
     messageInputsError,
     messagesError,
+    executeMessagesError,
+    executeMessagesLoading,
+    executeInputsError,
+    executeInputsLoading,
   };
 };
 
