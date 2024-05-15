@@ -194,7 +194,7 @@ export const networks: Network[] = [
     keplrExperimental: false,
     leapExperimental: false,
     isTestnet: false,
-    govV1: false,
+    govV1: true,
     explorerTxHashEndpoint: 'https://www.mintscan.io/cosmos/txs/',
     config: {
       chainId: 'cosmoshub-4',
