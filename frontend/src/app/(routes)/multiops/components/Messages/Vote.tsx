@@ -228,7 +228,7 @@ const Vote: React.FC<VoteProps> = (props) => {
         </div>
       </div>
       <div className="space-y-2 mt-[14px]">
-        <div className="text-[14px] font-extralight">Select Proposal</div>
+        <div className="text-[14px] font-extralight">Select Vote Option</div>
         <Controller
           name="voteOption"
           control={control}
@@ -252,7 +252,7 @@ const Vote: React.FC<VoteProps> = (props) => {
                   className="bg-[#FFFFFF0D]"
                   {...params}
                   required
-                  placeholder="Select proposal"
+                  placeholder="Select vote option"
                   error={!!error}
                   sx={autoCompleteTextFieldStyles}
                 />
