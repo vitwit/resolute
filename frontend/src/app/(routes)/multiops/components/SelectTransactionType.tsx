@@ -26,7 +26,7 @@ const SelectTransactionType: React.FC<SelectTransactionTypeProps> = (props) => {
             <div className="custom-radio-button-checked"></div>
           ) : null}
         </button>
-        <div className="text-[14px] font-light">File Upload</div>
+        <div className="text-[14px] font-light">Upload File</div>
       </div>
     </div>
   );
