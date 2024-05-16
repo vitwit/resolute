@@ -9,6 +9,7 @@ import { CircularProgress, Tooltip } from '@mui/material';
 import { RootState } from '@/store/store';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import {
+  getDepositParams,
   getGovTallyParams,
   getProposal,
   getProposalTally,
@@ -25,6 +26,7 @@ import { deepPurple } from '@mui/material/colors';
 import DepositProposalInfo from './DepositProposalInfo';
 import DepositProposalDetails from './DepositProposalDetails';
 import { formatCoin } from '@/utils/util';
+import { parseBalance } from '@/utils/denom';
 
 type handleCloseOverview = () => void;
 
@@ -42,11 +44,17 @@ const RightOverview = ({
   handleProposalSelected: (value: boolean) => void;
 }) => {
   const dispatch = useAppDispatch();
+
+  const [depositRequired, setDepositRequired] = useState(0);
+
   const proposalInfo = useAppSelector(
     (state: RootState) => state.gov.proposalDetails
   );
   const networkLogo = useAppSelector(
     (state: RootState) => state.wallet.networks[chainID]?.network.logos.menu
+  );
+  const depositParams = useAppSelector(
+    (state: RootState) => state.gov.chains[chainID]?.depositParams.params
   );
 
   const networks = useAppSelector((state: RootState) => state.wallet.networks);
@@ -57,8 +65,7 @@ const RightOverview = ({
 
   const isStatusVoting =
     get(proposalInfo, 'status') === 'PROPOSAL_STATUS_VOTING_PERIOD';
-  const { getChainInfo, isFeeAvailable } = useGetChainInfo();
-  const isFeeEnough = isFeeAvailable(chainID);
+  const { getChainInfo } = useGetChainInfo();
   const { chainName } = getChainInfo(chainID);
 
   useEffect(() => {
@@ -92,13 +99,42 @@ const RightOverview = ({
         baseURLs: chainInfo?.config.restURIs,
       })
     );
+
     dispatch(
       getPoolInfo({
         baseURLs: chainInfo.config.restURIs,
         chainID: chainID,
       })
     );
+
+    dispatch(
+      getDepositParams({
+        baseURLs: chainInfo?.config.restURIs,
+        baseURL: chainInfo?.config.rest,
+        chainID: chainID,
+      })
+    );
   }, [proposalId]);
+
+  useEffect(() => {
+    if (
+      depositParams?.min_deposit?.length &&
+      proposalInfo?.total_deposit?.length
+    ) {
+      const min_deposit = parseBalance(
+        depositParams.min_deposit,
+        currency.coinDecimals,
+        currency.coinMinimalDenom
+      );
+      const total_deposit = parseBalance(
+        proposalInfo.total_deposit,
+        currency.coinDecimals,
+        currency.coinMinimalDenom
+      );
+      const deposit_required = min_deposit - total_deposit;
+      setDepositRequired(deposit_required);
+    }
+  }, [depositParams, proposalInfo]);
 
   const poolInfo = useAppSelector(
     (state: RootState) => state.staking.chains[chainID]?.pool
@@ -182,7 +218,6 @@ const RightOverview = ({
   const proposalSubmittedOn = getTimeDifference(
     get(proposalInfo, 'submit_time')
   );
-  const [depositRequired] = useState(0);
   const nameToChainIDs = useAppSelector(
     (state: RootState) => state.wallet.nameToChainIDs
   );
@@ -277,7 +312,7 @@ const RightOverview = ({
                         )}
                       </div>
                     </div>
-                    <div className="font-bold text-base text-white max-w-[450px] truncate">
+                    <div className="font-bold text-base text-white max-w-[450px] whitespace-normal break-words">
                       {get(
                         proposalInfo,
                         'content.title',
@@ -291,20 +326,15 @@ const RightOverview = ({
                     </div>
                   </div>
 
-                  <div className="space-y-6">
-                    <div className="proposal-text-normal">
+                  <div className="space-y-6 max-w-[450px]">
+                    <div className="proposal-text-normal whitespace-normal break-words">
                       {truncatedDescription}
                       {isDescriptionTruncated && '...'}
                     </div>
                     <div className="flex space-x-6">
                       <button
-                        className={
-                          isFeeEnough
-                            ? 'primary-custom-btn'
-                            : 'primary-custom-btn-disabled'
-                        }
+                        className="primary-custom-btn"
                         onClick={() => {
-                          if (!isFeeEnough) return;
                           if (isStatusVoting) {
                             setIsVotePopupOpen(true);
                           } else {
