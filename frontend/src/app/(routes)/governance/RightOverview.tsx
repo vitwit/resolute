@@ -277,7 +277,7 @@ const RightOverview = ({
                         )}
                       </div>
                     </div>
-                    <div className="font-bold text-base text-white">
+                    <div className="font-bold text-base text-white max-w-[450px] truncate">
                       {get(
                         proposalInfo,
                         'content.title',
