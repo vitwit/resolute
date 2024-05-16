@@ -73,6 +73,7 @@ const GovPage = ({ chainIDs }: { chainIDs: string[] }) => {
           currentOverviewId={currentOverviewId}
           handleProposalSelected={handleProposalSelected}
           isSelected={isSelected}
+          overviewPropChainID={chainID}
         />
       </div>
       {(isOverviewOpen && (

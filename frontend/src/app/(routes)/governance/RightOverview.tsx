@@ -114,7 +114,7 @@ const RightOverview = ({
         chainID: chainID,
       })
     );
-  }, [proposalId]);
+  }, [proposalId, chainID]);
 
   useEffect(() => {
     if (
