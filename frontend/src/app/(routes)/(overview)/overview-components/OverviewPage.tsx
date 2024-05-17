@@ -77,7 +77,7 @@ const OverviewPage = ({ chainIDs }: { chainIDs: string[] }) => {
         })
       );
     }
-  }, [chainIDs]);
+  }, []);
 
   return (
     <div className="w-full flex justify-between">

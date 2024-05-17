@@ -58,7 +58,7 @@ const useInitBalances = ({ chainIDs }: { chainIDs: string[] }) => {
         })
       );
     }
-  }, [chainIDs]);
+  }, []);
 };
 
 export default useInitBalances;

@@ -26,7 +26,7 @@ const CustomSubmitButton = ({
         <button disabled={pendingStatus || (isIBC && isMetaMask)}
           type="submit" className={buttonStyle}>
           {pendingStatus ? (
-            <CircularProgress size={circularProgressSize} />
+            <CircularProgress size={circularProgressSize} sx={{color: 'white'}} />
           ) : (
             <>{buttonContent}</>
           )}

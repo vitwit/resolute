@@ -14,6 +14,7 @@ import React, { useState } from 'react';
 import { CircularProgress } from '@mui/material';
 import { ERR_UNKNOWN } from '@/utils/errors';
 import useVerifyAccount from '@/custom-hooks/useVerifyAccount';
+import { COSMOS_CHAIN_ID } from '@/utils/constants';
 
 interface SignTxnProps {
   address: string;
@@ -32,7 +33,6 @@ const SignTxn: React.FC<SignTxnProps> = (props) => {
   const { getChainInfo } = useGetChainInfo();
   const { rpc, address: walletAddress } = getChainInfo(chainID);
   const { isAccountVerified } = useVerifyAccount({
-    chainID,
     address: walletAddress,
   });
 
@@ -91,7 +91,7 @@ const SignTxn: React.FC<SignTxnProps> = (props) => {
         signature: toBase64(signatures[0]),
       };
 
-      const authToken = getAuthToken(chainID);
+      const authToken = getAuthToken(COSMOS_CHAIN_ID);
       dispatch(
         signTx({
           data: payload,

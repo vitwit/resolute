@@ -11,18 +11,9 @@ import useGetChainInfo from '../../../../custom-hooks/useGetChainInfo';
 import { multiTxns } from '@/store/features/bank/bankSlice';
 import { TxStatus } from '@/types/enums';
 import { setError } from '@/store/features/common/commonSlice';
-import { TransfersTab } from './TransfersPage';
 import NotSupported from '@/components/illustrations/NotSupported';
 
-const MultiTransfer = ({
-  chainID,
-  tab,
-  handleTabChange,
-}: {
-  chainID: string;
-  tab: TransfersTab;
-  handleTabChange: () => void;
-}) => {
+const MultiTransfer = ({ chainID }: { chainID: string }) => {
   const [msgs, setMsgs] = useState<Msg[]>([]);
   const txPendingStatus = useAppSelector((state) => state.bank.tx.status);
   const isAuthzMode = useAppSelector((state) => state.authz.authzModeEnabled);
@@ -98,8 +89,6 @@ const MultiTransfer = ({
         <Summary
           chainIDs={[chainID]}
           borderStyle="rounded-[16px_16px_0px_0px]"
-          tab={tab}
-          handleTabChange={handleTabChange}
         />
       </div>
       {isAuthzMode ? (
@@ -134,7 +123,7 @@ const MultiTransfer = ({
               </div>
               <CustomSubmitButton
                 pendingStatus={txPendingStatus === TxStatus.PENDING}
-                circularProgressSize={12}
+                circularProgressSize={20}
                 buttonStyle="primary-custom-btn w-[144px]"
                 buttonContent="Send"
               />

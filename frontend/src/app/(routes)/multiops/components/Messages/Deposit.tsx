@@ -132,7 +132,7 @@ const Deposit: React.FC<DepositProps> = (props) => {
           name="proposalID"
           control={control}
           defaultValue={null}
-          rules={{ required: 'Validator is required' }}
+          rules={{ required: 'Proposal is required' }}
           render={({ field: { onChange, value }, fieldState: { error } }) => (
             <Autocomplete
               disablePortal

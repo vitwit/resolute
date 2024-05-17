@@ -119,72 +119,92 @@ export const txBroadcastTimeoutMs = 60_000;
 export const txBroadcastPollIntervalMs = 3_000;
 export const TRACK_IBC_TX_TIME_INTERVAL = 15000;
 
-export const SIDENAV_MENU_ITEMS = [
-  {
-    name: 'Overview',
-    icon: '/overview-icon.svg',
-    activeIcon: '/overview-icon-active.svg',
-    link: '/',
-    authzSupported: true,
-    isMetaMaskSupports: true,
-  },
-  {
-    name: 'Transfers',
-    icon: '/transfers-icon.svg',
-    activeIcon: '/transfers-icon-active.svg',
-    link: '/transfers',
-    authzSupported: true,
-    isMetaMaskSupports: true,
-  },
-  {
-    name: 'Governance',
-    icon: '/gov-icon.svg',
-    activeIcon: '/gov-icon-active.svg',
-    link: '/governance',
-    authzSupported: true,
-    isMetaMaskSupports: true,
-  },
-  {
-    name: 'Staking',
-    icon: '/staking-icon.svg',
-    activeIcon: '/staking-icon-active.svg',
-    link: '/staking',
-    authzSupported: true,
-    isMetaMaskSupports: true,
-  },
-  {
-    name: 'Authz',
-    icon: '/authz-icon.svg',
-    activeIcon: '/authz-icon-active.svg',
-    link: '/authz',
-    authzSupported: false,
-    isMetaMaskSupports: false,
-  },
-  {
-    name: 'Multisig',
-    icon: '/multisig-icon.svg',
-    activeIcon: '/multisig-icon-active.svg',
-    link: '/multisig',
-    authzSupported: false,
-    isMetaMaskSupports: false,
-  },
-  {
-    name: 'Feegrant',
-    icon: '/feegrant-icon.svg',
-    activeIcon: '/feegrant-icon-active.svg',
-    link: '/feegrant',
-    authzSupported: false,
-    isMetaMaskSupports: false,
-  },
-  {
-    name: 'Multiops',
-    icon: '/multiops-icon.svg',
-    activeIcon: '/multiops-icon-active.svg',
-    link: '/multiops',
-    authzSupported: false,
-    isMetaMaskSupports: false,
-  },
-];
+export const SIDENAV_MENU_ITEMS = {
+  defaultOptions: [
+    {
+      name: 'Overview',
+      icon: '/overview-icon.svg',
+      activeIcon: '/overview-icon-active.svg',
+      link: '/',
+      authzSupported: true,
+      isMetaMaskSupports: true,
+    },
+    {
+      name: 'Transfers',
+      icon: '/transfers-icon.svg',
+      activeIcon: '/transfers-icon-active.svg',
+      link: '/transfers',
+      authzSupported: true,
+      isMetaMaskSupports: true,
+    },
+    {
+      name: 'Governance',
+      icon: '/gov-icon.svg',
+      activeIcon: '/gov-icon-active.svg',
+      link: '/governance',
+      authzSupported: true,
+      isMetaMaskSupports: true,
+    },
+    {
+      name: 'Staking',
+      icon: '/staking-icon.svg',
+      activeIcon: '/staking-icon-active.svg',
+      link: '/staking',
+      authzSupported: true,
+      isMetaMaskSupports: true,
+    },
+    {
+      name: 'Authz',
+      icon: '/authz-icon.svg',
+      activeIcon: '/authz-icon-active.svg',
+      link: '/authz',
+      authzSupported: false,
+      isMetaMaskSupports: false,
+    },
+    {
+      name: 'Multisig',
+      icon: '/multisig-icon.svg',
+      activeIcon: '/multisig-icon-active.svg',
+      link: '/multisig',
+      authzSupported: false,
+      isMetaMaskSupports: false,
+    },
+    {
+      name: 'Feegrant',
+      icon: '/feegrant-icon.svg',
+      activeIcon: '/feegrant-icon-active.svg',
+      link: '/feegrant',
+      authzSupported: false,
+      isMetaMaskSupports: false,
+    },
+  ],
+  moreOptions: [
+    {
+      name: 'Multiops',
+      icon: '/multiops-icon.svg',
+      activeIcon: '/multiops-icon-active.svg',
+      link: '/multiops',
+      authzSupported: false,
+      isMetaMaskSupports: false,
+    },
+    {
+      name: 'CosmWasm',
+      icon: '/cosmwasm-icon.svg',
+      activeIcon: '/cosmwasm-icon-active.svg',
+      link: '/cosmwasm',
+      authzSupported: false,
+      isMetaMaskSupports: false,
+    },
+    {
+      name: 'History',
+      icon: '/history-icon.svg',
+      activeIcon: '/history-icon.svg',
+      link: '/history',
+      authzSupported: true,
+      isMetaMaskSupports: true,
+    },
+  ],
+};
 export const ALL_NETWORKS_ICON = '/all-networks-icon.png';
 export const CHANGE_NETWORK_ICON = '/switch-icon.svg';
 export const TXN_SUCCESS_ICON = '/transaction-success-icon.svg';
@@ -279,6 +299,8 @@ export const COIN_GECKO_IDS: Record<string, string> = {
   ucmdx: 'cmdx',
 };
 
+export const MULTISEND_PLACEHOLDER = `Enter here\n\nExample:\ncosmos1hzq8fmhmd52fdhjprj2uj8ht3q0wxxc29th0l6, 35uatom\ncosmos1h0t3funxenm54ke2z9tfdtgrctex575ufpz3kw, 2506uatom`;
+
 export const voteOptionNumber: VoteOptionNumber = {
   yes: 1,
   no: 3,
@@ -302,12 +324,10 @@ export const MULTIOPS_MSG_TYPES = {
   vote: 'Vote',
   deposit: 'Deposit',
 };
-
 export const MULTIOPS_NOTE = `Note: Please ensure to allocate additional gas if the
 transaction involves multiple messages, and be sure to
 select the appropriate fee option in the signing
 wallet.`;
-
 export const MULTIOPS_SAMPLE_FILES = {
   delegate:
     'https://raw.githubusercontent.com/vitwit/resolute/a6a02cc1b74ee34604e6df35cfce7a46c39980ea/frontend/src/example-files/delegate.csv',
@@ -321,3 +341,5 @@ export const MULTIOPS_SAMPLE_FILES = {
   vote: 'https://raw.githubusercontent.com/vitwit/resolute/a6a02cc1b74ee34604e6df35cfce7a46c39980ea/frontend/src/example-files/vote.csv',
 };
 export const SWAP_ROUTE_ERROR = 'Failed to fetch routes.';
+export const DUMMY_WALLET_MNEMONIC =
+  process.env.NEXT_PUBLIC_DUMMY_WALLET_MNEMONIC || '';

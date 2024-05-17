@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import MainTopNav from '@/components/MainTopNav';
 import TransfersHistory from './TransfersHistory';
-import { TRANSFERS_TAB2 } from '../../../../utils/constants';
-import { TRANSFERS_TAB1 } from '@/utils/constants';
 import SingleTransfer from './SingleTransfer';
 import MultiTransfer from './MultiTransfer';
 import useInitBalances from '@/custom-hooks/useInitBalances';
@@ -25,31 +23,42 @@ const TransfersPage = ({ chainIDs }: { chainIDs: string[] }) => {
     AuthzSkipIBC: true,
   });
 
-  const [tab, setTab] = useState<TransfersTab>(TRANSFERS_TAB1);
   const isAuthzMode = useAppSelector((state) => state.authz.authzModeEnabled);
-  const changeTab = (tab: TransfersTab) => {
-    if (tab === TRANSFERS_TAB1) setTab(TRANSFERS_TAB2);
-    else setTab(TRANSFERS_TAB1);
-  };
+  const isFeegrantMode = useAppSelector(
+    (state) => state.feegrant.feegrantModeEnabled
+  );
 
   useInitBalances({ chainIDs });
 
-  const handleTabChange = () => {
-    if (chainIDs.length > 1) {
+  const tabs = ['Send', 'Multi Send', 'Swap'];
+  const [selectedTab, setSelectedTab] = useState('Send');
+
+  const handleTabchange = (tab: string) => {
+    if (tab.toLowerCase() === 'multi send' && chainIDs.length > 1) {
       dispatch(
         setError({
           type: 'error',
           message: 'Multi transfer is not available for All networks!',
         })
       );
-
-      return;
+    } else if (isAuthzMode) {
+      dispatch(
+        setError({
+          type: 'error',
+          message: 'Swap is not suppported in Authz Mode',
+        })
+      );
+    } else if (isFeegrantMode) {
+      dispatch(
+        setError({
+          type: 'error',
+          message: 'Swap is not suppported in Feegrant Mode',
+        })
+      );
+    } else {
+      setSelectedTab(tab);
     }
-    changeTab(tab);
   };
-
-  const tabs = ['Send', 'Multi Send', 'Swap'];
-  const [selectedTab, setSelectedTab] = useState('Send');
 
   return (
     <div className="w-full flex justify-between max-h-screen text-white flex-1">
@@ -67,22 +76,7 @@ const TransfersPage = ({ chainIDs }: { chainIDs: string[] }) => {
                     ? 'send-menu-item font-semibold'
                     : 'send-menu-item font-normal'
                 }
-                onClick={() => {
-                  if (
-                    tab.toLowerCase() === 'multi send' &&
-                    chainIDs.length > 1
-                  ) {
-                    dispatch(
-                      setError({
-                        type: 'error',
-                        message:
-                          'Multi transfer is not available for All networks!',
-                      })
-                    );
-                  } else {
-                    setSelectedTab(tab);
-                  }
-                }}
+                onClick={() => handleTabchange(tab)}
               >
                 {tab}
               </div>
@@ -102,17 +96,11 @@ const TransfersPage = ({ chainIDs }: { chainIDs: string[] }) => {
               <SingleTransfer
                 sortedAssets={isAuthzMode ? authzSortedAssets : sortedAssets}
                 chainIDs={chainIDs}
-                tab={tab}
-                handleTabChange={handleTabChange}
               />
             </div>
           ) : selectedTab === 'Multi Send' ? (
             <div className="bg-[#0e0b26] rounded-2xl flex flex-col flex-1">
-              <MultiTransfer
-                chainID={chainIDs[0]}
-                tab={tab}
-                handleTabChange={handleTabChange}
-              />
+              <MultiTransfer chainID={chainIDs[0]} />
             </div>
           ) : (
             <IBCSwap />

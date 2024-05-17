@@ -1,0 +1,192 @@
+.tabs {
+  @apply flex gap-10 items-center justify-start border-b-[1px] border-[#ffffff1e] mt-6;
+}
+
+.menu-item {
+  @apply cursor-pointer px-2 text-[18px] h-9 flex items-center pb-[14px] leading-[21.7px];
+}
+
+.selected-contract {
+  @apply px-4 py-6 border-[1px] border-[#FFFFFF80] rounded-2xl max-h-20 flex;
+}
+
+.styled-underlined-text {
+  @apply font-bold underline underline-offset-[3px] cursor-pointer;
+}
+
+.change-btn,
+.deploy-btn {
+  @apply text-[12px] px-3 py-[6px] rounded-lg leading-[20px] font-medium tracking-[0.48px] h-10 flex justify-center items-center;
+}
+
+.search-contract-field {
+  @apply h-12 flex bg-[#FFFFFF1A] items-center px-6 py-2 rounded-lg hover:bg-[#ffffff0d] flex-1;
+  border: 1px solid transparent;
+}
+
+.search-contract-field:focus-within {
+  border: 1px solid #ffffff4a;
+}
+
+.search-contract-input {
+  @apply w-full pl-2 border-none focus:outline-none bg-transparent placeholder:text-[16px] placeholder:text-[#FFFFFFBF] focus:border-[1px];
+}
+
+.styled-btn-wrapper {
+  @apply rounded-lg p-[1px] w-fit;
+  background: linear-gradient(to right, #4aa29c, #8b3da7);
+}
+
+.styled-btn-wrapper:hover {
+  background: linear-gradient(to right, #8b3da7, #4aa29c);
+}
+
+.styled-btn {
+  @apply bg-[#171429] text-[12px] font-semibold px-3 py-[10px] flex justify-center items-center rounded-lg;
+}
+
+.query-input-wrapper,
+.query-output-box {
+  @apply bg-[#FFFFFF0D] rounded-2xl min-h-[380px] p-4  flex flex-col gap-4;
+}
+
+.execute-field-wrapper,
+.execute-output-box {
+  @apply max-h-[440px] p-6;
+}
+
+.execute-field-wrapper {
+  @apply bg-[#ffffff0d] rounded-2xl p-4 flex flex-col gap-4;
+}
+
+.execute-input-field {
+  @apply relative flex-1 border-[1px] rounded-2xl border-[#ffffff1e] hover:border-[#ffffff50];
+}
+
+.execute-output-box {
+  @apply flex flex-col gap-6 pt-0;
+}
+
+.search-btn {
+  @apply font-medium rounded-lg px-3 py-[6px];
+}
+
+.search-error {
+  @apply text-red-500 font-light text-center;
+}
+
+.search-contract {
+  @apply mb-10 flex gap-6 px-10 items-center flex-col;
+}
+
+.search-contract-header {
+  @apply flex flex-col gap-4 w-full pb-2 border-b-[1px] border-[#ffffff33];
+}
+
+.contract-item {
+  @apply flex gap-4 justify-between items-center px-3 py-3 pr-1 rounded-full cursor-pointer border-[1px] border-[#ffffff32] hover:bg-[#ffffff32];
+}
+
+.execute-btn {
+  @apply h-10 rounded-lg px-3 py-[6px] absolute bottom-6 right-6 min-w-[85px];
+}
+
+.format-json-btn {
+  @apply border-[1px] border-[#FFFFFF33] rounded-full p-2 text-[12px] font-extralight top-4 right-4 absolute hover:border-[#ffffff50];
+}
+
+.attach-funds-header {
+  @apply border-b-[1px] border-[#ffffff1e] pb-4 space-y-2;
+}
+
+.attach-funds-description {
+  @apply leading-[18px] text-[12px] font-extralight;
+}
+
+.instantiate-input-wrapper {
+  @apply bg-[#ffffff0d] p-4 rounded-2xl flex-1;
+}
+
+.instantiate-input {
+  @apply relative h-full border-[1px] rounded-2xl border-[#ffffff1e] hover:border-[#ffffff50];
+}
+
+.provide-funds-input-wrapper {
+  @apply bg-[#FFFFFF0D] p-4 rounded-2xl;
+}
+
+.provide-funds-input {
+  @apply border-[1px] border-[#ffffff1e] hover:border-[#ffffff50] rounded-2xl relative;
+}
+
+.query-btn {
+  @apply h-10 rounded-lg px-3 py-[6px] absolute bottom-6 right-6 min-w-[85px];
+}
+
+.query-input {
+  @apply relative flex-1 border-[1px] rounded-2xl border-[#ffffff1e] hover:border-[#ffffff50];
+}
+
+.qeury-output {
+  @apply border-[1px] border-[#ffffff1e] h-full rounded-2xl p-4 overflow-x-scroll overflow-y-scroll;
+}
+
+.query-shortcut-msg {
+  @apply px-4 py-2 rounded-2xl bg-[#FFFFFF14] cursor-pointer hover:bg-[#ffffff26];
+}
+
+.add-funds-btn,
+.add-address-btn {
+  @apply rounded-lg px-3 py-[6px] font-medium leading-[20px] text-[12px];
+}
+
+.instantiate-btn,
+.upload-btn {
+  @apply flex justify-center items-center text-[12px] font-medium px-3 py-[6px] rounded-lg h-10 w-full;
+}
+
+.message-input-field {
+  @apply w-full border-none bg-transparent placeholder:text-[16px] placeholder:text-[#FFFFFFBF] focus:border-[1px] focus:outline-none;
+}
+
+.message-input-wrapper {
+  @apply h-12 flex bg-transparent items-center px-6 py-2 rounded-lg flex-1 border-[1px] border-[#ffffff1e] hover:border-[#ffffff50];
+}
+
+.search-contract-wrapper:focus-within {
+  border: 1px solid #ffffff4a;
+}
+
+.change-input-type-btn-wrapper {
+  @apply rounded-lg p-[1px];
+  background: linear-gradient(to right, #4aa29c, #8b3da7);
+}
+
+.change-input-type-btn-wrapper:hover {
+  background: linear-gradient(to right, #8b3da7, #4aa29c);
+}
+
+.change-input-type-btn {
+  @apply bg-[#232034] text-[12px] font-semibold px-3 py-[10px] flex justify-center items-center rounded-lg;
+}
+
+.codes-table {
+  @apply rounded-3xl text-white flex flex-col flex-1;
+  backdrop-filter: blur(2px);
+}
+
+.codes-table th {
+  @apply pb-4;
+}
+
+.codes-table td {
+  @apply font-light leading-normal pt-4 pb-4 px-2;
+}
+
+.codes-table tbody tr {
+  @apply hover:bg-[#ffffff0D];
+}
+
+.select-btn {
+  @apply px-3 py-[6px] rounded-lg;
+}

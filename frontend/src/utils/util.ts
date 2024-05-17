@@ -77,6 +77,10 @@ export const getSelectedPartFromURL = (urlParts: string[]): string => {
       return 'History';
     case 'validator':
       return 'Staking';
+    case 'cosmwasm':
+      return 'Cosmwasm';
+    case 'multiops':
+      return 'Multiops';
     default:
       return 'Overview';
   }
@@ -467,3 +471,53 @@ export function formatValidatorStatsValue(
     ? '-'
     : Number(numValue.toFixed(precision)).toLocaleString();
 }
+
+export function extractContractMessages(inputString: string): string[] {
+  let errMsg = '';
+  if (inputString.includes('expected')) {
+    errMsg = inputString.split('expected')[1];
+  } else if (inputString.includes('missing')) {
+    errMsg = inputString.split('missing')[1];
+  } else {
+    errMsg = inputString;
+  }
+  const pattern: RegExp = /`(\w+)`/g;
+
+  const matches: string[] = [];
+  let match: RegExpExecArray | null;
+  while ((match = pattern.exec(errMsg)) !== null) {
+    matches.push(match[1]);
+  }
+
+  return matches;
+}
+
+export const getFormattedFundsList = (
+  funds: FundInfo[],
+  fundsInput: string,
+  attachFundType: string
+) => {
+  if (attachFundType === 'select') {
+    const result: {
+      denom: string;
+      amount: string;
+    }[] = [];
+    funds.forEach((fund) => {
+      if (fund.amount.length) {
+        result.push({
+          denom: fund.denom,
+          amount: (Number(fund.amount) * 10 ** fund.decimals).toString(),
+        });
+      }
+    });
+    return result;
+  } else if (attachFundType === 'json') {
+    try {
+      const parsedFunds = JSON.parse(fundsInput);
+      return parsedFunds;
+      /* eslint-disable @typescript-eslint/no-explicit-any */
+    } catch (error: any) {
+      console.log(error);
+    }
+  }
+};

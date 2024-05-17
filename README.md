@@ -8,20 +8,23 @@ Supported features:
 - [x] Governance
 - [x] Multisig
 - [x] IBC Transfer
-- [ ] Authz
+- [x] IBC Swap
+- [x] Authz
+- [x] Feegrant
+- [x] Cosmwasm contracts
+- [x] Multi-Message Transaction Builder
 - [ ] Airdrops
-- [ ] Feegrant
 - [ ] Groups
 - [ ] Cross chain swaps
 - [ ] Interchain Accounts
-- [ ] Cosmwasm contracts
+
 
 ## Adding new network
 
 To add a new network to Resolute, please follow these steps:
 
-1. Open the frontend/chains directory. 
-2. Create a new `<chainname>.json` file. You can refer to the existing examples in the `frontend/chains` folder.
+1. Open the `frontend/src/utils/chainInfo.ts` file. 
+2. Add the new network configuration to the networks list. You can refer to the existing network configurations.
 
 ## Prerequisites
 

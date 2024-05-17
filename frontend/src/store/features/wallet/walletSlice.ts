@@ -63,7 +63,6 @@ export const establishWalletConnection = createAsyncThunk(
     const networks = data.networks;
     if (!isWalletInstalled(data.walletName)) {
       dispatch(setError({ type: 'error', message: 'Wallet is not installed' }));
-
       return rejectWithValue('wallet is not installed');
     } else {
       window.wallet.defaultOptions = {
@@ -226,6 +225,7 @@ const walletSlice = createSlice({
     builder
       .addCase(establishWalletConnection.pending, (state) => {
         state.status = TxStatus.PENDING;
+        state.isLoading = true
       })
       .addCase(establishWalletConnection.fulfilled, (state, action) => {
         const networks = action.payload.chainInfos;
