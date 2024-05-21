@@ -1,0 +1,26 @@
+.sidebar {
+  @apply overflow-hidden fixed top-[60px] w-[240px] bg-[#020002] border-r-[1px] border-[#1c1c20] py-10 flex flex-col justify-between;
+  height: calc(100vh - 60px) !important;
+}
+
+.fixed-top {
+  @apply flex-none;
+}
+
+.scrollable-content {
+  @apply overflow-y-auto flex-1 my-10;
+}
+
+.fixed-bottom {
+  @apply flex-none;
+}
+
+.network-icon-bg {
+  @apply w-10 h-10;
+  border-radius: 8px;
+  background: linear-gradient(180deg, #7a7e9c 0.5%, #09090a 100%);
+}
+
+.menu-item-selected {
+  background: linear-gradient(180deg, #4453df 12.5%, #7f5ced 87.5%);
+}
