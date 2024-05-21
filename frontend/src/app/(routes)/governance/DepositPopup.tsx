@@ -64,7 +64,7 @@ const DepositPopup = ({
     formState: { errors },
   } = useForm({
     defaultValues: {
-      amount: 0,
+      amount: '',
     },
   });
 
@@ -72,7 +72,7 @@ const DepositPopup = ({
     onClose();
   };
 
-  const handleDeposit = (data: { amount: number }) => {
+  const handleDeposit = (data: { amount: string }) => {
     const {
       aminoConfig,
       prefix,
@@ -170,7 +170,7 @@ const DepositPopup = ({
                           height={26}
                           alt="logo"
                         />
-                        <p className="proposal-text-small">{proposalId}</p>
+                        <p className="proposal-text-small">#{proposalId}</p>
                       </div>
                       <div className="proposal-text-small">{`Deposit period ends in ${votingEndsInDays} `}</div>
                     </div>
@@ -185,6 +185,13 @@ const DepositPopup = ({
                     <Controller
                       name="amount"
                       control={control}
+                      rules={{
+                        validate: (value) => {
+                          const amount = Number(value);
+                          if (isNaN(amount) || amount <= 0)
+                            return 'Invalid Amount';
+                        },
+                      }}
                       render={({ field }) => (
                         <TextField
                           className="bg-[#FFFFFF0D] rounded-2xl"
@@ -192,6 +199,7 @@ const DepositPopup = ({
                           required
                           fullWidth
                           size="small"
+                          autoFocus={true}
                           placeholder="Enter Amount here"
                           sx={{
                             '& .MuiTypography-body1': {
@@ -217,15 +225,20 @@ const DepositPopup = ({
                               },
                             },
                           }}
-                          error={!!errors.amount}
-                          helperText={
-                            errors.amount?.type === 'validate'
-                              ? 'Insufficient balance'
-                              : errors.amount?.message
-                          }
                         />
                       )}
                     />
+                    <div className="error-box">
+                      <span
+                        className={
+                          !!errors.amount
+                            ? 'error-chip opacity-80'
+                            : 'error-chip opacity-0'
+                        }
+                      >
+                        {errors.amount?.message}
+                      </span>
+                    </div>
                   </div>
                   <div className="mt-6">
                     <button

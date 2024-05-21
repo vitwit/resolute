@@ -45,6 +45,7 @@ const VotePopup = ({
   const { getChainInfo, getDenomInfo } = useGetChainInfo();
 
   const handleClose = () => {
+    setVoteOption('');
     onClose();
   };
 

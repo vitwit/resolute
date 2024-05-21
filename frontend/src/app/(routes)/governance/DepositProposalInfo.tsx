@@ -63,21 +63,23 @@ const DepositProposalInfo = ({ chainID }: { chainID: string }) => {
             </div>
           </div>
         </div>
-        <div className="w-full">
-          <div className="flex">
-            <div style={{ width: `${depositPercent.toString()}%` }}></div>
-            <div className="flex flex-col">
-              <div>{depositPercent}%</div>
-              <div className="bg-[#f0f0f3] h-[10px] w-[4px]"></div>
+        {!minDeposit ? null : (
+          <div className="w-full">
+            <div className="flex">
+              <div style={{ width: `${depositPercent.toString()}%` }}></div>
+              <div className="flex flex-col">
+                <div>{depositPercent}%</div>
+                <div className="bg-[#f0f0f3] h-[10px] w-[4px]"></div>
+              </div>
+            </div>
+            <div className="bg-[#FFFFFF1A] w-full h-[10px] rounded-full">
+              <div
+                style={{ width: `${depositPercent.toString()}%` }}
+                className={`bg-[#2DC5A4] h-[10px] rounded-l-full`}
+              ></div>
             </div>
           </div>
-          <div className="bg-[#FFFFFF1A] w-full h-[10px] rounded-full">
-            <div
-              style={{ width: `${depositPercent.toString()}%` }}
-              className={`bg-[#2DC5A4] h-[10px] rounded-l-full`}
-            ></div>
-          </div>
-        </div>
+        )}
       </div>
     </div>
   );

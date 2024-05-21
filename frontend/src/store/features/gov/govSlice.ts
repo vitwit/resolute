@@ -406,23 +406,15 @@ export const txVote = createAsyncThunk(
         );
         return rejectWithValue(result?.rawLog);
       }
-    } catch (error) {
-      if (error instanceof AxiosError) {
-        dispatch(
-          setError({
-            type: 'error',
-            message: error.message,
-          })
-        );
-        return rejectWithValue(error.response);
-      }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
       dispatch(
         setError({
           type: 'error',
-          message: ERR_UNKNOWN,
+          message: error?.message || ERR_UNKNOWN,
         })
       );
-      return rejectWithValue(ERR_UNKNOWN);
+      return rejectWithValue(error?.message || ERR_UNKNOWN);
     }
   }
 );
@@ -479,23 +471,15 @@ export const txDeposit = createAsyncThunk(
         dispatch(setError({ type: 'error', message: rawLog || '' }));
         return rejectWithValue(rawLog);
       }
-    } catch (error) {
-      if (error instanceof AxiosError) {
-        dispatch(
-          setError({
-            type: 'error',
-            message: error.message,
-          })
-        );
-        return rejectWithValue(error.response);
-      }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
       dispatch(
         setError({
           type: 'error',
-          message: ERR_UNKNOWN,
+          message: error?.message || ERR_UNKNOWN,
         })
       );
-      return rejectWithValue(ERR_UNKNOWN);
+      return rejectWithValue(error?.message || ERR_UNKNOWN);
     }
   }
 );
