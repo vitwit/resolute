@@ -11,7 +11,7 @@ import { useAppSelector } from '@/custom-hooks/StateHooks';
 import { Tooltip } from '@mui/material';
 import { isMetaMaskWallet } from '@/utils/localStorage';
 
-const Sidebar = () => {
+const SideBar = () => {
   return (
     <section className="sidebar">
       <div className="fixed-top w-full">
@@ -27,7 +27,7 @@ const Sidebar = () => {
   );
 };
 
-export default Sidebar;
+export default SideBar;
 
 const SelectNetwork = () => {
   return (

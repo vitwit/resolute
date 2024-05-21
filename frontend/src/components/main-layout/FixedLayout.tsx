@@ -2,7 +2,7 @@
 
 import React from 'react';
 import TopBar from './TopBar';
-import Sidebar from './Sidebar';
+import SideBar from './SideBar';
 import '@/app/fixed-layout.css';
 
 const FixedLayout = ({ children }: { children: React.ReactNode }) => {
@@ -11,7 +11,7 @@ const FixedLayout = ({ children }: { children: React.ReactNode }) => {
       <TopBar />
       <main className="flex flex-1 bg-[#020002] w-full justify-center">
         <div className="w-full max-w-[1512px] flex">
-          <Sidebar />
+          <SideBar />
           <section className="main-section px-10">{children}</section>
         </div>
       </main>
