@@ -1,13 +1,13 @@
 import './globals.css';
 import type { Metadata, } from 'next';
 import { Inter } from 'next/font/google';
-
 import { Landingpage } from '@/components/LandingPage';
 import { StoreProvider } from '@/store/StoreProvider';
 import SideBar from '@/components/SideBar';
 import SnackBar from '@/components/SnackBar';
 import Script from 'next/script';
 import { OpenGraph } from 'next/dist/lib/metadata/types/opengraph-types';
+import OverviewTable from '@/components/OverviewTable';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -37,10 +37,11 @@ export default function RootLayout({
         {
           <StoreProvider>
             <div className="layout">
-              <SnackBar />
+              {/* <SnackBar />
               <Landingpage>
                 <SideBar> {children}</SideBar>
-              </Landingpage>
+              </Landingpage> */}
+              <OverviewTable address='Cosmori8270jk80....' />
             </div>
           </StoreProvider>
         }
