@@ -9,7 +9,7 @@ export interface MenuItemI {
 
 export const SIDEBAR_MENU_OPTIONS: MenuItemI[] = [
   {
-    name: 'Overview',
+    name: 'Dashboard',
     icon: 'sidebar-menu-icons/dashboard-icon.svg',
     path: '/',
     authzSupported: true,
@@ -49,14 +49,6 @@ export const SIDEBAR_MENU_OPTIONS: MenuItemI[] = [
     multipleOptions: false,
   },
   {
-    name: 'Transaction Builder',
-    icon: 'sidebar-menu-icons/txn-builder-icon.svg',
-    path: '/transaction-builder',
-    authzSupported: false,
-    isMetaMaskSupported: false,
-    multipleOptions: false,
-  },
-  {
     name: 'Smart Contracts',
     icon: 'sidebar-menu-icons/smart-contracts-icon.svg',
     path: 'cosmwasm',
@@ -65,7 +57,15 @@ export const SIDEBAR_MENU_OPTIONS: MenuItemI[] = [
     multipleOptions: false,
   },
   {
-    name: 'Transaction History',
+    name: 'MultiOps',
+    icon: 'sidebar-menu-icons/txn-builder-icon.svg',
+    path: '/transaction-builder',
+    authzSupported: false,
+    isMetaMaskSupported: false,
+    multipleOptions: false,
+  },
+  {
+    name: 'History',
     icon: 'sidebar-menu-icons/txn-history-icon.svg',
     path: '/history',
     authzSupported: true,

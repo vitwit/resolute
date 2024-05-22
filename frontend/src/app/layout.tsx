@@ -7,6 +7,7 @@ import SnackBar from '@/components/SnackBar';
 import Script from 'next/script';
 import { OpenGraph } from 'next/dist/lib/metadata/types/opengraph-types';
 import FixedLayout from '@/components/main-layout/FixedLayout';
+import { Landingpage } from '@/components/LandingPage';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -39,7 +40,9 @@ export default function RootLayout({
           <StoreProvider>
             <div className="layout">
               <SnackBar />
-              <FixedLayout>{children}</FixedLayout>
+              <Landingpage>
+                <FixedLayout>{children}</FixedLayout>
+              </Landingpage>
             </div>
           </StoreProvider>
         }
