@@ -1,3 +1,5 @@
+
+
 interface ErrorState {
   message: string;
   type: string;
