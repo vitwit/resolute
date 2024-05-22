@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import ExitSession from './ExitSession';
 import Link from 'next/link';
 import { MenuItemI, SIDEBAR_MENU_OPTIONS } from '@/constants/sidebar-options';
@@ -48,6 +48,13 @@ const SelectNetwork = () => {
 const SideMenu = () => {
   const pathName = usePathname();
   const isAuthzMode = useAppSelector((state) => state.authz.authzModeEnabled);
+  const [metaMaskSupported, setMetaMaskSupported] = useState(false);
+
+  useEffect(() => {
+    if (isMetaMaskWallet()) {
+      setMetaMaskSupported(true);
+    }
+  }, []);
 
   return (
     <div className="flex flex-col gap-1">
@@ -57,6 +64,7 @@ const SideMenu = () => {
           itemData={item}
           pathName={pathName}
           authzSupported={!isAuthzMode || item.authzSupported}
+          metaMaskSupported={item.isMetaMaskSupported || !metaMaskSupported}
         />
       ))}
     </div>
@@ -67,22 +75,22 @@ const MenuItem = ({
   itemData,
   pathName,
   authzSupported,
+  metaMaskSupported,
 }: {
   itemData: MenuItemI;
   pathName: string;
   authzSupported: boolean;
+  metaMaskSupported: boolean;
 }) => {
   const routePath = pathName === 'overview' ? '/' : `${pathName}`;
   const selectedNetwork = useAppSelector(
     (state) => state.common.selectedNetwork.chainName
   );
-  const isMetamaskSupported = () =>
-    itemData.isMetaMaskSupported || !isMetaMaskWallet();
 
   return (
     <Link
       href={
-        isMetamaskSupported() === false
+        !metaMaskSupported
           ? ''
           : authzSupported
             ? tabLink(itemData.path, selectedNetwork)
@@ -91,14 +99,14 @@ const MenuItem = ({
     >
       <Tooltip
         className={
-          isMetamaskSupported() === false
+          !metaMaskSupported
             ? 'cursor-not-allowed'
             : authzSupported
               ? ''
               : 'cursor-not-allowed'
         }
         title={
-          isMetamaskSupported() === false
+          !metaMaskSupported
             ? "MetaMask doesn't support " + itemData.name
             : authzSupported
               ? null
@@ -119,141 +127,3 @@ const MenuItem = ({
   );
 };
 
-const SidebarOptions = () => {
-  return (
-    <div>
-      <div className="flex gap-2 h-10 items-center px-6">
-        <Image
-          src="/dashboard-icon.svg"
-          height={24}
-          width={24}
-          alt="Dashboard"
-        />
-        <div className="text-white text-[16px] leading-[19px]">Dashboard</div>
-      </div>
-      <div className="h-[1px] bg-[#1c1c20] my-2"></div>
-      <div className=" px-6">
-        <div className="flex gap-2 h-10 items-center">
-          <Image src="/staking-icon.svg" height={24} width={24} alt="Staking" />
-          <div className="text-white text-[16px] leading-[19px]">Staking</div>
-        </div>
-        <div className="text-[14px] text-[#FFFFFFBF]">
-          <div className="flex gap-2 h-8 items-center">
-            <div className="w-6"></div>
-            <div>Validators</div>
-          </div>
-          <div className="flex gap-2 h-8 items-center">
-            <div className="w-6"></div>
-            <div>My Validators</div>
-          </div>
-        </div>
-      </div>
-      <div className="h-[1px] bg-[#1c1c20] my-2"></div>
-      <div className="flex gap-2 h-10 items-center px-6">
-        <Image src="/gov-icon.svg" height={24} width={24} alt="Governance" />
-        <div className="text-white text-[16px] leading-[19px]">Governance</div>
-      </div>
-      <div className="h-[1px] bg-[#1c1c20] my-2"></div>
-      <div className=" px-6">
-        <div className="flex gap-2 h-10 items-center">
-          <Image
-            src="/transfers-icon.svg"
-            height={24}
-            width={24}
-            alt="Transfers"
-          />
-          <div className="text-white text-[16px] leading-[19px]">Transfers</div>
-        </div>
-        <div className="text-[14px] text-[#FFFFFFBF]">
-          <div className="flex gap-2 h-8 items-center">
-            <div className="w-6"></div>
-            <div>Single</div>
-          </div>
-          <div className="flex gap-2 h-8 items-center">
-            <div className="w-6"></div>
-            <div>Multiple</div>
-          </div>
-          <div className="flex gap-2 h-8 items-center">
-            <div className="w-6"></div>
-            <div>IBC Swap</div>
-          </div>
-        </div>
-      </div>
-      <div className="h-[1px] bg-[#1c1c20] my-2"></div>
-      <div className=" px-6">
-        <div className="flex gap-2 h-10 items-center">
-          <Image
-            src="/transfers-icon.svg"
-            height={24}
-            width={24}
-            alt="Transfers"
-          />
-          <div className="text-white text-[16px] leading-[19px]">Transfers</div>
-        </div>
-        <div className="text-[14px] text-[#FFFFFFBF]">
-          <div className="flex gap-2 h-8 items-center">
-            <div className="w-6"></div>
-            <div>Single</div>
-          </div>
-          <div className="flex gap-2 h-8 items-center">
-            <div className="w-6"></div>
-            <div>Multiple</div>
-          </div>
-          <div className="flex gap-2 h-8 items-center">
-            <div className="w-6"></div>
-            <div>IBC Swap</div>
-          </div>
-        </div>
-      </div>
-      <div className="h-[1px] bg-[#1c1c20] my-2"></div>
-      <div className="flex gap-2 h-10 items-center px-6">
-        <Image src="/multisig-icon.svg" height={24} width={24} alt="Multisig" />
-        <div className="text-white text-[16px] leading-[19px]">Multisig</div>
-      </div>
-      <div className="h-[1px] bg-[#1c1c20] my-2"></div>
-      <div className="flex gap-2 h-10 items-center px-6">
-        <Image
-          src="/dashboard-icon.svg"
-          height={24}
-          width={24}
-          alt="Smart Contracts"
-        />
-        <div className="text-white text-[16px] leading-[19px]">
-          Smart Contracts
-        </div>
-      </div>
-      <div className="h-[1px] bg-[#1c1c20] my-2"></div>
-      <div className=" px-6">
-        <div className="flex gap-2 h-10 items-center">
-          <Image
-            src="/settings-icon.svg"
-            height={24}
-            width={24}
-            alt="Transfers"
-          />
-          <div className="text-white text-[16px] leading-[19px]">Settings</div>
-        </div>
-        <div className="text-[14px] text-[#FFFFFFBF]">
-          <div className="flex gap-2 h-8 items-center">
-            <div className="w-6"></div>
-            <div className="w-full flex justify-between items-center">
-              <div>Authz Mode</div>
-              <Image src="/switch-on.svg" width={24} height={17} alt="On" />
-            </div>
-          </div>
-          <div className="flex gap-2 h-8 items-center">
-            <div className="w-6"></div>
-            <div className="w-full flex justify-between items-center">
-              <div>FeeGrant</div>
-              <Image src="/switch-on.svg" width={24} height={17} alt="On" />
-            </div>
-          </div>
-          <div className="flex gap-2 h-8 items-center">
-            <div className="w-6"></div>
-            <div className="w-full">General</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
