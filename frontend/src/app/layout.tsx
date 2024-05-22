@@ -2,9 +2,7 @@ import './globals.css';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 
-import { Landingpage } from '@/components/LandingPage';
 import { StoreProvider } from '@/store/StoreProvider';
-import SideBar from '@/components/SideBar';
 import SnackBar from '@/components/SnackBar';
 import Script from 'next/script';
 import { OpenGraph } from 'next/dist/lib/metadata/types/opengraph-types';

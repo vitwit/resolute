@@ -7,12 +7,12 @@ import '@/app/fixed-layout.css';
 
 const FixedLayout = ({ children }: { children: React.ReactNode }) => {
   return (
-    <div className="w-full h-screen flex flex-col">
+    <div className="fixed-layout">
       <TopBar />
-      <main className="flex flex-1 bg-[#020002] w-full justify-center">
-        <div className="w-full max-w-[1512px] flex">
+      <main className="main">
+        <div className="main-container">
           <SideBar />
-          <section className="main-section px-10">{children}</section>
+          <section className="dynamic-section">{children}</section>
         </div>
       </main>
     </div>

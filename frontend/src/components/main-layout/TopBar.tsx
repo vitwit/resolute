@@ -6,8 +6,8 @@ const connectWalletLogo = 'wallet-logos/keplr-logo-small.svg';
 
 const TopBar = () => {
   return (
-    <header className="bg-[#151517] flex justify-center items-center min-h-[60px] fixed top-0 left-0 right-0">
-      <nav className="px-10 w-full max-w-[1512px] flex justify-between items-center">
+    <header className="top-bar">
+      <nav>
         <div>
           <Image
             src="/resolute-logo.png"
@@ -26,12 +26,6 @@ const TopBar = () => {
             />
             <div className="text-[18px] text-white">{walletUserName}</div>
           </div>
-          <Image
-            src="icons/notification-icon.svg"
-            width={24}
-            height={24}
-            alt="Notifications"
-          />
         </div>
       </nav>
     </header>

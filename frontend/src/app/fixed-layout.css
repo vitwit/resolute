@@ -1,5 +1,21 @@
+.main {
+  --main-bg-color: #09090A;
+}
+
+.fixed-layout {
+  @apply w-full h-screen flex flex-col;
+}
+
+.main {
+  @apply bg-[var(--main-bg-color)] flex flex-1 w-full justify-center;
+}
+
+.main-container {
+  @apply w-full max-w-[1512px] flex;
+}
+
 .sidebar {
-  @apply overflow-hidden fixed top-[60px] w-[240px] bg-[#020002] border-r-[1px] border-[#1c1c20] py-10 flex flex-col justify-between;
+  @apply overflow-hidden fixed top-[65px] w-[240px] bg-[var(--main-bg-color)] border-r-[1px] border-[#1c1c20] py-10 flex flex-col justify-between;
   height: calc(100vh - 60px) !important;
 }
 
@@ -16,11 +32,32 @@
 }
 
 .network-icon-bg {
-  @apply w-10 h-10;
-  border-radius: 8px;
+  @apply w-10 h-10 rounded-full;
   background: linear-gradient(180deg, #7a7e9c 0.5%, #09090a 100%);
 }
 
 .menu-item-selected {
-  background: linear-gradient(180deg, #4453df 12.5%, #7f5ced 87.5%);
+  @apply font-semibold;
+  background: #ffffff14;
+}
+
+.dynamic-section {
+  @apply ml-[240px] mt-[60px] w-full px-10;
+}
+
+.menu-item {
+  @apply flex gap-2 h-10 items-center pl-3 pr-6 w-full rounded-full hover:bg-[#FFFFFF0A];
+}
+
+.menu-item-name {
+  @apply text-white text-[14px] leading-[19px];
+}
+
+.top-bar {
+  @apply bg-[#0f0f11] flex justify-center items-center min-h-[60px] fixed top-0 left-0 right-0;
+  box-shadow: 0px 4px 4px 0px #100;
+}
+
+.top-bar nav {
+  @apply px-20 w-full flex justify-between items-center;
 }
