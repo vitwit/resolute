@@ -13,8 +13,13 @@ const Overview = () => {
   const chainIDs = Object.keys(nameToChainIDs).map(
     (chainName) => nameToChainIDs[chainName]
   );
-  return <div> {chainIDs}
-  <OverviewTable address='Cosmos.....'/></div>;
+  return (
+    <div>
+      {' '}
+      {chainIDs}
+      <OverviewTable address="Cosmos....." />
+    </div>
+  );
 };
 
 export default Overview;

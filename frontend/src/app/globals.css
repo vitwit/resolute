@@ -26,3 +26,13 @@ body {
     rgba(127, 92, 237, 0.1) 87.5%
   );
 }
+.table-border-line {
+  @apply h-[1px] self-stretch border-b border-[#1C1C20];
+}
+.horizontal-line {
+  @apply h-[1px] self-stretch bg-[#1C1C20];
+}
+.search-bar {
+  @apply flex h-14 items-center gap-2 self-stretch px-6 py-4 rounded-[100px];
+  background: rgba(255, 255, 255, 0.02);
+}

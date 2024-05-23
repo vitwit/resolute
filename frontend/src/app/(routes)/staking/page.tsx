@@ -1,9 +1,13 @@
 import React from 'react';
 import Staking from './Staking';
+import ValidatorTable from './components/ValidatorTable';
+import StakingVal from './components/StakingVal';
 const page = () => {
   return (
     <div>
-      <Staking />
+      {/* <Staking /> */}
+      {/* <ValidatorTable /> */}
+      <StakingVal />
     </div>
   );
 };
