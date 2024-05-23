@@ -8,7 +8,7 @@ import Script from 'next/script';
 import { OpenGraph } from 'next/dist/lib/metadata/types/opengraph-types';
 import FixedLayout from '@/components/main-layout/FixedLayout';
 import { Landingpage } from '@/components/LandingPage';
-import OverviewTable from '@/app/(routes)/(overview)/overview-components/OverviewTable';
+// import OverviewTable from '@/app/(routes)/(overview)/overview-components/OverviewTable';
 
 const inter = Inter({ subsets: ['latin'] });
 
