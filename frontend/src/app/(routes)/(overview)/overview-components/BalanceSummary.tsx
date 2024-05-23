@@ -2,7 +2,7 @@ import { useAppSelector } from '@/custom-hooks/StateHooks';
 import useGetAssetsAmount from '@/custom-hooks/useGetAssetsAmount';
 import { formatDollarAmount } from '@/utils/util';
 import Image from 'next/image';
-import React, { useRef, useEffect, useState } from 'react';
+import React from 'react';
 import useGetAuthzAssetsAmount from '../../../../custom-hooks/useGetAuthzAssetsAmount';
 type AssetSummary = { icon: string; alt: string; type: string; amount: string };
 

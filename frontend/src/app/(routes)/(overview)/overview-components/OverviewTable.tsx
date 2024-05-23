@@ -47,7 +47,7 @@ const OverviewTable = ({ chainIDs }: { chainIDs: string[] }) => {
   useEffect(() => {
     dispatch(getAllTokensPrice())
 
-    chainIDs.forEach((chainID, index) => {
+    chainIDs.forEach((chainID) => {
 
       const allChainInfo = networks[chainID];
       const chainInfo = allChainInfo.network;

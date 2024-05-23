@@ -17,10 +17,10 @@ import useAuthzStakingExecHelper from '@/custom-hooks/useAuthzStakingExecHelper'
 
 const Asset = ({
   asset,
-  showChainName,
+  // showChainName,
 }: {
   asset: ParsedAsset;
-  showChainName: boolean;
+  // showChainName: boolean;
 }) => {
   const txClaimStatus = useAppSelector(
     (state: RootState) =>

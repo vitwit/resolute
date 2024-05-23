@@ -4,7 +4,7 @@ import React from 'react';
 import Asset from './Asset';
 import { CircularProgress } from '@mui/material';
 import NoAssets from '@/components/illustrations/NoAssets';
-import Image from 'next/image';
+
 
 const AssetsTable = ({ chainIDs }: { chainIDs: string[] }) => {
   const isAuthzMode = useAppSelector((state) => state.authz.authzModeEnabled);
@@ -52,8 +52,8 @@ const AssetsTable = ({ chainIDs }: { chainIDs: string[] }) => {
           <table className="relative w-full">
             <thead className="w-full">
               <tr>
-                {['Available', 'Staked', 'Rewards', 'Price', 'Value', 'Actions'].map((header) => (
-                  <th className="w-1/6">
+                {['Available', 'Staked', 'Rewards', 'Price', 'Value', 'Actions'].map((header, hIndex) => (
+                  <th key={hIndex} className="w-1/6">
                     <div className="text-[rgba(255,255,255,0.50)] text-base not-italic font-normal leading-[normal]">
                       {header}
                     </div>
@@ -66,7 +66,7 @@ const AssetsTable = ({ chainIDs }: { chainIDs: string[] }) => {
                 <Asset
                   asset={asset}
                   key={asset.chainID + asset.denom}
-                  showChainName={chainIDs.length > 1}
+                  // showChainName={chainIDs.length > 1}
                 />
               ))}
             </tbody>
