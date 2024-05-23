@@ -1,5 +1,5 @@
 'use client';
-import './overviewtable.css';
+
 import Image from 'next/image';
 
 const overviewSummaryData = [
@@ -31,15 +31,15 @@ const overviewSummaryData = [
 
 const OverviewTable = ({ address }: { address: string }) => {
   return (
-    <div className="background-color flex-col gap-20 px-10 py-20">
-      <div className="flex flex-col items-center gap-10">
+    <div className="flex-col px-10 py-20">
+      <div className="flex flex-col items-center gap-10 mb-20">
         <div className="flex flex-col items-start gap-2 self-stretch">
           <div className="flex space-x-2">
-            <div className="text-black text-[28px] italic font-black leading-[normal] space-x-4">
+            <div className="text-white text-[28px] italic font-black leading-[normal] space-x-4">
               Hello
             </div>
             <div className="flex items-center space-x-2">
-              <p className="text-2xl not-italic font-normal leading-[normal]">
+              <p className="text-white text-2xl not-italic font-normal leading-[normal]">
                 {address}
               </p>
               <Image
@@ -70,10 +70,10 @@ const OverviewTable = ({ address }: { address: string }) => {
                     />
                   </div>
                   <div className="flex flex-col items-center">
-                    <div className="text-xl not-italic font-bold leading-[18px]">
+                    <div className="text-white text-xl not-italic font-bold leading-[18px]">
                       {data.amount}
                     </div>
-                    <div className="text-black text-xs not-italic font-extralight leading-[18px]">
+                    <div className="text-[rgba(255,255,255,0.50)] text-xs not-italic font-light leading-[18px]">
                       {data.type}
                     </div>
                   </div>
@@ -84,42 +84,42 @@ const OverviewTable = ({ address }: { address: string }) => {
         </div>
       </div>
 
-      <div className="flex flex-col gap-10 self-stretch overflow-scroll">
+      <div className="flex flex-col gap-10 self-stretch overflow-scroll h-[50vh]">
         <div className="space-y-1">
-          <div className="text-black text-lg not-italic font-normal leading-[27px]">
+          <div className="text-white text-lg not-italic font-normal leading-[27px]">
             Asset Information
           </div>
-          <div className="text-black text-sm not-italic font-extralight leading-[21px]">
+          <div className="text-[rgba(255,255,255,0.50)] text-sm not-italic font-extralight leading-[21px]">
             Connect your wallet now to access all the modules on resolute
           </div>
-          <div className="h-line"></div>
+          <div className="horizontal-line"></div>
         </div>
         <div className="flex text-black flex-col items-start gap-2 self-stretch p-6">
           <table className="relative w-full">
             <thead className="w-full">
               <tr>
                 <th className="w-1/6">
-                  <div className="text-base not-italic font-normal leading-[normal] items-start">
+                  <div className="text-[rgba(255,255,255,0.50)] text-base not-italic font-normal leading-[normal]">
                     Available
                   </div>
                 </th>
                 <th className="w-1/6">
-                  <div className="text-base not-italic font-normal leading-[normal]">
+                  <div className="text-[rgba(255,255,255,0.50)] text-base not-italic font-normal leading-[normal]">
                     Staked
                   </div>
                 </th>
                 <th className="w-1/6">
-                  <div className="text-base not-italic font-normal leading-[normal]">
+                  <div className="text-[rgba(255,255,255,0.50)] text-base not-italic font-normal leading-[normal]">
                     Rewards
                   </div>
                 </th>
                 <th className="w-1/6">
-                  <div className="text-base not-italic font-normal leading-[normal]">
+                  <div className="text-[rgba(255,255,255,0.50)] text-base not-italic font-normal leading-[normal]">
                     Price
                   </div>
                 </th>
                 <th className="w-1/6">
-                  <div className="text-base not-italic font-normal leading-[normal]">
+                  <div className="text-[rgba(255,255,255,0.50)] text-base not-italic font-normal leading-[normal]">
                     Value
                   </div>
                 </th>
@@ -133,7 +133,7 @@ const OverviewTable = ({ address }: { address: string }) => {
                 <tr key={dataid} className="table-border-line">
                   <th className="px-0 py-8">
                     <div className="flex flex-col items-center">
-                      <div className="text-base not-italic font-normal leading-[normal]">
+                      <div className="text-white text-base not-italic font-normal leading-[normal]">
                         142.5 Atoms
                       </div>
                       <div className="flex space-x-2">
@@ -144,25 +144,25 @@ const OverviewTable = ({ address }: { address: string }) => {
                           alt="Akash-Logo"
                           loading="lazy"
                         />
-                        <p className="text-sm not-italic font-extralight leading-[normal]">
+                        <p className="text-white text-sm not-italic font-extralight leading-[normal]">
                           on akash
                         </p>
                       </div>
                     </div>
                   </th>
                   <th>
-                    <div className="text-base not-italic font-normal leading-[normal]">
+                    <div className="text-white text-base not-italic font-normal leading-[normal]">
                       40 atoms
                     </div>
                   </th>
                   <th>
-                    <div className="text-base not-italic font-normal leading-[normal]">
+                    <div className="text-white text-base not-italic font-normal leading-[normal]">
                       40 atoms
                     </div>
                   </th>
                   <th>
                     <div className="flex flex-col text-red items-center">
-                      <div className="text-base not-italic font-normal leading-[normal]">
+                      <div className="text-white text-base not-italic font-normal leading-[normal]">
                         $ 89.46
                       </div>
                       <div className="flex">
@@ -179,7 +179,7 @@ const OverviewTable = ({ address }: { address: string }) => {
                     </div>
                   </th>
                   <th>
-                    <div className="text-base not-italic font-normal leading-[normal]">
+                    <div className="text-white text-base not-italic font-normal leading-[normal]">
                       $ 89.46
                     </div>
                   </th>
