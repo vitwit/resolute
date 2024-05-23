@@ -13,7 +13,6 @@ import {
 } from '../store/features/wallet/walletSlice';
 import { setAllNetworksInfo } from '@/store/features/common/commonSlice';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
-import Loading from './Loading';
 declare let window: WalletWindow;
 
 import {
@@ -24,10 +23,7 @@ import {
 
 export const Landingpage = ({ children }: { children: React.ReactNode }) => {
   const dispatch = useAppDispatch();
-
-  const isLoading = useAppSelector((state) => state.wallet.isLoading);
-
-
+  const walletLoading = useAppSelector((state) => state.wallet.isLoading);
   const tryConnectWallet = async (walletName: string) => {
     if (walletName === 'metamask') {
       try {
@@ -88,9 +84,12 @@ export const Landingpage = ({ children }: { children: React.ReactNode }) => {
     };
   }, []);
 
-  if (isLoading) {
-    return <Loading />;
+  if (walletLoading) {
+    return (
+      <div className="h-screen w-screen flex justify-center items-center">
+        Loading...
+      </div>
+    );
   }
-
   return <>{children}</>;
 };
