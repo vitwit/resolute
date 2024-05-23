@@ -4,6 +4,7 @@ import React from 'react';
 import ExitSession from './ExitSession';
 import SideMenu from './SideMenu';
 import SelectNetwork from './SelectNetwork';
+import ConnectWallet from './ConnectWallet';
 
 const SideBar = () => {
   return (
@@ -11,6 +12,7 @@ const SideBar = () => {
       <SelectNetwork />
       <SideMenu />
       <ExitSession />
+      <ConnectWallet />
     </section>
   );
 };
