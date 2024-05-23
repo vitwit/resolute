@@ -1,29 +1,31 @@
 import './globals.css';
-import type { Metadata, } from 'next';
+import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
-import { Landingpage } from '@/components/LandingPage';
+
 import { StoreProvider } from '@/store/StoreProvider';
-import SideBar from '@/components/SideBar';
 import SnackBar from '@/components/SnackBar';
 import Script from 'next/script';
 import { OpenGraph } from 'next/dist/lib/metadata/types/opengraph-types';
-import OverviewTable from '@/components/OverviewTable';
+import FixedLayout from '@/components/main-layout/FixedLayout';
+import { Landingpage } from '@/components/LandingPage';
 
 const inter = Inter({ subsets: ['latin'] });
 
 const openGraph: OpenGraph = {
   title: 'Interchain interface',
-  description: 'Resolute is an advanced spacecraft designed to travel through the multiverse, connecting Cosmos sovereign chains.',
+  description:
+    'Resolute is an advanced spacecraft designed to travel through the multiverse, connecting Cosmos sovereign chains.',
   url: 'https://resolute.vitwit.com',
   type: 'website',
-}
-
+};
 
 export const metadata: Metadata = {
   title: 'Resolute',
-  description: 'Interchain interface, Resolute is an advanced spacecraft designed to travel through the multiverse, connecting Cosmos sovereign chains.',
-  keywords: 'resolute, interchain interface, cosmos, osmosis, regen, akash, celestia, dymension, authz, feegrant, groups, staking, send, ibc send, multisig',
-  openGraph
+  description:
+    'Interchain interface, Resolute is an advanced spacecraft designed to travel through the multiverse, connecting Cosmos sovereign chains.',
+  keywords:
+    'resolute, interchain interface, cosmos, osmosis, regen, akash, celestia, dymension, authz, feegrant, groups, staking, send, ibc send, multisig',
+  openGraph,
 };
 
 export default function RootLayout({
@@ -37,11 +39,10 @@ export default function RootLayout({
         {
           <StoreProvider>
             <div className="layout">
-              {/* <SnackBar />
+              <SnackBar />
               <Landingpage>
-                <SideBar> {children}</SideBar>
-              </Landingpage> */}
-              <OverviewTable address='Cosmori8270jk80....' />
+                <FixedLayout>{children}</FixedLayout>
+              </Landingpage>
             </div>
           </StoreProvider>
         }
