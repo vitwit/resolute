@@ -4,12 +4,45 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --primary-text-color: '#FFFFFF';
+  --secondary-text-color: #ffffff80;
+}
+
 ::-webkit-scrollbar {
   width: 0;
   background: transparent;
 }
 
+*,
+*::before,
+*::after {
+  @apply box-border;
+}
+
 body {
+  color: var(--primary-text-color);
   font-family: 'Libre Franklin', sans-serif !important;
   font-optical-sizing: auto !important;
+}
+
+.primary-btn {
+  @apply border-[1px] text-white text-[16px] rounded-full px-4 py-[10.5px] border-[#4453DF] leading-[19px] h-10 flex justify-center items-center;
+  background: linear-gradient(
+    180deg,
+    rgba(68, 83, 223, 0.1) 12.5%,
+    rgba(127, 92, 237, 0.1) 87.5%
+  );
+}
+
+.secondary-text {
+  @apply text-[var(--secondary-text-color)] font-extralight text-[14px];
+}
+
+.secondary-btn {
+  @apply text-[var(--secondary-text-color)] font-extralight text-[14px] underline underline-offset-[2px];
+}
+
+.divider-line {
+  @apply w-full bg-[#FFFFFF80] h-[0.25px] opacity-20;
 }

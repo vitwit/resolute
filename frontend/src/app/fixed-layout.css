@@ -66,3 +66,11 @@
 .top-bar nav {
   @apply px-6 w-full max-w-[1512px] flex justify-between items-center;
 }
+
+.profile-section {
+  @apply w-[472px] h-full px-6 pt-10 pb-[60px];
+}
+
+.connect-wallet-popup {
+  @apply max-w-[1000px] w-full p-4 space-y-10;
+}
