@@ -10,7 +10,7 @@ export interface MenuItemI {
 export const SIDEBAR_MENU_OPTIONS: MenuItemI[] = [
   {
     name: 'Dashboard',
-    icon: 'sidebar-menu-icons/dashboard-icon.svg',
+    icon: '/sidebar-menu-icons/dashboard-icon.svg',
     path: '/',
     authzSupported: true,
     isMetaMaskSupported: true,
@@ -18,7 +18,7 @@ export const SIDEBAR_MENU_OPTIONS: MenuItemI[] = [
   },
   {
     name: 'Staking',
-    icon: 'sidebar-menu-icons/staking-icon.svg',
+    icon: '/sidebar-menu-icons/staking-icon.svg',
     path: '/staking',
     authzSupported: true,
     isMetaMaskSupported: true,
@@ -26,7 +26,7 @@ export const SIDEBAR_MENU_OPTIONS: MenuItemI[] = [
   },
   {
     name: 'Governance',
-    icon: 'sidebar-menu-icons/gov-icon.svg',
+    icon: '/sidebar-menu-icons/gov-icon.svg',
     path: '/governance',
     authzSupported: true,
     isMetaMaskSupported: true,
@@ -34,7 +34,7 @@ export const SIDEBAR_MENU_OPTIONS: MenuItemI[] = [
   },
   {
     name: 'Transfers',
-    icon: 'sidebar-menu-icons/transfers-icon.svg',
+    icon: '/sidebar-menu-icons/transfers-icon.svg',
     path: '/transfers',
     authzSupported: true,
     isMetaMaskSupported: true,
@@ -42,7 +42,7 @@ export const SIDEBAR_MENU_OPTIONS: MenuItemI[] = [
   },
   {
     name: 'MultiSig',
-    icon: 'sidebar-menu-icons/multisig-icon.svg',
+    icon: '/sidebar-menu-icons/multisig-icon.svg',
     path: '/multisig',
     authzSupported: false,
     isMetaMaskSupported: false,
@@ -50,7 +50,7 @@ export const SIDEBAR_MENU_OPTIONS: MenuItemI[] = [
   },
   {
     name: 'Smart Contracts',
-    icon: 'sidebar-menu-icons/smart-contracts-icon.svg',
+    icon: '/sidebar-menu-icons/smart-contracts-icon.svg',
     path: 'cosmwasm',
     authzSupported: false,
     isMetaMaskSupported: false,
@@ -58,7 +58,7 @@ export const SIDEBAR_MENU_OPTIONS: MenuItemI[] = [
   },
   {
     name: 'MultiOps',
-    icon: 'sidebar-menu-icons/txn-builder-icon.svg',
+    icon: '/sidebar-menu-icons/txn-builder-icon.svg',
     path: '/transaction-builder',
     authzSupported: false,
     isMetaMaskSupported: false,
@@ -66,7 +66,7 @@ export const SIDEBAR_MENU_OPTIONS: MenuItemI[] = [
   },
   {
     name: 'History',
-    icon: 'sidebar-menu-icons/txn-history-icon.svg',
+    icon: '/sidebar-menu-icons/txn-history-icon.svg',
     path: '/history',
     authzSupported: true,
     isMetaMaskSupported: true,
@@ -74,7 +74,7 @@ export const SIDEBAR_MENU_OPTIONS: MenuItemI[] = [
   },
   {
     name: 'Settings',
-    icon: 'sidebar-menu-icons/settings-icon.svg',
+    icon: '/sidebar-menu-icons/settings-icon.svg',
     path: '/settings',
     authzSupported: false,
     isMetaMaskSupported: false,

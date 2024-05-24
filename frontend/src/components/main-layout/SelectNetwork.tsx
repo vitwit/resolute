@@ -1,8 +1,9 @@
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { setChangeNetworkDialogOpen } from '@/store/features/common/commonSlice';
 import { ALL_NETWORKS_ICON } from '@/utils/constants';
+import { copyToClipboard } from '@/utils/copyToClipboard';
 import { shortenMsg, shortenName } from '@/utils/util';
-import { Box } from '@mui/material';
+import { Box, Tooltip } from '@mui/material';
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 
@@ -39,25 +40,25 @@ const SelectNetwork = () => {
       <div className="flex gap-2 items-center">
         <Box
           sx={{
-            background: chainGradient,
+            background:
+              chainGradient ||
+              'linear-gradient(180deg, #7A7E9C 0.5%, #09090A 100%)',
+            height: '40px',
+            width: '40px',
           }}
           className="network-icon-bg"
         >
           <Image src={chainLogo} height={24} width={24} alt="" />
         </Box>
-        <div className="space-y-0">
+        <div>
           <div
             onClick={openChangeNetwork}
-            className="text-[16px] leading-[24px] font-bold text-white capitalize"
+            className="text-[16px] h-6 font-bold text-white capitalize cursor-pointer"
           >
             {shortenName(selectedNetwork.chainName, 15) || 'All Networks'}
           </div>
           {walletAddress?.length ? (
-            <div>
-              <span className="text-[#FFFFFF80] text-[12px] leading-[15px]">
-                {shortenMsg(walletAddress, 15)}
-              </span>
-            </div>
+            <WalletAddress address={walletAddress} />
           ) : null}
         </div>
       </div>
@@ -66,3 +67,45 @@ const SelectNetwork = () => {
 };
 
 export default SelectNetwork;
+
+const WalletAddress = ({ address }: { address: string }) => {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = (e: React.MouseEvent<HTMLDivElement>) => {
+    copyToClipboard(address);
+    setCopied(true);
+    e.stopPropagation();
+  };
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (copied) {
+      timer = setTimeout(() => {
+        setCopied(false);
+      }, 2000);
+    }
+    return () => clearTimeout(timer);
+  }, [copied]);
+
+  return (
+    <div className="flex gap-2 items-center">
+      <div className="text-[#FFFFFF80] text-[12px] leading-[15px]">
+        {shortenMsg(address, 15)}
+      </div>
+      <Tooltip
+        title='Copied!'
+        placement="right"
+        open={copied}
+      >
+        <Image
+          className="cursor-pointer"
+          onClick={handleCopy}
+          src={'/icons/copy-icon.svg'}
+          width={16}
+          height={16}
+          alt="copy"
+        />
+      </Tooltip>
+    </div>
+  );
+};

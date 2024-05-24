@@ -32,7 +32,7 @@
 }
 
 .network-icon-bg {
-  @apply w-10 h-10 rounded-full flex justify-center items-center;
+  @apply rounded-full flex justify-center items-center;
 }
 
 .menu-item-selected {
@@ -76,4 +76,20 @@
 
 .select-network-popup {
   @apply w-[1000px] max-w-[1000px] pt-4 pb-6 px-10 space-y-10;
+}
+
+.search-network-field {
+  @apply py-4 px-6 bg-[#FFFFFF05] rounded-full flex flex-1;
+}
+
+.search-network-input {
+  @apply w-full border-none cursor-text focus:outline-none bg-transparent placeholder:text-[16px] placeholder:text-[#FFFFFF80] placeholder:font-normal text-[#ffffff];
+}
+
+.network-item {
+  @apply p-2 flex items-center gap-2 border-[0.25px] border-[#ffffff21] rounded-2xl hover:bg-[#ffffff14] hover:border-transparent;
+}
+
+.network-item .network-name {
+  @apply text-[14px] leading-normal opacity-100 font-light;
 }

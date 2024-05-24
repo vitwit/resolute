@@ -5,7 +5,7 @@ import ExitSession from './ExitSession';
 import SideMenu from './SideMenu';
 import SelectNetwork from './SelectNetwork';
 import ConnectWallet from './ConnectWallet';
-import DialogSelectNetwork from './DialogSelectNetwork';
+import DialogSelectNetwork from '../select-network/DialogSelectNetwork';
 
 const SideBar = () => {
   return (

@@ -4,12 +4,14 @@ import {
   setChangeNetworkDialogOpen,
   setSelectedNetwork,
 } from '@/store/features/common/commonSlice';
-import { allNetworksLink, changeNetworkRoute, shortenName } from '@/utils/util';
-import { Avatar, Dialog, DialogContent } from '@mui/material';
+import { allNetworksLink } from '@/utils/util';
+import { Dialog, DialogContent } from '@mui/material';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
+import NetworkItem from '../select-network/NetworkItem';
+import SearchNetworkInput from './SearchNetworkInput';
 
 const DialogSelectNetwork = () => {
   const dispatch = useAppDispatch();
@@ -21,7 +23,9 @@ const DialogSelectNetwork = () => {
   const dialogOpen = useAppSelector(
     (state) => state.common.changeNetworkDialog.open
   );
-
+  const selectedNetwork = useAppSelector(
+    (state) => state.common.selectedNetwork
+  );
   const walletConnected = useAppSelector((state) => state.wallet.connected);
 
   const chains = getChainNamesAndLogos();
@@ -34,6 +38,13 @@ const DialogSelectNetwork = () => {
 
   const onClose = () => {
     dispatch(setChangeNetworkDialogOpen({ open: false, showSearch: false }));
+    setSearchQuery('');
+  };
+
+  const isSelected = (chainName: string): boolean => {
+    return (
+      selectedNetwork?.chainName?.toLowerCase() === chainName.toLowerCase()
+    );
   };
 
   useEffect(() => {
@@ -81,28 +92,39 @@ const DialogSelectNetwork = () => {
               </div>
             </div>
             <div className="flex gap-6 items-center">
-              <div className="py-4 px-6 bg-[#FFFFFF05] rounded-full flex flex-1">
+              <div className="search-network-field ">
                 <SearchNetworkInput
                   handleSearchQueryChange={(e) =>
                     setSearchQuery(e.target.value)
                   }
                   searchQuery={searchQuery}
                 />
-                <Link
-                  href={allNetworksLink(pathParts)}
-                  onClick={() => {
-                    dispatch(setSelectedNetwork({ chainName: '' }));
-                    onClose();
-                  }}
-                >
-                  Select All Networks
-                </Link>
               </div>
               {walletConnected ? (
                 <button className="primary-btn w-fit">Add Network</button>
               ) : null}
             </div>
           </div>
+          <Link
+            href={allNetworksLink(pathParts)}
+            onClick={() => {
+              dispatch(setSelectedNetwork({ chainName: '' }));
+              onClose();
+            }}
+            className={`network-item justify-center ${selectedNetwork.chainName?.length ? '' : 'bg-[#FFFFFF14] !border-transparent'}`}
+          >
+            <div className="p-1">
+              <Image
+                src="/icons/all-networks-icon.png"
+                height={24}
+                width={24}
+                alt=""
+              />
+            </div>
+            <h3 className={`text-[14px] leading-normal opacity-100`}>
+              <span className={`font-light`}>All Networks</span>
+            </h3>
+          </Link>
           <div className="space-y-6">
             <div className="space-y-2">
               <div className="secondary-text">All Networks</div>
@@ -116,9 +138,15 @@ const DialogSelectNetwork = () => {
                   chainLogo={chain.chainLogo}
                   pathName={pathName}
                   handleClose={onClose}
+                  selected={isSelected(chain.chainName)}
                 />
               ))}
             </div>
+            {filteredChains?.length === 0 && (
+              <div className="text-center">
+                <div className="secondary-text">- No Networks Found -</div>
+              </div>
+            )}
           </div>
           <div className="h-10"></div>
         </div>
@@ -128,59 +156,3 @@ const DialogSelectNetwork = () => {
 };
 
 export default DialogSelectNetwork;
-
-const NetworkItem = ({
-  chainName,
-  chainLogo,
-  pathName,
-  handleClose,
-}: {
-  chainName: string;
-  chainLogo: string;
-  pathName: string;
-  handleClose: () => void;
-}) => {
-  const dispatch = useAppDispatch();
-  const routePath = pathName.toLowerCase().includes('/validator')
-    ? '/staking'
-    : pathName;
-  return (
-    <Link
-      href={changeNetworkRoute(routePath, chainName)}
-      className="p-2 flex items-center gap-2 border-[0.25px] border-[#ffffff2f] rounded-2xl hover:scale-[1.07]"
-      onClick={() => {
-        dispatch(setSelectedNetwork({ chainName: chainName.toLowerCase() }));
-        handleClose();
-      }}
-    >
-      <div className="p-1">
-        <Avatar src={chainLogo} sx={{ width: 24, height: 24 }} />
-      </div>
-      <h3 className={`text-[14px] leading-normal opacity-100`}>
-        <span className={`font-light`}>{shortenName(chainName, 15)}</span>
-      </h3>
-    </Link>
-  );
-};
-
-const SearchNetworkInput = ({
-  searchQuery,
-  handleSearchQueryChange,
-}: {
-  searchQuery: string;
-  handleSearchQueryChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-}) => {
-  return (
-    <div className="flex gap-2 items-center flex-1">
-      <Image src="/search-icon.svg" height={24} width={24} alt="" />
-      <input
-        type="text"
-        placeholder="Search Network"
-        value={searchQuery}
-        onChange={handleSearchQueryChange}
-        className="w-full border-none cursor-text focus:outline-none bg-transparent placeholder:text-[16px] placeholder:text-[#FFFFFF80] placeholder:font-normal text-[#ffffff]"
-        autoFocus={true}
-      />
-    </div>
-  );
-};
