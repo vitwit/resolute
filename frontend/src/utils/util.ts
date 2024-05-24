@@ -6,9 +6,14 @@ import {
   pubkeyToAddress,
 } from '@cosmjs/amino';
 import { Options } from '@/custom-hooks/useSortedAssets';
-import { getAuthToken, removeAllAuthTokens } from './localStorage';
+import {
+  getAuthToken,
+  getWalletName,
+  removeAllAuthTokens,
+} from './localStorage';
 import { MultisigAddressPubkey } from '@/types/multisig';
 import { fromBech32 } from '@cosmjs/encoding';
+import { SUPPORTED_WALLETS } from './constants';
 
 export const convertPaginationToParams = (
   pagination?: KeyLimitPagination
@@ -520,4 +525,14 @@ export const getFormattedFundsList = (
       console.log(error);
     }
   }
+};
+
+export const getConnectWalletLogo = () => {
+  const wallets = SUPPORTED_WALLETS;
+  const walletName = getWalletName();
+  const wallet = wallets.find(
+    (wallet) => wallet.name.toLowerCase() === walletName.toLowerCase()
+  );
+
+  return wallet ? wallet.logo : '';
 };

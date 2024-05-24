@@ -1,5 +1,5 @@
 'use client';
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { getWalletAmino } from '../../../txns/execute';
 import { isWalletInstalled } from './walletService';
 import {
@@ -31,6 +31,7 @@ interface ChainInfo {
 
 interface WalletState {
   name: string;
+  connectWalletOpen: boolean;
   connected: boolean;
   isLoading: boolean;
   isNanoLedger: boolean;
@@ -42,6 +43,7 @@ interface WalletState {
 
 const initialState: WalletState = {
   name: '',
+  connectWalletOpen: false,
   connected: false,
   isLoading: true,
   isNanoLedger: false,
@@ -220,12 +222,15 @@ const walletSlice = createSlice({
     unsetIsLoading: (state) => {
       state.isLoading = false;
     },
+    setConnectWalletOpen: (state, action: PayloadAction<boolean>) => {
+      state.connectWalletOpen = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
       .addCase(establishWalletConnection.pending, (state) => {
         state.status = TxStatus.PENDING;
-        state.isLoading = true
+        state.isLoading = true;
       })
       .addCase(establishWalletConnection.fulfilled, (state, action) => {
         const networks = action.payload.chainInfos;
@@ -250,6 +255,7 @@ export const {
   resetWallet,
   resetConnectWalletStatus,
   unsetIsLoading,
+  setConnectWalletOpen,
 } = walletSlice.actions;
 
 export default walletSlice.reducer;

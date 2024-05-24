@@ -10,16 +10,14 @@ const Overview = () => {
   const nameToChainIDs = useAppSelector(
     (state: RootState) => state.wallet.nameToChainIDs
   );
+
   const chainIDs = Object.keys(nameToChainIDs).map(
     (chainName) => nameToChainIDs[chainName]
   );
-  return (
-    <div>
-      {' '}
-      {chainIDs}
-      <OverviewTable address="Cosmos....." />
-    </div>
-  );
+
+  return <div> {chainIDs}
+  <OverviewTable chainIDs={chainIDs} />
+  </div>;
 };
 
 export default Overview;
