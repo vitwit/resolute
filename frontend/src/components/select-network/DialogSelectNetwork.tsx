@@ -17,6 +17,9 @@ const DialogSelectNetwork = () => {
   const dispatch = useAppDispatch();
   const pathName = usePathname();
   const { getChainNamesAndLogos } = useGetChainInfo();
+  const chains = getChainNamesAndLogos();
+
+  const [searchQuery, setSearchQuery] = useState('');
 
   const pathParts = pathName.split('/');
 
@@ -27,10 +30,6 @@ const DialogSelectNetwork = () => {
     (state) => state.common.selectedNetwork
   );
   const walletConnected = useAppSelector((state) => state.wallet.connected);
-
-  const chains = getChainNamesAndLogos();
-
-  const [searchQuery, setSearchQuery] = useState('');
 
   const filteredChains = chains.filter((chain) =>
     chain.chainName.toLowerCase().includes(searchQuery.toLowerCase())

@@ -7,16 +7,12 @@ import { Box, Tooltip } from '@mui/material';
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 
-// TODO: Implement select network popup and refactor styles
 const SelectNetwork = () => {
   const dispatch = useAppDispatch();
   const [walletAddress, setWalletAddress] = useState('');
   const [chainLogo, setChainLogo] = useState(ALL_NETWORKS_ICON);
   const [chainGradient, setChainGradient] = useState('');
 
-  const openChangeNetwork = () => {
-    dispatch(setChangeNetworkDialogOpen({ open: true, showSearch: true }));
-  };
   const selectedNetwork = useAppSelector(
     (state) => state.common.selectedNetwork
   );
@@ -24,6 +20,11 @@ const SelectNetwork = () => {
   const networks = useAppSelector((state) => state.wallet.networks);
   const nameToChainIDs = useAppSelector((state) => state.wallet.nameToChainIDs);
   const isWalletConnected = useAppSelector((state) => state.wallet.connected);
+
+  const openChangeNetwork = () => {
+    dispatch(setChangeNetworkDialogOpen({ open: true, showSearch: true }));
+  };
+
   useEffect(() => {
     if (selectedNetwork.chainName && isWalletConnected) {
       const chainID = nameToChainIDs[selectedNetwork.chainName];
@@ -35,6 +36,7 @@ const SelectNetwork = () => {
       setChainLogo(ALL_NETWORKS_ICON);
     }
   }, [selectedNetwork]);
+
   return (
     <div className="fixed-top w-full">
       <div className="flex gap-2 items-center">
@@ -92,11 +94,7 @@ const WalletAddress = ({ address }: { address: string }) => {
       <div className="text-[#FFFFFF80] text-[12px] leading-[15px]">
         {shortenMsg(address, 15)}
       </div>
-      <Tooltip
-        title='Copied!'
-        placement="right"
-        open={copied}
-      >
+      <Tooltip title="Copied!" placement="right" open={copied}>
         <Image
           className="cursor-pointer"
           onClick={handleCopy}
