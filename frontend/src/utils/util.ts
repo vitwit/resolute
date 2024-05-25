@@ -1,3 +1,5 @@
+'use client'
+
 import { DelegationResponse, Params, Validator } from '@/types/staking';
 import { parseBalance } from './denom';
 import {

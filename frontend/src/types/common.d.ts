@@ -48,5 +48,9 @@ interface CommonState {
   tokensInfoState: TokensInfoState;
   selectedNetwork: SelectedNetwork;
   allTokensInfoState: AllTokensInfoState;
-  allNetworksInfo: Record<string, Network>
+  allNetworksInfo: Record<string, Network>;
+  changeNetworkDialog: {
+    open: boolean;
+    showSearch: boolean;
+  };
 }
