@@ -42,6 +42,7 @@ export default function RootLayout({
         {
           <StoreProvider>
             <div className="layout">
+              <SnackBar />
               <FixedLayout>{children}</FixedLayout>
             </div>
           </StoreProvider>
