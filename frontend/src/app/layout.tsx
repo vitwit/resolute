@@ -1,15 +1,15 @@
 import './globals.css';
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
-
 import { StoreProvider } from '@/store/StoreProvider';
 import SnackBar from '@/components/SnackBar';
 import Script from 'next/script';
 import { OpenGraph } from 'next/dist/lib/metadata/types/opengraph-types';
-import FixedLayout from '@/components/main-layout/FixedLayout';
-import { Landingpage } from '@/components/LandingPage';
-
-const inter = Inter({ subsets: ['latin'] });
+import dynamic from 'next/dynamic';
+import Loading from '@/components/main-layout/Loading';
+const FixedLayout = dynamic(
+  () => import('@/components/main-layout/FixedLayout'),
+  { ssr: false, loading: () => <Loading /> }
+);
 
 const openGraph: OpenGraph = {
   title: 'Interchain interface',
@@ -35,14 +35,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body>
         {
           <StoreProvider>
             <div className="layout">
               <SnackBar />
-              <Landingpage>
-                <FixedLayout>{children}</FixedLayout>
-              </Landingpage>
+              <FixedLayout>{children}</FixedLayout>
             </div>
           </StoreProvider>
         }
