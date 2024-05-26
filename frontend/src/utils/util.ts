@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import { DelegationResponse, Params, Validator } from '@/types/staking';
 import { parseBalance } from './denom';
@@ -8,7 +8,11 @@ import {
   pubkeyToAddress,
 } from '@cosmjs/amino';
 import { Options } from '@/custom-hooks/useSortedAssets';
-import { getAuthToken, getWalletName, removeAllAuthTokens } from './localStorage';
+import {
+  getAuthToken,
+  getWalletName,
+  removeAllAuthTokens,
+} from './localStorage';
 import { MultisigAddressPubkey } from '@/types/multisig';
 import { fromBech32 } from '@cosmjs/encoding';
 import { SUPPORTED_WALLETS } from './constants';

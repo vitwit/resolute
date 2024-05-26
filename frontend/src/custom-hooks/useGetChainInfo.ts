@@ -188,7 +188,7 @@ const useGetChainInfo = () => {
     isFeeAvailable,
     getCosmosAddress,
     getAllChainAddresses,
-    getChainNamesAndLogos
+    getChainNamesAndLogos,
   };
 };
 
