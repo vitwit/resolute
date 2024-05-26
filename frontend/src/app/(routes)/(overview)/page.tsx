@@ -13,7 +13,7 @@ const Overview = () => {
   const chainIDs = Object.keys(nameToChainIDs).map(
     (chainName) => nameToChainIDs[chainName]
   );
-  return <OverviewPage chainIDs={chainIDs} />;
+  return <></>;
 };
 
 export default Overview;

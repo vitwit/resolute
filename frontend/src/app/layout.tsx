@@ -7,9 +7,10 @@ import SnackBar from '@/components/SnackBar';
 import Script from 'next/script';
 import { OpenGraph } from 'next/dist/lib/metadata/types/opengraph-types';
 import dynamic from 'next/dynamic';
+import Loading from '@/components/main-layout/Loading';
 const FixedLayout = dynamic(
   () => import('@/components/main-layout/FixedLayout'),
-  { ssr: false, loading: () => <div>Loading...</div> }
+  { ssr: false, loading: () => <Loading /> }
 );
 
 const inter = Inter({ subsets: ['latin'] });
