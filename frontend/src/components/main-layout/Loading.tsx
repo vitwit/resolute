@@ -28,7 +28,7 @@ const TopBarLoading = () => {
             alt="Resolute"
           />
         </div>
-        <div className="w-[170px] animate-pulse h-[40px] bg-[#252525] rounded"></div>
+        <div className="w-[170px] animate-pulse h-[40px] bg-[#252525] rounded" />
       </nav>
     </header>
   );
@@ -48,9 +48,9 @@ const SelectNetworkLoading = () => {
   return (
     <div className="fixed-top w-full">
       <div className="flex gap-2 items-center">
-        <div className="w-10 h-10 rounded-full bg-[#252525]"></div>
+        <div className="w-10 h-10 rounded-full bg-[#252525]" />
         <div className="flex-1">
-          <div className="h-8 w-full rounded bg-[#252525] animate-pulse"></div>
+          <div className="h-8 w-full rounded bg-[#252525] animate-pulse" />
         </div>
       </div>
     </div>
@@ -73,8 +73,8 @@ const SideMenuLoading = () => {
 const MenuItemLoading = () => {
   return (
     <div className="flex items-center gap-2">
-      <div className="h-8 w-8 bg-[#252525] animate-pulse rounded-full"></div>
-      <div className="h-7 flex-1 bg-[#252525] animate-pulse rounded"></div>
+      <div className="h-8 w-8 bg-[#252525] animate-pulse rounded-full" />
+      <div className="h-7 flex-1 bg-[#252525] animate-pulse rounded" />
     </div>
   );
 };
