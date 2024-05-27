@@ -1,6 +1,6 @@
 import { DialogContent, Dialog } from '@mui/material';
 import Image from 'next/image';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { dialogBoxPaperPropStyles } from '@/utils/commonStyles';
 import { getWalletName } from '@/utils/localStorage';
 import { SUPPORTED_WALLETS } from '@/utils/constants';
@@ -14,14 +14,16 @@ const WalletPopup = ({
   onClose: () => void;
   selectWallet: (walletName: string) => void;
 }) => {
-  const [selectedWallet, setSelectedWallet] = useState<string | null>(
-    getWalletName()
-  );
+  const [selectedWallet, setSelectedWallet] = useState<string | null>(null);
 
   const handleWalletClick = (walletName: string) => {
     setSelectedWallet(walletName);
     selectWallet(walletName);
   };
+
+  useEffect(() => {
+    setSelectedWallet(getWalletName());
+  }, []);
 
   return (
     <Dialog

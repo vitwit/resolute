@@ -12,6 +12,8 @@ export interface DenomInfo {
 
 const useGetChainInfo = () => {
   const networks = useAppSelector((state: RootState) => state.wallet.networks);
+  const allNetworks = useAppSelector((state) => state.common.allNetworksInfo);
+  const isWalletConnected = useAppSelector((state) => state.wallet.connected);
   const balanceChains = useAppSelector(
     (state: RootState) => state.bank.balances
   );
@@ -157,6 +159,26 @@ const useGetChainInfo = () => {
     return addresses;
   };
 
+  const getChainNamesAndLogos = () => {
+    if (isWalletConnected) {
+      const chainIDs = Object.keys(networks);
+      const chainNamesAndLogos = chainIDs.map((chainID) => {
+        const { chainName } = networks[chainID].network.config;
+        const { chainLogo } = getChainInfo(chainID);
+        return { chainID, chainName, chainLogo };
+      });
+      return chainNamesAndLogos;
+    } else {
+      const chainIDs = Object.keys(allNetworks);
+      const chainNamesAndLogos = chainIDs.map((chainID) => {
+        const { chainName } = allNetworks[chainID].config;
+        const { menu: chainLogo } = allNetworks[chainID].logos;
+        return { chainID, chainName, chainLogo };
+      });
+      return chainNamesAndLogos;
+    }
+  };
+
   return {
     getDenomInfo,
     getChainInfo,
@@ -166,6 +188,7 @@ const useGetChainInfo = () => {
     isFeeAvailable,
     getCosmosAddress,
     getAllChainAddresses,
+    getChainNamesAndLogos,
   };
 };
 

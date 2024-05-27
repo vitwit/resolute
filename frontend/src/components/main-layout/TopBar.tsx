@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ProfileDialog from './ProfileDialog';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { setConnectWalletOpen } from '@/store/features/wallet/walletSlice';
@@ -10,7 +10,7 @@ const TopBar = () => {
   const [profileOpen, setProfileOpen] = useState(false);
   const walletConnected = useAppSelector((state) => state.wallet.connected);
   const walletUserName = useAppSelector((state) => state.wallet.name);
-  const walletLogo = getConnectWalletLogo();
+  const [walletLogo, setWalletLogo] = useState('');
 
   const onClose = () => {
     setProfileOpen(false);
@@ -19,6 +19,11 @@ const TopBar = () => {
   const connectWalletOpen = () => {
     dispatch(setConnectWalletOpen(true));
   };
+
+  useEffect(() => {
+    setWalletLogo(getConnectWalletLogo());
+  }, []);
+
   return (
     <header className="top-bar">
       <nav>
