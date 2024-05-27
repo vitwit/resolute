@@ -170,3 +170,12 @@
 .text-only-btn {
   @apply text-[18px] font-bold underline underline-offset-2;
 }
+
+/* New css */
+
+.connect-wallet-text {
+  @apply bg-clip-text;
+  background: linear-gradient(270deg, #fff -67.89%, #999 99.95%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
