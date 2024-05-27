@@ -2,7 +2,7 @@ import { useAppSelector } from '@/custom-hooks/StateHooks';
 import { getConnectWalletLogo } from '@/utils/util';
 import { Dialog, DialogContent, Slide, SlideProps } from '@mui/material';
 import Image from 'next/image';
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useEffect, useState } from 'react';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const Transition = forwardRef(function Transition(
@@ -19,8 +19,13 @@ const ProfileDialog = ({
   open: boolean;
   onClose: () => void;
 }) => {
-  const connnectedWalletLogo = getConnectWalletLogo();
+  const [walletLogo, setWalletLogo] = useState('');
+
   const walletUserName = useAppSelector((state) => state.wallet.name);
+
+  useEffect(() => {
+    setWalletLogo(getConnectWalletLogo());
+  }, []);
 
   return (
     <Dialog
@@ -58,7 +63,7 @@ const ProfileDialog = ({
               <div className="divider-line"></div>
             </div>
             <div className="flex flex-col items-center gap-2 px-6 py-[10px]">
-              <Image src={connnectedWalletLogo} height={40} width={40} alt="" />
+              <Image src={walletLogo} height={40} width={40} alt="" />
               <div className="font-medium">{walletUserName}</div>
             </div>
             <div>

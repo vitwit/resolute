@@ -12,7 +12,7 @@ interface MenuItemProps {
 
 const MenuItem = (props: MenuItemProps) => {
   const { itemData, pathName } = props;
-  const routePath = pathName === 'overview' ? '/' : `${pathName}`;
+  const routePath = pathName === 'overview' ? '/' : `/${pathName}`;
   const selectedNetwork = useAppSelector(
     (state) => state.common.selectedNetwork.chainName
   );

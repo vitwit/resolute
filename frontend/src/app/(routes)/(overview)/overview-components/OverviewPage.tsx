@@ -27,6 +27,7 @@ const OverviewPage = ({ chainIDs }: { chainIDs: string[] }) => {
   const dispatch = useAppDispatch();
   const networks = useAppSelector((state: RootState) => state.wallet.networks);
   const isAuthzMode = useAppSelector((state) => state.authz.authzModeEnabled);
+  const isWalletLoading = useAppSelector((state) => state.wallet.isLoading);
   const isFeegrantMode = useAppSelector(
     (state) => state.feegrant.feegrantModeEnabled
   );
@@ -34,42 +35,44 @@ const OverviewPage = ({ chainIDs }: { chainIDs: string[] }) => {
 
   useInitAuthzForOverview(chainIDs);
   useEffect(() => {
-    chainIDs.forEach((chainID) => {
-      const allChainInfo = networks[chainID];
-      const chainInfo = allChainInfo.network;
-      const address = allChainInfo?.walletInfo?.bech32Address;
-      const minimalDenom =
-        allChainInfo.network.config.stakeCurrency.coinMinimalDenom;
-      const basicChainInputs = {
-        baseURL: chainInfo.config.rest,
-        baseURLs: chainInfo.config.restURIs,
-        address,
-        chainID,
-      };
-      dispatch(getBalances(basicChainInputs));
-      dispatch(getDelegations(basicChainInputs));
-      dispatch(getAccountInfo(basicChainInputs));
-      dispatch(
-        getDelegatorTotalRewards({
-          baseURLs: chainInfo.config.restURIs,
+    if (!isWalletLoading) {
+      chainIDs.forEach((chainID) => {
+        const allChainInfo = networks[chainID];
+        const chainInfo = allChainInfo.network;
+        const address = allChainInfo?.walletInfo?.bech32Address;
+        const minimalDenom =
+          allChainInfo.network.config.stakeCurrency.coinMinimalDenom;
+        const basicChainInputs = {
           baseURL: chainInfo.config.rest,
-          address: address,
-          chainID: chainID,
-          denom: minimalDenom,
-        })
-      );
-      dispatch(
-        getUnbonding({
           baseURLs: chainInfo.config.restURIs,
-          address: address,
+          address,
           chainID,
-        })
-      );
-    });
-  }, []);
+        };
+        dispatch(getBalances(basicChainInputs));
+        dispatch(getDelegations(basicChainInputs));
+        dispatch(getAccountInfo(basicChainInputs));
+        dispatch(
+          getDelegatorTotalRewards({
+            baseURLs: chainInfo.config.restURIs,
+            baseURL: chainInfo.config.rest,
+            address: address,
+            chainID: chainID,
+            denom: minimalDenom,
+          })
+        );
+        dispatch(
+          getUnbonding({
+            baseURLs: chainInfo.config.restURIs,
+            address: address,
+            chainID,
+          })
+        );
+      });
+    }
+  }, [isWalletLoading]);
 
   useEffect(() => {
-    if (chainIDs) {
+    if (!isWalletLoading && chainIDs) {
       dispatch(
         getRecentTransactions({
           addresses: getAllChainAddresses(chainIDs),
@@ -77,7 +80,7 @@ const OverviewPage = ({ chainIDs }: { chainIDs: string[] }) => {
         })
       );
     }
-  }, []);
+  }, [isWalletLoading]);
 
   return (
     <div className="w-full flex justify-between">

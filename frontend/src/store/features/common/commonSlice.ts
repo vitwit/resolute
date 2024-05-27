@@ -32,6 +32,10 @@ const initialState: CommonState = {
     info: {},
     status: 'idle',
   },
+  changeNetworkDialog: {
+    open: false,
+    showSearch: false,
+  },
   selectedNetwork: {
     chainName: '',
   },
@@ -98,6 +102,13 @@ export const commonSlice = createSlice({
         type: '',
       };
     },
+    setChangeNetworkDialogOpen: (
+      state,
+      action: PayloadAction<{ open: boolean; showSearch: boolean }>
+    ) => {
+      state.changeNetworkDialog.open = action.payload.open;
+      state.changeNetworkDialog.showSearch = action.payload.showSearch;
+    },
     setSelectedNetwork: (state, action: PayloadAction<SelectedNetwork>) => {
       state.selectedNetwork.chainName = action.payload.chainName;
     },
@@ -161,6 +172,7 @@ export const {
   resetTxAndHash,
   setSelectedNetwork,
   setAllNetworksInfo,
+  setChangeNetworkDialogOpen,
 } = commonSlice.actions;
 
 export default commonSlice.reducer;
