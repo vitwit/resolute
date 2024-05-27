@@ -69,3 +69,19 @@ body {
 .divider-line {
   @apply w-full bg-[#FFFFFF80] h-[0.25px] opacity-20;
 }
+.dashboard-card {
+  @apply flex flex-col items-center gap-2 flex-[1_0_0] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)_inset] p-4 rounded-2xl;
+  background: rgba(255, 255, 255, 0.02);
+}
+.cards {
+  @apply shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)_inset] flex flex-col items-start gap-10 flex-[1_0_0] px-4 py-6 rounded-2xl;
+  background: rgba(255, 255, 255, 0.02);
+}
+.red-button {
+  @apply flex justify-center items-center gap-2 border px-3 py-0 rounded-[100px] border-solid border-[#F15757];
+  background: rgba(241, 87, 87, 0.5);
+}
+.delegations-card {
+  @apply flex flex-col justify-center items-start gap-6 flex-[1_0_0] p-6 rounded-2xl;
+  background: rgba(255, 255, 255, 0.02);
+}
