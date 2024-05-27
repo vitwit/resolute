@@ -93,7 +93,7 @@
 }
 
 .select-network {
-  @apply h-[120px] py-6 px-10 flex items-center;
+  @apply h-[100px] py-6 px-10 flex items-center;
   border-radius: 16px 16px 0px 0px;
   background: linear-gradient(
     180deg,

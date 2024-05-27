@@ -10,10 +10,8 @@ import CustomTextField, {
   CustomMultiLineTextField,
 } from '@/components/CustomTextField';
 import props from './customTextFields.json';
-import CustomSubmitButton from '@/components/CustomButton';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import { txTransfer } from '@/store/features/ibc/ibcSlice';
-import { TxStatus } from '@/types/enums';
 import { setError } from '@/store/features/common/commonSlice';
 import NoAssets from '@/components/illustrations/NoAssets';
 import { capitalizeFirstLetter } from '@/utils/util';
@@ -27,8 +25,6 @@ const SendPage = ({ sortedAssets }: { sortedAssets: ParsedAsset[] }) => {
   const { txSendInputs, txTransferInputs, getVoteTxInputs } = useGetTxInputs();
   const { isNativeTransaction, getChainIDFromAddress, getChainInfo } =
     useGetChainInfo();
-  const sendTxStatus = useAppSelector((state) => state.bank.tx.status);
-  const ibcTxStatus = useAppSelector((state) => state.ibc.txStatus);
   const balancesLoading = useAppSelector((state) => state.bank.balancesLoading);
   const sendProps = props.send;
   const [allAssetsDialogOpen, setAllAssetsDialogOpen]: [
@@ -168,7 +164,7 @@ const SendPage = ({ sortedAssets }: { sortedAssets: ParsedAsset[] }) => {
       return;
     }
 
-    const { rpc } = getVoteTxInputs(selectedAsset.chainID)
+    const { rpc } = getVoteTxInputs(selectedAsset.chainID);
 
     if (isNativeTransaction(selectedAsset.chainID, data.address)) {
       const txInputs = txSendInputs(
@@ -192,7 +188,7 @@ const SendPage = ({ sortedAssets }: { sortedAssets: ParsedAsset[] }) => {
         return;
       }
       txInputs.onTxSuccessCallBack = clearForm;
-      dispatch(txBankSend({...txInputs, rpc}));
+      dispatch(txBankSend({ ...txInputs, rpc }));
     } else {
       const destChainID = getChainIDFromAddress(data.address);
 
@@ -364,16 +360,6 @@ const SendPage = ({ sortedAssets }: { sortedAssets: ParsedAsset[] }) => {
                 </div>
               </div>
             )}
-            <CustomSubmitButton
-              isIBC={isIBC}
-              pendingStatus={
-                sendTxStatus === TxStatus.PENDING ||
-                ibcTxStatus === TxStatus.PENDING
-              }
-              buttonStyle="primary-custom-btn w-[144px]"
-              circularProgressSize={24}
-              buttonContent="Send"
-            />
           </form>
         </div>
       ) : balancesLoading ? (
@@ -418,7 +404,7 @@ const Cards = ({
           className={
             'card p-4 cursor-pointer' +
             (asset.denom === selectedAsset?.denom &&
-              asset.chainID === selectedAsset?.chainID
+            asset.chainID === selectedAsset?.chainID
               ? ' selected'
               : '')
           }

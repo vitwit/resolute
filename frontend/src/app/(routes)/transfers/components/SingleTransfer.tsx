@@ -1,15 +1,7 @@
 import React from 'react';
-import Summary from './Summary';
-import SendPage from '../SendPage';
 import SingleSend from './single-send/SingleSend';
 
-const SingleTransfer = ({
-  sortedAssets,
-  chainIDs,
-}: {
-  sortedAssets: ParsedAsset[];
-  chainIDs: string[];
-}) => {
+const SingleTransfer = ({ sortedAssets }: { sortedAssets: ParsedAsset[] }) => {
   return (
     <div className="px-10 flex flex-col md:flex-row gap-6 justify-between items-center h-full">
       <div className="space-y-4 w-[600px] md:w-[400px]">

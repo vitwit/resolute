@@ -23,6 +23,7 @@ import {
 } from '@/utils/localStorage';
 import { setAllNetworksInfo } from '@/store/features/common/commonSlice';
 import useShortCuts from '@/custom-hooks/useShortCuts';
+import TransactionSuccessPopup from '../TransactionSuccessPopup';
 
 const FixedLayout = ({ children }: { children: React.ReactNode }) => {
   const dispatch = useAppDispatch();
@@ -97,6 +98,7 @@ const FixedLayout = ({ children }: { children: React.ReactNode }) => {
           <section className="dynamic-section">{children}</section>
         </div>
       </main>
+      <TransactionSuccessPopup />
     </div>
   );
 };

@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import SingleTransfer from './SingleTransfer';
 import useInitBalances from '@/custom-hooks/useInitBalances';
-import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
+import { useAppSelector } from '@/custom-hooks/StateHooks';
 import useSortedAssets from '@/custom-hooks/useSortedAssets';
 import { useSearchParams } from 'next/navigation';
 
 const TransfersPage = ({ chainIDs }: { chainIDs: string[] }) => {
-  const dispatch = useAppDispatch();
   const [sortedAssets, authzSortedAssets] = useSortedAssets(chainIDs, {
     showAvailable: true,
     AuthzSkipIBC: true,
@@ -32,7 +31,6 @@ const TransfersPage = ({ chainIDs }: { chainIDs: string[] }) => {
       {transferType === 'single' ? (
         <SingleTransfer
           sortedAssets={isAuthzMode ? authzSortedAssets : sortedAssets}
-          chainIDs={chainIDs}
         />
       ) : null}
     </div>

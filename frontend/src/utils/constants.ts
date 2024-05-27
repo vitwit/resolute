@@ -205,7 +205,7 @@ export const SIDENAV_MENU_ITEMS = {
     },
   ],
 };
-export const ALL_NETWORKS_ICON = '/all-networks-icon.png';
+export const ALL_NETWORKS_ICON = '/icons/all-networks-icon.png';
 export const CHANGE_NETWORK_ICON = '/switch-icon.svg';
 export const TXN_SUCCESS_ICON = '/transaction-success-icon.svg';
 export const TXN_FAILED_ICON = '/transaction-failed-icon.svg';

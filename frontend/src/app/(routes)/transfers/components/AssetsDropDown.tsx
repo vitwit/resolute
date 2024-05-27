@@ -11,6 +11,7 @@ const AssetsDropDown = ({
   selectedAsset: ParsedAsset | null;
   handleAssetChange: (option: ParsedAsset | null) => void;
 }) => {
+  /* eslint-disable @typescript-eslint/no-explicit-any */
   const renderOption = (props: any, option: ParsedAsset) => (
     <li {...props} key={option.chainID + option.denom}>
       <div className="flex justify-between items-center px-1 py-2">
@@ -85,9 +86,9 @@ const AssetsDropDown = ({
       sx={{
         '& .MuiInputBase-input': {
           color: 'white',
-          fontSize: '16px',
+          fontSize: '14px',
           fontWeight: 300,
-          fontFamily: 'inter',
+          fontFamily: 'Libre Franklin',
         },
         '& .MuiOutlinedInput-notchedOutline': {
           border: 'none',
@@ -117,6 +118,7 @@ const AssetsDropDown = ({
             color: 'white',
             borderRadius: '16px',
             backdropFilter: 'blur(15px)',
+            marginTop: '8px',
           }}
         >
           {children}

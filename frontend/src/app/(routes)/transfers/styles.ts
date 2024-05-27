@@ -62,7 +62,7 @@ export const customTextFieldStyles = {
     border: 'none',
   },
   '& .MuiOutlinedInput-root': {
-    border: '0.25px solid #FFFFFF30',
+    border: '0.25px solid #ffffff10',
     borderRadius: '100px',
     height: '40px',
   },
@@ -98,6 +98,6 @@ export const amountFieldStyles = {
 export const customAutoCompleteStyles = {
   '& .MuiAutocomplete-inputRoot': {
     padding: '0px 16px',
+    fontFamily: 'Libre Franklin',
   },
-
 };

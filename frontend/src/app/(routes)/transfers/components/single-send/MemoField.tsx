@@ -3,6 +3,7 @@ import React from 'react';
 import { Controller } from 'react-hook-form';
 import { customTextFieldStyles } from '../../styles';
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 const MemoField = ({ control }: { control: any }) => {
   return (
     <Controller
@@ -13,7 +14,6 @@ const MemoField = ({ control }: { control: any }) => {
         <TextField
           className="bg-transparent rounded-full border-[1px] border-[#ffffff80] h-10"
           {...field}
-          required
           fullWidth
           type="text"
           autoFocus={true}

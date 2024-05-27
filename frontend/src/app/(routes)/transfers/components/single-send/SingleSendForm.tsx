@@ -3,6 +3,9 @@ import AddressField from './AddressField';
 import AmountInputWrapper from './AmountInputWrapper';
 import MemoField from './MemoField';
 import { UseFormSetValue } from 'react-hook-form';
+import CustomSubmitButton from '@/components/CustomButton';
+import { useAppSelector } from '@/custom-hooks/StateHooks';
+import { TxStatus } from '@/types/enums';
 
 type OnSubmit = (data: {
   amount: number | undefined;
@@ -10,6 +13,7 @@ type OnSubmit = (data: {
   memo: string;
 }) => void;
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 const SingleSendForm = ({
   control,
   handleSubmit,
@@ -17,6 +21,7 @@ const SingleSendForm = ({
   feeAmount,
   setValue,
   selectedAsset,
+  isIBC,
 }: {
   control: any;
   handleSubmit: any;
@@ -28,11 +33,14 @@ const SingleSendForm = ({
     memo: string;
   }>;
   selectedAsset: ParsedAsset | null;
+  isIBC: boolean;
 }) => {
+  const sendTxStatus = useAppSelector((state) => state.bank.tx.status);
+  const ibcTxStatus = useAppSelector((state) => state.ibc.txStatus);
+
   const quickSelectAmount = (value: string) => {
     if (selectedAsset) {
       const amount = selectedAsset.balance;
-
       if (value === 'half') {
         let halfAmount = Math.max(0, (amount || 0) - feeAmount) / 2;
         halfAmount = +halfAmount.toFixed(6);
@@ -50,20 +58,23 @@ const SingleSendForm = ({
         <div className="form-label-text">Enter recipient address</div>
         <AddressField control={control} />
       </div>
-      <div className="space-y-2">
-        <div className="form-label-text">Enter Amount</div>
+      <div>
         <AmountInputWrapper
           control={control}
           quickSelectAmount={quickSelectAmount}
+          selectedAsset={selectedAsset}
         />
       </div>
       <div className="space-y-2">
         <div className="form-label-text">Enter Memo (Optional)</div>
         <MemoField control={control} />
       </div>
-      <button type="submit" className="primary-btn w-full">
-        Send
-      </button>
+      <CustomSubmitButton
+        isIBC={isIBC}
+        pendingStatus={
+          sendTxStatus === TxStatus.PENDING || ibcTxStatus === TxStatus.PENDING
+        }
+      />
     </form>
   );
 };

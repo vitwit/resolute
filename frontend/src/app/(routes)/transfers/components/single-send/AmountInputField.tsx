@@ -1,6 +1,7 @@
 import React from 'react';
 import { Controller } from 'react-hook-form';
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 const AmountInputField = ({ control }: { control: any }) => {
   return (
     <Controller

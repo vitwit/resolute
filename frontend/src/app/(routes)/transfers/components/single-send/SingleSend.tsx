@@ -1,14 +1,21 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import AssetsDropDown from '../AssetsDropDown';
 import SingleSendForm from './SingleSendForm';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
-import { setError } from '@/store/features/common/commonSlice';
+import {
+  setChangeNetworkDialogOpen,
+  setError,
+} from '@/store/features/common/commonSlice';
 import useGetTxInputs from '@/custom-hooks/useGetTxInputs';
 import useAuthzExecHelper from '@/custom-hooks/useAuthzExecHelper';
 import { txBankSend } from '@/store/features/bank/bankSlice';
 import { txTransfer } from '@/store/features/ibc/ibcSlice';
+import Image from 'next/image';
+import { shortenName } from '@/utils/util';
+import { Box } from '@mui/material';
+import { ALL_NETWORKS_ICON } from '@/utils/constants';
 
 const SingleSend = ({ sortedAssets }: { sortedAssets: ParsedAsset[] }) => {
   const dispatch = useAppDispatch();
@@ -19,22 +26,23 @@ const SingleSend = ({ sortedAssets }: { sortedAssets: ParsedAsset[] }) => {
 
   const [selectedAsset, setSelectedAsset] = useState<ParsedAsset | null>(null);
   const [isIBC, setIsIBC] = useState(false);
+  const [chainLogo, setChainLogo] = useState(ALL_NETWORKS_ICON);
+  const [chainGradient, setChainGradient] = useState('');
 
   const isAuthzMode = useAppSelector((state) => state.authz.authzModeEnabled);
   const authzAddress = useAppSelector((state) => state.authz.authzAddress);
+  const selectedNetwork = useAppSelector(
+    (state) => state.common.selectedNetwork
+  );
+  const allNetworks = useAppSelector((state) => state.common.allNetworksInfo);
+  const nameToChainIDs = useAppSelector((state) => state.wallet.nameToChainIDs);
+  const isWalletConnected = useAppSelector((state) => state.wallet.connected);
 
   const feeAmount = selectedAsset
     ? getChainInfo(selectedAsset.chainID).feeAmount
     : 0;
 
-  const {
-    handleSubmit,
-    control,
-    reset,
-    formState: { errors },
-    getValues,
-    setValue,
-  } = useForm({
+  const { handleSubmit, control, reset, getValues, setValue } = useForm({
     defaultValues: {
       amount: '',
       address: '',
@@ -146,9 +154,41 @@ const SingleSend = ({ sortedAssets }: { sortedAssets: ParsedAsset[] }) => {
     }
   };
 
+  const changeNetwork = () => {
+    dispatch(setChangeNetworkDialogOpen({ open: true, showSearch: false }));
+  };
+
+  useEffect(() => {
+    if (selectedNetwork.chainName && isWalletConnected) {
+      const chainID = nameToChainIDs[selectedNetwork.chainName];
+      setChainLogo(allNetworks[chainID].logos.menu);
+      setChainGradient(allNetworks[chainID].config.theme.gradient);
+    } else {
+      setChainLogo(ALL_NETWORKS_ICON);
+    }
+  }, [selectedNetwork]);
+
   return (
-    <div className="single-send-box">
-      <div className="select-network">Select Network</div>
+    <div className="single-send-box w-[550px]">
+      <Box
+        sx={{
+          background:
+            chainGradient ||
+            'linear-gradient(180deg, #7A7E9C 0.5%, #09090A 100%)',
+        }}
+        className="select-network"
+      >
+        <div
+          onClick={() => changeNetwork()}
+          className="flex items-center gap-2 cursor-pointer w-fit"
+        >
+          <Image src={chainLogo} height={40} width={40} alt="" />
+          <div className="text-[20px] font-bold capitalize">
+            {shortenName(selectedNetwork.chainName, 15) || 'All Networks'}
+          </div>
+          <Image src="/drop-down-icon.svg" height={24} width={24} alt="" />
+        </div>
+      </Box>
       <div className="py-10 px-6 space-y-10">
         <div>
           <AssetsDropDown
@@ -164,6 +204,7 @@ const SingleSend = ({ sortedAssets }: { sortedAssets: ParsedAsset[] }) => {
           feeAmount={feeAmount}
           setValue={setValue}
           selectedAsset={selectedAsset}
+          isIBC={isIBC}
         />
       </div>
     </div>
