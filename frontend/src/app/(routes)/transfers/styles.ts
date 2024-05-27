@@ -49,3 +49,55 @@ export const swapTextFieldStyles = {
     WebkitTextFillColor: '#ffffff !important',
   },
 };
+
+export const customTextFieldStyles = {
+  '& .MuiInputBase-input': {
+    color: 'white',
+    fontSize: '14px',
+    fontWeight: 200,
+    fontFamily: 'Libre Franklin',
+    lineHeight: '19px',
+  },
+  '& .MuiOutlinedInput-notchedOutline': {
+    border: 'none',
+  },
+  '& .MuiOutlinedInput-root': {
+    border: '0.25px solid #FFFFFF30',
+    borderRadius: '100px',
+    height: '40px',
+  },
+  '& .Mui-focused': {
+    border: '0.25px solid #ffffff4a',
+    borderRadius: '100px',
+  },
+};
+
+export const amountFieldStyles = {
+  '& .MuiInputBase-input': {
+    color: 'white',
+    fontSize: '40px',
+    height: '48px',
+    fontWeight: 700,
+    fontFamily: 'Libre Franklin',
+    padding: '0',
+  },
+  '& .MuiOutlinedInput-notchedOutline': {
+    border: 'none',
+    height: '48px',
+  },
+  '& .MuiOutlinedInput-root': {
+    border: 'none',
+    padding: '0',
+  },
+  '& .Mui-focused': {
+    border: 'none',
+    borderRadius: '100px',
+  },
+};
+
+export const customAutoCompleteStyles = {
+  '& .MuiAutocomplete-inputRoot': {
+    padding: '0px 16px',
+  },
+
+};

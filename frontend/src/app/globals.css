@@ -5,7 +5,7 @@
 @tailwind utilities;
 
 :root {
-  --primary-text-color: '#FFFFFF';
+  --primary-text-color: #ffffff;
   --secondary-text-color: #ffffff80;
 }
 
@@ -47,4 +47,8 @@ body {
 
 .divider-line {
   @apply w-full bg-[#FFFFFF80] h-[0.25px] opacity-20;
+}
+
+.form-label-text {
+  @apply text-[var(--secondary-text-color)] font-light text-[14px] leading-[24px];
 }
