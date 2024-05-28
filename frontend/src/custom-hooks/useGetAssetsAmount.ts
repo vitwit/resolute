@@ -9,6 +9,9 @@ const useGetAssetsAmount = (chainIDs: string[]) => {
   const stakingChains = useAppSelector(
     (state: RootState) => state.staking.chains
   );
+
+  console.log('staking chainss=============', stakingChains)
+
   const balanceChains = useAppSelector(
     (state: RootState) => state.bank.balances
   );
@@ -26,6 +29,7 @@ const useGetAssetsAmount = (chainIDs: string[]) => {
     let totalStakedAmount = 0;
     chainIDs.forEach((chainID) => {
       const staked = stakingChains?.[chainID]?.delegations?.totalStaked || 0;
+      console.log('staked Amount==============', staked, stakingChains)
       if (staked > 0) {
         const { decimals, minimalDenom } = getDenomInfo(chainID);
         const usdPriceInfo: TokenInfo | undefined =
@@ -35,7 +39,28 @@ const useGetAssetsAmount = (chainIDs: string[]) => {
       }
     });
 
+    console.log('========================', totalStakedAmount)
+
     return totalStakedAmount;
+  }, [chainIDs, stakingChains, getDenomInfo, tokensPriceInfo]);
+
+
+  // calculates un staked amount in usd
+  const totalUnStakedAmount = useMemo(() => {
+    let totalUnStakedAmount = 0;
+    chainIDs.forEach((chainID) => {
+      const unStaked = stakingChains?.[chainID]?.unbonding?.totalUnbonded || 0;
+      if (unStaked > 0) {
+        const { decimals, minimalDenom } = getDenomInfo(chainID);
+        const usdPriceInfo: TokenInfo | undefined =
+          tokensPriceInfo?.[minimalDenom]?.info;
+        const usdDenomPrice = usdPriceInfo?.usd || 0;
+        totalUnStakedAmount += (unStaked / 10 ** decimals) * usdDenomPrice;
+      }
+    });
+
+    console.log('========================+++++++++++++', totalUnStakedAmount)
+    return totalUnStakedAmount;
   }, [chainIDs, stakingChains, getDenomInfo, tokensPriceInfo]);
 
   // calculates bank balances (native + ibs) in usd
@@ -98,7 +123,7 @@ const useGetAssetsAmount = (chainIDs: string[]) => {
     return totalRewardsAmount;
   }, [chainIDs, rewardsChains, getDenomInfo, tokensPriceInfo]);
 
-  return [totalStakedAmount, availableAmount, rewardsAmount];
+  return [totalStakedAmount, availableAmount, rewardsAmount, totalUnStakedAmount];
 };
 
 export default useGetAssetsAmount;
