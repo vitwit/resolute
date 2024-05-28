@@ -5,19 +5,22 @@ import Image from 'next/image';
 const MultisigDashboard = () => {
   return (
     <div className="flex gap-20 flex-col flex-[1_0_0] self-stretch px-10 py-20">
-      <div className="gap-10 flex flex-col w-full">
-        <div className="flex justify-between w-full">
-          <div className="flex flex-col items-start">
-            <div className="text-white text-[28px] not-italic font-bold leading-[normal] text-start">
-              Multisig
+      <div className="flex flex-col gap-10">
+        <div className="gap-2 flex flex-col w-full">
+          <div className="flex justify-between w-full">
+            <div className="flex flex-col items-start">
+              <div className="text-white text-[28px] not-italic font-bold leading-[normal] text-start">
+                Multisig
+              </div>
+              <div className="text-[rgba(255,255,255,0.50)] text-sm not-italic font-extralight leading-8">
+                Connect your wallet now to access all the modules on resolute{' '}
+              </div>
             </div>
-            <div className="text-[rgba(255,255,255,0.50)] text-sm not-italic font-extralight leading-8">
-              Connect your wallet now to access all the modules on resolute{' '}
+            <div className="items-center flex">
+              <button className="primary-btn">Create Multisig</button>
             </div>
           </div>
-          <div className="items-center flex">
-            <button className="primary-btn">Create Multisig</button>
-          </div>
+          <div className="divider-line"></div>
         </div>
         <div className="grid grid-cols-3 gap-6 px-6 py-0">
           {[1, 2, 3].map((data, dataid) => (
@@ -74,16 +77,15 @@ const MultisigDashboard = () => {
           ))}
         </div>
       </div>
-
       <div className="flex flex-col w-full gap-10">
         <div className="space-y-2 items-start">
-          <div className="text-white text-[28px] not-italic font-bold leading-[normal]">
-            Delegations
+          <div className="text-white text-lg not-italic font-normal leading-[27px]">
+            Recent Transactions
           </div>
           <div className="text-[rgba(255,255,255,0.50)] text-sm not-italic font-extralight leading-8">
             Connect your wallet now to access all the modules on resolute{' '}
           </div>
-          <div className="horizontal-line"></div>
+          <div className="divider-line"></div>
         </div>
 
         {[1, 2, 3].map((data, dataid) => (

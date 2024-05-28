@@ -191,3 +191,10 @@
   @apply flex flex-col justify-center items-start gap-6 flex-[1_0_0] p-6 rounded-2xl;
   background: rgba(255, 255, 255, 0.02);
 }
+.members-card {
+  @apply flex flex-col gap-4 flex-[1_0_0] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)_inset] p-4 rounded-2xl;
+  background: rgba(255, 255, 255, 0.02);
+}
+.txn-btns {
+  @apply flex justify-center items-center gap-4 px-4 py-[10.5px] rounded-lg border-[0.25px]  hover:bg-[#ffffff14];
+}
