@@ -56,7 +56,7 @@ const Messages = ({
             : null}
         </div>
       </div>
-      <div className="w-full divider-line !opacity-10"></div>
+      <div className="w-full divider-line !opacity-10" />
       <div className="flex flex-row-reverse items-center mt-1 h-6">
         {pagesCount > 1 ? (
           <Pagination
