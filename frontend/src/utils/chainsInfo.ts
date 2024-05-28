@@ -86,7 +86,7 @@ export const networks: Network[] = [
       theme: {
         primaryColor: '#fff',
         gradient:
-          'linear-gradient(180deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0) 100%)',
+          'linear-gradient(180deg, #BF2A4560 0%, #12131C80 100%)',
       },
     },
   },
@@ -170,7 +170,7 @@ export const networks: Network[] = [
       theme: {
         primaryColor: '#fff',
         gradient:
-          'linear-gradient(180deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0) 100%)',
+          'linear-gradient(180deg, #F24E2960 0%, #12131C80 100%)',
       },
     },
   },
@@ -252,7 +252,7 @@ export const networks: Network[] = [
       theme: {
         primaryColor: '#fff',
         gradient:
-          'linear-gradient(180deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0) 100%)',
+          'linear-gradient(180deg, #272B4060 0%, #12131C80 100%)',
       },
     },
   },
@@ -333,7 +333,7 @@ export const networks: Network[] = [
       theme: {
         primaryColor: '#fff',
         gradient:
-          'linear-gradient(180deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0) 100%)',
+          'linear-gradient(180deg, #F27D5260 0%, #12131C80 100%)',
       },
     },
   },
@@ -414,7 +414,7 @@ export const networks: Network[] = [
       theme: {
         primaryColor: '#fff',
         gradient:
-          'linear-gradient(180deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0) 100%)',
+          'linear-gradient(180deg, #F2453560 0%, #12131C80 100%)',
       },
     },
   },
@@ -497,7 +497,7 @@ export const networks: Network[] = [
       theme: {
         primaryColor: '#fff',
         gradient:
-          'linear-gradient(180deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0) 100%)',
+          'linear-gradient(180deg, #F2798360 0%, #12131C80 100%)',
       },
     },
   },
@@ -580,7 +580,7 @@ export const networks: Network[] = [
       theme: {
         primaryColor: '#fff',
         gradient:
-          'linear-gradient(180deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0) 100%)',
+          'linear-gradient(180deg, #D91E7560 0%, #12131C80 100%)',
       },
     },
   },
@@ -661,7 +661,7 @@ export const networks: Network[] = [
       theme: {
         primaryColor: '#fff',
         gradient:
-          'linear-gradient(180deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0) 100%)',
+          'linear-gradient(180deg, #5A0DA660 0%, #12131C80 100%)',
       },
     },
   },
@@ -748,7 +748,7 @@ export const networks: Network[] = [
       theme: {
         primaryColor: '#fff',
         gradient:
-          'linear-gradient(180deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0) 100%)',
+          'linear-gradient(180deg, #72727360 0%, #12131C80 100%)',
       },
     },
   },
@@ -831,7 +831,7 @@ export const networks: Network[] = [
       theme: {
         primaryColor: '#fff',
         gradient:
-          'linear-gradient(180deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0) 100%)',
+          'linear-gradient(180deg, #4F4DB560 0%, #12131C80 100%)',
       },
     },
   },
@@ -914,7 +914,7 @@ export const networks: Network[] = [
       theme: {
         primaryColor: '#fff',
         gradient:
-          'linear-gradient(180deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0) 100%)',
+          'linear-gradient(180deg, #BFBFBF60 0%, #12131C80 100%)',
       },
     },
   },
@@ -997,7 +997,7 @@ export const networks: Network[] = [
       theme: {
         primaryColor: '#fff',
         gradient:
-          'linear-gradient(180deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0) 100%)',
+          'linear-gradient(180deg, #5ABF9060 0%, #12131C80 100%)',
       },
     },
   },
@@ -1078,7 +1078,7 @@ export const networks: Network[] = [
       theme: {
         primaryColor: '#fff',
         gradient:
-          'linear-gradient(180deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0) 100%)',
+          'linear-gradient(180deg, #9AD9CD60 0%, #12131C80 100%)',
       },
     },
   },
@@ -1163,7 +1163,7 @@ export const networks: Network[] = [
       theme: {
         primaryColor: '#fff',
         gradient:
-          'linear-gradient(180deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0) 100%)',
+          'linear-gradient(180deg, #e9c3a460 0%, #12131C80 100%)',
       },
     },
   },
@@ -1246,7 +1246,7 @@ export const networks: Network[] = [
       theme: {
         primaryColor: '#fff',
         gradient:
-          'linear-gradient(180deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0) 100%)',
+          'linear-gradient(180deg, #C9ACF260 0%, #12131C80 100%)',
       },
     },
   },
@@ -1330,7 +1330,7 @@ export const networks: Network[] = [
       theme: {
         primaryColor: '#fff',
         gradient:
-          'linear-gradient(180deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0) 100%)',
+          'linear-gradient(180deg, #7A2BF960 0%, #12131C80 100%)',
       },
     },
   },
@@ -1411,7 +1411,7 @@ export const networks: Network[] = [
       theme: {
         primaryColor: '#fff',
         gradient:
-          'linear-gradient(180deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0) 100%)',
+          'linear-gradient(180deg, #6DD4EF60 0%, #12131C80 100%)',
       },
     },
   },
@@ -1492,7 +1492,7 @@ export const networks: Network[] = [
       theme: {
         primaryColor: '#fff',
         gradient:
-          'linear-gradient(180deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0) 100%)',
+          'linear-gradient(180deg, #F2415060 0%, #12131C80 100%)',
       },
     },
   },
@@ -1573,7 +1573,7 @@ export const networks: Network[] = [
       theme: {
         primaryColor: '#fff',
         gradient:
-          'linear-gradient(180deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0) 100%)',
+          'linear-gradient(180deg, #0339A660 0%, #12131C80 100%)',
       },
     },
   },
@@ -1654,7 +1654,7 @@ export const networks: Network[] = [
       theme: {
         primaryColor: '#fff',
         gradient:
-          'linear-gradient(180deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0) 100%)',
+          'linear-gradient(180deg, #F2522E60 0%, #12131C80 100%)',
       },
     },
   },
@@ -1735,7 +1735,7 @@ export const networks: Network[] = [
       theme: {
         primaryColor: '#fff',
         gradient:
-          'linear-gradient(180deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0) 100%)',
+          'linear-gradient(180deg, #F2440560 0%, #12131C80 100%)',
       },
     },
   },
@@ -1816,7 +1816,7 @@ export const networks: Network[] = [
       theme: {
         primaryColor: '#fff',
         gradient:
-          'linear-gradient(180deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0) 100%)',
+          'linear-gradient(180deg, #F2B47E60 0%, #12131C80 100%)',
       },
     },
   },
