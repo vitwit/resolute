@@ -101,3 +101,8 @@
     rgba(18, 19, 28, 0.5) 100%
   );
 }
+
+.upload-box {
+  @apply rounded-3xl px-6 py-[10.5px] flex items-center justify-between cursor-pointer;
+  border: 0.25px dashed #ffffff20;
+}

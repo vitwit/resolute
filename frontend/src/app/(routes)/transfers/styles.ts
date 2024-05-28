@@ -13,11 +13,11 @@ export const multiSendInputFieldStyles = {
     border: 'none',
   },
   '& .MuiOutlinedInput-root': {
-    border: '1px solid #ffffff1a',
+    border: '1px solid #ffffff10',
     borderRadius: '16px',
   },
   '& .Mui-focused': {
-    border: '1px solid #ffffff4a',
+    border: '1px solid #ffffff3a',
     borderRadius: '16px',
   },
 };
