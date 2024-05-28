@@ -24,13 +24,11 @@ const Messages = ({
 
   return (
     <div className="flex flex-col h-full">
-      <div className="flex flex-col h-full space-y-6">
+      <div className="flex flex-col h-full">
         <div className="flex justify-between h-[34px] items-center">
-          <div className="text-sm not-italic font-normal leading-[normal]">
-            Messages
-          </div>
+          <div className="text-[14px] font-light">Messages</div>
           <div
-            className="text-right text-xs not-italic font-normal leading-[normal] underline cursor-pointer"
+            className="secondary-btn"
             onClick={() => {
               onDeleteAll();
               setIndex(0);
@@ -39,7 +37,7 @@ const Messages = ({
             Clear All
           </div>
         </div>
-        <div className="flex h-full flex-col relative">
+        <div className="flex flex-col gap-2 my-4 h-[91px]">
           {msgs?.length
             ? msgs
                 .slice(
@@ -53,15 +51,13 @@ const Messages = ({
                       onDelete={onDelete}
                       index={MULTI_TRANSFER_MSG_COUNT * index + offset}
                     />
-
-                    <div style={{ marginTop: `55px` }} />
                   </div>
                 ))
             : null}
         </div>
       </div>
       <div className="w-full divider-line !opacity-10"></div>
-      <div className="flex flex-row-reverse mt-6 h-10 items-center">
+      <div className="flex flex-row-reverse items-center mt-1 h-6">
         {pagesCount > 1 ? (
           <Pagination
             page={index + 1}
@@ -93,9 +89,9 @@ const Message = ({
   );
 
   return (
-    <div className={`flex items-center justify-between w-full absolute`}>
+    <div className="flex items-center justify-between w-full">
       <div className="flex gap-2 items-center">
-        <div className="overflowed-text max-w-[275px] text-sm not-italic font-normal leading-[normal]">
+        <div className="overflowed-text max-w-[350px] text-[14px] font-light flex gap-1 text-[#FFFFFF80]">
           {formatSendMessage(
             msg,
             originDenomInfo.decimals,

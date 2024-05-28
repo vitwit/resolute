@@ -42,7 +42,7 @@ body {
 }
 
 .secondary-btn {
-  @apply text-[var(--secondary-text-color)] font-extralight text-[14px] underline underline-offset-[2px];
+  @apply text-[var(--secondary-text-color)] font-extralight text-[14px] underline underline-offset-[2px] cursor-pointer;
 }
 
 .divider-line {

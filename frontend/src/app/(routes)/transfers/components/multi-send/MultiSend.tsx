@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import CustomSubmitButton from '@/components/CustomButton';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
@@ -9,13 +9,14 @@ import {
   setError,
 } from '@/store/features/common/commonSlice';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
-import { Box, TextField } from '@mui/material';
-import { ALL_NETWORKS_ICON, MULTISEND_PLACEHOLDER } from '@/utils/constants';
+import { Box } from '@mui/material';
+import { ALL_NETWORKS_ICON } from '@/utils/constants';
 import Image from 'next/image';
 import { shortenName } from '@/utils/util';
-import { multiSendInputFieldStyles } from '../../styles';
-import { parseSendMsgsFromContent } from '@/utils/parseMsgs';
 import Messages from '../Messages';
+import MemoField from '../single-send/MemoField';
+import AmountSummary from './AmountSummary';
+import AddMessages from './AddMessages';
 
 const MultiSend = ({ chainID }: { chainID: string }) => {
   const dispatch = useAppDispatch();
@@ -26,7 +27,6 @@ const MultiSend = ({ chainID }: { chainID: string }) => {
   const [chainGradient, setChainGradient] = useState('');
 
   const txPendingStatus = useAppSelector((state) => state.bank.tx.status);
-  const isAuthzMode = useAppSelector((state) => state.authz.authzModeEnabled);
   const selectedNetwork = useAppSelector(
     (state) => state.common.selectedNetwork
   );
@@ -40,18 +40,14 @@ const MultiSend = ({ chainID }: { chainID: string }) => {
     }
   }, [txPendingStatus]);
 
-  const {
-    handleSubmit,
-    control,
-    formState: { errors },
-  } = useForm({
+  const { handleSubmit, control } = useForm({
     defaultValues: {
       memo: '',
     },
   });
 
   const addMsgs = (msgs: Msg[]) => {
-    setMsgs(msgs);
+    setMsgs((prev) => [...prev, ...msgs]);
   };
 
   const onDelete = (index: number) => {
@@ -132,14 +128,15 @@ const MultiSend = ({ chainID }: { chainID: string }) => {
           </div>
         </Box>
         <div className="py-10 px-6 space-y-10">
-          <form
-            className={`${msgs.length ? 'space-y-6' : 'space-y-10'}`}
-            onSubmit={handleSubmit(onSubmit)}
-          >
+          <form className={`${'space-y-6'}`} onSubmit={handleSubmit(onSubmit)}>
             <AddMessages addMsgs={addMsgs} chainID={chainID} msgs={msgs} />
+            <div className="space-y-2">
+              <div className="secondary-text">Enter Memo</div>
+              <MemoField control={control} />
+            </div>
             {msgs?.length ? (
-              <div className="space-y-10">
-                <AmountSummary />
+              <div className="space-y-4">
+                <AmountSummary msgs={msgs} />
                 <Messages
                   msgs={msgs}
                   onDelete={onDelete}
@@ -158,166 +155,3 @@ const MultiSend = ({ chainID }: { chainID: string }) => {
 };
 
 export default MultiSend;
-
-const AmountSummary = () => {
-  return (
-    <div className="px-6 py-4 bg-[#FFFFFF05] text-[14px] text-[#FFFFFF80] rounded-2xl w-full text-center space-x-2">
-      <span>You are sending</span>
-      <span className="font-bold text-white text-[16px]">50 AKT</span>
-      <span>to</span>
-      <span className="font-bold text-white text-[16px]">10 Addresses</span>
-    </div>
-  );
-};
-
-const AddMessages = ({
-  chainID,
-  addMsgs,
-  msgs,
-}: {
-  chainID: string;
-  addMsgs: (msgs: Msg[]) => void;
-  msgs: Msg[];
-}) => {
-  const dispatch = useAppDispatch();
-  const address = useAppSelector(
-    (state) => state.wallet.networks[chainID].walletInfo.bech32Address
-  );
-  const [inputs, setInputs] = useState('');
-  const handleInputChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    setInputs(e.target.value);
-  };
-
-  const onFileContents = (content: string | ArrayBuffer | null) => {
-    const [parsedTxns, error] = parseSendMsgsFromContent(
-      address,
-      '\n' + content
-    );
-    if (error) {
-      dispatch(
-        setError({
-          type: 'error',
-          message: error,
-        })
-      );
-    } else {
-      addMsgs(parsedTxns);
-    }
-  };
-
-  const addInputs = () => {
-    const [parsedTxns, error] = parseSendMsgsFromContent(
-      address,
-      '\n' + inputs
-    );
-    if (error) {
-      dispatch(
-        setError({
-          type: 'error',
-          message: error,
-        })
-      );
-    } else {
-      addMsgs(parsedTxns);
-      if (parsedTxns?.length) {
-        setInputs('');
-      } else {
-        dispatch(
-          setError({
-            type: 'error',
-            message: 'Invalid input',
-          })
-        );
-      }
-    }
-  };
-
-  return (
-    <div>
-      <div className="space-y-6">
-        <div className="relative">
-          <TextField
-            multiline
-            fullWidth
-            className="text-white"
-            onChange={handleInputChange}
-            value={inputs}
-            spellCheck={false}
-            rows={msgs.length ? 2 : 15}
-            sx={{
-              ...multiSendInputFieldStyles,
-              ...{ height: msgs.length ? '90px' : '392px' },
-            }}
-            placeholder={MULTISEND_PLACEHOLDER}
-            autoFocus={true}
-          />
-          <button
-            onClick={() => addInputs()}
-            type="button"
-            className="primary-btn !px-6 absolute top-4 right-4 z-100"
-          >
-            Add
-          </button>
-        </div>
-        <div>
-          <div
-            className="upload-box"
-            onClick={() => {
-              const element = document.getElementById('multiTxns_file');
-              if (element) element.click();
-            }}
-          >
-            <div className="flex gap-1 items-center">
-              <Image
-                src="/icons/upload-icon.svg"
-                height={24}
-                width={24}
-                alt=""
-              />
-              <div className="text-[14px]">Upload CSV here</div>
-            </div>
-            <div className="flex items-center gap-1">
-              <div className="secondary-text">Download Sample</div>
-              <div className="text-[14px] underline underline-offset-[3px] font-bold">
-                here
-              </div>
-            </div>
-            <input
-              id="multiTxns_file"
-              accept=".csv"
-              hidden
-              type="file"
-              onChange={(e) => {
-                if (!e?.target?.files) return;
-                const file = e.target.files[0];
-                if (!file) {
-                  return;
-                }
-
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                  if (!e.target) return null;
-                  const contents = e.target.result;
-                  onFileContents(contents);
-                };
-                reader.onerror = (e) => {
-                  dispatch(
-                    setError({
-                      type: 'error',
-                      message:
-                        '' + (e.target?.error || 'Something went wrong. '),
-                    })
-                  );
-                };
-                reader.readAsText(file);
-                e.target.value = '';
-              }}
-            />
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
