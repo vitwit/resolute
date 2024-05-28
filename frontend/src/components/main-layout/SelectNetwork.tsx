@@ -35,7 +35,7 @@ const SelectNetwork = () => {
       setWalletAddress('');
       setChainLogo(ALL_NETWORKS_ICON);
     }
-  }, [selectedNetwork]);
+  }, [selectedNetwork, isWalletConnected]);
 
   return (
     <div className="fixed-top w-full">

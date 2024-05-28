@@ -4,6 +4,7 @@ import useInitBalances from '@/custom-hooks/useInitBalances';
 import { useAppSelector } from '@/custom-hooks/StateHooks';
 import useSortedAssets from '@/custom-hooks/useSortedAssets';
 import { useSearchParams } from 'next/navigation';
+import MultiSendPage from './multi-send/MultiSendPage';
 
 const TransfersPage = ({ chainIDs }: { chainIDs: string[] }) => {
   const [sortedAssets, authzSortedAssets] = useSortedAssets(chainIDs, {
@@ -32,6 +33,9 @@ const TransfersPage = ({ chainIDs }: { chainIDs: string[] }) => {
         <SingleTransfer
           sortedAssets={isAuthzMode ? authzSortedAssets : sortedAssets}
         />
+      ) : null}
+      {transferType === 'multi-send' ? (
+        <MultiSendPage chainID={chainIDs[0]} />
       ) : null}
     </div>
   );
