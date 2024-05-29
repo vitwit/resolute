@@ -4,8 +4,8 @@ import React from 'react'
 type AssetSummary = { icon: string; alt: string; type: string; amount: number };
 
 function StakingSummary({
-    stakedAmount, rewardsAmount, unstakeAmount
-}: {stakedAmount: number, rewardsAmount: number, unstakeAmount: number}) {
+    stakedAmount, rewardsAmount, unstakeAmount, availableAmount
+}: {stakedAmount: number, rewardsAmount: number, unstakeAmount: number, availableAmount: number}) {
     const assetsSummaryData: AssetSummary[] = [
         {
             icon: '/stakedamount.png',
@@ -23,12 +23,12 @@ function StakingSummary({
             icon: '/avbal.png',
             alt: 'available',
             type: 'Available',
-            amount: 1,
+            amount: availableAmount,
         },
         {
             icon: '/unbonding.png',
-            alt: 'total',
-            type: 'Total',
+            alt: 'unbonding',
+            type: 'Unbonding',
             amount: unstakeAmount
             // amount: parseInt(stakedBal)+rewardsBal+availableBal,
         },

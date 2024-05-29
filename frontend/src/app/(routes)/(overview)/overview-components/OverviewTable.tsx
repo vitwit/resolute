@@ -48,8 +48,6 @@ const OverviewTable = ({ chainIDs }: { chainIDs: string[] }) => {
     dispatch(getAllTokensPrice())
 
     chainIDs.forEach((chainID) => {
-
-      console.log('chain Ids==================================', chainID)
       const allChainInfo = networks[chainID];
       const chainInfo = allChainInfo.network;
       const address = allChainInfo?.walletInfo?.bech32Address;

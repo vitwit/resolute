@@ -58,23 +58,24 @@ const useGetChainInfo = () => {
   };
 
   const getChainInfo = (chainID: string): BasicChainInfo => {
-    const network = networks[chainID].network;
-    const config = network.config;
-    const rest = config.rest;
-    const rpc = config.rpc;
-    const chainName = config.chainName.toLowerCase();
+    const network = networks[chainID]?.network;
+    
+    const config = network &&  network?.config;
+    const rest = config && config.rest;
+    const rpc = config && config.rpc;
+    const chainName = config && config.chainName.toLowerCase();
 
-    const aminoCfg = network?.aminoConfig;
+    const aminoCfg = network &&  network?.aminoConfig;
     const cosmosAddress = getCosmosAddress();
-    const prefix = config?.bech32Config.bech32PrefixAccAddr;
-    const valPrefix = config?.bech32Config.bech32PrefixValAddr;
+    const prefix = config && config?.bech32Config.bech32PrefixAccAddr;
+    const valPrefix = config && config?.bech32Config.bech32PrefixValAddr;
     const feeAmount = config?.feeCurrencies[0].gasPriceStep?.average || 0;
-    const decimals = config.feeCurrencies[0].coinDecimals || 0;
+    const decimals = config && config.feeCurrencies[0].coinDecimals || 0;
     const address = networks[chainID]?.walletInfo.bech32Address;
-    const feeCurrencies = config?.feeCurrencies;
-    const explorerTxHashEndpoint = network?.explorerTxHashEndpoint;
-    const chainLogo = networks[chainID].network.logos.menu;
-    const govV1 = network.govV1;
+    const feeCurrencies = config && config?.feeCurrencies;
+    const explorerTxHashEndpoint = network && network?.explorerTxHashEndpoint;
+    const chainLogo = networks[chainID]?.network?.logos?.menu;
+    const govV1 = network && network?.govV1;
 
     return {
       restURLs: config.restURIs,

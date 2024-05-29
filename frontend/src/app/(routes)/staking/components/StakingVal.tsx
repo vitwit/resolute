@@ -1,5 +1,4 @@
 import Image from 'next/image';
-import ValidatorTable from './ValidatorTable';
 
 const StakingVal = () => {
   return (
@@ -28,7 +27,7 @@ const StakingVal = () => {
           </button>
         </div>
       </div>
-      <ValidatorTable />
+      {/* <ValidatorTable /> */}
     </div>
   );
 };

@@ -1,4 +1,4 @@
-export const networks: Network[]= [
+export const networks: Network[] = [
   {
     enableModules: {
       authz: true,
@@ -85,7 +85,165 @@ export const networks: Network[]= [
           'linear-gradient(180deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0) 100%)',
       },
     },
-  }
+  },
+  // {
+  //   enableModules: {
+  //     authz: true,
+  //     feegrant: true,
+  //     group: false,
+  //   },
+  //   aminoConfig: {
+  //     authz: false,
+  //     feegrant: false,
+  //     group: false,
+  //   },
+  //   showAirdrop: false,
+  //   logos: {
+  //     menu: 'https://raw.githubusercontent.com/vitwit/aneka-resources/d234799b2da3dc0b148829259866d07618b9773b/assets/cosmoshub/atom.png',
+  //     toolbar:
+  //       'https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/cosmoshub/images/cosmoshub-logo.png',
+  //   },
+  //   keplrExperimental: true,
+  //   leapExperimental: true,
+  //   isTestnet: true,
+  //   govV1: false,
+  //   explorerTxHashEndpoint: 'https://www.mintscan.io/cosmos/txs/',
+  //   config: {
+  //     chainId: 'testnet',
+  //     chainName: 'Simapp',
+  //     rest: 'http://localhost:1317',
+  //     rpc: 'http://localhost:26657',
+  //     restURIs: ['http://localhost:1317'],
+  //     rpcURIs: ['http://localhost:26657'],
+  //     currencies: [
+  //       {
+  //         coinDenom: 'STAKE',
+  //         coinMinimalDenom: 'stake',
+  //         coinDecimals: 6,
+  //       },
+  //     ],
+  //     bech32Config: {
+  //       bech32PrefixAccAddr: 'cosmos',
+  //       bech32PrefixAccPub: 'cosmospub',
+  //       bech32PrefixValAddr: 'cosmosvaloper',
+  //       bech32PrefixValPub: 'cosmosvaloperpub',
+  //       bech32PrefixConsAddr: 'cosmosgvalcons',
+  //       bech32PrefixConsPub: 'cosmosvalconspub',
+  //     },
+  //     feeCurrencies: [
+  //       {
+  //         coinDenom: 'STAKE',
+  //         coinMinimalDenom: 'stake',
+  //         coinDecimals: 6,
+  //         gasPriceStep: {
+  //           low: 0.01,
+  //           average: 0.025,
+  //           high: 0.03,
+  //         },
+  //       },
+  //     ],
+  //     bip44: {
+  //       coinType: 118,
+  //     },
+  //     stakeCurrency: {
+  //       coinDenom: 'STAKE',
+  //       coinMinimalDenom: 'stake',
+  //       coinDecimals: 6,
+  //     },
+  //     image:
+  //       'https://raw.githubusercontent.com/leapwallet/assets/2289486990e1eaf9395270fffd1c41ba344ef602/images/logo.svg',
+  //     theme: {
+  //       primaryColor: '#fff',
+  //       gradient:
+  //         'linear-gradient(180deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0) 100%)',
+  //     },
+  //   },
+  // },
+  // {
+  //   enableModules: {
+  //     authz: true,
+  //     feegrant: true,
+  //     group: false,
+  //   },
+  //   aminoConfig: {
+  //     authz: false,
+  //     feegrant: false,
+  //     group: false,
+  //   },
+  //   showAirdrop: false,
+  //   logos: {
+  //     menu: 'https://raw.githubusercontent.com/vitwit/aneka-resources/d234799b2da3dc0b148829259866d07618b9773b/assets/akash/akt.png',
+  //     toolbar:
+  //       'https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/akash/images/akash-logo.png',
+  //   },
+  //   keplrExperimental: false,
+  //   leapExperimental: false,
+  //   isTestnet: false,
+  //   govV1: false,
+  //   explorerTxHashEndpoint: 'https://www.mintscan.io/akash/txs/',
+  //   config: {
+  //     chainId: 'akashnet-2',
+  //     chainName: 'Akash',
+  //     rest: 'https://rest-akash.ecostake.com',
+  //     rpc: 'https://akash-rpc.lavenderfive.com:443',
+  //     restURIs: [
+  //       'https://rest-akash.ecostake.com',
+  //       'https://akash-api.lavenderfive.com:443',
+  //       'https://akash-api.polkachu.com',
+  //       'https://rest-akash.ecostake.com',
+  //       'https://api.resolute.vitwit.com/akash_api',
+  //     ],
+  //     rpcURIs: [
+  //       'https://akash-rpc.lavenderfive.com:443',
+  //       'https://akash-rpc.polkachu.com',
+  //       'https://rpc-akash.cosmos-spaces.cloud',
+  //       'https://api.resolute.vitwit.com/akash_rpc',
+  //     ],
+  //     currencies: [
+  //       {
+  //         coinDenom: 'AKT',
+  //         coinMinimalDenom: 'uakt',
+  //         coinDecimals: 6,
+  //       },
+  //     ],
+  //     bech32Config: {
+  //       bech32PrefixAccAddr: 'akash',
+  //       bech32PrefixAccPub: 'akashpub',
+  //       bech32PrefixValAddr: 'akashvaloper',
+  //       bech32PrefixValPub: 'akashvaloperpub',
+  //       bech32PrefixConsAddr: 'akashgvalcons',
+  //       bech32PrefixConsPub: 'akashvalconspub',
+  //     },
+  //     bip44: {
+  //       coinType: 118,
+  //     },
+  //     feeCurrencies: [
+  //       {
+  //         coinDenom: 'AKT',
+  //         coinMinimalDenom: 'uakt',
+  //         coinDecimals: 6,
+  //         gasPriceStep: {
+  //           low: 0.01,
+  //           average: 0.025,
+  //           high: 0.03,
+  //         },
+  //       },
+  //     ],
+  //     stakeCurrency: {
+  //       coinDenom: 'AKT',
+  //       coinMinimalDenom: 'uakt',
+  //       coinDecimals: 6,
+  //     },
+  //     image:
+  //       'https://raw.githubusercontent.com/leapwallet/assets/2289486990e1eaf9395270fffd1c41ba344ef602/images/logo.svg',
+  //     theme: {
+  //       primaryColor: '#fff',
+  //       gradient:
+  //         'linear-gradient(180deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0) 100%)',
+  //     },
+  //   },
+  // },
+
 ]
 // export const networks: Network[] = [
 //   {

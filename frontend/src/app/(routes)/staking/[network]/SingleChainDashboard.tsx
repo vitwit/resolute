@@ -1,17 +1,19 @@
 'use client';
 
 // import ValidatorTable from './ValidatorTable';
-import StakingDelegations from './StakingDelegations';
-import StakingUnDelegations from './StakingUnDelegations';
-import StakingSummary from './StakingSummary';
-import useStaking from '@/custom-hooks/useStaking';
+import StakingDelegations from '../component/StakingDelegations';
+import StakingUnDelegations from '../component/StakingUnDelegations';
+import StakingSummary from '../component/StakingSummary';
+import useSingleStaking from '@/custom-hooks/useSingleStaking';
+import ValidatorTable from '../component/ValidatorTable';
 // import { RootState } from '@/store/store';
 // import { useAppSelector } from '@/custom-hooks/StateHooks';
 
-const StakingDashbrd = () => {
-  const staking = useStaking();
+const SingleStakingDashboard = ({chainID}: {chainID: string}) => {
+  const staking = useSingleStaking(chainID);
   const { totalStakedAmount, rewardsAmount, totalUnStakedAmount, availableAmount } = staking.getStakingAssets()
-  const delegations = staking.getAllDelegations()
+  const delegations = staking.getAllDelegations(chainID)
+
   return (
     <div className="flex flex-col items-start gap-20 flex-[1_0_0] self-stretch px-10 py-20">
       <div className="flex flex-col w-full gap-10">
@@ -25,7 +27,6 @@ const StakingDashbrd = () => {
           <div className="horizontal-line"></div>
         </div>
 
-        {/* Staking summary */}
         <StakingSummary
           availableAmount={availableAmount}
           stakedAmount={totalStakedAmount}
@@ -37,9 +38,11 @@ const StakingDashbrd = () => {
       <StakingUnDelegations undelegations={delegations}  />
 
       {/* Delegations */}
-      <StakingDelegations delegations={delegations} />
-      
+      <StakingDelegations delegations={delegations}  />
+
+      {/* Validator */}
+      <ValidatorTable chainID={chainID} />
     </div>
   );
 };
-export default StakingDashbrd;
+export default SingleStakingDashboard;

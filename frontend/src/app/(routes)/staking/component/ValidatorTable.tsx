@@ -1,6 +1,55 @@
+import useSingleStaking from '@/custom-hooks/useSingleStaking';
+import { get } from 'lodash';
 import Image from 'next/image';
+import {  useState } from 'react';
+import ValidatorName from './ValidatorName';
+import { Validator } from '@/types/staking';
 
-const ValidatorTable = () => {
+interface ValStatusObj {
+  [key: string]: string;
+}
+
+const valStatusObj: ValStatusObj = {
+  BOND_STATUS_BONDED: 'Bonded',
+  BOND_STATUS_UNBONDED: 'Un Bonded'
+}
+
+const ValidatorTable = ({ chainID }: { chainID: string }) => {
+  const staking = useSingleStaking(chainID)
+  const validators = staking.getValidators()
+
+  const [validatorsArr, setValidators] = useState<Record<string, Validator>>(get(validators, 'active'));
+  const [searchQuery, setSearchQuery] = useState<string>('');
+
+
+
+  const search = (query: string) => {
+    const vals = get(validators, 'active')
+    console.log({ values: Object.values(validators) })
+
+    if (query) {
+      const foundKey = Object.keys(vals).find(key =>
+        vals[key].operator_address.includes(query)||
+        (vals[key].description && vals[key].description.moniker.includes(query))
+      );
+
+      if (foundKey) {
+        setValidators({ [foundKey]: vals[foundKey] });
+      } else {
+        setValidators(vals);
+      }
+    } else {
+      setValidators(vals)
+    }
+
+
+
+    // let obj[found?.operator_address] = found
+    // setValidators({obj});
+  };
+
+  console.log({ validatorsArr, validators })
+
   return (
     <div className="flex flex-col gap-10 self-stretch overflow-scroll h-[50vh] px-10">
       <div className="space-y-1">
@@ -16,6 +65,11 @@ const ValidatorTable = () => {
         <div className="search-bar">
           <Image src="/search.svg" width={24} height={24} alt="Search-Icon" />
           <input
+            value={searchQuery}
+            onChange={(e) => {
+              setSearchQuery(e.target.value)
+              search(e.target.value)
+            }}
             className="text-[rgba(255,255,255,0.50)] text-base not-italic font-normal leading-[normal] bg-transparent border-none"
             placeholder=" Search Validator"
           />
@@ -55,41 +109,33 @@ const ValidatorTable = () => {
               </tr>
             </thead>
             <tbody>
-              {[1, 2, 3, 4, 5].map((data, dataid) => (
-                <tr key={dataid} className="table-border-line">
+              {Object.entries(validatorsArr || {}).map(([key, value], index) => (
+                <tr key={key} className="table-border-line">
                   <th className="px-0 py-8">
                     <div className="mr-auto flex">
                       <div className="text-white text-base not-italic font-normal leading-[normal]">
-                        #1
+                        #{index + 1}
                       </div>
                     </div>
                   </th>
                   <th className="">
                     <div className="flex space-x-2">
-                      <Image
-                        src="/cosmostation"
-                        width={24}
-                        height={24}
-                        alt="cosmostation-logo"
-                      />
-                      <p className="text-white text-left text-base not-italic font-normal leading-[normal]">
-                        Cosmostation
-                      </p>
+                      <ValidatorName valoperAddress={key} chainID={chainID} />
                     </div>
                   </th>
                   <th className="">
                     <div className="text-white text-left text-base not-italic font-normal leading-[normal]">
-                      40 Atoms
+                      {Number(get(value, 'commission.commission_rates.rate')) * 100}  %
                     </div>
                   </th>
                   <th className="">
                     <div className="text-white text-left text-base not-italic font-normal leading-[normal]">
-                      $ 89.46
+                      {staking.getAmountWithDecimal(Number(get(value, 'tokens')), chainID)}
                     </div>
                   </th>
                   <th className="">
                     <div className="text-white text-left text-base not-italic font-normal leading-[normal]">
-                      $ 89.46
+                      {valStatusObj[get(value, 'status')]}
                     </div>
                   </th>
                   <th className="">

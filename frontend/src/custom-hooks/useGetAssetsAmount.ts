@@ -10,8 +10,6 @@ const useGetAssetsAmount = (chainIDs: string[]) => {
     (state: RootState) => state.staking.chains
   );
 
-  console.log('staking chainss=============', stakingChains)
-
   const balanceChains = useAppSelector(
     (state: RootState) => state.bank.balances
   );
@@ -29,7 +27,7 @@ const useGetAssetsAmount = (chainIDs: string[]) => {
     let totalStakedAmount = 0;
     chainIDs.forEach((chainID) => {
       const staked = stakingChains?.[chainID]?.delegations?.totalStaked || 0;
-      console.log('staked Amount==============', staked, stakingChains)
+      
       if (staked > 0) {
         const { decimals, minimalDenom } = getDenomInfo(chainID);
         const usdPriceInfo: TokenInfo | undefined =
@@ -38,8 +36,6 @@ const useGetAssetsAmount = (chainIDs: string[]) => {
         totalStakedAmount += (staked / 10 ** decimals) * usdDenomPrice;
       }
     });
-
-    console.log('========================', totalStakedAmount)
 
     return totalStakedAmount;
   }, [chainIDs, stakingChains, getDenomInfo, tokensPriceInfo]);
@@ -59,7 +55,6 @@ const useGetAssetsAmount = (chainIDs: string[]) => {
       }
     });
 
-    console.log('========================+++++++++++++', totalUnStakedAmount)
     return totalUnStakedAmount;
   }, [chainIDs, stakingChains, getDenomInfo, tokensPriceInfo]);
 
