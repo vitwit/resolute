@@ -15,6 +15,7 @@ import { CircularProgress } from '@mui/material';
 import { ERR_UNKNOWN } from '@/utils/errors';
 import useVerifyAccount from '@/custom-hooks/useVerifyAccount';
 import { COSMOS_CHAIN_ID } from '@/utils/constants';
+import CustomButton from '@/components/common/CustomButton';
 
 interface SignTxnProps {
   address: string;
@@ -115,17 +116,15 @@ const SignTxn: React.FC<SignTxnProps> = (props) => {
   };
 
   return (
-    <button
-      className={
-        isMember ? 'sign-broadcast-btn' : 'sign-broadcast-btn btn-disabled'
-      }
-      onClick={() => {
+    <CustomButton
+      btnText="Sign"
+      btnDisabled={load || !isMember}
+      btnLoading={load}
+      btnOnClick={() => {
         signTheTx();
       }}
-      disabled={load || !isMember}
-    >
-      {load ? <CircularProgress size={20} sx={{ color: 'white' }} /> : 'Sign'}
-    </button>
+      btnStyles="w-[115px]"
+    />
   );
 };
 
