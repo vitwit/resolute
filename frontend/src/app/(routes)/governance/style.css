@@ -240,3 +240,15 @@
 .error-chip {
   @apply text-[12px] rounded-lg bg-[#ff00005b] text-white text-center leading-normal max-w-fit py-1 px-2 truncate;
 }
+
+
+/* New css */
+
+.text-bg {
+  background: linear-gradient(270deg, #fff -67.89%, #999 99.95%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.selected-btns {
+  @apply flex justify-center items-center gap-4 px-4 py-[10.5px] rounded-lg border-[0.25px]  hover:bg-[#ffffff14];
+}
