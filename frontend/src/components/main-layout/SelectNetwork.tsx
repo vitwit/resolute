@@ -26,16 +26,19 @@ const SelectNetwork = () => {
   };
 
   useEffect(() => {
+    if(selectedNetwork.chainName && allNetworks) {
+      const chainID = nameToChainIDs[selectedNetwork.chainName];
+      setChainLogo(allNetworks?.[chainID]?.logos?.menu || ALL_NETWORKS_ICON);
+      setChainGradient(allNetworks?.[chainID]?.config?.theme?.gradient);
+    }
     if (selectedNetwork.chainName && isWalletConnected) {
       const chainID = nameToChainIDs[selectedNetwork.chainName];
-      setChainLogo(allNetworks[chainID].logos.menu);
-      setChainGradient(allNetworks[chainID].config.theme.gradient);
-      setWalletAddress(networks[chainID].walletInfo.bech32Address);
-    } else {
+      setWalletAddress(networks[chainID]?.walletInfo.bech32Address);
+    } else if(!selectedNetwork.chainName) {
       setWalletAddress('');
       setChainLogo(ALL_NETWORKS_ICON);
-    }
-  }, [selectedNetwork, isWalletConnected]);
+    } 
+  }, [selectedNetwork, isWalletConnected, allNetworks]);
 
   return (
     <div className="fixed-top w-full">
