@@ -38,6 +38,15 @@ const MultisigDashboard: React.FC<MultisigDashboardI> = (props) => {
   const { prefix, restURLs, feeCurrencies } = getChainInfo(chainID);
   const { isAccountVerified } = useVerifyAccount({ address: walletAddress });
 
+  const signTxStatus = useAppSelector(
+    (state) => state.multisig.signTransactionRes
+  );
+  const broadcastTxnStatus = useAppSelector(
+    (state) => state.multisig.broadcastTxnRes
+  );
+  const signTxLoading = signTxStatus.status === TxStatus.PENDING;
+  const broadcastTxnLoading = broadcastTxnStatus.status === TxStatus.PENDING;
+
   useEffect(() => {
     if (walletAddress) {
       dispatch(getMultisigAccounts(walletAddress));
@@ -77,23 +86,36 @@ const MultisigDashboard: React.FC<MultisigDashboardI> = (props) => {
   }, [walletAddress]);
 
   useEffect(() => {
-    if (createSignRes.status === TxStatus.IDLE) {
+    if (signTxStatus.status === TxStatus.IDLE) {
       dispatch(setError({ type: 'success', message: 'Successfully signed' }));
       fetchAllTransactions();
-    } else if (createSignRes.status === TxStatus.REJECTED) {
+    } else if (signTxStatus.status === TxStatus.REJECTED) {
       dispatch(
         setError({
           type: 'error',
-          message: 'Error while signing the transaction',
+          message: signTxStatus.error || 'Error while signing the transaction',
         })
       );
+      fetchAllTransactions();
     }
-  }, [createSignRes]);
+  }, [signTxStatus]);
 
-  const signTxStatus = useAppSelector(
-    (state) => state.multisig.signTransactionRes.status
-  );
-  const signTxLoading = signTxStatus === TxStatus.PENDING;
+  useEffect(() => {
+    if (broadcastTxnStatus.status === TxStatus.IDLE) {
+      dispatch(
+        setError({ type: 'success', message: 'Broadcasted successfully' })
+      );
+      fetchAllTransactions();
+    } else if (broadcastTxnStatus.status === TxStatus.REJECTED) {
+      dispatch(
+        setError({
+          type: 'error',
+          message: broadcastTxnStatus.error || 'Failed to broadcasted',
+        })
+      );
+      fetchAllTransactions();
+    }
+  }, [broadcastTxnStatus]);
 
   return (
     <div className="mt-10 space-y-20">
@@ -102,6 +124,30 @@ const MultisigDashboard: React.FC<MultisigDashboardI> = (props) => {
       <DialogVerifyAccount walletAddress={walletAddress} />
       <Dialog
         open={signTxLoading}
+        PaperProps={{
+          sx: {
+            borderRadius: '24px',
+            background: '#ffffff1a',
+          },
+        }}
+        sx={{
+          backdropFilter: 'blur(2px)',
+        }}
+      >
+        <DialogContent>
+          <div className="flex gap-4 items-center">
+            <CircularProgress size={32} sx={{ color: 'white' }} />
+            <div className="text-white">
+              {' '}
+              <span className="italic">Loading...</span>
+              <span className="dots-flashing"></span>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog
+        open={broadcastTxnLoading}
         PaperProps={{
           sx: {
             borderRadius: '24px',

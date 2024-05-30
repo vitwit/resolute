@@ -44,22 +44,27 @@ const RecentTransactions = ({ chainID }: { chainID: string }) => {
             description="Recent transactions from all multisig accounts"
           />
           <div className="px-6 mt-10 space-y-10">
-            {accounts.map((account) =>
-              pendingTxns?.[account.address] ? (
-                <MultisigAccountRecentTxns
-                  key={account.address}
-                  actionsRequired={pendingTxns?.[account.address]}
-                  multisigName={account.name}
-                  txns={txnsState.filter(
-                    (txn) => txn.multisig_address === account.address
-                  )}
-                  currency={currency}
-                  threshold={account.threshold}
-                  multisigAddress={account.address}
-                  chainID={chainID}
-                />
-              ) : null
-            )}
+            {accounts.map((account) => {
+              const txns = txnsState.filter(
+                (txn) => txn.multisig_address === account.address
+              );
+              return (
+                <>
+                  {txns?.length ? (
+                    <MultisigAccountRecentTxns
+                      key={account.address}
+                      actionsRequired={txns.length}
+                      multisigName={account.name}
+                      txns={txns}
+                      currency={currency}
+                      threshold={account.threshold}
+                      multisigAddress={account.address}
+                      chainID={chainID}
+                    />
+                  ) : null}
+                </>
+              );
+            })}
           </div>
         </div>
       ) : null}

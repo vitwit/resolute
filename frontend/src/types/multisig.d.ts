@@ -128,6 +128,18 @@ interface MultisigState {
     error: string;
   };
   verifyDialogOpen: boolean;
+  broadcastTxnRes: {
+    status: TxStatus;
+    error: string;
+    txHash: string;
+    txResponse: {
+      code: number;
+      fee: Coin[];
+      transactionHash: string;
+      rawLog: string;
+      memo: string;
+    };
+  };
 }
 
 interface VerifyAccountRes {

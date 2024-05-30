@@ -1,21 +1,12 @@
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
-import { setError } from '@/store/features/common/commonSlice';
 import {
   setVerifyDialogOpen,
   signTransaction,
-  signTx,
 } from '@/store/features/multisig/multisigSlice';
-import { getWalletAmino } from '@/txns/execute';
 import { Txn } from '@/types/multisig';
-import { getAuthToken } from '@/utils/localStorage';
-import { SigningStargateClient } from '@cosmjs/stargate';
-import { toBase64 } from '@cosmjs/encoding';
 import React, { useState } from 'react';
-import { CircularProgress } from '@mui/material';
-import { ERR_UNKNOWN } from '@/utils/errors';
 import useVerifyAccount from '@/custom-hooks/useVerifyAccount';
-import { COSMOS_CHAIN_ID } from '@/utils/constants';
 import CustomButton from '@/components/common/CustomButton';
 import { TxStatus } from '@/types/enums';
 

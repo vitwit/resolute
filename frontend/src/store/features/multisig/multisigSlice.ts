@@ -2,9 +2,11 @@
 
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import multisigService from './multisigService';
-import { AxiosError } from 'axios';
+import axios, { AxiosError } from 'axios';
 import {
   ERR_UNKNOWN,
+  FAILED_TO_BROADCAST_ERROR,
+  NETWORK_ERROR,
   NOT_MULTISIG_ACCOUNT_ERROR,
   NOT_MULTISIG_MEMBER_ERROR,
   WALLET_REQUEST_ERROR,
@@ -16,7 +18,7 @@ import {
   MULTISIG_LEGACY_AMINO_PUBKEY_TYPE,
   OFFCHAIN_VERIFICATION_MESSAGE,
 } from '@/utils/constants';
-import { TxStatus } from '@/types/enums';
+import { MultisigTxStatus, TxStatus } from '@/types/enums';
 import bankService from '@/store/features/bank/bankService';
 import {
   CreateAccountPayload,
@@ -26,20 +28,32 @@ import {
   GetMultisigBalanceInputs,
   GetTxnsInputs,
   ImportMultisigAccountRes,
+  MultisigAddressPubkey,
   MultisigState,
+  Pubkey,
   QueryParams,
   SignTxInputs,
   Txn,
   UpdateTxnInputs,
 } from '@/types/multisig';
-import { getRandomNumber, isMultisigAccountMember } from '@/utils/util';
+import {
+  cleanURL,
+  getRandomNumber,
+  isMultisigAccountMember,
+  isNetworkError,
+  NewMultisigThresholdPubkey,
+} from '@/utils/util';
 import authService from './../auth/authService';
 import { get } from 'lodash';
-import { SigningStargateClient } from '@cosmjs/stargate';
+import { makeMultisignedTx, SigningStargateClient } from '@cosmjs/stargate';
 import { getWalletAmino } from '@/txns/execute';
 import { toBase64 } from '@cosmjs/encoding';
 import { getAuthToken } from '@/utils/localStorage';
 import multisigSigning from '@/app/(routes)/multisig/utils/multisigSigning';
+import { setError } from '../common/commonSlice';
+import { fromBase64 } from '@cosmjs/encoding';
+import { TxRaw } from 'cosmjs-types/cosmos/tx/v1beta1/tx';
+import { parseTxResult } from '@/utils/signing';
 
 const initialState: MultisigState = {
   createMultisigAccountRes: {
@@ -98,6 +112,18 @@ const initialState: MultisigState = {
   signTransactionRes: {
     status: TxStatus.INIT,
     error: '',
+  },
+  broadcastTxnRes: {
+    status: TxStatus.INIT,
+    error: '',
+    txHash: '',
+    txResponse: {
+      code: 0,
+      fee: [],
+      transactionHash: '',
+      rawLog: '',
+      memo: '',
+    },
   },
   txns: {
     list: [],
@@ -312,6 +338,171 @@ export const getAccountAllMultisigTxns = createAsyncThunk(
   }
 );
 
+export const broadcastTransaction = createAsyncThunk(
+  'multisig/broadcastTransaction',
+  async (
+    data: {
+      rpc: string;
+      chainID: string;
+      multisigAddress: string;
+      signedTxn: Txn;
+      walletAddress: string;
+      pubKeys: MultisigAddressPubkey[];
+      threshold: number;
+      baseURLs: string[];
+    },
+    { rejectWithValue, dispatch }
+  ) => {
+    const authToken = getAuthToken(COSMOS_CHAIN_ID);
+    const queryParams = {
+      address: data.walletAddress,
+      signature: authToken?.signature || '',
+    };
+    try {
+      // const payload = await multisigSigning.signTransaction(
+      //   data.rpc,
+      //   data.chainID,
+      //   data.multisigAddress,
+      //   data.unSignedTxn,
+      //   data.walletAddress
+      // );
+      const client = await SigningStargateClient.connect(data.rpc);
+      const multisigAcc = await client.getAccount(data.multisigAddress);
+      if (!multisigAcc) {
+        throw new Error('Multisig account does not exist on chain');
+      }
+
+      const mapData = data.pubKeys || [];
+      let pubkeys_list: Pubkey[] = [];
+
+      pubkeys_list = mapData.map((p) => {
+        const parsed = p?.pubkey;
+        const obj = {
+          type: parsed?.type,
+          value: parsed?.value,
+        };
+        return obj;
+      });
+
+      const multisigThresholdPK = NewMultisigThresholdPubkey(
+        pubkeys_list,
+        `${data.threshold}`
+      );
+
+      const txBody = {
+        typeUrl: '/cosmos.tx.v1beta1.TxBody',
+        value: {
+          messages: data.signedTxn.messages,
+          memo: data.signedTxn.memo,
+        },
+      };
+
+      const walletAmino = await getWalletAmino(data.chainID);
+      const offlineClient = await SigningStargateClient.offline(walletAmino[0]);
+      const txBodyBytes = offlineClient.registry.encode(txBody);
+
+      const signedTx = makeMultisignedTx(
+        multisigThresholdPK,
+        multisigAcc.sequence,
+        data.signedTxn?.fee,
+        txBodyBytes,
+        new Map(
+          data.signedTxn?.signatures.map((s) => [
+            s.address,
+            fromBase64(s.signature),
+          ])
+        )
+      );
+
+      const result = await client.broadcastTx(
+        Uint8Array.from(TxRaw.encode(signedTx).finish())
+      );
+      const txn = await axios.get(
+        cleanURL(data.baseURLs[0]) +
+          '/cosmos/tx/v1beta1/txs/' +
+          result.transactionHash
+      );
+      const {
+        code,
+        transactionHash,
+        fee = [],
+        memo = '',
+        rawLog = '',
+      } = parseTxResult(txn?.data?.tx_response);
+
+      if (result.code === 0) {
+        dispatch(
+          updateTxn({
+            queryParams: queryParams,
+            data: {
+              txId: data.signedTxn?.id,
+              address: data.multisigAddress,
+              body: {
+                status: MultisigTxStatus.SUCCESS,
+                hash: result?.transactionHash || '',
+                error_message: '',
+              },
+            },
+          })
+        );
+      } else {
+        dispatch(
+          setError({
+            type: 'error',
+            message: result?.rawLog || FAILED_TO_BROADCAST_ERROR,
+          })
+        );
+        dispatch(
+          updateTxn({
+            queryParams: queryParams,
+            data: {
+              txId: data.signedTxn?.id,
+              address: data.multisigAddress,
+              body: {
+                status: MultisigTxStatus.FAILED,
+                hash: result?.transactionHash || '',
+                error_message: result?.rawLog || FAILED_TO_BROADCAST_ERROR,
+              },
+            },
+          })
+        );
+      }
+      return {
+        data: { code, transactionHash, fee, memo, rawLog },
+        chainID: data.chainID,
+      };
+    } catch (error: any) {
+      let errMsg =
+        error?.message || 'Error while signing the transaction, Try again.';
+      if (isNetworkError(errMsg)) {
+        errMsg = `${NETWORK_ERROR}: ${errMsg}`;
+      }
+      dispatch(
+        setError({
+          message: errMsg,
+          type: 'error',
+        })
+      );
+
+      dispatch(
+        updateTxn({
+          queryParams,
+          data: {
+            txId: data.signedTxn?.id,
+            address: data.multisigAddress,
+            body: {
+              status: MultisigTxStatus.FAILED,
+              hash: '',
+              error_message: error?.message || FAILED_TO_BROADCAST_ERROR,
+            },
+          },
+        })
+      );
+
+      return rejectWithValue(errMsg);
+    }
+  }
+);
 export const updateTxn = createAsyncThunk(
   'multisig/updateTxn',
   async (data: UpdateTxnInputs, { rejectWithValue }) => {
@@ -341,7 +532,7 @@ export const signTransaction = createAsyncThunk(
       unSignedTxn: Txn;
       walletAddress: string;
     },
-    { rejectWithValue }
+    { rejectWithValue, dispatch }
   ) => {
     try {
       const payload = await multisigSigning.signTransaction(
@@ -366,10 +557,19 @@ export const signTransaction = createAsyncThunk(
         }
       );
       return response.data;
-    } catch (error) {
-      if (error instanceof AxiosError)
-        return rejectWithValue({ message: error.message });
-      return rejectWithValue({ message: ERR_UNKNOWN });
+    } catch (error: any) {
+      let errMsg =
+        error?.message || 'Error while signing the transaction, Try again.';
+      if (isNetworkError(errMsg)) {
+        errMsg = `${NETWORK_ERROR}: ${errMsg}`;
+      }
+      dispatch(
+        setError({
+          message: errMsg,
+          type: 'error',
+        })
+      );
+      return rejectWithValue(errMsg);
     }
   }
 );
@@ -666,6 +866,21 @@ export const multisigSlice = createSlice({
         state.signTransactionRes.status = TxStatus.REJECTED;
         const payload = action.payload as { message: string };
         state.signTransactionRes.error = payload.message || '';
+      });
+    builder
+      .addCase(broadcastTransaction.pending, (state, action) => {
+        state.broadcastTxnRes.status = TxStatus.PENDING;
+        state.broadcastTxnRes.error = '';
+      })
+      .addCase(broadcastTransaction.fulfilled, (state, action) => {
+        state.broadcastTxnRes.status = TxStatus.IDLE;
+        state.broadcastTxnRes.error = '';
+        state.broadcastTxnRes.txResponse = action.payload.data;
+        state.broadcastTxnRes.txHash = action.payload.data.transactionHash;
+      })
+      .addCase(broadcastTransaction.rejected, (state, action) => {
+        state.broadcastTxnRes.status = TxStatus.REJECTED;
+        state.broadcastTxnRes.error = action.error.message || ERR_UNKNOWN;
       });
     builder
       .addCase(importMultisigAccount.pending, (state) => {
