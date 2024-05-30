@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { get } from 'lodash';
 import Image from 'next/image';
-import ValidatorName from './ValidatorName';
 import { Validator } from '@/types/staking';
 import CustomLoader from '@/components/common/CustomLoader';
 import useSingleStaking from '@/custom-hooks/useSingleStaking';

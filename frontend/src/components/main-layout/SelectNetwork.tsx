@@ -74,7 +74,7 @@ const SelectNetwork = () => {
 export default SelectNetwork;
 
 export const WalletAddress = ({ address, displayAddress = true }: 
-  { address: string, displayAddress: boolean }) => {
+  { address: string, displayAddress?: boolean }) => {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = (e: React.MouseEvent<HTMLDivElement>) => {
