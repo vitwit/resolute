@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { get } from 'lodash';
 import useValidator from '@/custom-hooks/useValidator';
 import ValidatorLogo from '../components/ValidatorLogo';
@@ -12,9 +12,13 @@ interface ValidatorNameProps {
 const ValidatorName: React.FC<ValidatorNameProps> = ({ valoperAddress, chainID }) => {
     const { fetchValidator, getValidatorDetails } = useValidator();
 
-    useEffect(() => {
+    const memoizedFetchValidator = useCallback(() => {
         fetchValidator(valoperAddress, chainID);
     }, [valoperAddress, chainID, fetchValidator]);
+
+    useEffect(() => {
+        memoizedFetchValidator();
+    }, [memoizedFetchValidator]);
 
     const validatorDetails = getValidatorDetails(valoperAddress, chainID);
 
@@ -46,4 +50,4 @@ const ValidatorName: React.FC<ValidatorNameProps> = ({ valoperAddress, chainID }
     );
 };
 
-export default ValidatorName;
+export default React.memo(ValidatorName);

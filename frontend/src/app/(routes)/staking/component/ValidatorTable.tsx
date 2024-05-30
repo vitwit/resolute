@@ -1,9 +1,12 @@
-import useSingleStaking from '@/custom-hooks/useSingleStaking';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { get } from 'lodash';
 import Image from 'next/image';
-import {  useState } from 'react';
 import ValidatorName from './ValidatorName';
 import { Validator } from '@/types/staking';
+import CustomLoader from '@/components/common/CustomLoader';
+import useSingleStaking from '@/custom-hooks/useSingleStaking';
+import { WalletAddress } from '@/components/main-layout/SelectNetwork';
+import ValidatorLogo from '../components/ValidatorLogo';
 
 interface ValStatusObj {
   [key: string]: string;
@@ -11,44 +14,91 @@ interface ValStatusObj {
 
 const valStatusObj: ValStatusObj = {
   BOND_STATUS_BONDED: 'Bonded',
-  BOND_STATUS_UNBONDED: 'Un Bonded'
-}
+  BOND_STATUS_UNBONDED: 'Un Bonded',
+};
 
-const ValidatorTable = ({ chainID }: { chainID: string }) => {
-  const staking = useSingleStaking(chainID)
-  const validators = staking.getValidators()
+const ValidatorTable: React.FC<{ chainID: string }> = ({ chainID }) => {
+  const staking = useSingleStaking(chainID);
+  const validators = staking.getValidators();
 
-  const [validatorsArr, setValidators] = useState<Record<string, Validator>>(get(validators, 'active'));
+  const [filteredValidators, setFilteredValidators] = useState<Record<string, Validator>>({});
   const [searchQuery, setSearchQuery] = useState<string>('');
 
+  useEffect(() => {
+    if (validators?.status === 'idle') {
+      const activeValidators = get(validators, 'active', {});
+      const inactiveValidators = get(validators, 'inactive', {});
+      setFilteredValidators({ ...activeValidators, ...inactiveValidators });
+    }
+  }, [validators?.status]);
 
+  const handleSearch = useCallback((query: string) => {
+    setSearchQuery(query);
 
-  const search = (query: string) => {
-    const vals = get(validators, 'active')
-    console.log({ values: Object.values(validators) })
+    const allValidators = { ...get(validators, 'active', {}), ...get(validators, 'inactive', {}) };
 
     if (query) {
-      const foundKey = Object.keys(vals).find(key =>
-        vals[key].operator_address.includes(query)||
-        (vals[key].description && vals[key].description.moniker.includes(query))
+      const foundKey = Object.keys(allValidators).find((key) =>
+        allValidators[key].operator_address.includes(query) ||
+        allValidators[key].description?.moniker.includes(query)
       );
 
-      if (foundKey) {
-        setValidators({ [foundKey]: vals[foundKey] });
-      } else {
-        setValidators(vals);
-      }
+      setFilteredValidators(foundKey ? { [foundKey]: allValidators[foundKey] } : allValidators);
     } else {
-      setValidators(vals)
+      setFilteredValidators(allValidators);
     }
+  }, [validators]);
 
+  const validatorRows = useMemo(() => {
+    return Object.entries(filteredValidators || {}).map(([key, value], index) => (
+      <tr key={key} className="table-border-line">
+        <td className="px-0 py-8">
+          <div className="mr-auto flex">
+            <div className="text-white text-base not-italic font-normal leading-[normal]">
+              #{index + 1}
+            </div>
+          </div>
+        </td>
+        <td className="">
+          <div className="flex space-x-2">
+            <ValidatorLogo
+              width={20}
+              height={20}
+              identity={get(value, 'description.identity', '')}
+            /> &nbsp;
 
+            {/* Validator name  */}
+            <p className="text-white text-sm not-italic font-normal leading-[normal]">
+              {get(value, 'description.moniker')}
+            </p> &nbsp;
 
-    // let obj[found?.operator_address] = found
-    // setValidators({obj});
-  };
-
-  console.log({ validatorsArr, validators })
+            {/* Copy address icon */}
+            <WalletAddress address={get(value, 'operator_address')} displayAddress={false} />
+          </div>
+        </td>
+        <td className="">
+          <div className="text-white text-left text-base not-italic font-normal leading-[normal]">
+            {Number(get(value, 'commission.commission_rates.rate')) * 100}%
+          </div>
+        </td>
+        <td className="">
+          <div className="text-white text-left text-base not-italic font-normal leading-[normal]">
+            {staking.getAmountWithDecimal(Number(get(value, 'tokens')), chainID)}
+          </div>
+        </td>
+        <td className="">
+          <div className="text-white text-left text-base not-italic font-normal leading-[normal]">
+            {valStatusObj[get(value, 'status')]}
+          </div>
+        </td>
+        <td className="">
+          <div className="text-white text-base not-italic font-normal leading-[normal] ">
+            <button className="custom-btn ">Delegate</button>
+          </div>
+        </td>
+      </tr>
+    ));
+  }, [filteredValidators, chainID, staking]);
 
   return (
     <div className="flex flex-col gap-10 self-stretch overflow-scroll h-[50vh] px-10">
@@ -66,10 +116,7 @@ const ValidatorTable = ({ chainID }: { chainID: string }) => {
           <Image src="/search.svg" width={24} height={24} alt="Search-Icon" />
           <input
             value={searchQuery}
-            onChange={(e) => {
-              setSearchQuery(e.target.value)
-              search(e.target.value)
-            }}
+            onChange={(e) => handleSearch(e.target.value)}
             className="text-[rgba(255,255,255,0.50)] text-base not-italic font-normal leading-[normal] bg-transparent border-none"
             placeholder=" Search Validator"
           />
@@ -109,42 +156,7 @@ const ValidatorTable = ({ chainID }: { chainID: string }) => {
               </tr>
             </thead>
             <tbody>
-              {Object.entries(validatorsArr || {}).map(([key, value], index) => (
-                <tr key={key} className="table-border-line">
-                  <th className="px-0 py-8">
-                    <div className="mr-auto flex">
-                      <div className="text-white text-base not-italic font-normal leading-[normal]">
-                        #{index + 1}
-                      </div>
-                    </div>
-                  </th>
-                  <th className="">
-                    <div className="flex space-x-2">
-                      <ValidatorName valoperAddress={key} chainID={chainID} />
-                    </div>
-                  </th>
-                  <th className="">
-                    <div className="text-white text-left text-base not-italic font-normal leading-[normal]">
-                      {Number(get(value, 'commission.commission_rates.rate')) * 100}  %
-                    </div>
-                  </th>
-                  <th className="">
-                    <div className="text-white text-left text-base not-italic font-normal leading-[normal]">
-                      {staking.getAmountWithDecimal(Number(get(value, 'tokens')), chainID)}
-                    </div>
-                  </th>
-                  <th className="">
-                    <div className="text-white text-left text-base not-italic font-normal leading-[normal]">
-                      {valStatusObj[get(value, 'status')]}
-                    </div>
-                  </th>
-                  <th className="">
-                    <div className="text-white text-base not-italic font-normal leading-[normal] ">
-                      <button className="custom-btn ">Delegate</button>
-                    </div>
-                  </th>
-                </tr>
-              ))}
+              {validators?.status === 'pending' ? <CustomLoader loadingText='Loading...' /> : validatorRows}
             </tbody>
           </table>
         </div>
@@ -152,4 +164,5 @@ const ValidatorTable = ({ chainID }: { chainID: string }) => {
     </div>
   );
 };
+
 export default ValidatorTable;
