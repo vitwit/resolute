@@ -241,7 +241,6 @@
   @apply text-[12px] rounded-lg bg-[#ff00005b] text-white text-center leading-normal max-w-fit py-1 px-2 truncate;
 }
 
-
 /* New css */
 
 .text-bg {
@@ -251,4 +250,52 @@
 }
 .selected-btns {
   @apply flex justify-center items-center gap-4 px-4 py-[10.5px] rounded-lg border-[0.25px]  hover:bg-[#ffffff14];
+}
+.proposal-id {
+  @apply rounded-lg w-16 text-white text-lg font-normal leading-[normal] h-10;
+  background: linear-gradient(
+    180deg,
+    rgba(122, 126, 156, 0.2) 0.5%,
+    rgba(9, 9, 10, 0.2) 100%
+  );
+}
+.bottom-network-logo {
+  @apply shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] rounded-[100px] border-2 border-solid border-[#111115];
+  background: lightgray 50% / cover no-repeat;
+}
+.active-btn {
+  @apply border flex w-20 justify-center items-center gap-2 px-3 py-1 rounded-[100px] border-solid border-[#2BA472];
+  background: rgba(43, 164, 114, 0.5);
+}
+.proposal-view {
+  @apply shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] flex flex-col w-[50%] h-[60vh]  gap-4 p-6 rounded-2xl;
+  background: rgba(255, 255, 255, 0.02);
+}
+.vote-optn-btn {
+  @apply flex justify-center items-center gap-2  px-4 py-[10.5px] rounded-[100px] border-[0.25px] border-solid border-[rgba(255,255,255,0.50)];
+}
+.header {
+  @apply flex flex-col justify-center items-start gap-4 px-6 py-4 top-0 sticky;
+  background: #ffc13c;
+}
+.cast-vote-grid {
+  @apply flex flex-col items-end gap-6 self-stretch pt-4 pb-6 px-4 rounded-3xl;
+  background: #ffffff05;
+}
+.proposal-passed-text {
+  @apply bg-clip-text text-sm font-light leading-[normal];
+  background: linear-gradient(90deg, #b7e183 0%, #71de56 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.vertical-line {
+  @apply w-[0.25px] h-14 bg-[#FFFFFF80] opacity-20;
+}
+.blur {
+  @apply backdrop-blur-[2px] absolute bottom-0;
+  background: linear-gradient(
+    174deg,
+    rgba(217, 217, 217, 0) -235.54%,
+    rgba(14, 16, 27, 0.02) 95.6%
+  );
 }

@@ -48,3 +48,12 @@ body {
 .divider-line {
   @apply w-full bg-[#FFFFFF80] h-[0.25px] opacity-20;
 }
+.search-bar {
+  @apply flex h-14 justify-between items-center  px-6 py-4 rounded-[100px];
+  background: rgba(255, 255, 255, 0.02);
+}
+input[type=checkbox] {
+  accent-color: gray;
+  display: block;
+}
+

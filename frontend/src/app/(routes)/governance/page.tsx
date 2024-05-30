@@ -5,6 +5,7 @@ import { RootState } from '@/store/store';
 import GovPage from './GovPage';
 import NoProposals from './NoProposals';
 import GovernanceDashboard from './GovernanceDashboard';
+import FullProposalView from './FullProposalView';
 
 const Page = () => {
   const nameToChainIDs = useAppSelector(
@@ -19,7 +20,8 @@ const Page = () => {
     <>
       {/* <GovPage chainIDs={chainIDs} /> */}
       {/* <NoProposals /> */}
-      <GovernanceDashboard />
+      {/* <GovernanceDashboard /> */}
+      <FullProposalView />
     </>
   );
 };
