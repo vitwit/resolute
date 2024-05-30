@@ -121,6 +121,7 @@ interface MultisigState {
   updateTxnRes: TxRes;
   txns: Txns;
   signTxRes: TxRes;
+  signTransactionRes: TxRes;
   multisigAccountData: {
     account: ImportMultisigAccountRes;
     status: TxStatus;

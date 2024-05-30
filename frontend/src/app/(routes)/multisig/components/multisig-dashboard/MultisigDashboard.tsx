@@ -12,6 +12,9 @@ import React, { useEffect, useState } from 'react';
 import AllMultisigAccounts from './AllMultisigAccounts';
 import RecentTransactions from './RecentTransactions';
 import DialogVerifyAccount from '../DialogVerifyAccount';
+import { setError } from '@/store/features/common/commonSlice';
+import { TxStatus } from '@/types/enums';
+import { CircularProgress, Dialog, DialogContent } from '@mui/material';
 
 interface MultisigDashboardI {
   walletAddress: string;
@@ -27,6 +30,7 @@ const MultisigDashboard: React.FC<MultisigDashboardI> = (props) => {
   const createMultiAccRes = useAppSelector(
     (state) => state.multisig.createMultisigAccountRes
   );
+  const createSignRes = useAppSelector((state) => state.multisig.signTxRes);
 
   const [accountInfo] = useGetAccountInfo(chainID);
   const { pubkey } = accountInfo;
@@ -60,19 +64,65 @@ const MultisigDashboard: React.FC<MultisigDashboardI> = (props) => {
     }
   };
 
+  const fetchAllTransactions = () => {
+    dispatch(
+      getAccountAllMultisigTxns({ address: walletAddress, status: 'current' })
+    );
+  };
+
   useEffect(() => {
     if (walletAddress) {
-      dispatch(
-        getAccountAllMultisigTxns({ address: walletAddress, status: 'current' })
-      );
+      fetchAllTransactions();
     }
   }, [walletAddress]);
+
+  useEffect(() => {
+    if (createSignRes.status === TxStatus.IDLE) {
+      dispatch(setError({ type: 'success', message: 'Successfully signed' }));
+      fetchAllTransactions();
+    } else if (createSignRes.status === TxStatus.REJECTED) {
+      dispatch(
+        setError({
+          type: 'error',
+          message: 'Error while signing the transaction',
+        })
+      );
+    }
+  }, [createSignRes]);
+
+  const signTxStatus = useAppSelector(
+    (state) => state.multisig.signTransactionRes.status
+  );
+  const signTxLoading = signTxStatus === TxStatus.PENDING;
 
   return (
     <div className="mt-10 space-y-20">
       <AllMultisigAccounts chainName={chainName} />
       <RecentTransactions chainID={chainID} />
       <DialogVerifyAccount walletAddress={walletAddress} />
+      <Dialog
+        open={signTxLoading}
+        PaperProps={{
+          sx: {
+            borderRadius: '24px',
+            background: '#ffffff1a',
+          },
+        }}
+        sx={{
+          backdropFilter: 'blur(2px)',
+        }}
+      >
+        <DialogContent>
+          <div className="flex gap-4 items-center">
+            <CircularProgress size={32} sx={{ color: 'white' }} />
+            <div className="text-white">
+              {' '}
+              <span className="italic">Loading...</span>
+              <span className="dots-flashing"></span>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

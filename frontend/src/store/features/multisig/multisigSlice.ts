@@ -10,6 +10,7 @@ import {
   WALLET_REQUEST_ERROR,
 } from '../../../utils/errors';
 import {
+  COSMOS_CHAIN_ID,
   MAX_SALT_VALUE,
   MIN_SALT_VALUE,
   MULTISIG_LEGACY_AMINO_PUBKEY_TYPE,
@@ -28,11 +29,16 @@ import {
   MultisigState,
   QueryParams,
   SignTxInputs,
+  Txn,
   UpdateTxnInputs,
 } from '@/types/multisig';
 import { getRandomNumber, isMultisigAccountMember } from '@/utils/util';
 import authService from './../auth/authService';
 import { get } from 'lodash';
+import { SigningStargateClient } from '@cosmjs/stargate';
+import { getWalletAmino } from '@/txns/execute';
+import { toBase64 } from '@cosmjs/encoding';
+import { getAuthToken } from '@/utils/localStorage';
 
 const initialState: MultisigState = {
   createMultisigAccountRes: {
@@ -85,6 +91,10 @@ const initialState: MultisigState = {
     error: '',
   },
   signTxRes: {
+    status: TxStatus.INIT,
+    error: '',
+  },
+  signTransactionRes: {
     status: TxStatus.INIT,
     error: '',
   },
@@ -310,6 +320,82 @@ export const updateTxn = createAsyncThunk(
         data.data.address,
         data.data.txId,
         data.data.body
+      );
+      return response.data;
+    } catch (error) {
+      if (error instanceof AxiosError)
+        return rejectWithValue({ message: error.message });
+      return rejectWithValue({ message: ERR_UNKNOWN });
+    }
+  }
+);
+
+export const signTransaction = createAsyncThunk(
+  'multisig/signTransaction',
+  async (
+    data: {
+      rpc: string;
+      chainID: string;
+      multisigAddress: string;
+      unSignedTxn: Txn;
+      walletAddress: string;
+    },
+    { rejectWithValue }
+  ) => {
+    try {
+      window.wallet.defaultOptions = {
+        sign: {
+          preferNoSetMemo: true,
+          preferNoSetFee: true,
+          disableBalanceCheck: true,
+        },
+      };
+      const client = await SigningStargateClient.connect(data.rpc);
+
+      const result = await getWalletAmino(data.chainID);
+      const wallet = result[0];
+      const signingClient = await SigningStargateClient.offline(wallet);
+
+      const multisigAcc = await client.getAccount(data.multisigAddress);
+      if (!multisigAcc) {
+        throw new Error('Multisig account does not exist on chain');
+      }
+
+      const signerData = {
+        accountNumber: multisigAcc?.accountNumber,
+        sequence: multisigAcc?.sequence,
+        chainId: data.chainID,
+      };
+
+      const msgs = data.unSignedTxn?.messages || [];
+
+      const { signatures } = await signingClient.sign(
+        data.walletAddress,
+        msgs,
+        data.unSignedTxn?.fee || { amount: [], gas: '' },
+        data.unSignedTxn?.memo || '',
+        signerData
+      );
+
+      const payload = {
+        signer: data.walletAddress,
+        txId: data.unSignedTxn.id || NaN,
+        address: data.multisigAddress,
+        signature: toBase64(signatures[0]),
+      };
+      const authToken = getAuthToken(COSMOS_CHAIN_ID);
+
+      const response = await multisigService.signTx(
+        {
+          address: data.walletAddress,
+          signature: authToken?.signature || '',
+        },
+        data.multisigAddress,
+        data.unSignedTxn.id,
+        {
+          signer: payload.signer,
+          signature: payload.signature,
+        }
       );
       return response.data;
     } catch (error) {
@@ -600,6 +686,18 @@ export const multisigSlice = createSlice({
         state.signTxRes.status = TxStatus.REJECTED;
         const payload = action.payload as { message: string };
         state.signTxRes.error = payload.message || '';
+      });
+    builder
+      .addCase(signTransaction.pending, (state) => {
+        state.signTransactionRes.status = TxStatus.PENDING;
+      })
+      .addCase(signTransaction.fulfilled, (state) => {
+        state.signTransactionRes.status = TxStatus.IDLE;
+      })
+      .addCase(signTransaction.rejected, (state, action) => {
+        state.signTransactionRes.status = TxStatus.REJECTED;
+        const payload = action.payload as { message: string };
+        state.signTransactionRes.error = payload.message || '';
       });
     builder
       .addCase(importMultisigAccount.pending, (state) => {

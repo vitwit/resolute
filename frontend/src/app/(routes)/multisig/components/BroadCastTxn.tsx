@@ -20,6 +20,7 @@ import { FAILED_TO_BROADCAST_ERROR } from '@/utils/errors';
 import { CircularProgress } from '@mui/material';
 import useVerifyAccount from '@/custom-hooks/useVerifyAccount';
 import { COSMOS_CHAIN_ID } from '@/utils/constants';
+import CustomButton from '@/components/common/CustomButton';
 
 interface BroadCastTxnProps {
   txn: Txn;
@@ -195,21 +196,15 @@ const BroadCastTxn: React.FC<BroadCastTxnProps> = (props) => {
     }
   };
   return (
-    <button
-      className={
-        isMember ? 'sign-broadcast-btn' : 'sign-broadcast-btn btn-disabled'
-      }
-      onClick={() => {
+    <CustomButton
+      btnText="Broadcast"
+      btnDisabled={load || !isMember}
+      btnLoading={load}
+      btnOnClick={() => {
         broadcastTxn();
       }}
-      disabled={load || !isMember}
-    >
-      {load ? (
-        <CircularProgress size={20} sx={{ color: 'white' }} />
-      ) : (
-        'Broadcast'
-      )}
-    </button>
+      btnStyles="w-[115px]"
+    />
   );
 };
 

@@ -29,9 +29,9 @@ const TxnMsg: React.FC<TxnMsg> = (props) => {
     }
   };
   return (
-    <div>
+    <div className="w-[320px] truncate">
       {msg ? (
-        <div>
+        <div className="text-b1">
           {msg.typeUrl === SEND_TYPE_URL ? (
             <p>
               <span className="font-bold">{MAP_TXNS[msg?.typeUrl]}</span> &nbsp;
@@ -63,8 +63,7 @@ const TxnMsg: React.FC<TxnMsg> = (props) => {
             <p>
               <span className="font-bold">{MAP_TXNS[msg?.typeUrl]}</span>{' '}
               <span>{displayDenom(msg?.value?.amount)}</span>
-              &nbsp;
-              From &nbsp;
+              &nbsp; From &nbsp;
               <span>{shortenAddress(msg?.value?.validatorSrcAddress, 20)}</span>
               &nbsp; To &nbsp;
               <span>{shortenAddress(msg?.value?.validatorDstAddress, 20)}</span>

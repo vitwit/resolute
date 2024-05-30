@@ -1,6 +1,6 @@
 import SectionHeader from '@/components/common/SectionHeader';
-import { useAppSelector } from '@/custom-hooks/StateHooks';
-import React, { useMemo, useState } from 'react';
+import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Txn } from '@/types/multisig';
 import TxnMsg from '../msgs/TxnMsg';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
@@ -13,8 +13,10 @@ import Image from 'next/image';
 import LetterAvatar from '@/components/common/LetterAvatar';
 import SignTxn from '../SignTxn';
 import { isMultisigMember } from '@/utils/util';
+import BroadCastTxn from '../BroadCastTxn';
 
 const RecentTransactions = ({ chainID }: { chainID: string }) => {
+  const dispatch = useAppDispatch();
   const { getDenomInfo } = useGetChainInfo();
   const { decimals, displayDenom, minimalDenom } = getDenomInfo(chainID);
   const multisigAccounts = useAppSelector(
@@ -23,6 +25,7 @@ const RecentTransactions = ({ chainID }: { chainID: string }) => {
   const accounts = multisigAccounts.accounts;
   const pendingTxns = multisigAccounts.txnCounts;
   const txnsState = useAppSelector((state) => state.multisig.txns.list);
+
   const currency = useMemo(
     () => ({
       coinMinimalDenom: minimalDenom,
@@ -33,30 +36,34 @@ const RecentTransactions = ({ chainID }: { chainID: string }) => {
   );
 
   return (
-    <div>
-      <SectionHeader
-        title={'Recent Transactions'}
-        description="Recent transactions from all multisig accounts"
-      />
-      <div className="px-6 mt-10 space-y-10">
-        {accounts.map((account) =>
-          pendingTxns?.[account.address] ? (
-            <MultisigAccountRecentTxns
-              key={account.address}
-              actionsRequired={pendingTxns?.[account.address]}
-              multisigName={account.name}
-              txns={txnsState.filter(
-                (txn) => txn.multisig_address === account.address
-              )}
-              currency={currency}
-              threshold={account.threshold}
-              multisigAddress={account.address}
-              chainID={chainID}
-            />
-          ) : null
-        )}
-      </div>
-    </div>
+    <>
+      {txnsState?.length ? (
+        <div>
+          <SectionHeader
+            title={'Recent Transactions'}
+            description="Recent transactions from all multisig accounts"
+          />
+          <div className="px-6 mt-10 space-y-10">
+            {accounts.map((account) =>
+              pendingTxns?.[account.address] ? (
+                <MultisigAccountRecentTxns
+                  key={account.address}
+                  actionsRequired={pendingTxns?.[account.address]}
+                  multisigName={account.name}
+                  txns={txnsState.filter(
+                    (txn) => txn.multisig_address === account.address
+                  )}
+                  currency={currency}
+                  threshold={account.threshold}
+                  multisigAddress={account.address}
+                  chainID={chainID}
+                />
+              ) : null
+            )}
+          </div>
+        </div>
+      ) : null}
+    </>
   );
 };
 
@@ -125,20 +132,28 @@ const TxnsCard = ({
   const { messages } = txn;
   const pubKeys = txn.pubkeys || [];
   const isMember = isMultisigMember(pubKeys, walletAddress);
+  const isReadyToBroadcast = () => {
+    const signs = txn?.signatures || [];
+    if (signs?.length >= threshold) return true;
+    else return false;
+  };
+
   return (
     <div className="txn-card">
       <div className="space-y-2">
-        <div className="text-small-light">Transactions</div>
+        <div className="text-small-light">Transaction Messages</div>
         <div className="space-y-4">
           <div className="flex items-center gap-2">
-            <div className="flex gap-2">
-              <div className="font-bold">#1</div>
+            <div className="flex gap-1">
+              <div className="text-b1">#1</div>
               <TxnMsg msg={messages[0]} currency={currency} />
             </div>
-            <ExpandViewButton
-              showAll={showAll}
-              toggleView={() => setShowAll((prev) => !prev)}
-            />
+            {messages?.length > 1 ? (
+              <ExpandViewButton
+                showAll={showAll}
+                toggleView={() => setShowAll((prev) => !prev)}
+              />
+            ) : null}
           </div>
           {showAll
             ? messages.slice(1, messages?.length).map((msg, index) => (
@@ -157,18 +172,29 @@ const TxnsCard = ({
         <div className="flex gap-[2px] items-end">
           <span className="text-b1">{txn.signatures.length}</span>
           <span className="text-small-light">/</span>
-          <span className="text-small-light">{threshold}</span>
+          <span className="text-small-light">{pubKeys.length}</span>
         </div>
       </div>
       <div>
         <div className="flex items-center gap-6">
-          <SignTxn
-            address={multisigAddress}
-            chainID={chainID}
-            isMember={isMember}
-            txId={txn.id}
-            unSignedTxn={txn}
-          />
+          {isReadyToBroadcast() ? (
+            <BroadCastTxn
+              txn={txn}
+              multisigAddress={multisigAddress}
+              pubKeys={txn.pubkeys || []}
+              threshold={threshold}
+              chainID={chainID}
+              isMember={isMember}
+            />
+          ) : (
+            <SignTxn
+              address={multisigAddress}
+              chainID={chainID}
+              isMember={isMember}
+              txId={txn.id}
+              unSignedTxn={txn}
+            />
+          )}
           <button>
             <Image src={MENU_ICON} height={24} width={24} alt="Menu" />
           </button>
