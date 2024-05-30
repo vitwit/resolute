@@ -5,7 +5,7 @@
 @tailwind utilities;
 
 :root {
-  --primary-text-color: '#FFFFFF';
+  --primary-text-color: #ffffff;
   --secondary-text-color: #ffffff80;
 }
 
@@ -71,19 +71,47 @@ body {
 .divider-line {
   @apply w-full bg-[#FFFFFF80] h-[0.25px] opacity-20;
 }
-.dashboard-card {
-  @apply flex flex-col items-center gap-2 flex-[1_0_0] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)_inset] p-4 rounded-2xl;
-  background: rgba(255, 255, 255, 0.02);
+
+.empty-screen-title {
+  @apply text-[32px] font-bold;
+  background: linear-gradient(270deg, #fff -67.89%, #999 99.95%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
-.cards {
-  @apply shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)_inset] flex flex-col items-start gap-10 flex-[1_0_0] px-4 py-6 rounded-2xl;
-  background: rgba(255, 255, 255, 0.02);
+
+.empty-screen-description {
+  @apply text-[16px] font-extralight tracking-[1.6px] leading-[21px];
+  background: linear-gradient(270deg, #fff -67.89%, #999 99.95%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
-.red-button {
-  @apply flex justify-center items-center gap-2 border px-3 py-0 rounded-[100px] border-solid border-[#F15757];
-  background: rgba(241, 87, 87, 0.5);
+
+.text-h1 {
+  @apply text-[28px] font-bold;
 }
-.delegations-card {
-  @apply flex flex-col justify-center items-start gap-6 flex-[1_0_0] p-6 rounded-2xl;
-  background: rgba(255, 255, 255, 0.02);
+
+.text-h2 {
+  @apply text-[18px];
+}
+
+.text-b1 {
+  @apply text-[14px];
+}
+
+.text-b1-light {
+  @apply text-[14px] text-[var(--secondary-text-color)] font-extralight;
+}
+
+.text-small {
+  @apply text-[12px] text-[var(--secondary-text-color)];
+}
+
+.text-small-light {
+  @apply text-[12px] text-[var(--secondary-text-color)] font-extralight;
+}
+
+.text-btn {
+  @apply text-[var(--secondary-text-color)] font-extralight text-[14px] underline underline-offset-[2px];
 }
