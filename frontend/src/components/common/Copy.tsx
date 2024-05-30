@@ -1,7 +1,19 @@
+/**
+ * Copy component displays an icon that allows the user to copy content to the clipboard.
+ * @module Copy
+ */
+
 import { copyToClipboard } from '@/utils/copyToClipboard';
 import { Tooltip } from '@mui/material';
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
+
+/**
+ * Copy component displays an icon that allows the user to copy content to the clipboard.
+ * @param {Object} props - The props object.
+ * @param {string} props.content - The content to be copied to the clipboard.
+ * @returns {React.ReactNode} - React element representing the Copy component.
+ */
 
 const Copy = ({ content }: { content: string }) => {
   const [copied, setCopied] = useState(false);

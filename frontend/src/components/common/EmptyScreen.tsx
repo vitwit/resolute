@@ -6,6 +6,20 @@ import React from 'react';
 const defaultImageWidth = 914;
 const defaultImageHeight = 480;
 
+interface EmptyScreenProps {
+  title: string;
+  description: string;
+  width?: number;
+  height?: number;
+  hasActionBtn?: boolean;
+  btnText?: string;
+  btnStyles?: string;
+  btnLoading?: boolean;
+  btnDisabled?: boolean;
+  /* eslint-disable @typescript-eslint/no-explicit-any */
+  btnOnClick?: any;
+}
+
 const EmptyScreen = ({
   title,
   description,
@@ -17,18 +31,7 @@ const EmptyScreen = ({
   btnLoading,
   btnDisabled,
   btnOnClick,
-}: {
-  title: string;
-  description: string;
-  width?: number;
-  height?: number;
-  hasActionBtn?: boolean;
-  btnText?: string;
-  btnStyles?: string;
-  btnLoading?: boolean;
-  btnDisabled?: boolean;
-  btnOnClick?: any;
-}) => {
+}: EmptyScreenProps) => {
   return (
     <div className="flex flex-col items-center gap-10">
       <div className="flex flex-col items-center gap-3">

@@ -1,3 +1,8 @@
+/**
+ * CustomButton component represents a button with customizable text, styles, and loading state.
+ * @module CustomButton
+ */
+
 import { CircularProgress } from '@mui/material';
 import React from 'react';
 
@@ -6,6 +11,7 @@ interface CustomButtonProps {
   btnStyles?: string;
   btnLoading?: boolean;
   btnDisabled?: boolean;
+  /* eslint-disable @typescript-eslint/no-explicit-any */
   btnOnClick?: any;
 }
 
