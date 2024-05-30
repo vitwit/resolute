@@ -18,8 +18,6 @@ interface SignTxnProps {
   chainID: string;
 }
 
-declare let window: WalletWindow;
-
 const SignTxn: React.FC<SignTxnProps> = (props) => {
   const { address, isMember, txId, unSignedTxn, chainID } = props;
   const dispatch = useAppDispatch();

@@ -245,11 +245,7 @@ interface ImportMultisigAccountRes {
 interface DialogCreateMultisigProps {
   open: boolean;
   onClose: () => void;
-  addressPrefix: string;
   chainID: string;
-  address: string;
-  pubKey: string;
-  baseURLs: string[];
 }
 
 interface PubKeyFields {

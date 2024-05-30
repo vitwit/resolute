@@ -1,8 +1,6 @@
 import Copy from '@/components/common/Copy';
 import LetterAvatar from '@/components/common/LetterAvatar';
 import { shortenAddress } from '@/utils/util';
-import { Avatar, Stack } from '@mui/material';
-import Image from 'next/image';
 import React from 'react';
 
 interface MultisigAccountCardProps {

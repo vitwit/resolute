@@ -2,7 +2,7 @@
 
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import multisigService from './multisigService';
-import axios, { AxiosError } from 'axios';
+import { AxiosError } from 'axios';
 import {
   ERR_UNKNOWN,
   FAILED_TO_BROADCAST_ERROR,
@@ -30,30 +30,21 @@ import {
   ImportMultisigAccountRes,
   MultisigAddressPubkey,
   MultisigState,
-  Pubkey,
   QueryParams,
   SignTxInputs,
   Txn,
   UpdateTxnInputs,
 } from '@/types/multisig';
 import {
-  cleanURL,
   getRandomNumber,
   isMultisigAccountMember,
   isNetworkError,
-  NewMultisigThresholdPubkey,
 } from '@/utils/util';
 import authService from './../auth/authService';
 import { get } from 'lodash';
-import { makeMultisignedTx, SigningStargateClient } from '@cosmjs/stargate';
-import { getWalletAmino } from '@/txns/execute';
-import { toBase64 } from '@cosmjs/encoding';
 import { getAuthToken } from '@/utils/localStorage';
 import multisigSigning from '@/app/(routes)/multisig/utils/multisigSigning';
 import { setError } from '../common/commonSlice';
-import { fromBase64 } from '@cosmjs/encoding';
-import { TxRaw } from 'cosmjs-types/cosmos/tx/v1beta1/tx';
-import { parseTxResult } from '@/utils/signing';
 
 const initialState: MultisigState = {
   createMultisigAccountRes: {
@@ -359,76 +350,8 @@ export const broadcastTransaction = createAsyncThunk(
       signature: authToken?.signature || '',
     };
     try {
-      // const payload = await multisigSigning.signTransaction(
-      //   data.rpc,
-      //   data.chainID,
-      //   data.multisigAddress,
-      //   data.unSignedTxn,
-      //   data.walletAddress
-      // );
-      const client = await SigningStargateClient.connect(data.rpc);
-      const multisigAcc = await client.getAccount(data.multisigAddress);
-      if (!multisigAcc) {
-        throw new Error('Multisig account does not exist on chain');
-      }
-
-      const mapData = data.pubKeys || [];
-      let pubkeys_list: Pubkey[] = [];
-
-      pubkeys_list = mapData.map((p) => {
-        const parsed = p?.pubkey;
-        const obj = {
-          type: parsed?.type,
-          value: parsed?.value,
-        };
-        return obj;
-      });
-
-      const multisigThresholdPK = NewMultisigThresholdPubkey(
-        pubkeys_list,
-        `${data.threshold}`
-      );
-
-      const txBody = {
-        typeUrl: '/cosmos.tx.v1beta1.TxBody',
-        value: {
-          messages: data.signedTxn.messages,
-          memo: data.signedTxn.memo,
-        },
-      };
-
-      const walletAmino = await getWalletAmino(data.chainID);
-      const offlineClient = await SigningStargateClient.offline(walletAmino[0]);
-      const txBodyBytes = offlineClient.registry.encode(txBody);
-
-      const signedTx = makeMultisignedTx(
-        multisigThresholdPK,
-        multisigAcc.sequence,
-        data.signedTxn?.fee,
-        txBodyBytes,
-        new Map(
-          data.signedTxn?.signatures.map((s) => [
-            s.address,
-            fromBase64(s.signature),
-          ])
-        )
-      );
-
-      const result = await client.broadcastTx(
-        Uint8Array.from(TxRaw.encode(signedTx).finish())
-      );
-      const txn = await axios.get(
-        cleanURL(data.baseURLs[0]) +
-          '/cosmos/tx/v1beta1/txs/' +
-          result.transactionHash
-      );
-      const {
-        code,
-        transactionHash,
-        fee = [],
-        memo = '',
-        rawLog = '',
-      } = parseTxResult(txn?.data?.tx_response);
+      const { result, code, transactionHash, fee, memo, rawLog, queryParams } =
+        await multisigSigning.broadcastTransaction(data);
 
       if (result.code === 0) {
         dispatch(
@@ -472,11 +395,7 @@ export const broadcastTransaction = createAsyncThunk(
         chainID: data.chainID,
       };
     } catch (error: any) {
-      let errMsg =
-        error?.message || 'Error while signing the transaction, Try again.';
-      if (isNetworkError(errMsg)) {
-        errMsg = `${NETWORK_ERROR}: ${errMsg}`;
-      }
+      let errMsg = error?.message;
       dispatch(
         setError({
           message: errMsg,
@@ -503,6 +422,7 @@ export const broadcastTransaction = createAsyncThunk(
     }
   }
 );
+
 export const updateTxn = createAsyncThunk(
   'multisig/updateTxn',
   async (data: UpdateTxnInputs, { rejectWithValue }) => {
@@ -868,7 +788,7 @@ export const multisigSlice = createSlice({
         state.signTransactionRes.error = payload.message || '';
       });
     builder
-      .addCase(broadcastTransaction.pending, (state, action) => {
+      .addCase(broadcastTransaction.pending, (state) => {
         state.broadcastTxnRes.status = TxStatus.PENDING;
         state.broadcastTxnRes.error = '';
       })

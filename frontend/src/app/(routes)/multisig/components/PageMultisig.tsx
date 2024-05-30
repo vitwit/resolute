@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import AllMultisigs from './AllMultisigs';
 import MultisigSidebar from './MultisigSidebar';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
@@ -14,6 +14,8 @@ import PageHeader from '@/components/common/PageHeader';
 import { setConnectWalletOpen } from '@/store/features/wallet/walletSlice';
 import EmptyScreen from '@/components/common/EmptyScreen';
 import MultisigDashboard from './multisig-dashboard/MultisigDashboard';
+import CustomButton from '@/components/common/CustomButton';
+import DialogCreateMultisig from './DialogCreateMultisig';
 
 const PageMultisig = ({ chainName }: { chainName: string }) => {
   const dispatch = useAppDispatch();
@@ -26,6 +28,8 @@ const PageMultisig = ({ chainName }: { chainName: string }) => {
 
   const { getChainInfo } = useGetChainInfo();
   const { address: walletAddress } = getChainInfo(chainID);
+
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
 
   const connectWalletOpen = () => {
     dispatch(setConnectWalletOpen(true));
@@ -40,12 +44,27 @@ const PageMultisig = ({ chainName }: { chainName: string }) => {
     if (walletAddress) dispatch(getMultisigAccounts(walletAddress));
   }, []);
 
+  const toggleCreateDialog = () => {
+    setCreateDialogOpen((prev) => !prev);
+  };
+
   return (
     <div className="py-20 px-10 h-full flex flex-col">
-      <PageHeader
-        title="MultiSig"
-        description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga, fugit."
-      />
+      <div className="flex items-center gap-10 w-full">
+        <div className="flex-1">
+          <PageHeader
+            title="MultiSig"
+            description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga, fugit."
+          />
+        </div>
+        {isWalletConnected ? (
+          <CustomButton
+            btnOnClick={toggleCreateDialog}
+            btnText="Create Multisig"
+            btnStyles="w-fit"
+          />
+        ) : null}
+      </div>
       <div>
         {!isWalletConnected ? (
           <div className="flex-1 flex items-center justify-center">
@@ -65,6 +84,13 @@ const PageMultisig = ({ chainName }: { chainName: string }) => {
           />
         )}
       </div>
+      {isWalletConnected ? (
+        <DialogCreateMultisig
+          open={createDialogOpen}
+          onClose={toggleCreateDialog}
+          chainID={chainID}
+        />
+      ) : null}
     </div>
   );
 };

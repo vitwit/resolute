@@ -44,6 +44,7 @@ const MultisigDashboard: React.FC<MultisigDashboardI> = (props) => {
   const broadcastTxnStatus = useAppSelector(
     (state) => state.multisig.broadcastTxnRes
   );
+  const updateTxStatus = useAppSelector((state) => state.multisig.updateTxnRes);
   const signTxLoading = signTxStatus.status === TxStatus.PENDING;
   const broadcastTxnLoading = broadcastTxnStatus.status === TxStatus.PENDING;
 
@@ -105,7 +106,6 @@ const MultisigDashboard: React.FC<MultisigDashboardI> = (props) => {
       dispatch(
         setError({ type: 'success', message: 'Broadcasted successfully' })
       );
-      fetchAllTransactions();
     } else if (broadcastTxnStatus.status === TxStatus.REJECTED) {
       dispatch(
         setError({
@@ -113,9 +113,16 @@ const MultisigDashboard: React.FC<MultisigDashboardI> = (props) => {
           message: broadcastTxnStatus.error || 'Failed to broadcasted',
         })
       );
-      fetchAllTransactions();
     }
   }, [broadcastTxnStatus]);
+
+  useEffect(() => {
+    if (updateTxStatus.status === TxStatus.IDLE) {
+      fetchAllTransactions();
+    } else if (updateTxStatus.status === TxStatus.REJECTED) {
+      fetchAllTransactions();
+    }
+  }, [updateTxStatus]);
 
   return (
     <div className="mt-10 space-y-20">
