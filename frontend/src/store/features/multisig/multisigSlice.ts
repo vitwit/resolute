@@ -39,6 +39,7 @@ import { SigningStargateClient } from '@cosmjs/stargate';
 import { getWalletAmino } from '@/txns/execute';
 import { toBase64 } from '@cosmjs/encoding';
 import { getAuthToken } from '@/utils/localStorage';
+import multisigSigning from '@/app/(routes)/multisig/utils/multisigSigning';
 
 const initialState: MultisigState = {
   createMultisigAccountRes: {
@@ -343,46 +344,13 @@ export const signTransaction = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
-      window.wallet.defaultOptions = {
-        sign: {
-          preferNoSetMemo: true,
-          preferNoSetFee: true,
-          disableBalanceCheck: true,
-        },
-      };
-      const client = await SigningStargateClient.connect(data.rpc);
-
-      const result = await getWalletAmino(data.chainID);
-      const wallet = result[0];
-      const signingClient = await SigningStargateClient.offline(wallet);
-
-      const multisigAcc = await client.getAccount(data.multisigAddress);
-      if (!multisigAcc) {
-        throw new Error('Multisig account does not exist on chain');
-      }
-
-      const signerData = {
-        accountNumber: multisigAcc?.accountNumber,
-        sequence: multisigAcc?.sequence,
-        chainId: data.chainID,
-      };
-
-      const msgs = data.unSignedTxn?.messages || [];
-
-      const { signatures } = await signingClient.sign(
-        data.walletAddress,
-        msgs,
-        data.unSignedTxn?.fee || { amount: [], gas: '' },
-        data.unSignedTxn?.memo || '',
-        signerData
+      const payload = await multisigSigning.signTransaction(
+        data.rpc,
+        data.chainID,
+        data.multisigAddress,
+        data.unSignedTxn,
+        data.walletAddress
       );
-
-      const payload = {
-        signer: data.walletAddress,
-        txId: data.unSignedTxn.id || NaN,
-        address: data.multisigAddress,
-        signature: toBase64(signatures[0]),
-      };
       const authToken = getAuthToken(COSMOS_CHAIN_ID);
 
       const response = await multisigService.signTx(
