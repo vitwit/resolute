@@ -1,7 +1,6 @@
 export const dialogBoxPaperPropStyles = {
-  borderRadius: '24px',
-  background:
-    'linear-gradient(178deg, #241B61 1.71%, #69448D 98.35%, #69448D 98.35%)',
+  borderRadius: '16px',
+  background: '#1C1C1D',
 };
 
 export const customMUITextFieldStyles = {
