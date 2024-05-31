@@ -22,7 +22,7 @@ const TopBar = () => {
 
   useEffect(() => {
     setWalletLogo(getConnectWalletLogo());
-  }, []);
+  }, [walletConnected]);
 
   return (
     <header className="top-bar">
