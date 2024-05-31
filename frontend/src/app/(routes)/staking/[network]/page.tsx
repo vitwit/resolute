@@ -1,17 +1,21 @@
+'use client';
+
 import React from 'react';
 import '../staking.css';
-import ChainStaking from './ChainStaking';
+import SingleChain from './SingleChain';
+// import ChainStaking from './ChainStaking';
 
 const page = ({
   params,
-  searchParams,
+  // searchParams,
 }: {
   params: { network: string };
-  searchParams?: { [key: string]: string | undefined };
+  // searchParams?: { [key: string]: string | undefined };
 }) => {
   const { network: paramChain } = params;
 
-  return <ChainStaking paramChain={paramChain} queryParams={searchParams} />;
+  return <SingleChain paramChain={paramChain}   />
+  // return <ChainStaking paramChain={paramChain} queryParams={searchParams} />;
 };
 
 export default page;
