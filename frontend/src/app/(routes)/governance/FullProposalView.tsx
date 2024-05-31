@@ -1,6 +1,32 @@
 import './style.css';
 import Image from 'next/image';
 import { useState } from 'react';
+const ProposalSummary = ` Following a successful implementation of Phase I of our plan
+to reduce stablecoin LTs and LTVs, we would like to propose
+the next phase. Additionally, we have updated our
+recommended final state for all associated stablecoins, with
+LTVs and LTs harmonized across all chains at 75% and 78%,
+respectively. Additionally, we have updated our recommended
+final state for all associated stablecoins, with LTVs and
+LTs harmonized across all chains at 75% and 78%,
+respectively. Additionally, we have updated our recommended
+final state for all associated stablecoins, with LTVs and
+LTs harmonized across all chains at 75% and 78%,
+respectively. 
+
+
+Following a successful implementation of Phase I of our plan
+to reduce stablecoin LTs and LTVs, we would like to propose
+the next phase. Additionally, we have updated our
+recommended final state for all associated stablecoins, with
+LTVs and LTs harmonized across all chains at 75% and 78%,
+respectively. Additionally, we have updated our recommended
+final state for all associated stablecoins, with LTVs and
+LTs harmonized across all chains at 75% and 78%,
+respectively. Additionally, we have updated our recommended
+final state for all associated stablecoins, with LTVs and
+LTs harmonized across all chains at 75% and 78%,
+respectively.`;
 
 const FullProposalView = () => {
   const [showFullText, setShowFullText] = useState(false);
@@ -77,49 +103,18 @@ const FullProposalView = () => {
                   Author: ACI (Aave-chan Initiative)
                 </p>
               </div>
-              <div className="text-white h-full">
+
+              <div className="text-white h-[40vh]  flex flex-col justify-between relative">
+                <p
+                  className={`h-[40vh] ${showFullText ? 'overflow-scroll' : 'overflow-hidden'}`}
+                >
+                  {ProposalSummary}
+                </p>
+
                 {showFullText ? (
-                  <p>
-                    Following a successful implementation of Phase I of our plan
-                    to reduce stablecoin LTs and LTVs, we would like to propose
-                    the next phase. Additionally, we have updated our
-                    recommended final state for all associated stablecoins, with
-                    LTVs and LTs harmonized across all chains at 75% and 78%,
-                    respectively. Additionally, we have updated our recommended
-                    final state for all associated stablecoins, with LTVs and
-                    LTs harmonized across all chains at 75% and 78%,
-                    respectively. Additionally, we have updated our recommended
-                    final state for all associated stablecoins, with LTVs and
-                    LTs harmonized across all chains at 75% and 78%,
-                    respectively.
-                  </p>
-                ) : (
-                  <>
-                    <p>
-                      Long proposal text goes here... <br />
-                    </p>
-                    <div className=" relative mt-32 flex items-end justify-center">
-                      <div className="blur w-full h-24 "></div>
-                      <div
-                        onClick={handleToggleText}
-                        className="cursor-pointer flex text-lg font-normal leading-[normal] underline  space-x-1 items-center justify-center absolute z-10 "
-                      >
-                        Continue Reading{' '}
-                        <Image
-                          src="/down.svg"
-                          width={24}
-                          height={24}
-                          alt="more-icon"
-                          className="ml-2"
-                        />
-                      </div>
-                    </div>
-                  </>
-                )}
-                {showFullText && (
                   <p
                     onClick={handleToggleText}
-                    className="cursor-pointer text-white text-sm font-normal leading-[normal] underline flex space-x-1 items-center"
+                    className="cursor-pointer text-white justify-center text-sm font-normal leading-[normal] underline flex space-x-1 items-center"
                   >
                     Show Less
                     <Image
@@ -129,10 +124,28 @@ const FullProposalView = () => {
                       alt="Less-icon"
                     />
                   </p>
+                ) : (
+                  <div className="h-32 w-full relative flex">
+                    <div
+                      onClick={handleToggleText}
+                      className="cursor-pointer justify-center w-full bottom-14 absolute flex z-10 text-lg font-normal leading-[normal] underline  space-x-1  "
+                    >
+                      Continue Reading{' '}
+                      <Image
+                        src="/down.svg"
+                        width={24}
+                        height={24}
+                        alt="more-icon"
+                        className="ml-2"
+                      />
+                    </div>
+                    <div className="blur w-full absolute bottom-0  h-32"> </div>
+                  </div>
                 )}
               </div>
             </div>
-            <div className="cast-vote-grid">
+
+            <div className="cast-vote-grid ">
               <div className="flex px-6 py-4 rounded-2xl bg-[#FFFFFF05] justify-between w-full">
                 <p className="text-white text-xs not-italic font-normal leading-[18px]">
                   Caste your vote
@@ -142,18 +155,18 @@ const FullProposalView = () => {
                 </p>
               </div>
               <div className="flex gap-6 w-full">
-                <button className="vote-optn-btn w-[50%] text-white text-base font-normal leading-[normal]">
+                <button className="vote-optn-btn w-[50%] text-white text-base font-normal leading-[normal] border-[#2BA472]">
                   Yes
                 </button>
-                <button className="vote-optn-btn w-[50%] text-white text-base font-normal leading-[normal]">
+                <button className="vote-optn-btn w-[50%] text-white text-base font-normal leading-[normal] border-[#D92101]">
                   No
                 </button>
               </div>
               <div className="flex gap-6 w-full">
-                <button className="vote-optn-btn w-[50%] text-white text-base font-normal leading-[normal]">
+                <button className="vote-optn-btn w-[50%] text-white text-base font-normal leading-[normal] border-[#DA561E]">
                   Abstain
                 </button>
-                <button className="vote-optn-btn w-[50%] text-white text-base font-normal leading-[normal]">
+                <button className="vote-optn-btn w-[50%] text-white text-base font-normal leading-[normal] border-[#FFC13C]">
                   Veto
                 </button>
               </div>
@@ -288,8 +301,8 @@ const FullProposalView = () => {
                   <div className="bg-[#FFFFFF0D] w-full h-[10px] rounded-full">
                     <div className="bg-[#f0f0f3] h-[10px] w-[4px] absolute  flex left-[224px]"></div>
                     <div
-                      style={{ width: 40 }}
-                      className={`bg-[#2DC5A4] h-2 rounded-l-full `}
+                      style={{ width: 80 }}
+                      className={`yes-bg h-2 rounded-l-full `}
                     ></div>
                   </div>
                   <Image
@@ -312,7 +325,7 @@ const FullProposalView = () => {
                     <div className="bg-[#f0f0f3] h-[10px] w-[4px] absolute  flex left-[224px]"></div>
                     <div
                       style={{ width: 40 }}
-                      className={`bg-[#2DC5A4] h-2 rounded-l-full `}
+                      className={`no-bg h-2 rounded-l-full `}
                     ></div>
                   </div>
                   <p className="secondary-text">12%</p>
@@ -330,7 +343,7 @@ const FullProposalView = () => {
                     <div className="bg-[#f0f0f3] h-[10px] w-[4px] absolute  flex left-[224px]"></div>
                     <div
                       style={{ width: 40 }}
-                      className={`bg-[#2DC5A4] h-2 rounded-l-full `}
+                      className={`abstain-bg h-2 rounded-l-full `}
                     ></div>
                   </div>
                   <p className="secondary-text">12%</p>
@@ -348,7 +361,7 @@ const FullProposalView = () => {
                     <div className="bg-[#f0f0f3] h-[10px] w-[4px] absolute  flex left-[224px]"></div>
                     <div
                       style={{ width: 40 }}
-                      className={`bg-[#2DC5A4] h-2 rounded-l-full `}
+                      className={`veto-bg h-2 rounded-l-full `}
                     ></div>
                   </div>
                   <p className="secondary-text">12%</p>

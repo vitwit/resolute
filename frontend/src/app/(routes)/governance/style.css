@@ -272,7 +272,7 @@
   background: rgba(255, 255, 255, 0.02);
 }
 .vote-optn-btn {
-  @apply flex justify-center items-center gap-2  px-4 py-[10.5px] rounded-[100px] border-[0.25px] border-solid border-[rgba(255,255,255,0.50)];
+  @apply flex justify-center items-center gap-2  px-4 py-[10.5px] rounded-[100px] border-[1px];
 }
 .header {
   @apply flex flex-col justify-center items-start gap-4 px-6 py-4 top-0 sticky;
@@ -292,10 +292,23 @@
   @apply w-[0.25px] h-14 bg-[#FFFFFF80] opacity-20;
 }
 .blur {
-  @apply backdrop-blur-[2px] absolute bottom-0;
+  @apply backdrop-blur-[2px];
   background: linear-gradient(
     174deg,
     rgba(217, 217, 217, 0) -235.54%,
     rgba(14, 16, 27, 0.02) 95.6%
   );
+}
+
+.yes-bg {
+  background: linear-gradient(90deg, #2ba472 0%, rgba(43, 164, 114, 0.5) 100%);
+}
+.no-bg {
+  background: linear-gradient(90deg, #d92101 0%, rgba(217, 33, 1, 0.5) 100%);
+}
+.abstain-bg {
+  background: linear-gradient(90deg, #ffc13c 0%, rgba(255, 193, 60, 0.5) 100%);
+}
+.veto-bg {
+  background: linear-gradient(90deg, #da561e 0%, rgba(218, 86, 30, 0.5) 100%);
 }
