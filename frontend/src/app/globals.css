@@ -25,6 +25,29 @@ body {
   font-family: 'Libre Franklin', sans-serif !important;
   font-optical-sizing: auto !important;
 }
+.text-bg {
+  background: linear-gradient(270deg, #fff -67.89%, #999 99.95%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.custom-btn {
+  @apply border flex items-center gap-2 px-4 py-[10.5px] rounded-[100px] border-solid border-[#4453DF];
+  background: linear-gradient(
+    180deg,
+    rgba(68, 83, 223, 0.1) 12.5%,
+    rgba(127, 92, 237, 0.1) 87.5%
+  );
+}
+.table-border-line {
+  @apply h-[1px] self-stretch border-b border-[#1C1C20];
+}
+.horizontal-line {
+  @apply h-[1px] self-stretch bg-[#1C1C20];
+}
+.search-bar {
+  @apply flex h-14 items-center gap-2 self-stretch px-6 py-4 rounded-[100px];
+  background: rgba(255, 255, 255, 0.02);
+}
 
 .primary-btn {
   @apply border-[1px] text-white text-[16px] rounded-full px-4 py-[10.5px] leading-[19px] h-10 flex justify-center items-center;
