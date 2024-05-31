@@ -54,3 +54,23 @@
     background: linear-gradient(90deg, rgba(74, 162, 156, 0.50) 7.46%, rgba(139, 61, 167, 0.50) 94.28%);
     opacity: 50%;
 }
+
+
+
+
+
+/* New ui css */
+
+
+.table-border-line {
+    @apply h-[1px] self-stretch border-b border-[#1C1C20];
+  }
+  .horizontal-line {
+    @apply h-[1px] self-stretch bg-[#1C1C20];
+  }
+  .dashboard-card {
+    @apply flex flex-col items-center gap-2 flex-[1_0_0] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)_inset] p-4 rounded-2xl;
+    background: rgba(255, 255, 255, 0.02);
+  }
+  
+  
