@@ -358,7 +358,7 @@ export const networks: Network[] = [
     leapExperimental: false,
     isTestnet: false,
     explorerTxHashEndpoint: 'https://www.mintscan.io/evmos/txs/',
-    govV1: false,
+    govV1: true,
     config: {
       chainId: 'evmos_9001-2',
       chainName: 'Evmos',
@@ -1021,7 +1021,7 @@ export const networks: Network[] = [
     keplrExperimental: false,
     leapExperimental: false,
     isTestnet: false,
-    govV1: false,
+    govV1: true,
     explorerTxHashEndpoint: 'https://www.mintscan.io/stargaze/txs/',
     config: {
       chainId: 'stargaze-1',
