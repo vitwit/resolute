@@ -1,6 +1,6 @@
 import SectionHeader from '@/components/common/SectionHeader';
-import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
-import React, { useEffect, useMemo, useState } from 'react';
+import { useAppSelector } from '@/custom-hooks/StateHooks';
+import React, { useMemo, useState } from 'react';
 import { Txn } from '@/types/multisig';
 import TxnMsg from '../msgs/TxnMsg';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
@@ -16,14 +16,12 @@ import { isMultisigMember } from '@/utils/util';
 import BroadCastTxn from '../BroadCastTxn';
 
 const RecentTransactions = ({ chainID }: { chainID: string }) => {
-  const dispatch = useAppDispatch();
   const { getDenomInfo } = useGetChainInfo();
   const { decimals, displayDenom, minimalDenom } = getDenomInfo(chainID);
   const multisigAccounts = useAppSelector(
     (state) => state.multisig.multisigAccounts
   );
   const accounts = multisigAccounts.accounts;
-  const pendingTxns = multisigAccounts.txnCounts;
   const txnsState = useAppSelector((state) => state.multisig.txns.list);
 
   const currency = useMemo(

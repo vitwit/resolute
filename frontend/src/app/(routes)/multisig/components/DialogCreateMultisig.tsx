@@ -1,9 +1,4 @@
-import {
-  CircularProgress,
-  Dialog,
-  DialogContent,
-  TextField,
-} from '@mui/material';
+import { CircularProgress, TextField } from '@mui/material';
 import Image from 'next/image';
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import { setError } from '@/store/features/common/commonSlice';
@@ -33,10 +28,7 @@ import {
   MIN_PUBKEYS_ERROR,
   MIN_THRESHOLD_ERROR,
 } from '@/utils/errors';
-import {
-  customMUITextFieldStyles,
-  dialogBoxPaperPropStyles,
-} from '@/utils/commonStyles';
+import { customMUITextFieldStyles } from '@/utils/commonStyles';
 import { TxStatus } from '@/types/enums';
 import { fromBech32 } from '@cosmjs/encoding';
 import { DialogCreateMultisigProps, PubKeyFields } from '@/types/multisig';

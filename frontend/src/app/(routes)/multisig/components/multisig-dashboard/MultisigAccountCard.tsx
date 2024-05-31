@@ -12,8 +12,7 @@ interface MultisigAccountCardProps {
 }
 
 const MultisigAccountCard = (props: MultisigAccountCardProps) => {
-  const { actionsRequired, multisigAddress, chainName, name, threshold } =
-    props;
+  const { actionsRequired, multisigAddress, name, threshold } = props;
   return (
     <div className="multisig-card">
       <MultisigName name={name} />
@@ -55,6 +54,7 @@ const MultisigDetail = ({
   isAddress = false,
 }: {
   title: string;
+  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
   value: any;
   isAddress?: boolean;
 }) => {

@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import AllMultisigs from './AllMultisigs';
-import MultisigSidebar from './MultisigSidebar';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { RootState } from '@/store/store';
@@ -9,7 +7,6 @@ import {
   resetDeleteMultisigRes,
 } from '@/store/features/multisig/multisigSlice';
 import { resetError } from '@/store/features/common/commonSlice';
-import DialogVerifyAccount from './DialogVerifyAccount';
 import PageHeader from '@/components/common/PageHeader';
 import { setConnectWalletOpen } from '@/store/features/wallet/walletSlice';
 import EmptyScreen from '@/components/common/EmptyScreen';
