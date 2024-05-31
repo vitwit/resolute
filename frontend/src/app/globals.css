@@ -92,3 +92,56 @@ body {
       0.5em 0 0 white;
   }
 }
+
+
+.empty-screen-title {
+  @apply text-[32px] font-bold;
+  background: linear-gradient(270deg, #fff -67.89%, #999 99.95%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.empty-screen-description {
+  @apply text-[16px] font-extralight tracking-[1.6px] leading-[21px];
+  background: linear-gradient(270deg, #fff -67.89%, #999 99.95%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-h1 {
+  @apply text-[28px] font-bold;
+}
+
+.text-h2 {
+  @apply text-[18px];
+}
+
+.text-b1 {
+  @apply text-[14px];
+}
+
+.text-b1-light {
+  @apply text-[14px] text-[var(--secondary-text-color)] font-extralight;
+}
+
+.text-small {
+  @apply text-[12px] text-[var(--secondary-text-color)];
+}
+
+.text-small-light {
+  @apply text-[12px] text-[var(--secondary-text-color)] font-extralight;
+}
+
+.text-btn {
+  @apply text-[var(--secondary-text-color)] font-extralight text-[14px] underline underline-offset-[2px];
+}
+
+.txn-status-data {
+  @apply flex items-center justify-center gap-2 px-6 py-[10.5px] bg-[#FFFFFF05] rounded-full w-full;
+}
+
+.more-msgs {
+  @apply bg-[#FFFFFF14] flex justify-center items-center text-[12px] h-6 min-w-6 rounded-2xl p-2;
+}

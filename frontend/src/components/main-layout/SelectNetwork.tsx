@@ -26,7 +26,7 @@ const SelectNetwork = () => {
   };
 
   useEffect(() => {
-    if(selectedNetwork.chainName && allNetworks) {
+    if (selectedNetwork.chainName && allNetworks) {
       const chainID = nameToChainIDs[selectedNetwork.chainName];
       setChainLogo(allNetworks?.[chainID]?.logos?.menu || ALL_NETWORKS_ICON);
       setChainGradient(allNetworks?.[chainID]?.config?.theme?.gradient);
@@ -34,10 +34,10 @@ const SelectNetwork = () => {
     if (selectedNetwork.chainName && isWalletConnected) {
       const chainID = nameToChainIDs[selectedNetwork.chainName];
       setWalletAddress(networks[chainID]?.walletInfo.bech32Address);
-    } else if(!selectedNetwork.chainName) {
+    } else if (!selectedNetwork.chainName) {
       setWalletAddress('');
       setChainLogo(ALL_NETWORKS_ICON);
-    } 
+    }
   }, [selectedNetwork, isWalletConnected, allNetworks]);
 
   return (

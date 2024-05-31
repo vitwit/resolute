@@ -9,12 +9,12 @@ import {
   VOTE_OPTIONS,
   VOTE_TYPE_URL,
 } from '@/utils/constants';
-import { capitalizeFirstLetter, parseAmount } from '@/utils/util';
+import {
+  capitalizeFirstLetter,
+  parseAmount,
+  shortenAddress,
+} from '@/utils/util';
 import React from 'react';
-import Image from 'next/image';
-import { copyToClipboard } from '@/utils/copyToClipboard';
-import { useAppDispatch } from '@/custom-hooks/StateHooks';
-import { setError } from '@/store/features/common/commonSlice';
 
 const TxnMessage = ({
   msgs,
@@ -25,7 +25,6 @@ const TxnMessage = ({
   currency: Currency;
   failed: boolean;
 }) => {
-  const dispatch = useAppDispatch();
   const status = failed ? 'failed' : 'successfully';
 
   const msgType = msgs[0]?.typeUrl;
@@ -47,25 +46,8 @@ const TxnMessage = ({
               <span>
                 <div className="common-copy max-w-[176px] inline font-normal">
                   <span className="truncate">
-                    {msgs[0]?.value?.toAddress || '-'}
+                    {shortenAddress(msgs[0]?.value?.toAddress || '', 15) || '-'}
                   </span>
-                  <Image
-                    className="cursor-pointer"
-                    onClick={(e) => {
-                      copyToClipboard(msgs[0]?.value?.toAddress || '-');
-                      dispatch(
-                        setError({
-                          type: 'success',
-                          message: 'Copied',
-                        })
-                      );
-                      e.stopPropagation();
-                    }}
-                    src="/copy-icon-plain.svg"
-                    width={24}
-                    height={24}
-                    alt="copy"
-                  />
                 </div>
               </span>
               <MoreMessages msgs={msgs} />
@@ -80,25 +62,11 @@ const TxnMessage = ({
               <span>
                 <div className="common-copy max-w-[176px] inline font-normal">
                   <span className="truncate">
-                    {msgs[0]?.value?.validatorAddress || '-'}
+                    {shortenAddress(
+                      msgs[0]?.value?.validatorAddress || '',
+                      15
+                    ) || '-'}
                   </span>
-                  <Image
-                    className="cursor-pointer"
-                    onClick={(e) => {
-                      copyToClipboard(msgs[0]?.value?.validatorAddress || '-');
-                      dispatch(
-                        setError({
-                          type: 'success',
-                          message: 'Copied',
-                        })
-                      );
-                      e.stopPropagation();
-                    }}
-                    src="/copy-icon-plain.svg"
-                    width={24}
-                    height={24}
-                    alt="copy"
-                  />
                 </div>
               </span>
               <MoreMessages msgs={msgs} />
@@ -118,25 +86,11 @@ const TxnMessage = ({
               <span>
                 <div className="common-copy max-w-[176px] inline font-normal">
                   <span className="truncate">
-                    {msgs[0]?.value?.validatorAddress || '-'}
+                    {shortenAddress(
+                      msgs[0]?.value?.validatorAddress || '',
+                      15
+                    ) || '-'}
                   </span>
-                  <Image
-                    className="cursor-pointer"
-                    onClick={(e) => {
-                      copyToClipboard(msgs[0]?.value?.validatorAddress || '-');
-                      dispatch(
-                        setError({
-                          type: 'success',
-                          message: 'Copied',
-                        })
-                      );
-                      e.stopPropagation();
-                    }}
-                    src="/copy-icon-plain.svg"
-                    width={24}
-                    height={24}
-                    alt="copy"
-                  />
                 </div>
               </span>
               <MoreMessages msgs={msgs} />
@@ -198,23 +152,6 @@ const TxnMessage = ({
                   <span className="truncate">
                     {msgs[0]?.value?.receiver || '-'}
                   </span>
-                  <Image
-                    className="cursor-pointer"
-                    onClick={(e) => {
-                      copyToClipboard(msgs[0]?.value?.receiver || '-');
-                      dispatch(
-                        setError({
-                          type: 'success',
-                          message: 'Copied',
-                        })
-                      );
-                      e.stopPropagation();
-                    }}
-                    src="/copy-icon-plain.svg"
-                    width={24}
-                    height={24}
-                    alt="copy"
-                  />
                 </div>
               </span>
               <MoreMessages msgs={msgs} />

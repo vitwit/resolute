@@ -58,7 +58,7 @@
 }
 
 .top-bar {
-  @apply bg-[#0f0f11] flex justify-center items-center min-h-[60px] fixed top-0 left-0 right-0;
+  @apply bg-[#0f0f11] flex justify-center items-center min-h-[60px] fixed top-0 left-0 right-0 z-[999];
   box-shadow: 0px 4px 4px 0px #100;
 }
 
