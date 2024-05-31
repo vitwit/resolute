@@ -6,6 +6,7 @@ import AddressField from './AddressField';
 
 const ReDelegatePopup = () => {
   const [open, setOpen] = useState(false);
+  console.log({open})
   return (
     <>
       <CustomDialog
@@ -32,7 +33,7 @@ const ReDelegatePopup = () => {
 
           <AddressField
             quickSelectAmount={function (value: string): void {
-              console.log('');
+              console.log('',value);
             }}
           />
           <div className="flex flex-col w-full">

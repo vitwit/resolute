@@ -6,6 +6,7 @@ import AddressField from './AddressField';
 
 const UndelegatePopup = () => {
   const [open, setOpen] = useState(false);
+  console.log({open})
   return (
     <>
       <CustomDialog
@@ -33,7 +34,7 @@ const UndelegatePopup = () => {
 
           <AddressField
             quickSelectAmount={function (value: string): void {
-              console.log('');
+              console.log('',value);
             }}
           />
           <div className="staking-alert w-full">
