@@ -4,16 +4,16 @@ import { useState } from 'react';
 import Image from 'next/image';
 import AddressField from './AddressField';
 
-const DelegatePopup = () => {
+const UndelegatePopup = () => {
   const [open, setOpen] = useState(false);
   return (
     <>
       <CustomDialog
-        open={open}
+        open={true}
         onClose={() => {
           setOpen(false);
         }}
-        title={'Delegate'}
+        title={'Un-Delegate'}
       >
         <div className="flex flex-col items-center gap-6 w-full">
           <div className="flex flex-col gap-2 w-full">
@@ -45,7 +45,8 @@ const DelegatePopup = () => {
               </p>
             </div>
             <div className="text-b1">
-              To make your staked assets liquid, undelegation will take 21 days.
+              No staking rewards, cancellation of unbonding, or fund withdrawals
+              until 21+ days post-undelegation.
             </div>
           </div>
 
@@ -53,11 +54,11 @@ const DelegatePopup = () => {
             <button className="text-white text-base font-normal leading-[normal] underline cursor-pointer">
               cancel
             </button>
-            <button className="primary-btn cursor-pointer">Delegate</button>
+            <button className="primary-btn cursor-pointer">Un-Delegate</button>
           </div>
         </div>
       </CustomDialog>
     </>
   );
 };
-export default DelegatePopup;
+export default UndelegatePopup;
