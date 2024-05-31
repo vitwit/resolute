@@ -1,10 +1,8 @@
 'use client';
-// import CustomDialog from '@/components/common/CustomDialog';
 import CustomDialog from '@/components/common/CustomDialog';
 import { useState } from 'react';
 import Image from 'next/image';
 import AddressField from './AddressField';
-import ValidatorDropDown from './ValidatorDropdown';
 
 const ReDelegatePopup = () => {
   const [open, setOpen] = useState(false);
@@ -50,10 +48,8 @@ const ReDelegatePopup = () => {
                   />
                   <p className="">Stakefish</p>
                 </div>
-                
               </div>
             </div>
-           
           </div>
 
           <div className="staking-alert w-full">
@@ -70,12 +66,9 @@ const ReDelegatePopup = () => {
             </div>
           </div>
 
-          <div className="flex gap-4 justify-end w-full">
-            <button className="text-white text-base font-normal leading-[normal] underline cursor-pointer">
-              cancel
-            </button>
-            <button className="primary-btn cursor-pointer">Re-Delegate</button>
-          </div>
+          <button className="primary-btn cursor-pointer w-full">
+            Re-Delegate
+          </button>
         </div>
       </CustomDialog>
     </>

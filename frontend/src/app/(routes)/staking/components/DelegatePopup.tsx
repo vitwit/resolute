@@ -9,7 +9,7 @@ const DelegatePopup = () => {
   return (
     <>
       <CustomDialog
-        open={open}
+        open={true}
         onClose={() => {
           setOpen(false);
         }}
@@ -49,12 +49,9 @@ const DelegatePopup = () => {
             </div>
           </div>
 
-          <div className="flex gap-4 justify-end w-full">
-            <button className="text-white text-base font-normal leading-[normal] underline cursor-pointer">
-              cancel
-            </button>
-            <button className="primary-btn cursor-pointer">Delegate</button>
-          </div>
+          <button className="primary-btn cursor-pointer w-full">
+            Delegate
+          </button>
         </div>
       </CustomDialog>
     </>
