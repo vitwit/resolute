@@ -26,16 +26,19 @@ const SelectNetwork = () => {
   };
 
   useEffect(() => {
+    if (selectedNetwork.chainName && allNetworks) {
+      const chainID = nameToChainIDs[selectedNetwork.chainName];
+      setChainLogo(allNetworks?.[chainID]?.logos?.menu || ALL_NETWORKS_ICON);
+      setChainGradient(allNetworks?.[chainID]?.config?.theme?.gradient);
+    }
     if (selectedNetwork.chainName && isWalletConnected) {
       const chainID = nameToChainIDs[selectedNetwork.chainName];
-      setChainLogo(allNetworks[chainID].logos.menu);
-      setChainGradient(allNetworks[chainID].config.theme.gradient);
-      setWalletAddress(networks[chainID].walletInfo.bech32Address);
-    } else {
+      setWalletAddress(networks[chainID]?.walletInfo.bech32Address);
+    } else if (!selectedNetwork.chainName) {
       setWalletAddress('');
       setChainLogo(ALL_NETWORKS_ICON);
     }
-  }, [selectedNetwork]);
+  }, [selectedNetwork, isWalletConnected, allNetworks]);
 
   return (
     <div className="fixed-top w-full">
@@ -70,7 +73,8 @@ const SelectNetwork = () => {
 
 export default SelectNetwork;
 
-const WalletAddress = ({ address }: { address: string }) => {
+export const WalletAddress = ({ address, displayAddress = true }: 
+  { address: string, displayAddress?: boolean }) => {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -91,9 +95,12 @@ const WalletAddress = ({ address }: { address: string }) => {
 
   return (
     <div className="flex gap-2 items-center">
-      <div className="text-[#FFFFFF80] text-[12px] leading-[15px]">
-        {shortenMsg(address, 15)}
-      </div>
+      {
+        displayAddress && <div className="text-[#FFFFFF80] text-[12px] leading-[15px]">
+          {shortenMsg(address, 15)}
+        </div> || null
+      }
+
       <Tooltip title="Copied!" placement="right" open={copied}>
         <Image
           className="cursor-pointer"

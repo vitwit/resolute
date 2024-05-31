@@ -5,7 +5,7 @@
 @tailwind utilities;
 
 :root {
-  --primary-text-color: '#FFFFFF';
+  --primary-text-color: #ffffff;
   --secondary-text-color: #ffffff80;
 }
 
@@ -25,6 +25,29 @@ body {
   font-family: 'Libre Franklin', sans-serif !important;
   font-optical-sizing: auto !important;
 }
+.text-bg {
+  background: linear-gradient(270deg, #fff -67.89%, #999 99.95%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.custom-btn {
+  @apply border flex items-center gap-2 px-4 py-[10.5px] rounded-[100px] border-solid border-[#4453DF];
+  background: linear-gradient(
+    180deg,
+    rgba(68, 83, 223, 0.1) 12.5%,
+    rgba(127, 92, 237, 0.1) 87.5%
+  );
+}
+.table-border-line {
+  @apply h-[1px] self-stretch border-b border-[#1C1C20];
+}
+.horizontal-line {
+  @apply h-[1px] self-stretch bg-[#1C1C20];
+}
+.search-bar {
+  @apply flex h-14 items-center gap-2 self-stretch px-6 py-4 rounded-[100px];
+  background: rgba(255, 255, 255, 0.02);
+}
 
 .primary-btn {
   @apply border-[1px] text-white text-[16px] rounded-full px-4 py-[10.5px] leading-[19px] h-10 flex justify-center items-center;
@@ -42,11 +65,108 @@ body {
 }
 
 .secondary-btn {
-  @apply text-[var(--secondary-text-color)] font-extralight text-[14px] underline underline-offset-[2px];
+  @apply text-[var(--secondary-text-color)] font-extralight text-[14px] underline underline-offset-[2px] cursor-pointer;
 }
 
 .divider-line {
   @apply w-full bg-[#FFFFFF80] h-[0.25px] opacity-20;
+}
+
+.form-label-text {
+  @apply text-[var(--secondary-text-color)] font-light text-[12px] leading-[24px];
+}
+
+.dots-flashing:after {
+  content: ' .';
+  animation: dots 1s steps(5, end) infinite;
+}
+
+.dots-loader:after {
+  content: ' ...';
+  animation: dots 1s steps(5, end) infinite;
+}
+
+@keyframes dots {
+  0%,
+  20% {
+    color: rgba(0, 0, 0, 0);
+    text-shadow:
+      0.25em 0 0 rgba(0, 0, 0, 0),
+      0.5em 0 0 rgba(0, 0, 0, 0);
+  }
+
+  40% {
+    color: white;
+    text-shadow:
+      0.25em 0 0 rgba(0, 0, 0, 0),
+      0.5em 0 0 rgba(0, 0, 0, 0);
+  }
+
+  60% {
+    text-shadow:
+      0.25em 0 0 white,
+      0.5em 0 0 rgba(0, 0, 0, 0);
+  }
+
+  80%,
+  100% {
+    text-shadow:
+      0.25em 0 0 white,
+      0.5em 0 0 white;
+  }
+}
+
+
+.empty-screen-title {
+  @apply text-[32px] font-bold;
+  background: linear-gradient(270deg, #fff -67.89%, #999 99.95%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.empty-screen-description {
+  @apply text-[16px] font-extralight tracking-[1.6px] leading-[21px];
+  background: linear-gradient(270deg, #fff -67.89%, #999 99.95%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-h1 {
+  @apply text-[28px] font-bold;
+}
+
+.text-h2 {
+  @apply text-[18px];
+}
+
+.text-b1 {
+  @apply text-[14px];
+}
+
+.text-b1-light {
+  @apply text-[14px] text-[var(--secondary-text-color)] font-extralight;
+}
+
+.text-small {
+  @apply text-[12px] text-[var(--secondary-text-color)];
+}
+
+.text-small-light {
+  @apply text-[12px] text-[var(--secondary-text-color)] font-extralight;
+}
+
+.text-btn {
+  @apply text-[var(--secondary-text-color)] font-extralight text-[14px] underline underline-offset-[2px];
+}
+
+.txn-status-data {
+  @apply flex items-center justify-center gap-2 px-6 py-[10.5px] bg-[#FFFFFF05] rounded-full w-full;
+}
+
+.more-msgs {
+  @apply bg-[#FFFFFF14] flex justify-center items-center text-[12px] h-6 min-w-6 rounded-2xl p-2;
 }
 .search-bar {
   @apply flex h-14 justify-between items-center  px-6 py-4 rounded-[100px];

@@ -4,62 +4,37 @@ import React from 'react';
 
 const CustomSubmitButton = ({
   pendingStatus,
-  circularProgressSize,
-  buttonStyle,
-  buttonContent,
-  isIBC
+  isIBC,
 }: {
   pendingStatus: boolean;
-  circularProgressSize: number;
-  buttonStyle: string;
-  buttonContent: string;
-  isIBC?:boolean;
+  isIBC?: boolean;
 }) => {
   const isMetaMask = isMetaMaskWallet();
 
   return (
     <div>
       <Tooltip
-        title={(isIBC && isMetaMask) ? 'Metamask does not support IBC' : ''}
+        title={isIBC && isMetaMask ? 'Metamask does not support IBC' : ''}
         placement="top-end"
       >
-        <button disabled={pendingStatus || (isIBC && isMetaMask)}
-          type="submit" className={buttonStyle}>
+        <button
+          className="primary-btn w-full"
+          disabled={pendingStatus || (isIBC && isMetaMask)}
+          type="submit"
+        >
           {pendingStatus ? (
-            <CircularProgress size={circularProgressSize} sx={{color: 'white'}} />
+            <div className="flex justify-center items-center gap-2">
+              <CircularProgress size={12} sx={{ color: 'white' }} />
+              <span className="italic">
+                Pending<span className="dots-flashing"></span>{' '}
+              </span>
+            </div>
           ) : (
-            <>{buttonContent}</>
+            'Send'
           )}
         </button>
       </Tooltip>
-
     </div>
-  );
-};
-
-interface propsToAccept {
-  pendingStatus: boolean;
-  circularProgressSize: number;
-  buttonStyle: string;
-  buttonContent: string;
-  onClick: () => void;
-}
-
-export const CustomButton: React.FC<propsToAccept> = ({
-  pendingStatus,
-  circularProgressSize,
-  buttonStyle,
-  buttonContent,
-  onClick,
-}: propsToAccept) => {
-  return (
-    <button className={buttonStyle} onClick={onClick}>
-      {pendingStatus ? (
-        <CircularProgress size={circularProgressSize} />
-      ) : (
-        <>{buttonContent}</>
-      )}
-    </button>
   );
 };
 
