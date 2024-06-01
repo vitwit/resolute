@@ -1,6 +1,7 @@
 import Copy from '@/components/common/Copy';
 import LetterAvatar from '@/components/common/LetterAvatar';
 import { shortenAddress } from '@/utils/util';
+import Link from 'next/link';
 import React from 'react';
 
 interface MultisigAccountCardProps {
@@ -15,14 +16,17 @@ const MultisigAccountCard = (props: MultisigAccountCardProps) => {
   const { actionsRequired, multisigAddress, chainName, name, threshold } =
     props;
   return (
-    <div className="multisig-card">
+    <Link
+      href={`/multisig/${chainName.toLowerCase()}/${multisigAddress}`}
+      className="multisig-card"
+    >
       <MultisigName name={name} />
       <div className="flex items-center gap-6">
         <MultisigAddress address={multisigAddress} />
         <MultisigDetail title="Threshold" value={threshold} />
         <MultisigDetail title="Action Required" value={actionsRequired} />
       </div>
-    </div>
+    </Link>
   );
 };
 
