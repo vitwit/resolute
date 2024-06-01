@@ -20,3 +20,20 @@
   @apply rounded-2xl bg-[#FFFFFF05] p-4 space-y-4;
   box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25) inset;
 }
+
+.txns-filter {
+  @apply h-10 flex justify-center items-center text-[16px] px-4 py-[10.5px]  rounded-lg;
+}
+
+.txns-filter-unselected {
+  @apply border-[0.25px] bg-transparent border-[#FFFFFF10] hover:bg-[#ffffff08] hover:border-transparent;
+}
+
+.txns-filter-selected {
+  @apply bg-[#FFFFFF14] border-[0.25px] border-transparent;
+}
+
+.more-options {
+  @apply bg-[#FFFFFF14] rounded-2xl absolute right-[45px] top-10 overflow-hidden w-[180px];
+  backdrop-filter: blur(15px);
+}

@@ -1,23 +1,21 @@
-import CustomButton from '@/components/common/CustomButton';
-import LetterAvatar from '@/components/common/LetterAvatar';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
-import { setSelectedNetwork } from '@/store/features/common/commonSlice';
 import {
   getMultisigAccounts,
   getMultisigBalance,
+  getTxns,
   multisigByAddress,
 } from '@/store/features/multisig/multisigSlice';
 import {
   getAllValidators,
   getDelegations,
 } from '@/store/features/staking/stakeSlice';
-import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import MultisigAccountHeader from './MultisigAccountHeader';
 import Copy from '@/components/common/Copy';
 import { formatStakedAmount, shortenAddress } from '@/utils/util';
 import { parseBalance } from '@/utils/denom';
+import Transactions from './Transactions';
 
 const MultisigAccount = ({
   chainName,
@@ -78,11 +76,19 @@ const MultisigAccount = ({
   return (
     <div className="space-y-10">
       <MultisigAccountHeader isAdmin={isAdmin} />
-      <MultisigAccountInfo
-        chainID={chainID}
-        coinMinimalDenom={coinMinimalDenom}
-        currency={currency}
-      />
+      <div className="space-y-20">
+        <MultisigAccountInfo
+          chainID={chainID}
+          coinMinimalDenom={coinMinimalDenom}
+          currency={currency}
+        />
+        <Transactions
+          chainID={chainID}
+          multisigAddress={multisigAccount.account.address}
+          currency={currency}
+          threshold={multisigAccount.account.threshold}
+        />
+      </div>
     </div>
   );
 };
