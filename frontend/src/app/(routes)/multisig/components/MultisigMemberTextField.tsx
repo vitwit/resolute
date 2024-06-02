@@ -3,10 +3,17 @@ import { InputAdornment, TextField } from '@mui/material';
 import React from 'react';
 import { createMultisigTextFieldStyles } from '../styles';
 import Image from 'next/image';
-import { REMOVE_ICON } from '@/constants/image-names';
+import { REMOVE_ICON, TOGGLE_OFF } from '@/constants/image-names';
 
 const MultisigMemberTextField: React.FC<InputTextComponentProps> = (props) => {
-  const { field, index, handleChangeValue, handleRemoveValue } = props;
+  const {
+    field,
+    index,
+    handleChangeValue,
+    handleRemoveValue,
+    togglePubKey,
+    isImport,
+  } = props;
   return (
     <>
       <TextField
@@ -26,33 +33,36 @@ const MultisigMemberTextField: React.FC<InputTextComponentProps> = (props) => {
         fullWidth
         disabled={field.disabled}
         InputProps={{
-          endAdornment: !field.disabled ? (
-            <InputAdornment
-              onClick={() =>
-                !field.disabled
-                  ? handleRemoveValue(index)
-                  : alert('Cannot self remove')
-              }
-              position="end"
-              sx={{
-                '&:hover': {
-                  cursor: 'pointer',
-                },
-              }}
-            >
-              <Image
-                src={REMOVE_ICON}
-                height={24}
-                width={24}
-                alt="Remove"
-                draggable={false}
-              />
-            </InputAdornment>
-          ) : index === 0 ? (
-            <InputAdornment position="end">
-              <div>(You)</div>
-            </InputAdornment>
-          ) : null,
+          endAdornment:
+            !field.disabled && !isImport ? (
+              <InputAdornment
+                position="end"
+                sx={{
+                  '&:hover': {
+                    cursor: 'pointer',
+                  },
+                  minWidth: '95px', // Adjust the minimum width here
+                }}
+              >
+                <div
+                  className="flex items-center gap-4"
+                  style={{ minWidth: '95px' }}
+                >
+                  <TogglePubkey toggle={() => togglePubKey(index)} />
+                  <RemoveButton
+                    onClick={() =>
+                      !field.disabled
+                        ? handleRemoveValue(index)
+                        : alert('Cannot self remove')
+                    }
+                  />
+                </div>
+              </InputAdornment>
+            ) : index === 0 ? (
+              <InputAdornment position="end">
+                <div className="text-small-light">(You)</div>
+              </InputAdornment>
+            ) : null,
           sx: {
             input: {
               color: 'white',
@@ -70,3 +80,26 @@ const MultisigMemberTextField: React.FC<InputTextComponentProps> = (props) => {
 };
 
 export default MultisigMemberTextField;
+
+const TogglePubkey = ({ toggle }: { toggle: () => void }) => {
+  return (
+    <button className="flex items-center gap-1" type="button" onClick={toggle}>
+      <Image src={TOGGLE_OFF} height={11.2} width={16} alt="" />
+      <span className="text-[12px] font-light text-white">pubkey</span>
+    </button>
+  );
+};
+
+const RemoveButton = ({ onClick }: { onClick: () => void }) => {
+  return (
+    <button type="button" onClick={onClick}>
+      <Image
+        src={REMOVE_ICON}
+        height={24}
+        width={24}
+        alt="Remove"
+        draggable={false}
+      />
+    </button>
+  );
+};

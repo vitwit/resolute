@@ -412,8 +412,8 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
       <div>
         {page === 1 ? (
           <div className="flex gap-10 items-center">
-            <div className="flex-1 flex flex-col">
-              <form onSubmit={(e) => handleSubmit(e)}>
+            <div className="space-y-10">
+              <form className="space-y-10" onSubmit={(e) => handleSubmit(e)}>
                 <div className="flex gap-6">
                   <div className="space-y-2 flex-1">
                     <div className="text-b1-light !font-light">Name</div>
@@ -459,24 +459,9 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
                             handleChangeValue={handleChangeValue}
                             index={index}
                             field={field}
+                            togglePubKey={togglePubKey}
+                            isImport={importMultisig}
                           />
-                          {!importMultisig && (
-                            <div className="text-right font-light">
-                              {index !== 0 ? (
-                                <button
-                                  onClick={() => {
-                                    togglePubKey(index);
-                                  }}
-                                  type="button"
-                                  className="text-[12px] underline underline-offset-2"
-                                >
-                                  {field.isPubKey
-                                    ? 'Use Address'
-                                    : 'Use PubKey'}
-                                </button>
-                              ) : null}
-                            </div>
-                          )}
                         </div>
                       ))}
                     </div>
@@ -485,8 +470,7 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
                     <AddMemberButton handleAddPubKey={handleAddPubKey} />
                   )}
                 </div>
-                <div>{formError}</div>
-                <div className="flex gap-4 items-center justify-end">
+                <div className="flex justify-end">
                   <CustomButton
                     btnText="Create"
                     btnDisabled={
@@ -496,41 +480,26 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
                       createMultiAccRes?.status === 'pending' || pubkeyLoading
                     }
                     btnType="submit"
+                    btnStyles="w-[150px]"
                   />
-                  <div className="italic font-light">
-                    {pubkeyLoading ? (
-                      <div>
-                        <span>Validating inputs</span>
-                        <span className="dots-flashing"></span>
-                      </div>
-                    ) : createMultiAccRes?.status === 'pending' ? (
-                      <div>
-                        <span>Creating multisig account</span>
-                        <span className="dots-flashing"></span>
-                      </div>
-                    ) : null}
-                  </div>
                 </div>
               </form>
               {!importMultisig ? (
-                <div className="create-multisig-dialog-footer">
-                  <div className="text-[14px] font-extralight">Or</div>
-                  <div className="flex gap-4 items-center">
-                    <div className="text-[16px]">
-                      Have an existing MultiSig account ?
-                    </div>{' '}
-                    <button
-                      onClick={() => {
-                        setMultisigAddress('');
-                        setAddressValidationError('');
-                        setName('');
-                        setPage(2);
-                      }}
-                      className="text-only-btn"
-                    >
-                      Import Here
-                    </button>
-                  </div>
+                <div className="flex gap-1 justify-center">
+                  <div className="text-[16px] font-extralight text-[#ffffff80]">
+                    Have an existing MultiSig account ? Import it
+                  </div>{' '}
+                  <button
+                    onClick={() => {
+                      setMultisigAddress('');
+                      setAddressValidationError('');
+                      setName('');
+                      setPage(2);
+                    }}
+                    className="secondary-btn !font-bold !text-white"
+                  >
+                    here
+                  </button>
                 </div>
               ) : (
                 <div className="create-multisig-dialog-footer">

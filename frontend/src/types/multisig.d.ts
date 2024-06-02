@@ -269,4 +269,6 @@ interface InputTextComponentProps {
     index: number,
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => void;
+  togglePubKey: (index: number) => void;
+  isImport: boolean;
 }

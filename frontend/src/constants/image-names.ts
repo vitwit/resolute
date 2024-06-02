@@ -16,3 +16,5 @@ export const MINUS_ICON = '/icons/minus-icon.svg';
 export const PLUS_ICON = '/icons/plus-icon.svg';
 export const MINUS_ICON_DISABLED = '/icons/minus-icon-disabled.svg';
 export const PLUS_ICON_DISABLED = '/icons/plus-icon-disabled.svg';
+export const TOGGLE_OFF = '/icons/toggle-off.svg';
+// export const TOGGLE_ON = '/icons/toggle-on.svg';
