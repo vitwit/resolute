@@ -2,7 +2,7 @@ import CustomButton from '@/components/common/CustomButton';
 import SectionHeader from '@/components/common/SectionHeader';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
-import { getTxns } from '@/store/features/multisig/multisigSlice';
+import { deleteTxn, getTxns } from '@/store/features/multisig/multisigSlice';
 import { Txn } from '@/types/multisig';
 import { cleanURL, isMultisigMember } from '@/utils/util';
 import React, { useEffect, useRef, useState } from 'react';
@@ -20,6 +20,10 @@ import {
 import { TxStatus } from '@/types/enums';
 import CustomLoader from '@/components/common/CustomLoader';
 import Link from 'next/link';
+import { getAuthToken } from '@/utils/localStorage';
+import { COSMOS_CHAIN_ID } from '@/utils/constants';
+import DialogConfirmDelete from './DialogConfirmDelete';
+import CustomDialog from '@/components/common/CustomDialog';
 
 const TXNS_TYPES = [
   { option: 'to-sign', value: 'To be Signed' },
@@ -50,6 +54,7 @@ const Transactions = ({
   };
 
   const txnsStatus = useAppSelector((state) => state.multisig.txns.status);
+  const deleteTxnRes = useAppSelector((state) => state.multisig.deleteTxnRes);
 
   const handleTxnsTypeChange = (type: string) => {
     setTxnsType(type);
@@ -101,6 +106,16 @@ const Transactions = ({
 
     setTxnsList(filteredTxns);
   }, [txnsState]);
+
+  useEffect(() => {
+    if (deleteTxnRes.status === TxStatus.IDLE) {
+      if (['failed', 'history', 'completed'].includes(txnsType)) {
+        fetchTxns('history');
+      } else {
+        fetchTxns('current');
+      }
+    }
+  }, [deleteTxnRes]);
 
   return (
     <div className="space-y-6">
@@ -224,10 +239,12 @@ const TxnsCard = ({
   chainID: string;
   isHistory: boolean;
 }) => {
+  const dispatch = useAppDispatch();
   const { getChainInfo } = useGetChainInfo();
   const { address: walletAddress, explorerTxHashEndpoint } =
     getChainInfo(chainID);
   const [showAll, setShowAll] = useState(false);
+  const [viewRawOpen, setViewRawOpen] = useState(false);
   const { messages } = txn;
   const pubKeys = txn.pubkeys || [];
   const isMember = isMultisigMember(pubKeys, walletAddress);
@@ -238,8 +255,31 @@ const TxnsCard = ({
   };
 
   const [optionsOpen, setOptionsOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const menuRef2 = useRef<HTMLDivElement>(null);
+
+  const loading = useAppSelector((state) => state.multisig.deleteTxnRes.status);
+
+  const hanldeDeleteTxn = () => {
+    setDeleteDialogOpen(true);
+  };
+
+  const onDeleteTxn = () => {
+    const authToken = getAuthToken(COSMOS_CHAIN_ID);
+    dispatch(
+      deleteTxn({
+        data: {
+          address: multisigAddress,
+          id: txn.id,
+        },
+        queryParams: {
+          address: walletAddress,
+          signature: authToken?.signature || '',
+        },
+      })
+    );
+  };
 
   useEffect(() => {
     const handleOutsideClick = (event: MouseEvent) => {
@@ -259,6 +299,12 @@ const TxnsCard = ({
       document.removeEventListener('mousedown', handleOutsideClick);
     };
   }, []);
+
+  useEffect(() => {
+    if (loading === TxStatus.IDLE || loading === TxStatus.REJECTED) {
+      setDeleteDialogOpen(false);
+    }
+  }, [loading]);
 
   return (
     <div className="txn-card">
@@ -366,8 +412,31 @@ const TxnsCard = ({
       {optionsOpen ? (
         <MoreOptions
           setOptionsOpen={(value: boolean) => setOptionsOpen(value)}
+          hanldeDeleteTxn={hanldeDeleteTxn}
+          onViewRaw={() => setViewRawOpen(true)}
         />
       ) : null}
+      <DialogConfirmDelete
+        open={deleteDialogOpen}
+        onClose={() => setDeleteDialogOpen(false)}
+        title="Delete Transaction"
+        description=" Are you sure you want to delete the transaction ?"
+        onDelete={onDeleteTxn}
+        loading={loading === TxStatus.PENDING}
+      />
+      <CustomDialog
+        open={viewRawOpen}
+        onClose={() => setViewRawOpen(false)}
+        title="Raw Transaction"
+      >
+        <div className="w-[800px] bg-black text-white h-[400px] max-h-[400px] overflow-y-scroll p-2">
+          {txn ? (
+            <pre>{JSON.stringify(txn, undefined, 2)}</pre>
+          ) : (
+            <div className="text-center">- No Data -</div>
+          )}
+        </div>
+      </CustomDialog>
     </div>
   );
 };
@@ -393,8 +462,12 @@ const ExpandViewButton = ({
 
 const MoreOptions = ({
   setOptionsOpen,
+  hanldeDeleteTxn,
+  onViewRaw,
 }: {
   setOptionsOpen: (value: boolean) => void;
+  hanldeDeleteTxn: () => void;
+  onViewRaw: () => void;
 }) => {
   return (
     <div
@@ -403,11 +476,13 @@ const MoreOptions = ({
       onMouseLeave={() => setOptionsOpen(false)}
     >
       <button
+        onClick={hanldeDeleteTxn}
         className={`hover:bg-[#FFFFFF14] cursor-pointer p-4 text-b1 text-left`}
       >
         Delete
       </button>
       <button
+        onClick={onViewRaw}
         className={`hover:bg-[#FFFFFF14] cursor-pointer p-4 text-b1 text-left`}
       >
         View Raw

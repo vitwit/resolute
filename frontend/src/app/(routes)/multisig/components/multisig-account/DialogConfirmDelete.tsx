@@ -5,16 +5,21 @@ import { Dialog, DialogContent } from '@mui/material';
 import Image from 'next/image';
 import React from 'react';
 
-const DialogDeleteMultisig = ({
+const DialogConfirmDelete = ({
   open,
   onClose,
   onDelete,
+  title,
+  description,
+  loading,
 }: {
   open: boolean;
   onClose: () => void;
   onDelete: () => void;
+  title: string;
+  description: string;
+  loading: boolean;
 }) => {
-  const loading = useAppSelector((state) => state.multisig.deleteMultisigRes);
   return (
     <Dialog
       open={open}
@@ -43,17 +48,15 @@ const DialogDeleteMultisig = ({
                 alt="Verify Ownership"
               />
               <div className="flex items-center flex-col gap-2">
-                <div className="text-h1 !font-semibold">Delete Multisig</div>
-                <div className="text-b1-light">
-                  Are you sure you want to delete this multisig ?
-                </div>
+                <div className="text-h1 !font-semibold">{title}</div>
+                <div className="text-b1-light">{description}</div>
               </div>
             </div>
             <CustomButton
               btnOnClick={onDelete}
-              btnLoading={loading.status === 'pending'}
-              btnDisabled={loading.status === 'pending'}
-              btnText="Verify Ownership"
+              btnLoading={loading}
+              btnDisabled={loading}
+              btnText="Delete"
               btnStyles="w-full !border-[#D92101] !bg-[#D921011A] delete-multisig-btn"
             />
           </div>
@@ -63,4 +66,4 @@ const DialogDeleteMultisig = ({
   );
 };
 
-export default DialogDeleteMultisig;
+export default DialogConfirmDelete;

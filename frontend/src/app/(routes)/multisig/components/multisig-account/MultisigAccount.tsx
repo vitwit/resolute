@@ -84,6 +84,7 @@ const MultisigAccount = ({
         goBackURL={`/multisig/${chainName}`}
         multisigAddress={multisigAddress}
         walletAddress={walletAddress}
+        chainName={chainName}
       />
       <div className="space-y-20">
         <MultisigAccountInfo

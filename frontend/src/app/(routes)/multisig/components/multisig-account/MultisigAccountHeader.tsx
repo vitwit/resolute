@@ -1,6 +1,6 @@
 import CustomButton from '@/components/common/CustomButton';
 import LetterAvatar from '@/components/common/LetterAvatar';
-import { useAppDispatch } from '@/custom-hooks/StateHooks';
+import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import useVerifyAccount from '@/custom-hooks/useVerifyAccount';
 import {
   deleteMultisig,
@@ -10,8 +10,11 @@ import { COSMOS_CHAIN_ID } from '@/utils/constants';
 import { getTimeDifferenceToFutureDate } from '@/utils/dataTime';
 import { getAuthToken } from '@/utils/localStorage';
 import Link from 'next/link';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import DialogDeleteMultisig from './DialogDeleteMultisig';
+import { useRouter } from 'next/navigation';
+import { setError } from '@/store/features/common/commonSlice';
+import DialogConfirmDelete from './DialogConfirmDelete';
 
 const MultisigAccountHeader = ({
   isAdmin,
@@ -20,6 +23,7 @@ const MultisigAccountHeader = ({
   goBackURL,
   multisigAddress,
   walletAddress,
+  chainName,
 }: {
   isAdmin: boolean;
   multisigName: string;
@@ -27,12 +31,19 @@ const MultisigAccountHeader = ({
   goBackURL: string;
   multisigAddress: string;
   walletAddress: string;
+  chainName: string;
 }) => {
   const dispatch = useAppDispatch();
+  const router = useRouter();
   const { isAccountVerified } = useVerifyAccount({
     address: walletAddress,
   });
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const deleteMultisigRes = useAppSelector(
+    (state) => state.multisig.deleteMultisigRes
+  );
+  const loading = useAppSelector((state) => state.multisig.deleteMultisigRes);
+
   const handleDeleteMultisig = () => {
     const authToken = getAuthToken(COSMOS_CHAIN_ID);
     if (isAdmin) {
@@ -55,6 +66,17 @@ const MultisigAccountHeader = ({
     }
     setDeleteDialogOpen(true);
   };
+
+  useEffect(() => {
+    if (deleteMultisigRes.status === 'idle') {
+      dispatch(
+        setError({ message: 'Account Deleted Successfully', type: 'success' })
+      );
+      setTimeout(() => {
+        router.push(`/multisig/${chainName}`);
+      }, 500);
+    }
+  }, [deleteMultisigRes]);
 
   return (
     <div className="flex items-center gap-2 w-full">
@@ -84,10 +106,13 @@ const MultisigAccountHeader = ({
           btnStyles="w-fit"
         />
       ) : null}
-      <DialogDeleteMultisig
+      <DialogConfirmDelete
         open={deleteDialogOpen}
         onClose={() => setDeleteDialogOpen(false)}
         onDelete={handleDeleteMultisig}
+        title="Delete Multisig"
+        description=" Are you sure you want to delete this multisig ?"
+        loading={loading.status === 'pending'}
       />
     </div>
   );

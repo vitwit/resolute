@@ -34,6 +34,11 @@
 }
 
 .more-options {
-  @apply bg-[#FFFFFF14] rounded-2xl flex flex-col absolute right-[35px] top-10 overflow-hidden w-[180px] z-[999];
+  @apply bg-[#FFFFFF14] rounded-2xl flex flex-col absolute right-[40px] top-12 overflow-hidden w-[180px] z-[999];
   backdrop-filter: blur(15px);
+}
+
+.delete-multisig-btn {
+  border-image: none !important;
+  background: #d921011a !important;
 }
