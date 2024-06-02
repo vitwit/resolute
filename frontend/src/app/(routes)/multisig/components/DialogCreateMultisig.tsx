@@ -46,7 +46,14 @@ import useGetPubkey from '@/custom-hooks/useGetPubkey';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import useGetAccountInfo from '@/custom-hooks/useGetAccountInfo';
 import CustomDialog from '@/components/common/CustomDialog';
-import { ADD_ICON, MINUS_ICON, PLUS_ICON } from '@/constants/image-names';
+import {
+  ADD_ICON,
+  MINUS_ICON,
+  MINUS_ICON_DISABLED,
+  PLUS_ICON,
+  PLUS_ICON_DISABLED,
+} from '@/constants/image-names';
+import CustomButton from '@/components/common/CustomButton';
 
 const MAX_PUB_KEYS = 7;
 const MULTISIG_NAME_MAX_LENGTH = 100;
@@ -436,6 +443,7 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
                     <Threshold
                       threshold={threshold}
                       handleThresholdChange={handleThresholdChange}
+                      membersCount={pubKeyFields.length}
                     />
                   </div>
                 </div>
@@ -477,71 +485,18 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
                     <AddMemberButton handleAddPubKey={handleAddPubKey} />
                   )}
                 </div>
-                <div className="mb-6 flex items-center gap-4">
-                  <TextField
-                    className="bg-[#FFFFFF0D] rounded-[4px]"
-                    name={'threshold'}
-                    value={threshold}
-                    required
-                    inputProps={{ maxLength: 1 }}
-                    onChange={handleChange}
-                    label=""
-                    type="number"
-                    size="small"
-                    disabled={importMultisig}
-                    style={{ maxWidth: 75 }}
-                    sx={{
-                      ...createMultisigTextFieldStyles,
-                      ...createMultisigThresholdStyles,
-                    }}
-                    InputProps={{
-                      sx: {
-                        input: {
-                          color: 'white',
-                          fontSize: '14px',
-                        },
-                      },
-                    }}
-                  />
-                  <div className="font-extralight text-[14px] mt-6 text-[#FFFFFF80]">
-                    of
-                  </div>
-                  <TextField
-                    className="bg-[#FFFFFF0D] rounded-[4px]"
-                    name={'threshold'}
-                    value={pubKeyFields?.length}
-                    label=""
-                    disabled
-                    size="small"
-                    style={{ maxWidth: 75 }}
-                    sx={createMultisigTextFieldStyles}
-                    InputProps={{
-                      sx: {
-                        input: {
-                          color: 'white',
-                          fontSize: '14px',
-                        },
-                      },
-                    }}
-                  />
-                  <div className="font-extralight text-[14px] mt-6">
-                    Threshold
-                  </div>
-                </div>
                 <div>{formError}</div>
-                <div className="flex gap-4 items-center">
-                  <button
-                    disabled={createMultiAccRes?.status === 'pending'}
-                    className="create-account-btn min-w-[144px]"
-                    type="submit"
-                  >
-                    {createMultiAccRes?.status === 'pending' ||
-                    pubkeyLoading ? (
-                      <CircularProgress size={16} sx={{ color: 'white' }} />
-                    ) : (
-                      <>{importMultisig ? 'Import' : 'Create'}</>
-                    )}
-                  </button>
+                <div className="flex gap-4 items-center justify-end">
+                  <CustomButton
+                    btnText="Create"
+                    btnDisabled={
+                      createMultiAccRes?.status === 'pending' || pubkeyLoading
+                    }
+                    btnLoading={
+                      createMultiAccRes?.status === 'pending' || pubkeyLoading
+                    }
+                    btnType="submit"
+                  />
                   <div className="italic font-light">
                     {pubkeyLoading ? (
                       <div>
@@ -690,18 +645,40 @@ const AddMemberButton = ({
 const Threshold = ({
   handleThresholdChange,
   threshold,
+  membersCount,
 }: {
   handleThresholdChange: (value: string) => void;
   threshold: number;
+  membersCount: number;
 }) => {
+  const incDisabled = threshold >= membersCount;
+  const decDisabled = threshold <= 1;
   return (
     <div className="threshold">
-      <button onClick={() => handleThresholdChange(INC)} type="button">
-        <Image src={MINUS_ICON} height={20} width={20} alt="Decrease" />
+      <button
+        disabled={decDisabled}
+        onClick={() => handleThresholdChange(DEC)}
+        type="button"
+      >
+        <Image
+          src={decDisabled ? MINUS_ICON_DISABLED : MINUS_ICON}
+          height={20}
+          width={20}
+          alt="Decrease"
+        />
       </button>
       <div className="w-5 h-5 flex-center">{threshold}</div>
-      <button onClick={() => handleThresholdChange(DEC)} type="button">
-        <Image src={PLUS_ICON} height={20} width={20} alt="Increase" />
+      <button
+        disabled={incDisabled}
+        onClick={() => handleThresholdChange(INC)}
+        type="button"
+      >
+        <Image
+          src={incDisabled ? PLUS_ICON_DISABLED : PLUS_ICON}
+          height={20}
+          width={20}
+          alt="Increase"
+        />
       </button>
     </div>
   );
