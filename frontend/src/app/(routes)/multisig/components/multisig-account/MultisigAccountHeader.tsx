@@ -81,7 +81,7 @@ const MultisigAccountHeader = ({
   return (
     <div className="flex items-center gap-2 w-full">
       <div className="flex-1 space-y-6">
-        <Link href={goBackURL} className="text-btn h-8 flex items-center">
+        <Link href={goBackURL} className="text-btn h-8 flex items-center w-fit">
           <span>Back to List</span>
         </Link>
         <div className="space-y-2">

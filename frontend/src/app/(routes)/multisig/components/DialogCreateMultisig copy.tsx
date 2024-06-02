@@ -46,12 +46,9 @@ import useGetPubkey from '@/custom-hooks/useGetPubkey';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import useGetAccountInfo from '@/custom-hooks/useGetAccountInfo';
 import CustomDialog from '@/components/common/CustomDialog';
-import { ADD_ICON, MINUS_ICON, PLUS_ICON } from '@/constants/image-names';
 
 const MAX_PUB_KEYS = 7;
 const MULTISIG_NAME_MAX_LENGTH = 100;
-const INC = 'increase';
-const DEC = 'decrease';
 
 const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
   const { open, onClose, chainID } = props;
@@ -66,7 +63,7 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
   const { pubkey: pubKey } = accountInfo;
   const [name, setName] = useState('');
   const [pubKeyFields, setPubKeyFields] = useState<PubKeyFields[]>([]);
-  const [threshold, setThreshold] = useState(1);
+  const [threshold, setThreshold] = useState(0);
   const [formError, setFormError] = useState('');
   const [importMultisig, setImportMultisig] = useState(false);
   const [page, setPage] = useState(1);
@@ -106,7 +103,7 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
       { ...pubKeyObj },
     ]);
     setName('');
-    setThreshold(1);
+    setThreshold(0);
     setPage(1);
   };
 
@@ -360,22 +357,6 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
     );
   };
 
-  const handleThresholdChange = (value: string) => {
-    if (value === INC) {
-      if (threshold + 1 > pubKeyFields?.length) {
-        dispatch(setError({ type: 'error', message: MAX_THRESHOLD_ERROR }));
-      } else {
-        setThreshold(threshold + 1);
-      }
-    } else if (value === DEC) {
-      if (threshold - 1 < 1) {
-        dispatch(setError({ type: 'error', message: MIN_THRESHOLD_ERROR }));
-      } else {
-        setThreshold(threshold - 1);
-      }
-    }
-  };
-
   useEffect(() => {
     if (importMultisigAccountRes.status === TxStatus.IDLE) {
       setImportMultisig(true);
@@ -407,76 +388,63 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
           <div className="flex gap-10 items-center">
             <div className="flex-1 flex flex-col">
               <form onSubmit={(e) => handleSubmit(e)}>
-                <div className="flex gap-6">
-                  <div className="space-y-2 flex-1">
-                    <div className="text-b1-light !font-light">Name</div>
-                    <TextField
-                      className="bg-transparent rounded-full border-[1px] border-[#ffffff80] h-10"
-                      onChange={handleNameChange}
-                      name="name"
-                      value={name}
-                      required
-                      autoFocus={true}
-                      placeholder="Name (Eg: Alice-Bob-Eve-Msig)"
-                      fullWidth
-                      sx={createMultisigTextFieldStyles}
-                      InputProps={{
-                        sx: {
-                          input: {
-                            color: 'white',
-                            fontSize: '14px',
-                            padding: 2,
-                          },
-                        },
-                      }}
+                <TextField
+                  className="bg-[#FFFFFF0D] rounded-2xl"
+                  onChange={handleNameChange}
+                  name="name"
+                  value={name}
+                  required
+                  autoFocus={true}
+                  placeholder="Name (Eg: Alice-Bob-Eve-Msig)"
+                  fullWidth
+                  sx={createMultisigTextFieldStyles}
+                  InputProps={{
+                    sx: {
+                      input: {
+                        color: 'white',
+                        fontSize: '14px',
+                        padding: 2,
+                      },
+                    },
+                  }}
+                />
+                {pubKeyFields.map((field, index) => (
+                  <>
+                    <MultisigMemberTextField
+                      key={index}
+                      handleRemoveValue={handleRemoveValue}
+                      handleChangeValue={handleChangeValue}
+                      index={index}
+                      field={field}
                     />
+                    {!importMultisig && (
+                      <div className="text-right font-light">
+                        {index !== 0 ? (
+                          <button
+                            onClick={() => {
+                              togglePubKey(index);
+                            }}
+                            type="button"
+                            className="text-[12px] underline underline-offset-2"
+                          >
+                            {field.isPubKey ? 'Use Address' : 'Use PubKey'}
+                          </button>
+                        ) : null}
+                      </div>
+                    )}
+                  </>
+                ))}
+                {!importMultisig && (
+                  <div className="text-right mt-4 text-[12px] font-light">
+                    <button
+                      type="button"
+                      className="create-multisig-btn cursor-pointer"
+                      onClick={handleAddPubKey}
+                    >
+                      Add New Member
+                    </button>
                   </div>
-                  <div className="space-y-2">
-                    <div className="text-b1-light !font-light">Threshold</div>
-                    <Threshold
-                      threshold={threshold}
-                      handleThresholdChange={handleThresholdChange}
-                    />
-                  </div>
-                </div>
-                <div className="space-y-6">
-                  <div className="space-y-2">
-                    <div className="text-b1-light !font-light">Add Members</div>
-                    <div className="grid grid-cols-2 gap-x-10 gap-y-4">
-                      {pubKeyFields.map((field, index) => (
-                        <div>
-                          <MultisigMemberTextField
-                            key={index}
-                            handleRemoveValue={handleRemoveValue}
-                            handleChangeValue={handleChangeValue}
-                            index={index}
-                            field={field}
-                          />
-                          {!importMultisig && (
-                            <div className="text-right font-light">
-                              {index !== 0 ? (
-                                <button
-                                  onClick={() => {
-                                    togglePubKey(index);
-                                  }}
-                                  type="button"
-                                  className="text-[12px] underline underline-offset-2"
-                                >
-                                  {field.isPubKey
-                                    ? 'Use Address'
-                                    : 'Use PubKey'}
-                                </button>
-                              ) : null}
-                            </div>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                  {!importMultisig && (
-                    <AddMemberButton handleAddPubKey={handleAddPubKey} />
-                  )}
-                </div>
+                )}
                 <div className="mb-6 flex items-center gap-4">
                   <TextField
                     className="bg-[#FFFFFF0D] rounded-[4px]"
@@ -667,42 +635,3 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
 };
 
 export default DialogCreateMultisig;
-
-const AddMemberButton = ({
-  handleAddPubKey,
-}: {
-  handleAddPubKey: () => void;
-}) => {
-  return (
-    <div className="flex justify-center">
-      <button
-        type="button"
-        className="flex items-center gap-2 font-light"
-        onClick={handleAddPubKey}
-      >
-        <Image src={ADD_ICON} height={24} width={24} alt="" />
-        <span>Add More</span>
-      </button>
-    </div>
-  );
-};
-
-const Threshold = ({
-  handleThresholdChange,
-  threshold,
-}: {
-  handleThresholdChange: (value: string) => void;
-  threshold: number;
-}) => {
-  return (
-    <div className="threshold">
-      <button onClick={() => handleThresholdChange(INC)} type="button">
-        <Image src={MINUS_ICON} height={20} width={20} alt="Decrease" />
-      </button>
-      <div className="w-5 h-5 flex-center">{threshold}</div>
-      <button onClick={() => handleThresholdChange(DEC)} type="button">
-        <Image src={PLUS_ICON} height={20} width={20} alt="Increase" />
-      </button>
-    </div>
-  );
-};

@@ -10,3 +10,7 @@ export const REDIRECT_ICON = '/icons/redirect-icon.svg';
 export const REDIRECT_ICON_GREEN = '/icons/redirect-icon-green.svg';
 export const REDIRECT_ICON_RED = '/icons/redirect-icon-red.svg';
 export const DELETE_ILLUSTRATION = '/illustrations/delete.png';
+export const ADD_ICON = '/icons/add-icon.svg';
+export const REMOVE_ICON = '/icons/remove-icon.svg';
+export const MINUS_ICON = '/icons/minus-icon.svg';
+export const PLUS_ICON = '/icons/plus-icon.svg';

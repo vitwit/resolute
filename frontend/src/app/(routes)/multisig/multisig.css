@@ -42,3 +42,7 @@
   border-image: none !important;
   background: #d921011a !important;
 }
+
+.threshold {
+  @apply text-[14px] rounded-full h-10 border-[#ffffff10] border-[0.25px] px-4 py-[10.5px] w-[125px] flex justify-center items-center;
+}

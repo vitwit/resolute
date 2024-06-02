@@ -3,13 +3,14 @@ import { InputAdornment, TextField } from '@mui/material';
 import React from 'react';
 import { createMultisigTextFieldStyles } from '../styles';
 import Image from 'next/image';
+import { REMOVE_ICON } from '@/constants/image-names';
 
 const MultisigMemberTextField: React.FC<InputTextComponentProps> = (props) => {
   const { field, index, handleChangeValue, handleRemoveValue } = props;
   return (
     <>
       <TextField
-        className="bg-[#FFFFFF0D] rounded-2xl"
+        className="bg-transparent rounded-full border-[1px] border-[#ffffff80] h-10"
         onChange={(e) => handleChangeValue(index, e)}
         name={field.isPubKey ? 'pubKey' : 'address'}
         value={
@@ -40,10 +41,10 @@ const MultisigMemberTextField: React.FC<InputTextComponentProps> = (props) => {
               }}
             >
               <Image
-                src="/delete-icon-outlined.svg"
+                src={REMOVE_ICON}
                 height={24}
                 width={24}
-                alt="Delete"
+                alt="Remove"
                 draggable={false}
               />
             </InputAdornment>
