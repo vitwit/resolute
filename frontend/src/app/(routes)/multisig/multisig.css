@@ -8,7 +8,7 @@
 }
 
 .txn-card {
-  @apply bg-[#ffffff05] rounded-2xl p-6 flex justify-between;
+  @apply bg-[#ffffff05] rounded-2xl p-6 flex justify-between relative items-center;
 }
 
 .stats-card {
@@ -34,6 +34,6 @@
 }
 
 .more-options {
-  @apply bg-[#FFFFFF14] rounded-2xl absolute right-[45px] top-10 overflow-hidden w-[180px];
+  @apply bg-[#FFFFFF14] rounded-2xl flex flex-col absolute right-[35px] top-10 overflow-hidden w-[180px] z-[999];
   backdrop-filter: blur(15px);
 }

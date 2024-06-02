@@ -53,7 +53,9 @@ const LetterAvatar = ({
   width?: string;
   height?: string;
 }) => {
-  return <Avatar {...stringAvatar(name, width, height)} />;
+  return name?.length ? (
+    <Avatar {...stringAvatar(name, width, height)} />
+  ) : null;
 };
 
 export default LetterAvatar;

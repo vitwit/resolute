@@ -3,7 +3,6 @@ import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import {
   getMultisigAccounts,
   getMultisigBalance,
-  getTxns,
   multisigByAddress,
 } from '@/store/features/multisig/multisigSlice';
 import {
@@ -47,6 +46,9 @@ const MultisigAccount = ({
     (state) => state.multisig.multisigAccount
   );
 
+  const { name: multisigName, created_at: createdTime } =
+    multisigAccount.account;
+
   const isAdmin =
     multisigAccount?.account?.created_by === (walletAddress || '');
 
@@ -75,7 +77,14 @@ const MultisigAccount = ({
 
   return (
     <div className="space-y-10">
-      <MultisigAccountHeader isAdmin={isAdmin} />
+      <MultisigAccountHeader
+        isAdmin={isAdmin}
+        multisigName={multisigName}
+        createdTime={createdTime}
+        goBackURL={`/multisig/${chainName}`}
+        multisigAddress={multisigAddress}
+        walletAddress={walletAddress}
+      />
       <div className="space-y-20">
         <MultisigAccountInfo
           chainID={chainID}
@@ -203,16 +212,7 @@ const MultisigMembersList = ({ members }: { members: string[] }) => {
   return (
     <div className="members-list">
       <div className="text-small-light">Members</div>
-      <div className="flex items-end gap-6 justify-between flex-wrap">
-        {members.map((address) => (
-          <MultisigMember address={address} />
-        ))}
-        {members.map((address) => (
-          <MultisigMember address={address} />
-        ))}
-        {members.map((address) => (
-          <MultisigMember address={address} />
-        ))}
+      <div className="flex items-end gap-6 flex-wrap">
         {members.map((address) => (
           <MultisigMember address={address} />
         ))}

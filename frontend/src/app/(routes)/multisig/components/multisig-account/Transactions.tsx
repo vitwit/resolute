@@ -4,7 +4,7 @@ import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import { getTxns } from '@/store/features/multisig/multisigSlice';
 import { Txn } from '@/types/multisig';
-import { isMultisigMember } from '@/utils/util';
+import { cleanURL, isMultisigMember } from '@/utils/util';
 import React, { useEffect, useRef, useState } from 'react';
 import TxnMsg from '../msgs/TxnMsg';
 import BroadCastTxn from '../BroadCastTxn';
@@ -14,9 +14,12 @@ import {
   DROP_DOWN_CLOSE,
   DROP_DOWN_OPEN,
   MENU_ICON,
+  REDIRECT_ICON_GREEN,
+  REDIRECT_ICON_RED,
 } from '@/constants/image-names';
 import { TxStatus } from '@/types/enums';
 import CustomLoader from '@/components/common/CustomLoader';
+import Link from 'next/link';
 
 const TXNS_TYPES = [
   { option: 'to-sign', value: 'To be Signed' },
@@ -123,6 +126,7 @@ const Transactions = ({
             threshold={threshold}
             multisigAddress={multisigAddress}
             chainID={chainID}
+            txnsType={txnsType}
           />
         )}
       </div>
@@ -178,13 +182,16 @@ const TransactionsList = ({
   threshold,
   multisigAddress,
   chainID,
+  txnsType,
 }: {
   txns: Txn[];
   currency: Currency;
   threshold: number;
   multisigAddress: string;
   chainID: string;
+  txnsType: string;
 }) => {
+  const isHistory = ['completed', 'failed'].includes(txnsType);
   return (
     <div className="space-y-4">
       {txns.map((txn, index) => (
@@ -195,6 +202,7 @@ const TransactionsList = ({
           threshold={threshold}
           multisigAddress={multisigAddress}
           chainID={chainID}
+          isHistory={isHistory}
         />
       ))}
     </div>
@@ -207,15 +215,18 @@ const TxnsCard = ({
   threshold,
   multisigAddress,
   chainID,
+  isHistory,
 }: {
   txn: Txn;
   currency: Currency;
   threshold: number;
   multisigAddress: string;
   chainID: string;
+  isHistory: boolean;
 }) => {
   const { getChainInfo } = useGetChainInfo();
-  const { address: walletAddress } = getChainInfo(chainID);
+  const { address: walletAddress, explorerTxHashEndpoint } =
+    getChainInfo(chainID);
   const [showAll, setShowAll] = useState(false);
   const { messages } = txn;
   const pubKeys = txn.pubkeys || [];
@@ -250,7 +261,7 @@ const TxnsCard = ({
   }, []);
 
   return (
-    <div className="txn-card relative">
+    <div className="txn-card">
       <div className="space-y-2 w-[40%]">
         <div className="text-small-light">Transaction Messages</div>
         <div className="space-y-4">
@@ -278,34 +289,70 @@ const TxnsCard = ({
             : null}
         </div>
       </div>
-      <div className="space-y-2 w-1/6">
-        <div className="text-small-light">Signed</div>
-        <div className="flex gap-[2px] items-end">
-          <span className="text-b1">{txn.signatures.length}</span>
-          <span className="text-small-light">/</span>
-          <span className="text-small-light">{pubKeys.length}</span>
+      {isHistory ? (
+        <div className="space-y-2 w-1/6">
+          <div className="text-small-light">Status</div>
+          <div className="flex gap-[2px] items-end">
+            {txn?.status === 'SUCCESS' ? (
+              <Link
+                className="flex gap-[2px]"
+                href={`${cleanURL(explorerTxHashEndpoint)}/${txn.hash}`}
+                target="_blank"
+              >
+                <div className="text-[#2BA472] underline underline-offset-[3px]">
+                  Success
+                </div>
+                <Image
+                  src={REDIRECT_ICON_GREEN}
+                  height={16}
+                  width={16}
+                  alt=""
+                />
+              </Link>
+            ) : (
+              <div className="flex gap-[2px] cursor-pointer">
+                <div className="text-[#F15757] underline underline-offset-[3px]">
+                  Failed
+                </div>
+                <Image src={REDIRECT_ICON_RED} height={16} width={16} alt="" />
+              </div>
+            )}
+          </div>
         </div>
-      </div>
+      ) : (
+        <div className="space-y-2 w-1/6">
+          <div className="text-small-light">Signed</div>
+          <div className="flex gap-[2px] items-end">
+            <span className="text-b1">{txn.signatures.length}</span>
+            <span className="text-small-light">/</span>
+            <span className="text-small-light">{pubKeys.length}</span>
+          </div>
+        </div>
+      )}
       <div className="w-1/6">
-        <div className="flex items-center gap-6">
-          {isReadyToBroadcast() ? (
-            <BroadCastTxn
-              txn={txn}
-              multisigAddress={multisigAddress}
-              pubKeys={txn.pubkeys || []}
-              threshold={threshold}
-              chainID={chainID}
-              isMember={isMember}
-            />
-          ) : (
-            <SignTxn
-              address={multisigAddress}
-              chainID={chainID}
-              isMember={isMember}
-              txId={txn.id}
-              unSignedTxn={txn}
-            />
-          )}
+        <div className="flex items-center gap-6 justify-end">
+          {!isHistory ? (
+            <>
+              {isReadyToBroadcast() ? (
+                <BroadCastTxn
+                  txn={txn}
+                  multisigAddress={multisigAddress}
+                  pubKeys={txn.pubkeys || []}
+                  threshold={threshold}
+                  chainID={chainID}
+                  isMember={isMember}
+                />
+              ) : (
+                <SignTxn
+                  address={multisigAddress}
+                  chainID={chainID}
+                  isMember={isMember}
+                  txId={txn.id}
+                  unSignedTxn={txn}
+                />
+              )}
+            </>
+          ) : null}
           <div
             ref={menuRef2}
             onMouseEnter={() => setOptionsOpen(true)}
@@ -355,12 +402,16 @@ const MoreOptions = ({
       onMouseEnter={() => setOptionsOpen(true)}
       onMouseLeave={() => setOptionsOpen(false)}
     >
-      <div className={`hover:bg-[#FFFFFF14] cursor-pointer p-4 text-b1`}>
+      <button
+        className={`hover:bg-[#FFFFFF14] cursor-pointer p-4 text-b1 text-left`}
+      >
         Delete
-      </div>
-      <div className={`hover:bg-[#FFFFFF14] cursor-pointer p-4 text-b1`}>
+      </button>
+      <button
+        className={`hover:bg-[#FFFFFF14] cursor-pointer p-4 text-b1 text-left`}
+      >
         View Raw
-      </div>
+      </button>
     </div>
   );
 };
