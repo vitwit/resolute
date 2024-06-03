@@ -10,17 +10,18 @@ import useGetValidatorInfo from '@/custom-hooks/useGetValidatorInfo';
 import { capitalizeFirstLetter, formatValidatorStatsValue } from '@/utils/util';
 import ValidatorLogo from '../../staking/components/ValidatorLogo';
 import { Tooltip } from '@mui/material';
-import { WITVAL } from '@/utils/constants';
+import { VITWIT_VALIDATOR_NAMES, WITVAL } from '@/utils/constants';
 
 const ValidatorProfile = ({ moniker }: { moniker: string }) => {
   const tabs = ['Profile', 'Announcements', 'Inbox', 'Notices'];
   const selectedTab = 'profile';
   useInitAllValidator();
-  const { getChainwiseValidatorInfo,
+  const {
+    getChainwiseValidatorInfo,
     getOasisValidatorInfo,
     getPolygonValidatorInfo,
-     getValidatorStats } =
-    useGetValidatorInfo();
+    getValidatorStats,
+  } = useGetValidatorInfo();
   const {
     chainWiseValidatorData,
     validatorDescription,
@@ -33,20 +34,23 @@ const ValidatorProfile = ({ moniker }: { moniker: string }) => {
     moniker: moniker,
   });
 
-  const { avgCommission,
-    activeNetworks,
-    totalNetworks } = validatorStatsResult;
+  const { avgCommission, activeNetworks, totalNetworks } = validatorStatsResult;
 
-  let { totalDelegators,
-    totalStaked, } = validatorStatsResult
+  let { totalDelegators, totalStaked } = validatorStatsResult;
 
-  const { totalStakedInUSD: totalPolygonStaked, totalDelegators: totalPolygonDelegators } = getPolygonValidatorInfo()
-  const { totalStakedInUSD: totalOasisStaked, totalDelegators: totalOasisDelegator } = getOasisValidatorInfo()
+  const {
+    totalStakedInUSD: totalPolygonStaked,
+    totalDelegators: totalPolygonDelegators,
+  } = getPolygonValidatorInfo();
+  const {
+    totalStakedInUSD: totalOasisStaked,
+    totalDelegators: totalOasisDelegator,
+  } = getOasisValidatorInfo();
 
-  totalStaked += totalPolygonStaked || 0
-  totalStaked += totalOasisStaked || 0
-  totalDelegators += totalPolygonDelegators
-  totalDelegators += totalOasisDelegator
+  totalStaked += totalPolygonStaked || 0;
+  totalStaked += totalOasisStaked || 0;
+  totalDelegators += totalPolygonDelegators;
+  totalDelegators += totalOasisDelegator;
 
   return (
     <div className="py-6 px-10 space-y-10 h-screen flex flex-col text-[#E1E1E1]">
@@ -100,7 +104,7 @@ const ValidatorProfile = ({ moniker }: { moniker: string }) => {
         </div>
         <ValidatorsTable
           data={chainWiseValidatorData}
-          isWitval={moniker.toLowerCase() === WITVAL}
+          isWitval={VITWIT_VALIDATOR_NAMES.includes(moniker.toLowerCase())}
         />
       </div>
     </div>
@@ -125,17 +129,19 @@ const ValidatorMetadataCard = ({
       <div className="flex gap-2 items-center h-8">
         <ValidatorLogo identity={identity} height={24} width={24} />
         <div className="text-[18px] leading-[21.7px]">
-          {
-            moniker.toLowerCase() === WITVAL ? 'VITWIT' : capitalizeFirstLetter(moniker)
-          }
+          {moniker.toLowerCase() === WITVAL
+            ? 'VITWIT'
+            : capitalizeFirstLetter(moniker)}
         </div>
       </div>
       <div className="space-y-10">
         <div className="space-y-2">
           <div className="text-[#FFFFFF80] text-[14px]">Description</div>
-          <div className="text-[16px] leading-[30px]">{
-            moniker.toLowerCase() === WITVAL ?
-              'Vitwit excels in providing top-notch infrastructure services for the Cosmos blockchain ecosystem. We specialize in setting up and managing validators, relayers, and offering expert advisory services.' : description || '-'}</div>
+          <div className="text-[16px] leading-[30px]">
+            {moniker.toLowerCase() === WITVAL
+              ? 'Vitwit excels in providing top-notch infrastructure services for the Cosmos blockchain ecosystem. We specialize in setting up and managing validators, relayers, and offering expert advisory services.'
+              : description || '-'}
+          </div>
         </div>
         {website ? (
           <div>
