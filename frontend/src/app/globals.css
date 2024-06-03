@@ -168,3 +168,12 @@ body {
 .more-msgs {
   @apply bg-[#FFFFFF14] flex justify-center items-center text-[12px] h-6 min-w-6 rounded-2xl p-2;
 }
+.search-bar {
+  @apply flex h-14 justify-between items-center  px-6 py-4 rounded-[100px];
+  background: rgba(255, 255, 255, 0.02);
+}
+input[type=checkbox] {
+  accent-color: gray;
+  display: block;
+}
+

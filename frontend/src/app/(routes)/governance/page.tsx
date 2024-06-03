@@ -3,6 +3,7 @@ import React from 'react';
 import { useAppSelector } from '@/custom-hooks/StateHooks';
 import { RootState } from '@/store/store';
 import GovPage from './GovPage';
+import NoProposals from './NoProposals';
 
 const Page = () => {
   const nameToChainIDs = useAppSelector(
@@ -13,7 +14,12 @@ const Page = () => {
     (chainName) => nameToChainIDs[chainName]
   );
 
-  return <GovPage chainIDs={chainIDs} />;
+  return (
+    <>
+      <GovPage chainIDs={chainIDs} />
+      <NoProposals />
+    </>
+  );
 };
 
 export default Page;
