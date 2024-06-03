@@ -24,12 +24,13 @@ import useInitAuthzForOverview from '@/custom-hooks/useInitAuthzForOverview';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import Image from 'next/image';
 import BalanceSummary from './BalanceSummary';
-import { getAllTokensPrice, setError } from '@/store/features/common/commonSlice';
+import {
+  getAllTokensPrice,
+  setError,
+} from '@/store/features/common/commonSlice';
 import { copyToClipboard } from '@/utils/copyToClipboard';
 import AssetsTable from './AssetsTable';
 import { shortenAddress } from '@/utils/util';
-
-
 
 const OverviewTable = ({ chainIDs }: { chainIDs: string[] }) => {
   const dispatch = useAppDispatch();
@@ -41,11 +42,11 @@ const OverviewTable = ({ chainIDs }: { chainIDs: string[] }) => {
   // );
   const { getAllChainAddresses } = useGetChainInfo();
 
-  const addresses = getAllChainAddresses(chainIDs)
+  const addresses = getAllChainAddresses(chainIDs);
 
   useInitAuthzForOverview(chainIDs);
   useEffect(() => {
-    dispatch(getAllTokensPrice())
+    dispatch(getAllTokensPrice());
 
     chainIDs.forEach((chainID) => {
       const allChainInfo = networks[chainID];
@@ -82,18 +83,15 @@ const OverviewTable = ({ chainIDs }: { chainIDs: string[] }) => {
     });
   }, []);
 
-
   return (
     <div className="flex-col px-10 py-20">
       <div className="flex flex-col items-center gap-10 mb-20">
-        <div className="flex flex-col items-start gap-2 self-stretch">
+        <div className="flex flex-col items-start gap-2 w-full">
           <div className="flex space-x-2">
-            <div className="text-white text-[28px] italic font-black leading-[normal] space-x-4">
-              Hello
-            </div>
+            <div className="text-h1 italic space-x-4">Hello</div>
             <div className="flex items-center space-x-2">
-              <p className="text-white text-2xl not-italic font-normal leading-[normal]">
-              {shortenAddress(addresses?.[0]?.address, 20)}  
+              <p className="text-white text-2xl font-normal leading-[normal]">
+                {shortenAddress(addresses?.[0]?.address, 20)}
               </p>
               <Image
                 onClick={(e) => {
@@ -114,19 +112,18 @@ const OverviewTable = ({ chainIDs }: { chainIDs: string[] }) => {
                 draggable={false}
                 className="cursor-pointer"
               />
-             
             </div>
           </div>
-          <div className="text-[rgba(255,255,255,0.50)] text-sm not-italic font-extralight leading-8">
+          <div className="secondary-text">
             Connect your wallet now to access all the modules on resolute
           </div>
+          <div className="divider-line"></div>
         </div>
 
         <BalanceSummary chainIDs={chainIDs} />
       </div>
 
       <AssetsTable chainIDs={chainIDs} />
-    
     </div>
   );
 };

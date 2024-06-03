@@ -73,8 +73,13 @@ const SelectNetwork = () => {
 
 export default SelectNetwork;
 
-export const WalletAddress = ({ address, displayAddress = true }: 
-  { address: string, displayAddress?: boolean }) => {
+export const WalletAddress = ({
+  address,
+  displayAddress = true,
+}: {
+  address: string;
+  displayAddress?: boolean;
+}) => {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -95,19 +100,20 @@ export const WalletAddress = ({ address, displayAddress = true }:
 
   return (
     <div className="flex gap-2 items-center">
-      {
-        displayAddress && <div className="text-[#FFFFFF80] text-[12px] leading-[15px]">
+      {(displayAddress && (
+        <div className="text-[#FFFFFF80] text-[12px] leading-[15px]">
           {shortenMsg(address, 15)}
-        </div> || null
-      }
+        </div>
+      )) ||
+        null}
 
       <Tooltip title="Copied!" placement="right" open={copied}>
         <Image
-          className="cursor-pointer"
+          className="cursor-pointer flex items-center justify-center"
           onClick={handleCopy}
           src={'/icons/copy-icon.svg'}
-          width={16}
-          height={16}
+          width={20}
+          height={20}
           alt="copy"
         />
       </Tooltip>

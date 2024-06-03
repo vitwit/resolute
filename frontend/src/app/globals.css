@@ -30,14 +30,7 @@ body {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
-.custom-btn {
-  @apply border flex items-center gap-2 px-4 py-[10.5px] rounded-[100px] border-solid border-[#4453DF];
-  background: linear-gradient(
-    180deg,
-    rgba(68, 83, 223, 0.1) 12.5%,
-    rgba(127, 92, 237, 0.1) 87.5%
-  );
-}
+
 .table-border-line {
   @apply h-[1px] self-stretch border-b border-[#1C1C20];
 }
@@ -116,7 +109,6 @@ body {
   }
 }
 
-
 .empty-screen-title {
   @apply text-[32px] font-bold;
   background: linear-gradient(270deg, #fff -67.89%, #999 99.95%);
@@ -172,8 +164,11 @@ body {
   @apply flex h-14 justify-between items-center  px-6 py-4 rounded-[100px];
   background: rgba(255, 255, 255, 0.02);
 }
-input[type=checkbox] {
+input[type='checkbox'] {
   accent-color: gray;
   display: block;
 }
-
+.dashboard-card {
+  @apply flex flex-col items-center gap-2 flex-[1_0_0] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)_inset] p-4 rounded-2xl;
+  background: rgba(255, 255, 255, 0.02);
+}
