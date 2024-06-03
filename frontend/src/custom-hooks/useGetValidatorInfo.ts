@@ -48,11 +48,11 @@ const useGetValidatorInfo = () => {
         stakingData?.[chainID]?.validators.active
       ).find((v) => {
         // For few networks supported by Vitwit Validator, Moniker name is still Witval, so considering that validator also
-        return (
+        const isMatchingMoniker =
           v.description.moniker.trim().toLowerCase() ===
-            moniker.trim().toLowerCase() ||
-          v.description.moniker.trim().toLowerCase() === WITVAL
-        );
+          moniker.trim().toLowerCase();
+        const isWitval = v.description.moniker.trim().toLowerCase() === WITVAL;
+        return isMatchingMoniker || isWitval;
       });
 
       if (validator) {
