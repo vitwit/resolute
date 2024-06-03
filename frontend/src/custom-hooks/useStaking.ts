@@ -2,8 +2,8 @@ import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "./StateHooks";
 import { RootState } from '@/store/store';
 import useGetChainInfo from "./useGetChainInfo";
-import { getDelegations, getUnbonding, getValidator } from "@/store/features/staking/stakeSlice";
-import { getDelegatorTotalRewards } from "@/store/features/distribution/distributionSlice";
+import { getDelegations, getUnbonding, getValidator, txCancelUnbonding } from "@/store/features/staking/stakeSlice";
+import { getDelegatorTotalRewards, txWithdrawAllRewards } from "@/store/features/distribution/distributionSlice";
 import { getBalances } from "@/store/features/bank/bankSlice";
 // import useGetAssets from "./useGetAssets";
 // import { Interface } from "readline";
@@ -12,6 +12,7 @@ import {
     getAllTokensPrice,
     //  getTokenPrice
 } from "@/store/features/common/commonSlice";
+import useGetTxInputs from "./useGetTxInputs";
 
 const useStaking = () => {
     const dispatch = useAppDispatch();
@@ -40,6 +41,8 @@ const useStaking = () => {
     const stakeData = useAppSelector(
         (state: RootState) => state.staking.chains
     );
+
+    const { txWithdrawAllRewardsInputs } = useGetTxInputs();
 
     useEffect(() => {
         if (chainIDs.length > 0 && isWalletConnected) {
@@ -131,13 +134,74 @@ const useStaking = () => {
         return totalRewardsAmount.toFixed(4) + ' ' + displayDenomName;
     }
 
+    // tx: withdraw claim rewards without authz and fee grant
+
+    const txWithdrawCliamRewards = (chainID: string) => {
+        const txInputs = txWithdrawAllRewardsInputs(chainID);
+        txInputs.isTxAll = true;
+        if (txInputs.msgs.length) dispatch(txWithdrawAllRewards(txInputs));
+    }
+
+
+    const txAllChainTxStatus = useAppSelector(
+        (state: RootState) => state.distribution.chains
+    );
+
+    console.log('txAllchainTxstatus', txAllChainTxStatus)
+
+    const getClaimTxStatus = () => {
+        return txAllChainTxStatus
+    }
+
+    const txCancelUnbond = (chainID: string, delegator: string,
+        validator: string,
+        amount: number, creationHeight: string) => {
+        const basicChainInfo = getChainInfo(chainID);
+        const { currencies } =
+            networks[chainID]?.network?.config;
+
+        const currency = currencies[0]
+
+        const { feeAmount: avgFeeAmount } = getChainInfo(chainID);
+        const feeAmount = avgFeeAmount * 10 ** currency?.coinDecimals;
+
+        alert(JSON.stringify({
+            isAuthzMode: false,
+            // basicChainInfo: basicChainInfo,
+            delegator: delegator,
+            validator: validator,
+            amount: amount * 10 ** currency?.coinDecimals,
+            denom: currency?.coinMinimalDenom,
+            feeAmount: feeAmount,
+            feegranter: '',
+            creationHeight: creationHeight,
+        }))
+
+        dispatch(
+            txCancelUnbonding({
+                isAuthzMode: false,
+                basicChainInfo: basicChainInfo,
+                delegator: delegator,
+                validator: validator,
+                amount: amount * 10 ** currency?.coinDecimals,
+                denom: currency?.coinMinimalDenom,
+                feeAmount: feeAmount,
+                feegranter: '',
+                creationHeight: creationHeight,
+            })
+        );
+    }
+
     return {
         getStakingAssets,
         getAllDelegations,
         fetchValidatorDetails,
         getAmountWithDecimal,
         chainTotalRewards,
-        chainLogo
+        chainLogo,
+        txWithdrawCliamRewards,
+        getClaimTxStatus,
+        txCancelUnbond,
     }
 };
 

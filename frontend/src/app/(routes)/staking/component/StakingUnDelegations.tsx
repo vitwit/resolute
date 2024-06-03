@@ -10,6 +10,14 @@ import '../staking.css';
 function StakingUnDelegations({ undelegations }: { undelegations: Chains }) {
   const staking = useStaking();
 
+  const cancelUnbonding = (chainID: string, delegator: string, validator: string, height: string, amount: number) => {
+    staking.txCancelUnbond(chainID,
+      delegator,
+      validator,
+      amount,
+      height)
+  }
+
   return (
     <div className="flex flex-col w-full gap-10">
       <div className="space-y-2 items-start">
@@ -22,10 +30,10 @@ function StakingUnDelegations({ undelegations }: { undelegations: Chains }) {
       <div className="grid grid-cols-3 gap-10 px-6 py-0">
         {Object.entries(undelegations).map(([key, value]) => {
           return get(value, 'unbonding.unbonding.unbonding_responses', []).map(
-            (ud, index) => {
-              return get(ud, 'entries', []).map((e) => {
+            (ud) => {
+              return get(ud, 'entries', []).map((e, kIndex) => {
                 return (
-                  <div key={index} className="unBonding-card">
+                  <div key={kIndex} className="unBonding-card">
                     <div className="flex justify-between w-full">
                       <div className="flex space-x-2 justify-center items-center">
                         <ValidatorName
@@ -34,7 +42,12 @@ function StakingUnDelegations({ undelegations }: { undelegations: Chains }) {
                         />
                       </div>
                       <div className="">
-                        <button className="primary-btn">Cancel</button>
+                        <button
+                          onClick={() => cancelUnbonding(key,
+                            get(ud, 'delegator_address'),
+                            get(ud, 'validator_address'),
+                            get(e, 'creation_height'), Number(get(e, 'balance')),)}
+                          className="primary-btn">Cancel</button>
                       </div>
                     </div>
                     <div className="flex justify-between w-full">

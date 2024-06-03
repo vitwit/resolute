@@ -20,6 +20,12 @@ function StakingDelegations({ delegations }: { delegations: Chains }) {
     return staking.chainTotalRewards(chainID);
   };
 
+  const withClaimRewards = (chainID: string) => {
+    staking.txWithdrawCliamRewards(chainID)
+  }
+
+  const claimTxStatus = staking.getClaimTxStatus()
+
   return (
     <div className="flex flex-col w-full gap-10">
       <div className="space-y-2 items-start">
@@ -57,11 +63,13 @@ function StakingDelegations({ delegations }: { delegations: Chains }) {
                   </div>
                 </div>
                 <div className="">
-                  <button className="primary-btn">
-                    Claim &nbsp;
-                    {getChainTotalRewards(key)}
-                    {/* 12.4.5 AKT */}
-                    <p className="ml-2 text-small-light">Rewards</p>
+                  <button onClick={() => withClaimRewards(key)} className="primary-btn">
+                    {
+                      claimTxStatus[key]?.tx?.status === 'pending' ? 'loading....' :
+                        <>Claim &nbsp;
+                          {getChainTotalRewards(key)}
+                          <p className="ml-2 text-small-light">Rewards</p></>
+                    }
                   </button>
                 </div>
               </div>
@@ -119,7 +127,7 @@ function StakingDelegations({ delegations }: { delegations: Chains }) {
                 ))}
               </div>
             </div>
-          )
+          ) || null
         );
       })}
     </div>
