@@ -16,8 +16,8 @@ const Page = () => {
 
   return (
     <>
-      {/* <GovPage chainIDs={chainIDs} /> */}
-      {/* <NoProposals /> */}
+      <GovPage chainIDs={chainIDs} />
+      <NoProposals />
     </>
   );
 };
