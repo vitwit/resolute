@@ -5,7 +5,6 @@ import Asset from './Asset';
 import { CircularProgress } from '@mui/material';
 import NoAssets from '@/components/illustrations/NoAssets';
 
-
 const AssetsTable = ({ chainIDs }: { chainIDs: string[] }) => {
   const isAuthzMode = useAppSelector((state) => state.authz.authzModeEnabled);
   const [sortedAssets, authzSortedAssets] = useSortedAssets(chainIDs, {
@@ -34,27 +33,32 @@ const AssetsTable = ({ chainIDs }: { chainIDs: string[] }) => {
     isAuthzMode && (authzBalanceLoading || authzDelegationsLoading);
 
   return (
-    <div className="flex flex-col gap-10 self-stretch overflow-scroll h-[50vh]">
+    <div className="flex flex-col gap-10 w-full overflow-scroll h-[50vh]">
       <div className="space-y-1">
-        <div className="text-white text-lg not-italic font-normal leading-[27px]">
-          Asset Information
-        </div>
-        <div className="text-[rgba(255,255,255,0.50)] text-sm not-italic font-extralight leading-[21px]">
+        <div className="text-h2">Asset Information</div>
+        <div className="secondary-text">
           Connect your wallet now to access all the modules on resolute
         </div>
-        <div className="horizontal-line"></div>
+        <div className="divider-line"></div>
       </div>
 
       {/* table */}
 
       {assets.length ? (
-        <div className="flex text-black flex-col items-start gap-2 self-stretch p-6">
+        <div className="flex flex-col items-start gap-2 w-full p-6">
           <table className="relative w-full">
             <thead className="w-full">
               <tr>
-                {['Available', 'Staked', 'Rewards', 'Price', 'Value', 'Actions'].map((header, hIndex) => (
+                {[
+                  'Available',
+                  'Staked',
+                  'Rewards',
+                  'Price',
+                  'Value',
+                  'Actions',
+                ].map((header, hIndex) => (
                   <th key={hIndex} className="w-1/6">
-                    <div className="text-[rgba(255,255,255,0.50)] text-base not-italic font-normal leading-[normal]">
+                    <div className="text-[rgba(255,255,255,0.50)] text-base font-normal leading-[normal]">
                       {header}
                     </div>
                   </th>
