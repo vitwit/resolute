@@ -3,7 +3,7 @@ import { InputAdornment, TextField } from '@mui/material';
 import React from 'react';
 import { createMultisigTextFieldStyles } from '../styles';
 import Image from 'next/image';
-import { REMOVE_ICON, TOGGLE_OFF } from '@/constants/image-names';
+import { REMOVE_ICON, TOGGLE_OFF, TOGGLE_ON } from '@/constants/image-names';
 
 const MultisigMemberTextField: React.FC<InputTextComponentProps> = (props) => {
   const {
@@ -15,7 +15,7 @@ const MultisigMemberTextField: React.FC<InputTextComponentProps> = (props) => {
     isImport,
   } = props;
   return (
-    <>
+    <div>
       <TextField
         className="bg-transparent rounded-full border-[1px] border-[#ffffff80] h-10"
         onChange={(e) => handleChangeValue(index, e)}
@@ -48,7 +48,10 @@ const MultisigMemberTextField: React.FC<InputTextComponentProps> = (props) => {
                   className="flex items-center gap-4"
                   style={{ minWidth: '95px' }}
                 >
-                  <TogglePubkey toggle={() => togglePubKey(index)} />
+                  <TogglePubkey
+                    toggle={() => togglePubKey(index)}
+                    isPubKey={field.isPubKey}
+                  />
                   <RemoveButton
                     onClick={() =>
                       !field.disabled
@@ -75,16 +78,27 @@ const MultisigMemberTextField: React.FC<InputTextComponentProps> = (props) => {
       <div className="address-pubkey-field-error">
         {field.error.length ? field.error : ''}
       </div>
-    </>
+    </div>
   );
 };
 
 export default MultisigMemberTextField;
 
-const TogglePubkey = ({ toggle }: { toggle: () => void }) => {
+const TogglePubkey = ({
+  toggle,
+  isPubKey,
+}: {
+  toggle: () => void;
+  isPubKey: boolean;
+}) => {
   return (
     <button className="flex items-center gap-1" type="button" onClick={toggle}>
-      <Image src={TOGGLE_OFF} height={11.2} width={16} alt="" />
+      <Image
+        src={isPubKey ? TOGGLE_ON : TOGGLE_OFF}
+        height={11.2}
+        width={16}
+        alt=""
+      />
       <span className="text-[12px] font-light text-white">pubkey</span>
     </button>
   );

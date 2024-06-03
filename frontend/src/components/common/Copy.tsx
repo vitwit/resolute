@@ -30,6 +30,7 @@ const Copy = ({
     copyToClipboard(content);
     setCopied(true);
     e.stopPropagation();
+    e.preventDefault();
   };
 
   useEffect(() => {

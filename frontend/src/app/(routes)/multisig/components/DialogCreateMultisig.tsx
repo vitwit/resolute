@@ -383,6 +383,11 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
     }
   };
 
+  const switchToCreateMultisig = () => {
+    setImportMultisig(false);
+    setDefaultFormValues();
+  };
+
   useEffect(() => {
     if (importMultisigAccountRes.status === TxStatus.IDLE) {
       setImportMultisig(true);
@@ -409,11 +414,14 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
       onClose={handleClose}
       styles="w-[800px]"
     >
-      <div>
+      <div className="w-full">
         {page === 1 ? (
-          <div className="flex gap-10 items-center">
-            <div className="space-y-10">
-              <form className="space-y-10" onSubmit={(e) => handleSubmit(e)}>
+          <div className="flex gap-10 items-center w-full">
+            <div className="space-y-10 w-full">
+              <form
+                className="space-y-10 w-full"
+                onSubmit={(e) => handleSubmit(e)}
+              >
                 <div className="flex gap-6">
                   <div className="space-y-2 flex-1">
                     <div className="text-b1-light !font-light">Name</div>
@@ -447,29 +455,14 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
                     />
                   </div>
                 </div>
-                <div className="space-y-6">
-                  <div className="space-y-2">
-                    <div className="text-b1-light !font-light">Add Members</div>
-                    <div className="grid grid-cols-2 gap-x-10 gap-y-4">
-                      {pubKeyFields.map((field, index) => (
-                        <div>
-                          <MultisigMemberTextField
-                            key={index}
-                            handleRemoveValue={handleRemoveValue}
-                            handleChangeValue={handleChangeValue}
-                            index={index}
-                            field={field}
-                            togglePubKey={togglePubKey}
-                            isImport={importMultisig}
-                          />
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                  {!importMultisig && (
-                    <AddMemberButton handleAddPubKey={handleAddPubKey} />
-                  )}
-                </div>
+                <AddMembers
+                  handleAddPubKey={handleAddPubKey}
+                  handleChangeValue={handleChangeValue}
+                  handleRemoveValue={handleRemoveValue}
+                  importMultisig={importMultisig}
+                  pubKeyFields={pubKeyFields}
+                  togglePubKey={togglePubKey}
+                />
                 <div className="flex justify-end">
                   <CustomButton
                     btnText="Create"
@@ -496,7 +489,7 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
                       setName('');
                       setPage(2);
                     }}
-                    className="secondary-btn !font-bold !text-white"
+                    className="secondary-btn !text-[16px] !font-bold !text-white"
                   >
                     here
                   </button>
@@ -516,74 +509,13 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
             </div>
           </div>
         ) : (
-          <div className="flex gap-10 items-center">
-            <div className="flex-1 flex flex-col px-10">
-              <h2 className="text-[20px] font-bold leading-[21px]">
-                Import Multisig
-              </h2>
-              <div className="flex gap-6 my-6">
-                <div className="flex-1 relative">
-                  <TextField
-                    className="bg-[#FFFFFF0D] rounded-2xl w-full"
-                    name="granteeAddress"
-                    value={multisigAddress}
-                    onChange={handleMultisigAddressChange}
-                    required
-                    autoFocus={true}
-                    placeholder="Enter Multisig Address Here"
-                    InputProps={{
-                      sx: {
-                        input: {
-                          color: 'white',
-                          fontSize: '14px',
-                          padding: 2,
-                        },
-                      },
-                    }}
-                    sx={customMUITextFieldStyles}
-                  />
-                  <div className="error-box absolute right-0">
-                    <span
-                      className={
-                        addressValidationError
-                          ? 'error-chip opacity-80'
-                          : 'error-chip opacity-0'
-                      }
-                    >
-                      {addressValidationError}
-                    </span>
-                  </div>
-                </div>
-                <button
-                  onClick={() => fetchMultisigAccount()}
-                  className="primary-gradient import-multisig-btn"
-                >
-                  {importMultisigAccountRes.status === TxStatus.PENDING ? (
-                    <CircularProgress size={20} sx={{ color: 'white' }} />
-                  ) : (
-                    'Import Multisig'
-                  )}
-                </button>
-              </div>
-              <div className="create-multisig-dialog-footer">
-                <div className="text-[14px] font-extralight">Or</div>
-                <div className="flex gap-4 items-center">
-                  <div className="text-[16px]">
-                    Do not have an existing MultiSig account ?
-                  </div>{' '}
-                  <button
-                    onClick={() => {
-                      setImportMultisig(false);
-                      setDefaultFormValues();
-                    }}
-                    className="text-only-btn"
-                  >
-                    Create New Here
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
+          <ImportMultisig
+            addressValidationError={addressValidationError}
+            fetchMultisigAccount={fetchMultisigAccount}
+            handleMultisigAddressChange={handleMultisigAddressChange}
+            multisigAddress={multisigAddress}
+            switchToCreateMultisig={switchToCreateMultisig}
+          />
         )}
       </div>
     </CustomDialog>
@@ -591,6 +523,118 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
 };
 
 export default DialogCreateMultisig;
+
+const ImportMultisig = ({
+  addressValidationError,
+  fetchMultisigAccount,
+  handleMultisigAddressChange,
+  multisigAddress,
+  switchToCreateMultisig,
+}: {
+  multisigAddress: string;
+  handleMultisigAddressChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  addressValidationError: string;
+  fetchMultisigAccount: () => void;
+  switchToCreateMultisig: () => void;
+}) => {
+  const importMultisigAccountRes = useAppSelector(
+    (state: RootState) => state.multisig.multisigAccountData
+  );
+
+  return (
+    <div className="flex-1 space-y-10">
+      <div className="flex gap-6 my-6">
+        <div className="flex-1">
+          <div className="text-b1-light !font-light">
+            Enter Multisig Address
+          </div>
+          <TextField
+            className="bg-transparent rounded-full border-[1px] border-[#ffffff80] h-10"
+            name="granteeAddress"
+            value={multisigAddress}
+            onChange={handleMultisigAddressChange}
+            required
+            autoFocus={true}
+            fullWidth
+            placeholder="Enter Multisig Address Here"
+            InputProps={{
+              sx: {
+                input: {
+                  color: 'white',
+                  fontSize: '14px',
+                  padding: 2,
+                },
+              },
+            }}
+            sx={createMultisigTextFieldStyles}
+          />
+          <div className="address-error">{addressValidationError || ''}</div>
+        </div>
+        <CustomButton
+          btnText="Import"
+          btnLoading={importMultisigAccountRes.status === TxStatus.PENDING}
+          btnDisabled={importMultisigAccountRes.status === TxStatus.PENDING}
+          btnOnClick={fetchMultisigAccount}
+          btnStyles="w-[150px]"
+        />
+      </div>
+      <div className="flex gap-1 justify-center">
+        <div className="text-[16px] font-extralight text-[#ffffff80]">
+          Do not have an existing MultiSig account ? Create New
+        </div>{' '}
+        <button
+          onClick={switchToCreateMultisig}
+          className="secondary-btn !text-[16px] !font-bold !text-white"
+        >
+          here
+        </button>
+      </div>
+    </div>
+  );
+};
+
+const AddMembers = ({
+  handleChangeValue,
+  handleRemoveValue,
+  importMultisig,
+  pubKeyFields,
+  togglePubKey,
+  handleAddPubKey,
+}: {
+  pubKeyFields: PubKeyFields[];
+  handleRemoveValue: (i: number) => void;
+  handleChangeValue: (
+    index: number,
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => void;
+  togglePubKey: (index: number) => void;
+  importMultisig: boolean;
+  handleAddPubKey: () => void;
+}) => {
+  return (
+    <div className="space-y-6">
+      <div className="space-y-2">
+        <div className="text-b1-light !font-light">Add Members</div>
+        <div className="add-members">
+          {pubKeyFields.map((field, index) => (
+            <div>
+              <MultisigMemberTextField
+                key={index}
+                handleRemoveValue={handleRemoveValue}
+                handleChangeValue={handleChangeValue}
+                index={index}
+                field={field}
+                togglePubKey={togglePubKey}
+                isImport={importMultisig}
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+      {!importMultisig && <AddMemberButton handleAddPubKey={handleAddPubKey} />}
+    </div>
+  );
+};
 
 const AddMemberButton = ({
   handleAddPubKey,
