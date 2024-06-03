@@ -269,6 +269,13 @@ export const ALERT_TYPE_MAP: Record<string, string> = {
 };
 export const WITVAL = 'witval';
 export const VITWIT = 'vitwit';
+export const VITWIT_NEW_MONIKER = 'vitwit%20(previously%20witval)';
+export const VITWIT_VALIDATOR_NAMES = [
+  'vitwit',
+  'witval',
+  'validator/vitwit%20(previously%20witval)',
+  'vitwit (previously witval)',
+];
 export const POLYGON_API = 'https://staking-api.polygon.technology/api/v2';
 
 export const POLYGON_CONFIG = {

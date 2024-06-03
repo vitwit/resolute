@@ -121,7 +121,7 @@ export const StakingCardHeader = ({
   networkLogo,
 }: StakingCardHeaderProps) => {
   const validatorProfileURL = validator
-    ? `/staking/validator/${encodeURIComponent(validator?.toLowerCase())}`
+    ? `/validator/${encodeURIComponent(validator?.toLowerCase())}`
     : '';
   return (
     <div className="flex justify-between items-center">

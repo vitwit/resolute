@@ -2,14 +2,17 @@ import React from 'react';
 import ValidatorProfile from './ValidatorProfile';
 import '../validator-profile.css';
 import '../../staking/staking.css';
-import { VITWIT, WITVAL } from '@/utils/constants';
+import { VITWIT_NEW_MONIKER, VITWIT_VALIDATOR_NAMES } from '@/utils/constants';
 
 const page = ({ params }: { params: { validator: string } }) => {
   const decodedMonikerName = decodeURIComponent(params.validator);
-  const monikerName =
-    decodedMonikerName.toLowerCase() === VITWIT
-      ? WITVAL
-      : decodedMonikerName.toLocaleLowerCase();
+  // If the moniker name is vitwit or vitwit (previously witval) or witval use new moniker name
+  const isVitwitValidator = VITWIT_VALIDATOR_NAMES.includes(
+    decodedMonikerName.toLowerCase()
+  );
+  const monikerName = isVitwitValidator
+    ? decodeURIComponent(VITWIT_NEW_MONIKER)
+    : decodedMonikerName.toLocaleLowerCase();
   return <ValidatorProfile moniker={monikerName} />;
 };
 
