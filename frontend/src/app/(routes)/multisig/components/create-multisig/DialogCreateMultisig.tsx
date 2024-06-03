@@ -22,7 +22,7 @@ import { RootState } from '@/store/store';
 import {
   createMultisigTextFieldStyles,
   createMultisigThresholdStyles,
-} from '../styles';
+} from '../../styles';
 import {
   ADDRESS_NOT_FOUND,
   DUPLICATE_PUBKEYS_ERROR,
@@ -40,8 +40,13 @@ import {
 import { TxStatus } from '@/types/enums';
 import { fromBech32 } from '@cosmjs/encoding';
 import { DialogCreateMultisigProps, PubKeyFields } from '@/types/multisig';
-import MultisigMemberTextField from './MultisigMemberTextField';
-import { COSMOS_CHAIN_ID, MULTISIG_PUBKEY_OBJECT } from '@/utils/constants';
+import MultisigMemberTextField from '../MultisigMemberTextField';
+import {
+  COSMOS_CHAIN_ID,
+  DECREASE,
+  INCREASE,
+  MULTISIG_PUBKEY_OBJECT,
+} from '@/utils/constants';
 import useGetPubkey from '@/custom-hooks/useGetPubkey';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import useGetAccountInfo from '@/custom-hooks/useGetAccountInfo';
@@ -54,11 +59,12 @@ import {
   PLUS_ICON_DISABLED,
 } from '@/constants/image-names';
 import CustomButton from '@/components/common/CustomButton';
+import ImportMultisig from './ImportMultisig';
+import AddMembers from './AddMember';
+import Threshold from './Threshold';
 
 const MAX_PUB_KEYS = 7;
 const MULTISIG_NAME_MAX_LENGTH = 100;
-const INC = 'increase';
-const DEC = 'decrease';
 
 const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
   const { open, onClose, chainID } = props;
@@ -368,13 +374,13 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
   };
 
   const handleThresholdChange = (value: string) => {
-    if (value === INC) {
+    if (value === INCREASE) {
       if (threshold + 1 > pubKeyFields?.length) {
         dispatch(setError({ type: 'error', message: MAX_THRESHOLD_ERROR }));
       } else {
         setThreshold(threshold + 1);
       }
-    } else if (value === DEC) {
+    } else if (value === DECREASE) {
       if (threshold - 1 < 1) {
         dispatch(setError({ type: 'error', message: MIN_THRESHOLD_ERROR }));
       } else {
@@ -410,7 +416,7 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
   return (
     <CustomDialog
       open={open}
-      title="Create Multisig"
+      title={importMultisig ? 'Import Multisig' : 'Create Multisig'}
       onClose={handleClose}
       styles="w-[800px]"
     >
@@ -463,9 +469,18 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
                   pubKeyFields={pubKeyFields}
                   togglePubKey={togglePubKey}
                 />
-                <div className="flex justify-end">
+                <div className="flex justify-end gap-">
+                  {importMultisig ? (
+                    <button
+                      type="button"
+                      className="secondary-btn w-[150px]"
+                      onClick={resetCreateMultisig}
+                    >
+                      Cancel
+                    </button>
+                  ) : null}
                   <CustomButton
-                    btnText="Create"
+                    btnText={importMultisig ? 'Import' : 'Create'}
                     btnDisabled={
                       createMultiAccRes?.status === 'pending' || pubkeyLoading
                     }
@@ -488,6 +503,7 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
                       setAddressValidationError('');
                       setName('');
                       setPage(2);
+                      setImportMultisig(true);
                     }}
                     className="secondary-btn !text-[16px] !font-bold !text-white"
                   >
@@ -523,176 +539,3 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
 };
 
 export default DialogCreateMultisig;
-
-const ImportMultisig = ({
-  addressValidationError,
-  fetchMultisigAccount,
-  handleMultisigAddressChange,
-  multisigAddress,
-  switchToCreateMultisig,
-}: {
-  multisigAddress: string;
-  handleMultisigAddressChange: (e: ChangeEvent<HTMLInputElement>) => void;
-  addressValidationError: string;
-  fetchMultisigAccount: () => void;
-  switchToCreateMultisig: () => void;
-}) => {
-  const importMultisigAccountRes = useAppSelector(
-    (state: RootState) => state.multisig.multisigAccountData
-  );
-
-  return (
-    <div className="flex-1 space-y-10">
-      <div className="flex gap-6 my-6">
-        <div className="flex-1">
-          <div className="text-b1-light !font-light">
-            Enter Multisig Address
-          </div>
-          <TextField
-            className="bg-transparent rounded-full border-[1px] border-[#ffffff80] h-10"
-            name="granteeAddress"
-            value={multisigAddress}
-            onChange={handleMultisigAddressChange}
-            required
-            autoFocus={true}
-            fullWidth
-            placeholder="Enter Multisig Address Here"
-            InputProps={{
-              sx: {
-                input: {
-                  color: 'white',
-                  fontSize: '14px',
-                  padding: 2,
-                },
-              },
-            }}
-            sx={createMultisigTextFieldStyles}
-          />
-          <div className="address-error">{addressValidationError || ''}</div>
-        </div>
-        <CustomButton
-          btnText="Import"
-          btnLoading={importMultisigAccountRes.status === TxStatus.PENDING}
-          btnDisabled={importMultisigAccountRes.status === TxStatus.PENDING}
-          btnOnClick={fetchMultisigAccount}
-          btnStyles="w-[150px]"
-        />
-      </div>
-      <div className="flex gap-1 justify-center">
-        <div className="text-[16px] font-extralight text-[#ffffff80]">
-          Do not have an existing MultiSig account ? Create New
-        </div>{' '}
-        <button
-          onClick={switchToCreateMultisig}
-          className="secondary-btn !text-[16px] !font-bold !text-white"
-        >
-          here
-        </button>
-      </div>
-    </div>
-  );
-};
-
-const AddMembers = ({
-  handleChangeValue,
-  handleRemoveValue,
-  importMultisig,
-  pubKeyFields,
-  togglePubKey,
-  handleAddPubKey,
-}: {
-  pubKeyFields: PubKeyFields[];
-  handleRemoveValue: (i: number) => void;
-  handleChangeValue: (
-    index: number,
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => void;
-  togglePubKey: (index: number) => void;
-  importMultisig: boolean;
-  handleAddPubKey: () => void;
-}) => {
-  return (
-    <div className="space-y-6">
-      <div className="space-y-2">
-        <div className="text-b1-light !font-light">Add Members</div>
-        <div className="add-members">
-          {pubKeyFields.map((field, index) => (
-            <div>
-              <MultisigMemberTextField
-                key={index}
-                handleRemoveValue={handleRemoveValue}
-                handleChangeValue={handleChangeValue}
-                index={index}
-                field={field}
-                togglePubKey={togglePubKey}
-                isImport={importMultisig}
-              />
-            </div>
-          ))}
-        </div>
-      </div>
-      {!importMultisig && <AddMemberButton handleAddPubKey={handleAddPubKey} />}
-    </div>
-  );
-};
-
-const AddMemberButton = ({
-  handleAddPubKey,
-}: {
-  handleAddPubKey: () => void;
-}) => {
-  return (
-    <div className="flex justify-center">
-      <button
-        type="button"
-        className="flex items-center gap-2 font-light"
-        onClick={handleAddPubKey}
-      >
-        <Image src={ADD_ICON} height={24} width={24} alt="" />
-        <span>Add More</span>
-      </button>
-    </div>
-  );
-};
-
-const Threshold = ({
-  handleThresholdChange,
-  threshold,
-  membersCount,
-}: {
-  handleThresholdChange: (value: string) => void;
-  threshold: number;
-  membersCount: number;
-}) => {
-  const incDisabled = threshold >= membersCount;
-  const decDisabled = threshold <= 1;
-  return (
-    <div className="threshold">
-      <button
-        disabled={decDisabled}
-        onClick={() => handleThresholdChange(DEC)}
-        type="button"
-      >
-        <Image
-          src={decDisabled ? MINUS_ICON_DISABLED : MINUS_ICON}
-          height={20}
-          width={20}
-          alt="Decrease"
-        />
-      </button>
-      <div className="w-5 h-5 flex-center">{threshold}</div>
-      <button
-        disabled={incDisabled}
-        onClick={() => handleThresholdChange(INC)}
-        type="button"
-      >
-        <Image
-          src={incDisabled ? PLUS_ICON_DISABLED : PLUS_ICON}
-          height={20}
-          width={20}
-          alt="Increase"
-        />
-      </button>
-    </div>
-  );
-};
