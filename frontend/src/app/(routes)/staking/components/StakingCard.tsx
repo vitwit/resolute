@@ -28,6 +28,7 @@ import {
 } from '@/utils/errors';
 import useAuthzStakingExecHelper from '@/custom-hooks/useAuthzStakingExecHelper';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
+import ClaimRewards from './ClaimRewards';
 
 const StakingCard = ({
   processingValAddr,
@@ -283,15 +284,14 @@ const StakingCardActions = ({
             enable={enable}
           />
         </div>
-        <StakingCardActionButton
-          name={'Claim'}
-          action={claim}
-          isPending={
-            txClaimStatus === TxStatus.PENDING &&
-            validatorAddress === processingValAddr &&
-            !isClaimAll
-          }
+        <ClaimRewards
+          claim={claim}
           enable={enable}
+          isClaimAll={isClaimAll}
+          processingValAddr={processingValAddr}
+          txClaimStatus={txClaimStatus}
+          validatorAddress={validatorAddress}
+          chainID={chainID}
         />
         <StakingCardActionButton
           name={'Restake'}
@@ -325,7 +325,7 @@ const StakingCardActions = ({
   );
 };
 
-const StakingCardActionButton = ({
+export const StakingCardActionButton = ({
   name,
   action,
   isPending,

@@ -46,6 +46,22 @@ const useGetDistributionMsgs = () => {
     return msgs;
   };
 
+  const getWithdrawValidatorCommisionAndRewardsMsgs = ({
+    chainID,
+    validator,
+  }: {
+    chainID: string;
+    validator: string;
+  }) => {
+    const { address: delegator } = getChainInfo(chainID);
+    const msgs = [...getWithdrawCommissionMsgs({ chainID })];
+    const withdrawRewardsMsg = isAuthzMode
+      ? EncodedWithdrawAllRewardsMsg(authzAddress, validator)
+      : WithdrawAllRewardsMsg(delegator, validator);
+    msgs.push(withdrawRewardsMsg);
+    return msgs;
+  };
+
   const getWithdrawCommissionMsgs = ({ chainID }: { chainID: string }) => {
     const validator = isAuthzMode
       ? authzStakingData?.[chainID].validator
@@ -113,6 +129,7 @@ const useGetDistributionMsgs = () => {
     getWithdrawRewardsMsgs,
     getSetWithdrawAddressMsg,
     getWithdrawCommissionAndRewardsMsgs,
+    getWithdrawValidatorCommisionAndRewardsMsgs,
   };
 };
 
