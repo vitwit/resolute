@@ -74,10 +74,8 @@ const GovernanceDashboard = () => {
     <div className="flex flex-col items-start gap-20 px-10 py-20">
       <div className="flex flex-col gap-10  w-full">
         <div className="flex flex-col items-start w-full">
-          <div className="text-white text-[28px] not-italic font-bold leading-[normal] text-start">
-            Governance
-          </div>
-          <div className="text-[rgba(255,255,255,0.50)] text-sm not-italic font-extralight leading-8">
+          <div className="text-h1">Governance</div>
+          <div className="secondary-text">
             Connect your wallet now to access all the modules on resolute{' '}
           </div>
           <div className="divider-line"></div>
@@ -90,7 +88,7 @@ const GovernanceDashboard = () => {
                   setSelectedVotingPeriod(data);
                 }}
                 key={dataid}
-                className={`selected-btns text-white text-base not-italic font-normal leading-[normal] ${data === selectedVotingPeriod ? 'bg-[#ffffff14] border-none' : 'border-[rgba(255,255,255,0.50)]'}`}
+                className={`selected-btns text-white text-base ${data === selectedVotingPeriod ? 'bg-[#ffffff14] border-none' : 'border-[rgba(255,255,255,0.50)]'}`}
               >
                 {data}
               </div>
@@ -130,9 +128,7 @@ const GovernanceDashboard = () => {
                       </div>
                     </div>
                     <div className="flex space-x-1">
-                      <p className="text-white text-lg font-normal leading-[normal] items-center flex">
-                        {data.title}
-                      </p>
+                      <p className="text-h2 items-center flex">{data.title}</p>
                       <div
                         className="flex justify-center"
                         onClick={() => {
@@ -185,11 +181,7 @@ const GovernanceDashboard = () => {
                 </div>
                 {selectedProposal.proposalId ? null : (
                   <div className="flex items-end justify-end">
-                    <div className="primary-btn w-20">
-                      <p className="text-white text-base not-italic leading-[normal]">
-                        Vote
-                      </p>
-                    </div>
+                    <button className="primary-btn">Vote</button>
                   </div>
                 )}
               </div>
@@ -225,9 +217,7 @@ const GovernanceDashboard = () => {
                   <div className="flex flex-col gap-2">
                     <div className="flex justify-between">
                       <div className="flex space-x-1 items-center">
-                        <p className="text-white text-lg font-normal leading-[normal]">
-                          {selectedProposal.title}
-                        </p>
+                        <p className="text-h2 ">{selectedProposal.title}</p>
                         <Image
                           src="/viewful.svg"
                           width={24}
@@ -239,32 +229,22 @@ const GovernanceDashboard = () => {
                     </div>
                     <div className="flex gap-6">
                       <div className="flex gap-2">
-                        <p className="text-[rgba(255,255,255,0.50)] text-xs font-extralight leading-[normal]">
-                          By
-                        </p>
-                        <p className="text-white text-sm font-normal leading-[normal]">
-                          {selectedProposal.address}
-                        </p>
+                        <p className="text-small-light ">By</p>
+                        <p className="text-b1">{selectedProposal.address}</p>
                       </div>
                       <div className="flex gap-2">
-                        <p className="text-[rgba(255,255,255,0.50)] text-xs font-extralight leading-[normal]">
-                          Voting
-                        </p>
-                        <p className="text-white text-sm font-normal leading-[normal]">
-                          {selectedProposal.timeline}
-                        </p>
+                        <p className="text-small-light ">Voting</p>
+                        <p className="text-b1">{selectedProposal.timeline}</p>
                       </div>
                       <div className="flex gap-2">
-                        <p className="text-[rgba(255,255,255,0.50)] text-xs font-extralight leading-[normal]">
-                          on
-                        </p>
+                        <p className="text-small-light ">on</p>
                         <Image
                           src={selectedProposal.networkLogo}
                           width={20}
                           height={20}
                           alt="Network-logo"
                         />
-                        <p className="text-white text-sm font-normal leading-[normal]">
+                        <p className="text-b1">
                           {selectedProposal.networkName}
                         </p>
                       </div>
@@ -272,37 +252,31 @@ const GovernanceDashboard = () => {
                   </div>
                 </div>
                 <div className="flex gap-4 flex-col">
-                  <div className="text-white text-base font-normal leading-[normal]">
-                    Proposal Summary
-                  </div>
+                  <div className="text-white text-base">Proposal Summary</div>
                   <div className="divider-line"></div>
                 </div>
-                <div className="text-[rgba(255,255,255,0.50)] text-sm font-normal leading-[21px]">
+                <div className="secondary-text">
                   {selectedProposal.proposalSummary}
                 </div>
               </div>
 
               <div className="flex flex-col gap-10 w-full ">
                 <div className="flex justify-between gap-4">
-                  <button className="vote-optn-btn w-[133px] text-white text-base font-normal leading-[normal]">
+                  <button className="vote-optn-btn w-[133px] text-white text-base border-[#2BA472]">
                     Yes
                   </button>
-                  <button className="vote-optn-btn w-[133px] text-white text-base font-normal leading-[normal]">
+                  <button className="vote-optn-btn w-[133px] border-[#D92101] text-white text-base">
                     No
                   </button>
-                  <button className="vote-optn-btn w-[133px] text-white text-base font-normal leading-[normal]">
+                  <button className="vote-optn-btn w-[133px] border-[#FFC13C] text-white text-base">
                     Abstain
                   </button>
-                  <button className="vote-optn-btn w-[133px] text-white text-base font-normal leading-[normal]">
+                  <button className="vote-optn-btn w-[133px] border-[#DA561E] text-white text-base ">
                     Veto
                   </button>
                 </div>
-                <div className="flex justify-between w-full">
-                  <button className="primary-btn w-[50%]">Vote</button>
-                  <button className="w-[50%] text-white text-base not-italic font-normal leading-[normal] underline">
-                    View Full Proposal
-                  </button>
-                </div>
+
+                <button className="primary-btn w-full">Vote</button>
               </div>
             </div>
           </div>

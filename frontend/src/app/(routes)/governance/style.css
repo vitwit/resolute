@@ -264,7 +264,7 @@
   background: lightgray 50% / cover no-repeat;
 }
 .active-btn {
-  @apply border flex w-20 justify-center items-center gap-2 px-3 py-1 rounded-[100px] border-solid border-[#2BA472];
+  @apply border flex justify-center items-center gap-2 px-3 py-1 rounded-[100px] border-solid border-[#2BA472];
   background: rgba(43, 164, 114, 0.5);
 }
 .proposal-view {
@@ -311,4 +311,7 @@
 }
 .veto-bg {
   background: linear-gradient(90deg, #da561e 0%, rgba(218, 86, 30, 0.5) 100%);
+}
+.badge-bg {
+  @apply flex justify-center items-center gap-2 px-4 py-2 rounded-[100px] bg-[#FFFFFF05] w-[158px];
 }
