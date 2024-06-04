@@ -20,15 +20,15 @@ const DepositProposal = () => {
                   <div className="deposit-btn text-b1">Deposit</div>
                 </div>
                 <div className="flex gap-6 w-full">
-                  <div className="flex gap-2">
+                  <div className="flex gap-2 items-center">
                     <p className="text-small-light">By</p>
                     <p className="text-b1">0x2cc1...c54Df1</p>
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex gap-2 items-center">
                     <p className="text-small-light">Voting</p>
                     <p className="text-b1">Ends in 4 days</p>
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex gap-2 items-center">
                     <p className="text-small-light">on</p>
                     <Image
                       src="/akash-logo.svg"
@@ -48,7 +48,6 @@ const DepositProposal = () => {
           </div>
           {/* RightSideView */}
           <DepositRightView />
-          
         </div>
       </div>
     </>
