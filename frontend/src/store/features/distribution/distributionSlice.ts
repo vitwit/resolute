@@ -40,6 +40,10 @@ const initialState: DistributionStoreInitialState = {
       status: TxStatus.INIT,
       errMsg: '',
     },
+    txWithdrawSingleValCommission: {
+      status: TxStatus.INIT,
+      errMsg: '',
+    },
     txSetWithdrawAddress: {
       status: TxStatus.INIT,
       errMsg: '',
@@ -445,6 +449,109 @@ export const txWithdrawValidatorCommissionAndRewards = createAsyncThunk(
   }
 );
 
+export const txWithdrawSingleValidatorCommissionAndRewards = createAsyncThunk(
+  'distribution/withdraw-single-validator-commission-rewards',
+  async (
+    data: TxWithDrawValidatorCommissionAndRewardsInputs | TxAuthzExecInputs,
+    { rejectWithValue, fulfillWithValue, dispatch }
+  ) => {
+    try {
+      const msgs = data.msgs;
+
+      const result = await signAndBroadcast(
+        data.basicChainInfo.chainID,
+        data.basicChainInfo.aminoConfig,
+        data.basicChainInfo.prefix,
+        msgs,
+        GAS_FEE,
+        '',
+        `${data.basicChainInfo.feeAmount * 10 ** data.basicChainInfo.decimals}${
+          data.denom
+        }`,
+        data.basicChainInfo.rest,
+        data?.feegranter?.length ? data.feegranter : undefined,
+        data?.basicChainInfo?.rpc,
+        data?.basicChainInfo?.restURLs
+      );
+      const tx = NewTransaction(
+        result,
+        msgs,
+        data.basicChainInfo.chainID,
+        data.basicChainInfo.address
+      );
+
+      if (result?.code === 0) {
+        if (data.isAuthzMode) {
+          dispatch(
+            getAuthzBalances({
+              baseURLs: data.basicChainInfo.restURLs,
+              baseURL: data.basicChainInfo.rest,
+              chainID: data.basicChainInfo.chainID,
+              address: data.authzChainGranter,
+            })
+          );
+
+          dispatch(
+            getAuthzDelegatorTotalRewards({
+              baseURL: data.basicChainInfo.rest,
+              baseURLs: data.basicChainInfo.restURLs,
+              address: data.authzChainGranter,
+              chainID: data.basicChainInfo.chainID,
+              denom: data.denom,
+            })
+          );
+        } else {
+          dispatch(
+            getBalances({
+              baseURLs: data.basicChainInfo.restURLs,
+              baseURL: data.basicChainInfo.rest,
+              address: data.basicChainInfo.address,
+              chainID: data.basicChainInfo.chainID,
+            })
+          );
+
+          dispatch(
+            getDelegatorTotalRewards({
+              baseURL: data.basicChainInfo.rest,
+              baseURLs: data.basicChainInfo.restURLs,
+              address: data.basicChainInfo.address,
+              chainID: data.basicChainInfo.chainID,
+              denom: data.denom,
+            })
+          );
+        }
+
+        dispatch(
+          setTxAndHash({
+            hash: result?.transactionHash,
+            tx: tx,
+          })
+        );
+        return fulfillWithValue({ txHash: result?.transactionHash });
+      } else {
+        dispatch(
+          setError({
+            type: 'error',
+            message: result?.rawLog || '',
+          })
+        );
+        return rejectWithValue(result?.rawLog);
+      }
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        dispatch(
+          setError({
+            type: 'error',
+            message: error.message,
+          })
+        );
+        return rejectWithValue(error.message);
+      }
+      return rejectWithValue(ERR_UNKNOWN);
+    }
+  }
+);
+
 export const getDelegatorTotalRewards = createAsyncThunk(
   'distribution/totalRewards',
   async (data: DelegatorTotalRewardsRequest) => {
@@ -686,6 +793,33 @@ export const distSlice = createSlice({
           const chainID = action.meta?.arg?.basicChainInfo.chainID;
           state.chains[chainID].txWithdrawCommission.status = TxStatus.REJECTED;
           state.chains[chainID].txWithdrawCommission.errMsg =
+            action.error.message || '';
+        }
+      );
+
+    builder
+      .addCase(
+        txWithdrawSingleValidatorCommissionAndRewards.pending,
+        (state, action) => {
+          const chainID = action.meta?.arg?.basicChainInfo.chainID;
+          state.chains[chainID].txWithdrawSingleValCommission.status = TxStatus.PENDING;
+          state.chains[chainID].txWithdrawSingleValCommission.errMsg = '';
+        }
+      )
+      .addCase(
+        txWithdrawSingleValidatorCommissionAndRewards.fulfilled,
+        (state, action) => {
+          const chainID = action.meta?.arg?.basicChainInfo.chainID;
+          state.chains[chainID].txWithdrawSingleValCommission.status = TxStatus.IDLE;
+          state.chains[chainID].txWithdrawSingleValCommission.errMsg = '';
+        }
+      )
+      .addCase(
+        txWithdrawSingleValidatorCommissionAndRewards.rejected,
+        (state, action) => {
+          const chainID = action.meta?.arg?.basicChainInfo.chainID;
+          state.chains[chainID].txWithdrawSingleValCommission.status = TxStatus.REJECTED;
+          state.chains[chainID].txWithdrawSingleValCommission.errMsg =
             action.error.message || '';
         }
       );

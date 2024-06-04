@@ -7,7 +7,8 @@ import useAuthzStakingExecHelper from '@/custom-hooks/useAuthzStakingExecHelper'
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import useGetDistributionMsgs from '@/custom-hooks/useGetDistributionMsgs';
 import useGetTxInputs from '@/custom-hooks/useGetTxInputs';
-import { txWithdrawValidatorCommissionAndRewards } from '@/store/features/distribution/distributionSlice';
+import { txWithdrawSingleValidatorCommissionAndRewards } from '@/store/features/distribution/distributionSlice';
+import { CircularProgress } from '@mui/material';
 
 interface ClaimRewardsProps {
   claim: () => void;
@@ -78,7 +79,7 @@ const ClaimRewards = ({
         validator: validatorAddress,
       });
       const txInputs = txWithdrawCommissionAndRewardsInputs(chainID, msgs);
-      dispatch(txWithdrawValidatorCommissionAndRewards(txInputs));
+      dispatch(txWithdrawSingleValidatorCommissionAndRewards(txInputs));
     }
   };
 
@@ -97,7 +98,11 @@ const ClaimRewards = ({
         />
       ) : (isSelfValidator && !isAuthzMode) ||
         canAuthzClaimRewardsCommission ? (
-        <button onClick={claimRewardsAndCommission}>Claim Commision</button>
+        <WithdrawCommission
+          enable={enable}
+          claimRewardsAndCommission={claimRewardsAndCommission}
+          chainID={chainID}
+        />
       ) : (
         <button>!Claim Commision</button>
       )}
@@ -107,6 +112,41 @@ const ClaimRewards = ({
 
 export default ClaimRewards;
 
-const WithdrawCommission = () => {
-  return <div></div>;
+const WithdrawCommission = ({
+  enable,
+  claimRewardsAndCommission,
+  chainID,
+}: {
+  enable: boolean;
+  claimRewardsAndCommission: () => void;
+  chainID: string;
+}) => {
+  const txWithdrawSingleValCommission = useAppSelector(
+    (state) => state.distribution.chains[chainID]?.txWithdrawSingleValCommission
+  );
+
+  const isPending = txWithdrawSingleValCommission.status === TxStatus.PENDING;
+
+  return (
+    <button
+      className={
+        enable
+          ? 'staking-card-action-button !w-[190px]'
+          : 'staking-card-action-button delegate-button-disabled !w-[190px]'
+      }
+      onClick={claimRewardsAndCommission}
+    >
+      {isPending ? (
+        <CircularProgress size={16} sx={{ color: 'white' }} />
+      ) : (
+        <div className="flex gap-1 items-center">
+          <div>Claim</div>
+          <div className="text-[10px] flex flex-col">
+            <div>Rewards</div>
+            <div>Commission</div>
+          </div>
+        </div>
+      )}
+    </button>
+  );
 };
