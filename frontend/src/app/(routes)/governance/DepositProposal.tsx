@@ -1,7 +1,6 @@
 import Banner from './Banner';
 import Image from 'next/image';
 import ProposalSummary from './ProposalSummary';
-import RightSideView from './RightSideView';
 import DepositForm from './DepositForm';
 import DepositRightView from './DepositRightView';
 
