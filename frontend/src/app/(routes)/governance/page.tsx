@@ -2,10 +2,8 @@
 import React from 'react';
 import { useAppSelector } from '@/custom-hooks/StateHooks';
 import { RootState } from '@/store/store';
-
-import DepositProposal from './DepositProposal';
-import FullProposalView from './FullProposalView';
-import GovernanceDashboard from './GovernanceDashboard';
+import GovPage from './GovPage';
+import NoProposals from './NoProposals';
 
 const Page = () => {
   const nameToChainIDs = useAppSelector(
@@ -15,13 +13,11 @@ const Page = () => {
   const chainIDs = Object.keys(nameToChainIDs).map(
     (chainName) => nameToChainIDs[chainName]
   );
-  console.log(chainIDs);
 
   return (
     <>
-      {/* <GovernanceDashboard /> */}
-      <FullProposalView />
-      {/* <DepositProposal /> */}
+      <GovPage chainIDs={chainIDs} />
+      <NoProposals />
     </>
   );
 };
