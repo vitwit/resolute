@@ -1,26 +1,23 @@
-import './style.css';
-import Image from 'next/image';
-import CastVote from './CastVote';
 import Banner from './Banner';
-import RightSideView from './RightSideView';
+import Image from 'next/image';
 import ProposalSummary from './ProposalSummary';
+import RightSideView from './RightSideView';
+import DepositForm from './DepositForm';
+import DepositRightView from './DepositRightView';
 
-const FullProposalView = () => {
+const DepositProposal = () => {
   return (
     <>
-      {/* Banner */}
-
       <Banner />
-
-      <div className="flex items-start gap-10 pt-20 pb-20 px-10 w-full h-full">
-        <div className="flex items-start gap-20 w-full">
-          <div className="flex flex-col flex-1 justify-between overflow-y-scroll max-h-[80vh]">
+      <div className="flex items-start gap-10 pt-20 pb-0 px-10 w-full h-full">
+        <div className="flex items-start gap-20 w-full h-full">
+          <div className="flex flex-col flex-1 justify-between h-full">
             <div className="flex flex-col gap-6">
               <div className="secondary-btn">Go back</div>
               <div className="flex flex-col gap-4">
                 <div className="flex justify-between w-full">
                   <p className="text-h1">Aave v3.1 Cantina competitione</p>
-                  <div className="active-btn text-b1">Active</div>
+                  <div className="deposit-btn text-b1">Deposit</div>
                 </div>
                 <div className="flex gap-6 w-full">
                   <div className="flex gap-2">
@@ -47,16 +44,14 @@ const FullProposalView = () => {
 
               <ProposalSummary />
             </div>
-
-            <CastVote />
+            <DepositForm />
           </div>
-
-          {/* RightSide View */}
-
-          <RightSideView />
+          {/* RightSideView */}
+          <DepositRightView />
+          
         </div>
       </div>
     </>
   );
 };
-export default FullProposalView;
+export default DepositProposal;

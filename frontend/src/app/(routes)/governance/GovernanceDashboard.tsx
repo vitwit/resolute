@@ -52,6 +52,36 @@ const ProposalDetails = [
     proposalSummary:
       'Following a successful implementation of Phase I of our plan to reduce stablecoin LTs and LTVs, we would like to propose the next phase. Additionally, we have updated our recommended final state for all associated stablecoins, with LTVs and LTs harmonized across all chains at 75% and 78%, respectively.',
   },
+  {
+    proposalId: 126,
+    networkLogo: '/akash-logo.svg',
+    networkName: 'Akash',
+    title: 'Aave v3.1 Cantina competition',
+    address: '0x2cc1...c54Df1',
+    timeline: 'ends in 04 hours',
+    proposalSummary:
+      'Following a successful implementation of Phase I of our plan to reduce stablecoin LTs and LTVs, we would like to propose the next phase. Additionally, we have updated our recommended final state for all associated stablecoins, with LTVs and LTs harmonized across all chains at 75% and 78%, respectively.',
+  },
+  {
+    proposalId: 126,
+    networkLogo: '/akash-logo.svg',
+    networkName: 'Akash',
+    title: 'Aave v3.1 Cantina competition',
+    address: '0x2cc1...c54Df1',
+    timeline: 'ends in 04 hours',
+    proposalSummary:
+      'Following a successful implementation of Phase I of our plan to reduce stablecoin LTs and LTVs, we would like to propose the next phase. Additionally, we have updated our recommended final state for all associated stablecoins, with LTVs and LTs harmonized across all chains at 75% and 78%, respectively.',
+  },
+  {
+    proposalId: 126,
+    networkLogo: '/akash-logo.svg',
+    networkName: 'Akash',
+    title: 'Aave v3.1 Cantina competition',
+    address: '0x2cc1...c54Df1',
+    timeline: 'ends in 04 hours',
+    proposalSummary:
+      'Following a successful implementation of Phase I of our plan to reduce stablecoin LTs and LTVs, we would like to propose the next phase. Additionally, we have updated our recommended final state for all associated stablecoins, with LTVs and LTs harmonized across all chains at 75% and 78%, respectively.',
+  },
 ];
 const votingPeriod = ['Voting ends in 1 day', 'Deposit ends in 1 day'];
 
@@ -109,8 +139,8 @@ const GovernanceDashboard = () => {
           </div>
         </div>
       </div>
-      <div className="flex gap-6 w-full h-full ">
-        <div className="flex flex-col w-full gap-10 px-6 py-0 flex-1">
+      <div className="flex gap-6 w-full h-full max-h-[60vh]">
+        <div className="flex flex-col w-full gap-10 px-6 py-0 flex-1 overflow-y-scroll">
           {ProposalDetails.map((data, dataid) => (
             <div key={dataid} className="flex flex-col gap-4 w-full">
               <div className="flex justify-between w-full">
@@ -193,7 +223,7 @@ const GovernanceDashboard = () => {
         {/* Right View */}
         {selectedProposal?.proposalId ? (
           <div className="proposal-view">
-            <div className="flex flex-col justify-between h-full ">
+            <div className="flex flex-col justify-between h-full">
               <div className="flex flex-col gap-6 ">
                 <div className="flex flex-col gap-10 w-full">
                   <div className="items-start">

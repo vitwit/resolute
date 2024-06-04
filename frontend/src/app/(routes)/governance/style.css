@@ -264,11 +264,11 @@
   background: lightgray 50% / cover no-repeat;
 }
 .active-btn {
-  @apply border flex justify-center items-center gap-2 px-3 py-1 rounded-[100px] border-solid border-[#2BA472];
+  @apply border flex justify-center items-center gap-2 px-3 py-1 rounded-[100px] border-solid border-[#2BA472] w-20;
   background: rgba(43, 164, 114, 0.5);
 }
 .proposal-view {
-  @apply shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] flex flex-col w-[50%] h-[60vh]  gap-4 p-6 rounded-2xl;
+  @apply shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] flex flex-col w-[50%] h-[60vh] gap-4 p-6 rounded-2xl;
   background: rgba(255, 255, 255, 0.02);
 }
 .vote-optn-btn {
@@ -314,4 +314,8 @@
 }
 .badge-bg {
   @apply flex justify-center items-center gap-2 px-4 py-2 rounded-[100px] bg-[#FFFFFF05] w-[158px];
+}
+.deposit-btn {
+  @apply flex justify-center items-center gap-2 border px-3 py-1 rounded-[100px] border-solid border-[#DA561E];
+  background: rgba(218, 86, 30, 0.5);
 }
