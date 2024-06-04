@@ -1,7 +1,7 @@
 const DepositCollected = () => {
   return (
     <>
-      <div className="flex flex-col gap-6 p-6 rounded-2xl bg-[#FFFFFF05] w-[330px]">
+      <div className="flex flex-col gap-6 p-6 rounded-2xl bg-[#FFFFFF05] w-[380px]">
         <div className="flex flex-col gap-2">
           <p className="text-b1">Deposit Collected</p>
           <div className="divider-line"></div>
@@ -11,7 +11,7 @@ const DepositCollected = () => {
           <p className="secondary-text">25% deposit collected</p>
         </div>
         <div className="bg-[#FFFFFF0D] w-full h-[10px] rounded-full">
-          <div className="bg-[#f0f0f3] h-[10px] w-[4px] absolute  flex left-[224px]"></div>
+          <div className="bg-[#f0f0f3] h-[10px] w-[4px] absolute  flex"></div>
           <div
             style={{ width: 80 }}
             className={`yes-bg h-2 rounded-l-full `}
