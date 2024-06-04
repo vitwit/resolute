@@ -6,6 +6,7 @@ import CustomLoader from '@/components/common/CustomLoader';
 import useSingleStaking from '@/custom-hooks/useSingleStaking';
 import { WalletAddress } from '@/components/main-layout/SelectNetwork';
 import ValidatorLogo from '../components/ValidatorLogo';
+import DelegatePopup from '../components/DelegatePopup';
 
 interface ValStatusObj {
   [key: string]: string;
@@ -19,6 +20,7 @@ const valStatusObj: ValStatusObj = {
 const ValidatorTable: React.FC<{ chainID: string }> = ({ chainID }) => {
   const staking = useSingleStaking(chainID);
   const validators = staking.getValidators();
+  const [openDelegate, setOpenDelegate] = useState<boolean>(false);
 
   const [filteredValidators, setFilteredValidators] = useState<Record<string, Validator>>({});
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -48,54 +50,67 @@ const ValidatorTable: React.FC<{ chainID: string }> = ({ chainID }) => {
     }
   }, [validators]);
 
+  const openDelegatePopup = (): void => {
+    setOpenDelegate(!openDelegate)
+  };
+
   const validatorRows = useMemo(() => {
     return Object.entries(filteredValidators || {}).map(([key, value], index) => (
-      <tr key={key} className="table-border-line">
-        <td className="px-0 py-8">
-          <div className="mr-auto flex">
-            <div className="text-white text-base not-italic font-normal leading-[normal]">
-              #{index + 1}
+      <>
+        {
+          openDelegate ? <DelegatePopup
+            validator={get(value, 'operator_address')}
+            chainID={chainID}
+            openDelegatePopup={openDelegatePopup} openPopup={openDelegate} /> : null
+        }
+        <tr key={key} className="table-border-line">
+          <td className="px-0 py-8">
+            <div className="mr-auto flex">
+              <div className="text-white text-base not-italic font-normal leading-[normal]">
+                #{index + 1}
+              </div>
             </div>
-          </div>
-        </td>
-        <td className="">
-          <div className="flex space-x-2">
-            <ValidatorLogo
-              width={20}
-              height={20}
-              identity={get(value, 'description.identity', '')}
-            /> &nbsp;
+          </td>
+          <td className="">
+            <div className="flex space-x-2">
+              <ValidatorLogo
+                width={20}
+                height={20}
+                identity={get(value, 'description.identity', '')}
+              /> &nbsp;
 
-            {/* Validator name  */}
-            <p className="text-white text-sm not-italic font-normal leading-[normal]">
-              {get(value, 'description.moniker')}
-            </p> &nbsp;
+              {/* Validator name  */}
+              <p className="text-white text-sm not-italic font-normal leading-[normal]">
+                {get(value, 'description.moniker')}
+              </p> &nbsp;
 
-            {/* Copy address icon */}
-            <WalletAddress address={get(value, 'operator_address')} displayAddress={false} />
-          </div>
-        </td>
-        <td className="">
-          <div className="text-white text-left text-base not-italic font-normal leading-[normal]">
-            {Number(get(value, 'commission.commission_rates.rate')) * 100}%
-          </div>
-        </td>
-        <td className="">
-          <div className="text-white text-left text-base not-italic font-normal leading-[normal]">
-            {staking.getAmountWithDecimal(Number(get(value, 'tokens')), chainID)}
-          </div>
-        </td>
-        <td className="">
-          <div className="text-white text-left text-base not-italic font-normal leading-[normal]">
-            {valStatusObj[get(value, 'status')]}
-          </div>
-        </td>
-        <td className="">
-          <div className="text-white text-base not-italic font-normal leading-[normal] ">
-            <button className="custom-btn ">Delegate</button>
-          </div>
-        </td>
-      </tr>
+              {/* Copy address icon */}
+              <WalletAddress address={get(value, 'operator_address')} displayAddress={false} />
+            </div>
+          </td>
+          <td className="">
+            <div className="text-white text-left text-base not-italic font-normal leading-[normal]">
+              {Number(get(value, 'commission.commission_rates.rate')) * 100}%
+            </div>
+          </td>
+          <td className="">
+            <div className="text-white text-left text-base not-italic font-normal leading-[normal]">
+              {staking.getAmountWithDecimal(Number(get(value, 'tokens')), chainID)}
+            </div>
+          </td>
+          <td className="">
+            <div className="text-white text-left text-base not-italic font-normal leading-[normal]">
+              {valStatusObj[get(value, 'status')]}
+            </div>
+          </td>
+          <td className="">
+            <div className="text-white text-base not-italic font-normal leading-[normal] ">
+              <button onClick={openDelegatePopup} className="custom-btn ">Delegate11</button>
+            </div>
+          </td>
+        </tr>
+      </>
+
     ));
   }, [filteredValidators, chainID, staking]);
 
@@ -163,5 +178,6 @@ const ValidatorTable: React.FC<{ chainID: string }> = ({ chainID }) => {
     </div>
   );
 };
+
 
 export default ValidatorTable;

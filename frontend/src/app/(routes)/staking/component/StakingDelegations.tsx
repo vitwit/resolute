@@ -1,10 +1,13 @@
 import useStaking from '@/custom-hooks/useStaking';
 import { get } from 'lodash';
 import Image from 'next/image';
-import React from 'react';
+import React, { useState } from 'react';
 import ValidatorName from './ValidatorName';
 import useValidator from '@/custom-hooks/useValidator';
 import { Chains } from '@/store/features/staking/stakeSlice';
+import DelegatePopup from '../components/DelegatePopup';
+import UndelegatePopup from '../components/UndelegatePopup';
+import ReDelegatePopup from '../components/ReDelegatePopup';
 
 function StakingDelegations({ delegations }: { delegations: Chains }) {
   const staking = useStaking();
@@ -115,12 +118,15 @@ function StakingDelegations({ delegations }: { delegations: Chains }) {
                         </p>
                       </div>
                       <div className="flex justify-end">
-                        <Image
-                          src="/more.svg"
-                          width={24}
-                          height={24}
-                          alt="More-Icon"
-                        />
+                        <ImageWithPopup
+                          chainID={key}
+                          validator={get(
+                            data,
+                            'delegation.validator_address'
+                          )} delegator={get(
+                            data,
+                            'delegation.delegator_address'
+                          )} />
                       </div>
                     </div>
                   </div>
@@ -133,5 +139,108 @@ function StakingDelegations({ delegations }: { delegations: Chains }) {
     </div>
   );
 }
+
+interface PopupPosition {
+  top: number;
+  left: number;
+}
+
+interface PopupProps {
+  delegator: string;
+  validator: string;
+  chainID: string;
+}
+
+
+const ImageWithPopup: React.FC<PopupProps> = ({ validator, delegator, chainID }) => {
+  const [showPopup, setShowPopup] = useState<boolean>(false);
+  const [popupPosition, setPopupPosition] = useState<PopupPosition>({ top: 0, left: 0 });
+  const [openDelegate, setOpenDelegate] = useState<boolean>(false);
+  const [openUnDelegate, setOpenUnDelegate] = useState<boolean>(false);
+  const [openReDelegate, setOpenReDelegate] = useState<boolean>(false);
+
+  console.log(popupPosition)
+
+  const handleImageClick = (e: React.MouseEvent<HTMLImageElement>): void => {
+    setShowPopup(!showPopup);
+    const rect = e.currentTarget.getBoundingClientRect();
+    setPopupPosition({
+      top: rect.top + window.scrollY,
+      left: rect.right + window.scrollX + 10, // Adjust for the popup to appear beside the image
+    });
+    setPopupPosition({ top: 0, left: 0 })
+  };
+
+  const openDelegatePopup = (): void => {
+    setOpenDelegate(!openDelegate)
+  };
+
+  const openUnDelegatePopup = (): void => {
+    setOpenUnDelegate(!openUnDelegate)
+  };
+
+  const openReDelegatePopup = (): void => {
+    setOpenReDelegate(!openReDelegate)
+  };
+
+  return (
+    <div className="relative">
+
+      {
+        openDelegate ? <DelegatePopup
+          validator={validator}
+          chainID={chainID}
+          openDelegatePopup={openDelegatePopup} openPopup={openDelegate} /> : null
+      }
+
+      {
+        openUnDelegate ? <UndelegatePopup
+          validator={validator}
+          chainID={chainID}
+          openDelegatePopup={openUnDelegatePopup} openPopup={openUnDelegate} /> : null
+      }
+
+      {
+        openReDelegate ? <ReDelegatePopup
+        validator={validator}
+        chainID={chainID}
+         openPopup={openReDelegate}
+        /> : null
+      }
+
+      <Image
+        src="/more.svg"
+        width={24}
+        height={24}
+        alt="More-Icon"
+        className="cursor-pointer"
+        onClick={handleImageClick}
+      />
+      {showPopup && (
+        <div className="absolute top-0 left-0 rounded mt-9 w-36 border border-gray-200 shadow-lg z-10">
+          <button
+            className="w-full px-4 py-2 bg-gray-200 text-black  hover:bg-gray-600"
+            onClick={openDelegatePopup}
+          >
+            {'Delegate'}
+          </button>
+          <button
+            className="w-full px-4 py-2 bg-gray-200 text-black  hover:bg-gray-600"
+            onClick={openUnDelegatePopup}
+          >
+            {'Un Delegate'}
+          </button>
+          <button
+            className="w-full px-4 py-2 bg-gray-200 text-black  hover:bg-gray-600"
+            onClick={openReDelegatePopup}
+          >
+            {'Re Delegate'}
+          </button>
+        </div>
+      ) || null}
+    </div>
+  );
+};
+
 
 export default StakingDelegations;

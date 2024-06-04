@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "./StateHooks";
 import { RootState } from '@/store/store';
 import useGetChainInfo from "./useGetChainInfo";
-import { getDelegations, getUnbonding, getValidator, txCancelUnbonding } from "@/store/features/staking/stakeSlice";
+import { getDelegations, getUnbonding, getValidator, txCancelUnbonding, txDelegate, txReDelegate, txUnDelegate } from "@/store/features/staking/stakeSlice";
 import { getDelegatorTotalRewards, txWithdrawAllRewards } from "@/store/features/distribution/distributionSlice";
 import { getBalances } from "@/store/features/bank/bankSlice";
 // import useGetAssets from "./useGetAssets";
@@ -147,6 +147,10 @@ const useStaking = () => {
         (state: RootState) => state.distribution.chains
     );
 
+    const txAllChainStakeTxStatus = useAppSelector(
+        (state: RootState) => state.staking.chains
+    );
+
     console.log('txAllchainTxstatus', txAllChainTxStatus)
 
     const getClaimTxStatus = () => {
@@ -192,6 +196,79 @@ const useStaking = () => {
         );
     }
 
+    const txDelegateTx = (validator: string, amount: number, chainID: string) => {
+        const basicChainInfo = getChainInfo(chainID);
+        const { currencies } =
+            networks[chainID]?.network?.config;
+
+        const currency = currencies[0]
+
+        const { feeAmount: avgFeeAmount } = getChainInfo(chainID);
+        const feeAmount = avgFeeAmount * 10 ** currency?.coinDecimals;
+
+        dispatch(
+            txDelegate({
+                isAuthzMode: false,
+                basicChainInfo: basicChainInfo,
+                delegator: basicChainInfo.address,
+                validator: validator,
+                amount: amount * 10 ** currency?.coinDecimals,
+                denom: currency?.coinMinimalDenom,
+                feeAmount: feeAmount,
+                feegranter: '',
+            })
+        );
+    }
+
+    const txUnDelegateTx = (validator: string, amount: number, chainID: string) => {
+        const basicChainInfo = getChainInfo(chainID);
+        const { currencies } =
+            networks[chainID]?.network?.config;
+
+        const currency = currencies[0]
+
+        const { feeAmount: avgFeeAmount } = getChainInfo(chainID);
+        const feeAmount = avgFeeAmount * 10 ** currency?.coinDecimals;
+
+        dispatch(
+            txUnDelegate({
+                isAuthzMode: false,
+                basicChainInfo: basicChainInfo,
+                delegator: basicChainInfo.address,
+                validator: validator,
+                amount: amount * 10 ** currency?.coinDecimals,
+                denom: currency?.coinMinimalDenom,
+                feeAmount: feeAmount,
+                feegranter: '',
+            })
+        );
+    }
+
+    const txReDelegateTx = (srcVal: string, destVal: string, amount: number, chainID: string) => {
+        const basicChainInfo = getChainInfo(chainID);
+        const { currencies } =
+            networks[chainID]?.network?.config;
+
+        const currency = currencies[0]
+
+        const { feeAmount: avgFeeAmount } = getChainInfo(chainID);
+        const feeAmount = avgFeeAmount * 10 ** currency?.coinDecimals;
+
+        dispatch(
+            txReDelegate({
+                isAuthzMode: false,
+                basicChainInfo: basicChainInfo,
+                delegator: basicChainInfo.address,
+                destVal: destVal,
+                srcVal: srcVal,
+                amount: amount * 10 ** currency?.coinDecimals,
+                denom: currency?.coinMinimalDenom,
+                feeAmount: feeAmount,
+                feegranter: '',
+            })
+        );
+    }
+
     return {
         getStakingAssets,
         getAllDelegations,
@@ -202,6 +279,10 @@ const useStaking = () => {
         txWithdrawCliamRewards,
         getClaimTxStatus,
         txCancelUnbond,
+        txDelegateTx,
+        txAllChainStakeTxStatus,
+        txUnDelegateTx,
+        txReDelegateTx
     }
 };
 

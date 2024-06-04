@@ -100,6 +100,12 @@ const useSingleStaking = (chainID: string) => {
         return (amount / 10 ** decimals).toFixed(4) + ' ' + displayDenom;
     }
 
+    const getDenomWithChainID = (chainID: string) => {
+        const {  displayDenom } = getDenomInfo(chainID);
+
+        return  displayDenom;
+    }
+
     const chainTotalRewards = (chainID: string) => {
         let totalRewardsAmount = 0;
         let displayDenomName = ''
@@ -130,6 +136,7 @@ const useSingleStaking = (chainID: string) => {
         chainTotalRewards,
         chainLogo,
         getValidators,
+        getDenomWithChainID
     }
 };
 
