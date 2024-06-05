@@ -8,7 +8,9 @@ import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import useGetDistributionMsgs from '@/custom-hooks/useGetDistributionMsgs';
 import useGetTxInputs from '@/custom-hooks/useGetTxInputs';
 import { txWithdrawSingleValidatorCommissionAndRewards } from '@/store/features/distribution/distributionSlice';
-import { CircularProgress } from '@mui/material';
+import { CircularProgress, Tooltip } from '@mui/material';
+import Image from 'next/image';
+import { setError } from '@/store/features/common/commonSlice';
 
 interface ClaimRewardsProps {
   claim: () => void;
@@ -49,15 +51,17 @@ const ClaimRewards = ({
   const { withdrawCommissionAllowed, withdrawRewardsAllowed } =
     getWithdrawPermissions({ chainID, granter: authzAddress });
 
-  const isAuthzValidator = authzStakingData?.[chainID]?.validator?.validatorInfo
-    ?.operator_address
-    ? true
-    : false;
+  const isAuthzValidator =
+    authzStakingData?.[chainID]?.validator?.validatorInfo?.operator_address ===
+    validatorAddress
+      ? true
+      : false;
 
-  const isSelfValidator = stakingData?.[chainID]?.validator?.validatorInfo
-    ?.operator_address
-    ? true
-    : false;
+  const isSelfValidator =
+    stakingData?.[chainID]?.validator?.validatorInfo?.operator_address ===
+    validatorAddress
+      ? true
+      : false;
 
   const canAuthzClaimCommission =
     isAuthzValidator && isAuthzMode && withdrawCommissionAllowed;
@@ -104,7 +108,19 @@ const ClaimRewards = ({
           chainID={chainID}
         />
       ) : (
-        <button>!Claim Commision</button>
+        <WithdrawCommission
+          enable={enable}
+          chainID={chainID}
+          claimRewardsAndCommission={() => {
+            dispatch(
+              setError({
+                type: 'error',
+                message:
+                  "You don't have permission to Withdraw Rewards & Commission",
+              })
+            );
+          }}
+        />
       )}
     </div>
   );
@@ -128,25 +144,24 @@ const WithdrawCommission = ({
   const isPending = txWithdrawSingleValCommission.status === TxStatus.PENDING;
 
   return (
-    <button
-      className={
-        enable
-          ? 'staking-card-action-button !w-[190px]'
-          : 'staking-card-action-button delegate-button-disabled !w-[190px]'
-      }
-      onClick={claimRewardsAndCommission}
-    >
-      {isPending ? (
-        <CircularProgress size={16} sx={{ color: 'white' }} />
-      ) : (
-        <div className="flex gap-1 items-center">
-          <div>Claim</div>
-          <div className="text-[10px] flex flex-col">
-            <div>Rewards</div>
-            <div>Commission</div>
+    <Tooltip title="Claim (Rewards & Commission)" placement="top">
+      <button
+        className={
+          enable
+            ? 'staking-card-action-button'
+            : 'staking-card-action-button delegate-button-disabled'
+        }
+        onClick={claimRewardsAndCommission}
+      >
+        {isPending ? (
+          <CircularProgress size={16} sx={{ color: 'white' }} />
+        ) : (
+          <div className="flex gap-1 items-center">
+            <div>Claim</div>
+            <Image src="/i-button.png" height={13} width={13} alt="" />
           </div>
-        </div>
-      )}
-    </button>
+        )}
+      </button>
+    </Tooltip>
   );
 };
