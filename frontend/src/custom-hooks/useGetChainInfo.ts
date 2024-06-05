@@ -56,7 +56,6 @@ const useGetChainInfo = () => {
 
   const getChainInfo = (chainID: string): BasicChainInfo => {
     let network;
-    console.log(allNetworks)
     if (isWalletConnected) {
       network = networks?.[chainID].network;
     } else {

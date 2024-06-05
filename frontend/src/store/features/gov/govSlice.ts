@@ -279,16 +279,18 @@ export const getProposalsInVoting = createAsyncThunk(
             govV1: data.govV1,
           })
         );
-        dispatch(
-          getVotes({
-            baseURL: data?.baseURL,
-            baseURLs: data?.baseURLs,
-            proposalId,
-            voter: data?.voter,
-            chainID: data?.chainID,
-            govV1: data.govV1,
-          })
-        );
+        if (data?.voter?.length) {
+          dispatch(
+            getVotes({
+              baseURL: data?.baseURL,
+              baseURLs: data?.baseURLs,
+              proposalId,
+              voter: data?.voter,
+              chainID: data?.chainID,
+              govV1: data.govV1,
+            })
+          );
+        }
       });
 
       return {
