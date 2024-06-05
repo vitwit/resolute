@@ -17,3 +17,15 @@
 .txn-btn {
   @apply bg-[#0B071D] text-[12px] font-semibold px-3 py-[10px] flex justify-center items-center rounded-lg;
 }
+.txn-grid {
+  @apply opacity-80 flex items-center gap-2 w-full px-6 py-4 rounded-2xl;
+  background: rgba(255, 255, 255, 0.02);
+}
+.txn-type-chip {
+  @apply flex justify-center items-center gap-2 px-4 py-2 rounded-lg;
+  background: rgba(255, 255, 255, 0.06);
+}
+.more-chip {
+  @apply flex w-[37px] h-[37px] justify-center items-center gap-2 px-2 py-[10.5px] rounded-[100px];
+  background: rgba(255, 255, 255, 0.08);
+}

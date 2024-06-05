@@ -64,14 +64,14 @@ export interface MenuItemI {
     //   isMetaMaskSupported: false,
     //   multipleOptions: false,
     // },
-    // {
-    //   name: 'History',
-    //   icon: '/sidebar-menu-icons/txn-history-icon.svg',
-    //   path: '/history',
-    //   authzSupported: true,
-    //   isMetaMaskSupported: true,
-    //   multipleOptions: false,
-    // },
+    {
+      name: 'History',
+      icon: '/sidebar-menu-icons/txn-history-icon.svg',
+      path: '/history',
+      authzSupported: true,
+      isMetaMaskSupported: true,
+      multipleOptions: false,
+    },
     // {
     //   name: 'Settings',
     //   icon: '/sidebar-menu-icons/settings-icon.svg',
