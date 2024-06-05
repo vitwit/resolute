@@ -6,7 +6,7 @@ import GovPage from './GovPage';
 
 const Page = () => {
   const nameToChainIDs = useAppSelector(
-    (state: RootState) => state.wallet.nameToChainIDs
+    (state: RootState) => state.common.nameToChainIDs
   );
 
   const chainIDs = Object.keys(nameToChainIDs).map(

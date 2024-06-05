@@ -53,4 +53,5 @@ interface CommonState {
     open: boolean;
     showSearch: boolean;
   };
+  nameToChainIDs: Record<string, string>;
 }
