@@ -1,22 +1,3 @@
-.message-text-gradient {
-  background-image: linear-gradient(to bottom, #4aa29c 0%, #8b3da7);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.txn-btn-wrapper {
-  @apply rounded-lg p-[1px];
-  background: linear-gradient(to right, #4aa29c, #8b3da7);
-}
-
-.txn-btn-wrapper:hover {
-  background: linear-gradient(to right, #8b3da7, #4aa29c);
-}
-
-.txn-btn {
-  @apply bg-[#0B071D] text-[12px] font-semibold px-3 py-[10px] flex justify-center items-center rounded-lg;
-}
 .txn-grid {
   @apply opacity-80 flex items-center gap-2 w-full px-6 py-4 rounded-2xl;
   background: rgba(255, 255, 255, 0.02);
@@ -28,4 +9,20 @@
 .more-chip {
   @apply flex w-[37px] h-[37px] justify-center items-center gap-2 px-2 py-[10.5px] rounded-[100px];
   background: rgba(255, 255, 255, 0.08);
+}
+.msg-grid {
+  @apply flex flex-col items-start gap-4 w-full pb-4 rounded-2xl;
+  background: rgba(255, 255, 255, 0.02);
+}
+.msg-type-bg {
+  @apply flex items-start px-6 py-4 rounded-2xl w-full;
+  background: rgba(255, 255, 255, 0.02);
+}
+.right-view-grid {
+  @apply flex flex-col items-start gap-4 p-6 rounded-2xl w-[370px];
+  background: rgba(255, 255, 255, 0.02);
+}
+.network-bg {
+  @apply flex px-4 py-2 gap-2 rounded-[100px];
+  background: rgba(255, 255, 255, 0.04);
 }

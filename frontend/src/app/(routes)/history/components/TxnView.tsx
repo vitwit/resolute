@@ -49,7 +49,7 @@ const TxnView = () => {
   return (
     <div>
       {TxnDetails.map((txn, index) => (
-        <div key={index} className="flex items-start gap-2 mb-4">
+        <div key={index} className="flex items-start gap-2 mb-6">
           <div className="flex flex-col gap-2 justify-center items-center">
             <Image
               src={txn.status === 'txnSuccess' ? '/tick.png' : '/fail.png'}

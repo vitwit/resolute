@@ -1,4 +1,4 @@
-import Image from 'next/image';
+
 import SearchBar from './SearchBar';
 import TxnView from './TxnView';
 

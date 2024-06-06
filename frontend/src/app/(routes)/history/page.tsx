@@ -1,9 +1,13 @@
 import React from 'react';
-import TxnHistory from './TxnHistory';
 import './history.css';
+import TxnInternalPage from './components/TxnInternalPage';
 
 const page = () => {
-  return <TxnHistory />;
+  return (
+    // <TxnHistory />;
+    // <TxnHistoryDashboard />
+    <TxnInternalPage />
+  );
 };
 
 export default page;
