@@ -66,10 +66,7 @@ const MessageDetail: React.FC<MessageDetailProps> = ({
   claimRewards,
 }) => (
   <div className="msg-grid">
-    <div className="flex justify-between msg-type-bg">
-      <p className="text-b1">{msgType}</p>
-      <p className="secondary-btn">Cancel</p>
-    </div>
+    <div className="text-b1 msg-type-bg">{msgType}</div>
     <div className="flex justify-between items-start w-full px-6 py-0">
       <div className="flex flex-col justify-center items-start gap-4">
         <p className="text-small">Validator</p>
@@ -94,8 +91,8 @@ const Messages: React.FC = () => {
   return (
     <div className="flex flex-col items-start gap-6 w-full overflow-y-scroll h-screen">
       <div className="flex justify-between w-full text-b1">
-        <p>Messages</p>
         <p>Count Type : #43</p>
+        <button className="secondary-btn">View JSON</button>
       </div>
 
       {MsgDetails.map((msg, index) => (

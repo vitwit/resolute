@@ -16,7 +16,7 @@ const TxnInternalPage = () => {
               <p className="secondary-btn">Go back</p>
               <div className="flex flex-col gap-2">
                 {transactionStatus === 'success' ? (
-                  <div className="flex gap-2 items-center">
+                  <div className="flex items-center">
                     <Image
                       src="/tick.png"
                       width={32}
@@ -28,7 +28,7 @@ const TxnInternalPage = () => {
                     </p>
                   </div>
                 ) : (
-                  <div className="flex gap-2 items-center">
+                  <div className="flex items-center">
                     <Image
                       src="/cross.png"
                       width={32}
@@ -38,18 +38,17 @@ const TxnInternalPage = () => {
                     <p className="text-h1 text-[#F15757]">Transaction Failed</p>
                   </div>
                 )}
-                <div className="flex justify-between">
-                  <div className="flex gap-2">
-                    <p className="text-b1">98D7W5D4A6AH9 </p>
-                    <Image
-                      src="/copy.svg"
-                      width={24}
-                      height={24}
-                      alt="copy-icon"
-                    />
-                  </div>
-                  <div className="secondary-btn">View JSON</div>
+
+                <div className="flex gap-2 ml-8">
+                  <p className="text-b1">98D7W5D4A6AH9 </p>
+                  <Image
+                    src="/copy.svg"
+                    width={24}
+                    height={24}
+                    alt="copy-icon"
+                  />
                 </div>
+
                 <div className="divider-line"></div>
               </div>
             </div>
