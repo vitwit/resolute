@@ -33,7 +33,8 @@ const ClaimRewards = ({
 }: ClaimRewardsProps) => {
   const dispatch = useAppDispatch();
   const { getWithdrawPermissions } = useGetWithdrawPermissions();
-  const { txAuthzWithdrawRewardsAndCommission } = useAuthzStakingExecHelper();
+  const { txAuthzWithdrawValidatorRewardsAndCommission } =
+    useAuthzStakingExecHelper();
   const { getWithdrawValidatorCommisionAndRewardsMsgs } =
     useGetDistributionMsgs();
   const { txWithdrawCommissionAndRewardsInputs } = useGetTxInputs();
@@ -72,10 +73,11 @@ const ClaimRewards = ({
 
   const claimRewardsAndCommission = () => {
     if (isAuthzMode) {
-      txAuthzWithdrawRewardsAndCommission({
+      txAuthzWithdrawValidatorRewardsAndCommission({
         chainID: chainID,
         grantee: address,
         granter: authzAddress,
+        validator: validatorAddress,
       });
     } else {
       const msgs = getWithdrawValidatorCommisionAndRewardsMsgs({
