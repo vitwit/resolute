@@ -137,7 +137,7 @@ const StakingActionsPopup: React.FC<PopupProps> = ({ validator, chainID, withCla
   const [openDelegate, setOpenDelegate] = useState<boolean>(false);
   const [openUnDelegate, setOpenUnDelegate] = useState<boolean>(false);
   const [openReDelegate, setOpenReDelegate] = useState<boolean>(false);
-
+  console.log({popupPosition})
   // Handle click on the image to toggle the popup
   const handleImageClick = (e: React.MouseEvent<HTMLImageElement>): void => {
     setShowPopup(!showPopup);

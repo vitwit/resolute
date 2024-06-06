@@ -146,9 +146,9 @@ const ReDelegatePopup: React.FC<PopupProps> = ({
                     aria-orientation="vertical"
                     aria-labelledby="options-menu"
                   >
-                    {Object.entries(allVals || {}).map(([key, value], index) => (
+                    {Object.entries(allVals || {}).map(([key, value]) => (
                       <button
-                        key={index}
+                        key={key}
                         className="w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-600 hover:text-white flex items-center rounded-[25px]"
                         role="menuitem"
                         onClick={() => {
