@@ -7,11 +7,22 @@ import { WalletAddress } from '@/components/main-layout/SelectNetwork';
 interface ValidatorNameProps {
   valoperAddress: string;
   chainID: string;
+  hasStatus?: boolean;
 }
+
+interface ValStatusObj {
+  [key: string]: string;
+}
+
+const valStatusObj: ValStatusObj = {
+  BOND_STATUS_BONDED: 'Active',
+  BOND_STATUS_UNBONDED: 'InActive',
+};
 
 const ValidatorName: React.FC<ValidatorNameProps> = ({
   valoperAddress,
   chainID,
+  hasStatus
 }) => {
   const { fetchValidator, getValidatorDetails } = useValidator();
 
@@ -45,6 +56,14 @@ const ValidatorName: React.FC<ValidatorNameProps> = ({
           &nbsp;
           {/* Copy address icon */}
           <WalletAddress address={valoperAddress} displayAddress={false} />
+
+          {
+            hasStatus ?
+              <div className={`border  h-5 items-center ${valStatusObj[get(validatorDetails, 'status', '')]==='Active'?'bg-green-900 border-green': 'bg-red-600 border-red'} text-sm px-3 text-white rounded-[25px] relative`}>
+                {get(validatorDetails, 'jailed') ? 'Jailed' : valStatusObj[get(validatorDetails, 'status') || '']}
+              </div> : null
+          }
+
         </>
       )}
     </div>

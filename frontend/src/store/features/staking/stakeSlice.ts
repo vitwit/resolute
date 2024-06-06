@@ -95,6 +95,9 @@ interface StakingState {
     chains: Record<string, any>;
     delegators: Record<string, any>;
   };
+  allValidators: Record<string, any>;
+  filteredValidators: Record<string, any>;
+  searchQuery: string,
 }
 
 const initialState: StakingState = {
@@ -177,6 +180,9 @@ const initialState: StakingState = {
     cancelUnbondingTxStatus: TxStatus.INIT,
     isTxAll: false,
   },
+  allValidators: {},
+  filteredValidators: {},
+  searchQuery: '',
 };
 
 export const txRestake = createAsyncThunk(
@@ -988,6 +994,23 @@ export const stakeSlice = createSlice({
   name: 'staking',
   initialState,
   reducers: {
+    setValidators(state, action: PayloadAction<Record<string, Validator>>) {
+      state.allValidators = action.payload;
+      state.filteredValidators = action.payload;
+    },
+    setSearchQuery(state, action: PayloadAction<string>) {
+      state.searchQuery = action.payload;
+    },
+    filterValidators(state) {
+      const query = state.searchQuery.toLowerCase();
+      state.filteredValidators = Object.fromEntries(
+        Object.entries(state.allValidators).filter(
+          ([, validator]) =>
+            validator.operator_address.toLowerCase().includes(query) ||
+            validator.description?.moniker.toLowerCase().includes(query)
+        )
+      );
+    },
     resetRestakeTx: (state, action: PayloadAction<{ chainID: string }>) => {
       const chainID = action.payload.chainID;
       if (chainID?.length && state.chains[chainID]) {
@@ -1583,6 +1606,7 @@ export const {
   resetCompleteState,
   resetAuthz,
   resetAuthzDelegations,
+  setValidators, setSearchQuery, filterValidators,
 } = stakeSlice.actions;
 
 export default stakeSlice.reducer;

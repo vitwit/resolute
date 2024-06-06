@@ -42,7 +42,11 @@ const useStaking = () => {
         (state: RootState) => state.staking.chains
     );
 
-    const { txWithdrawAllRewardsInputs } = useGetTxInputs();
+    const delegationsLoading = useAppSelector(
+        (state: RootState) => state.staking.delegationsLoading
+    )
+
+    const { txWithdrawAllRewardsInputs, txWithdrawValidatorRewardsInputs } = useGetTxInputs();
 
     useEffect(() => {
         if (chainIDs.length > 0 && isWalletConnected) {
@@ -134,11 +138,48 @@ const useStaking = () => {
         return totalRewardsAmount.toFixed(4) + ' ' + displayDenomName;
     }
 
+    const chainTotalValRewards = (validator: string, chainID: string) => {
+        let totalRewardsAmount = 0;
+        let displayDenomName = ''
+
+        chainIDs.forEach((cId) => {
+            if (cId === chainID) {
+                const rewards =
+                    rewardsChains?.[chainID]?.delegatorRewards
+
+                rewards.list.forEach(r => {
+                    if (r.validator_address === validator) {
+
+                        const { decimals, displayDenom } = getDenomInfo(chainID);
+
+                        totalRewardsAmount = Number(r?.reward[0]?.amount || 0) / 10 ** decimals
+                        displayDenomName = displayDenom
+                    }
+
+                    return false
+                })
+
+                return false
+            }
+
+        });
+
+        return totalRewardsAmount.toFixed(4) + ' ' + displayDenomName;
+    }
+
     // tx: withdraw claim rewards without authz and fee grant
 
     const txWithdrawCliamRewards = (chainID: string) => {
         const txInputs = txWithdrawAllRewardsInputs(chainID);
         txInputs.isTxAll = true;
+        if (txInputs.msgs.length) dispatch(txWithdrawAllRewards(txInputs));
+    }
+
+
+    const txWithdrawValRewards = (validator: string, chainID: string) => {
+        const delegatorAddress = networks[chainID]?.walletInfo?.bech32Address
+        const txInputs = txWithdrawValidatorRewardsInputs(chainID, validator, delegatorAddress)
+        txInputs.isTxAll = false;
         if (txInputs.msgs.length) dispatch(txWithdrawAllRewards(txInputs));
     }
 
@@ -282,7 +323,10 @@ const useStaking = () => {
         txDelegateTx,
         txAllChainStakeTxStatus,
         txUnDelegateTx,
-        txReDelegateTx
+        txReDelegateTx,
+        txWithdrawValRewards,
+        chainTotalValRewards,
+        delegationsLoading,
     }
 };
 

@@ -16,7 +16,9 @@ const StakingDashbrd = () => {
     totalUnStakedAmount,
     availableAmount,
   } = staking.getStakingAssets();
+  
   const delegations = staking.getAllDelegations();
+
   return (
     <div className="flex flex-col items-start gap-20 w-full px-10 py-20">
       <div className="flex flex-col w-full gap-10">

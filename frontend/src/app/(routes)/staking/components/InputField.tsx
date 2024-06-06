@@ -5,7 +5,7 @@ const InputField = ({ value, onChange }: { value: number, onChange: (event: Reac
   return <input className="amount-input-field"
     onChange={onChange}
     type='number'
-    value={value}
+    value={value === 0? undefined: value}
     placeholder="0" required />;
 };
 
