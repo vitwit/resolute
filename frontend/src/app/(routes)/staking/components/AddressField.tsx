@@ -1,55 +1,51 @@
 import React from 'react';
 import InputField from './InputField';
 
-type QuickSelectAmountFunc = (value: string) => void;
-
 const AddressField = ({
   quickSelectAmount,
+  availableAmount,
+  denom,
+  onChange,
+  value,
+  balanceTypeText,
 }: {
-  quickSelectAmount: QuickSelectAmountFunc;
+  quickSelectAmount: (value: number) => void;
+  availableAmount?: number;
+  denom?: string;
+  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  value: number;
+  balanceTypeText: string;
 }) => {
   return (
     <div className="border-[0.25px] border-[#ffffff30] rounded-3xl py-10 px-6">
       <div className="space-y-2">
         <div className="flex items-center gap-2">
-          <div className="text-[14px] font-light leading-[24px]">{'AKT'}</div>
+          <div className="text-[14px] font-light leading-[24px]">{denom}</div>
           <div className="flex-1">
-            <InputField />
+            <InputField value={value} onChange={onChange} />
           </div>
           <div className="flex items-center gap-6">
-            <QuickSetAmountButton
-              value="half"
-              quickSelectAmount={quickSelectAmount}
-            />
-            <QuickSetAmountButton
-              value="max"
-              quickSelectAmount={quickSelectAmount}
-            />
+            <button
+              onClick={() => quickSelectAmount(0.5)}
+              type="button"
+              className="primary-btn w-20 capitalize"
+            >
+              {'Half'}
+            </button>
+            <button
+              onClick={() => quickSelectAmount(1)}
+              type="button"
+              className="primary-btn w-20 capitalize"
+            >
+              {'Max'}
+            </button>
           </div>
         </div>
         <div className="secondary-text font-light">
-          Available Balance {'25.453'} {'AKT'}
+          {balanceTypeText} Balance {availableAmount?.toFixed(6)} {denom}
         </div>
       </div>
     </div>
   );
 };
 export default AddressField;
-
-const QuickSetAmountButton = ({
-  value,
-  quickSelectAmount,
-}: {
-  value: string;
-  quickSelectAmount: QuickSelectAmountFunc;
-}) => {
-  return (
-    <button
-      onClick={() => quickSelectAmount(value)}
-      type="button"
-      className="primary-btn w-20 capitalize"
-    >
-      {value}
-    </button>
-  );
-};
