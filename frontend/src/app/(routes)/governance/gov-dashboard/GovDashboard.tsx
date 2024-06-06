@@ -9,7 +9,7 @@ import {
 import useGetProposals from '@/custom-hooks/governance/useGetProposals';
 import useInitGovernance from '@/custom-hooks/governance/useInitGovernance';
 import Image from 'next/image';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import ProposalOverivew from './ProposalOverivew';
 import { ProposalsData } from '@/types/gov';
 
@@ -27,7 +27,7 @@ const GovDashboard = ({ chainIDs }: { chainIDs: string[] }) => {
   const [showAll, setShowAll] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const propsData = getProposals({ chainIDs, showAll: showAll });
-  const [proposalsData, setProposalsData] = useState<ProposalsData[]>([]);
+  const proposalsData = getProposals({ chainIDs, showAll: showAll });
   const [filteredProposals, setFilteredProposals] = useState<ProposalsData[]>(
     []
   );
@@ -75,13 +75,8 @@ const GovDashboard = ({ chainIDs }: { chainIDs: string[] }) => {
 
   const handleShowAllProposals = (e: React.ChangeEvent<HTMLInputElement>) => {
     setShowAll(e.target.checked);
-    const data = getProposals({ chainIDs, showAll: e.target.checked });
-    setProposalsData(data);
+    setSelectedProposal(null);
   };
-
-  useEffect(() => {
-    setProposalsData(propsData);
-  }, [propsData]);
 
   return (
     <div className="gov-main">
@@ -260,18 +255,16 @@ const ProposalsList = ({
                       />
                     </button>
                   </div>
-                  {selectedProposal ? null : (
-                    <>
-                      {isActive ? (
-                        <div className="active-btn">Active</div>
-                      ) : (
-                        <div className="deposit-btn">Deposit</div>
-                      )}
-                    </>
-                  )}
+                  <>
+                    {isActive ? (
+                      <div className="active-badge">Active</div>
+                    ) : (
+                      <div className="deposit-badge">Deposit</div>
+                    )}
+                  </>
                 </div>
                 <div className="flex gap-6">
-                  <div className="flex space-x-1">
+                  <div className="flex space-x-1 min-w-[180px]">
                     <Image
                       src={TIMER_ICON}
                       width={16}

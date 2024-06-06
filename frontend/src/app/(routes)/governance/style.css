@@ -27,8 +27,8 @@
   background: lightgray 50% / cover no-repeat;
 }
 
-.active-btn {
-  @apply h-[25px] border flex justify-center items-center gap-2 px-3 py-1 rounded-[100px] border-solid border-[#2BA472] w-20;
+.active-badge {
+  @apply h-[25px] w-[85px] border flex justify-center items-center gap-2 px-3 py-1 rounded-[100px] border-solid border-[#2BA472];
   background: rgba(43, 164, 114, 0.5);
 }
 .proposal-view {
@@ -37,7 +37,7 @@
 }
 
 .vote-optn-btn {
-  @apply flex justify-center items-center gap-2  px-4 py-[10.5px] rounded-[100px] border-[1px];
+  @apply flex justify-center items-center gap-2 h-10 px-4 py-[10.5px] rounded-[100px] border-[1px];
 }
 
 .header {
@@ -90,8 +90,8 @@
   @apply flex justify-center items-center gap-2 px-4 py-2 rounded-[100px] bg-[#FFFFFF05] w-[158px];
 }
 
-.deposit-btn {
-  @apply h-[25px] flex justify-center items-center gap-2 border px-3 py-1 rounded-[100px] border-solid border-[#DA561E];
+.deposit-badge {
+  @apply h-[25px] w-[85px] flex justify-center items-center gap-2 border px-3 py-1 rounded-[100px] border-solid border-[#DA561E];
   background: rgba(218, 86, 30, 0.5);
 }
 

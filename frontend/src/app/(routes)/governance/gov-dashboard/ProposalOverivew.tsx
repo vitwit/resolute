@@ -2,6 +2,7 @@ import { REDIRECT_ICON } from '@/constants/image-names';
 import useGetProposals from '@/custom-hooks/governance/useGetProposals';
 import Image from 'next/image';
 import React from 'react';
+import Vote from './Vote';
 
 const PROPOSAL_OVERVIEW_MAX_LENGTH = 300;
 
@@ -53,9 +54,9 @@ const ProposalOverview = ({
                   />
                 </div>
                 {isActive ? (
-                  <div className="active-btn">Active</div>
+                  <div className="active-badge">Active</div>
                 ) : (
-                  <div className="deposit-btn">Deposit</div>
+                  <div className="deposit-badge">Deposit</div>
                 )}
               </div>
               <div className="flex gap-6">
@@ -65,7 +66,7 @@ const ProposalOverview = ({
                   </p>
                   <p className="text-b1">Ends in {endTime}</p>
                 </div>
-                <div className="flex gap-2 items-centers">
+                <div className="flex gap-2 items-center">
                   <p className="text-small-light ">on</p>
                   <Image
                     src={chainLogo}
@@ -88,24 +89,7 @@ const ProposalOverview = ({
           </div>
         </div>
 
-        <div className="flex flex-col gap-10 w-full ">
-          <div className="flex justify-between gap-4">
-            <button className="vote-optn-btn w-[133px] text-white text-base border-[#2BA472]">
-              Yes
-            </button>
-            <button className="vote-optn-btn w-[133px] border-[#D92101] text-white text-base">
-              No
-            </button>
-            <button className="vote-optn-btn w-[133px] border-[#FFC13C] text-white text-base">
-              Abstain
-            </button>
-            <button className="vote-optn-btn w-[133px] border-[#DA561E] text-white text-base ">
-              Veto
-            </button>
-          </div>
-
-          <button className="primary-btn w-full">Vote</button>
-        </div>
+        <Vote proposalId={proposalId} chainID={chainID} />
       </div>
     </div>
   );

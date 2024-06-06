@@ -362,6 +362,8 @@ export const txVote = createAsyncThunk(
     data: TxVoteInputs | TxAuthzExecInputs,
     { rejectWithValue, fulfillWithValue, dispatch }
   ) => {
+    console.log("hererererer....")
+    console.log(data)
     try {
       let msgs: Msg[];
       if (data.isAuthzMode) msgs = data.msgs;
@@ -755,6 +757,8 @@ export const govSlice = createSlice({
     builder
       .addCase(txVote.pending, (state, action) => {
         const chainID = action.meta?.arg?.basicChainInfo.chainID;
+        if (!state.chains[chainID])
+          state.chains[chainID] = cloneDeep(initialState.defaultState);
         state.chains[chainID].tx.status = TxStatus.PENDING;
         state.chains[chainID].tx.txHash = '';
       })

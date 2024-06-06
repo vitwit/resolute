@@ -63,7 +63,7 @@ const useGetProposals = () => {
             get(proposal, 'title', get(proposal, 'content.@type', ''))
           );
           const endTime = getTimeDifferenceToFutureDate(
-            get(proposal, 'voting_end_time')
+            get(proposal, 'deposit_end_time')
           );
           const proposalId = get(
             proposal,
