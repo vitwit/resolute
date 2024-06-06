@@ -102,3 +102,7 @@
 .search-proposal-field {
   @apply py-4 px-6 bg-[#FFFFFF05] rounded-full flex w-full max-w-[600px];
 }
+
+.amount-input-field {
+  @apply bg-transparent w-full border-none focus:outline-none text-[40px] font-bold placeholder:text-[#FFFFFF33];
+}

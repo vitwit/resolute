@@ -257,6 +257,8 @@ export const getDepositParams = createAsyncThunk(
 export const getProposalsInVoting = createAsyncThunk(
   'gov/active-proposals',
   async (data: GetProposalsInVotingInputs, { rejectWithValue, dispatch }) => {
+    console.log(data)
+    console.log("-----------")
     try {
       const response = await govService.proposals(
         data.baseURLs,

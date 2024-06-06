@@ -12,6 +12,7 @@ import Image from 'next/image';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import ProposalOverivew from './ProposalOverivew';
 import { ProposalsData } from '@/types/gov';
+import DialogDeposit from '../popups/DialogDeposit';
 
 interface SelectedProposal {
   chainID: string;
@@ -20,6 +21,15 @@ interface SelectedProposal {
 }
 
 type HandleInputChangeEvent = (e: React.ChangeEvent<HTMLInputElement>) => void;
+type HandleSelectProposalEvent = ({
+  chainID,
+  isActive,
+  proposalId,
+}: {
+  proposalId: string;
+  chainID: string;
+  isActive: boolean;
+}) => void;
 
 const GovDashboard = ({ chainIDs }: { chainIDs: string[] }) => {
   useInitGovernance({ chainIDs });
@@ -197,15 +207,7 @@ const ProposalsList = ({
 }: {
   proposals: ProposalsData[];
   selectedProposal: SelectedProposal | null;
-  handleViewProposal: ({
-    chainID,
-    isActive,
-    proposalId,
-  }: {
-    proposalId: string;
-    chainID: string;
-    isActive: boolean;
-  }) => void;
+  handleViewProposal: HandleSelectProposalEvent;
 }) => {
   return (
     <>
@@ -214,94 +216,147 @@ const ProposalsList = ({
           proposalsData;
         const { endTime, proposalId, proposalTitle } = proposalInfo;
         return (
-          <div key={index} className="flex flex-col gap-4 w-full">
-            <div
-              className={`flex justify-between w-full px-6 py-2 ${selectedProposal && selectedProposal.proposalId === proposalId && selectedProposal.chainID === chainID ? 'bg-[#ffffff14] rounded-2xl' : ''} `}
-            >
-              <div className="flex flex-col gap-4">
-                <div className="flex items-center gap-6">
-                  <div className="proposal-id">
-                    <span>{proposalId}</span>
-                    <div className="bottom-network-logo">
-                      <Image
-                        src={chainLogo}
-                        width={20}
-                        height={20}
-                        alt="Network-Logo"
-                      />
-                    </div>
-                  </div>
-                  <div
-                    className="flex space-x-1 items-center cursor-pointer"
-                    onClick={() => {
-                      handleViewProposal({
-                        proposalId,
-                        chainID,
-                        isActive,
-                      });
-                    }}
-                  >
-                    <p
-                      className={`text-h2 truncate ${selectedProposal ? 'max-w-[254px]' : 'max-w-[500px]'}`}
-                    >
-                      {proposalTitle}
-                    </p>
-                    <button type="button" className="flex justify-center">
-                      <Image
-                        src={REDIRECT_ICON}
-                        width={24}
-                        height={24}
-                        alt="View-full-icon"
-                      />
-                    </button>
-                  </div>
-                  <>
-                    {isActive ? (
-                      <div className="active-badge">Active</div>
-                    ) : (
-                      <div className="deposit-badge">Deposit</div>
-                    )}
-                  </>
-                </div>
-                <div className="flex gap-6">
-                  <div className="flex space-x-1 min-w-[180px]">
-                    <Image
-                      src={TIMER_ICON}
-                      width={16}
-                      height={16}
-                      alt="Address-icon"
-                    />
-                    <p className="secondary-text">
-                      {isActive ? 'Voting ends in' : 'Deposit ends in'}{' '}
-                      {endTime}
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Image
-                      className="w-4 h-4"
-                      src={chainLogo}
-                      width={16}
-                      height={16}
-                      alt=""
-                    />
-                    <p className="secondary-text capitalize">
-                      {chainName} Network
-                    </p>
-                  </div>
-                </div>
-              </div>
-              {selectedProposal ? null : (
-                <div className="flex items-end justify-end">
-                  <button className="primary-btn w-20">
-                    {isActive ? 'Vote' : 'Deposit'}
-                  </button>
-                </div>
-              )}
-            </div>
-            <div className="divider-line"></div>
-          </div>
+          <ProposalItem
+            key={chainID + proposalId}
+            chainID={chainID}
+            chainLogo={chainLogo}
+            chainName={chainName}
+            endTime={endTime}
+            handleViewProposal={handleViewProposal}
+            isActive={isActive}
+            proposalId={proposalId}
+            proposalTitle={proposalTitle}
+            selectedProposal={selectedProposal}
+          />
         );
       })}
     </>
+  );
+};
+
+const ProposalItem = ({
+  chainLogo,
+  chainName,
+  endTime,
+  handleViewProposal,
+  isActive,
+  proposalId,
+  proposalTitle,
+  selectedProposal,
+  chainID,
+}: {
+  selectedProposal: SelectedProposal | null;
+  proposalId: string;
+  chainLogo: string;
+  handleViewProposal: HandleSelectProposalEvent;
+  proposalTitle: string;
+  isActive: boolean;
+  chainName: string;
+  endTime: string;
+  chainID: string;
+}) => {
+  const [depositDialogOpen, setDepositDialogOpen] = useState(false);
+  return (
+    <div className="flex flex-col gap-4 w-full">
+      <div
+        className={`flex justify-between w-full px-6 py-2 ${selectedProposal && selectedProposal.proposalId === proposalId && selectedProposal.chainID === chainID ? 'bg-[#ffffff14] rounded-2xl' : ''} `}
+      >
+        <div className="flex flex-col gap-4">
+          <div className="flex items-center gap-6">
+            <div className="proposal-id">
+              <span>{proposalId}</span>
+              <div className="bottom-network-logo">
+                <Image
+                  src={chainLogo}
+                  width={20}
+                  height={20}
+                  alt="Network-Logo"
+                />
+              </div>
+            </div>
+            <div
+              className="flex space-x-1 items-center cursor-pointer"
+              onClick={() => {
+                handleViewProposal({
+                  proposalId,
+                  chainID,
+                  isActive,
+                });
+              }}
+            >
+              <p
+                className={`text-h2 truncate ${selectedProposal ? 'max-w-[254px]' : 'max-w-[500px]'}`}
+              >
+                {proposalTitle}
+              </p>
+              <button type="button" className="flex justify-center">
+                <Image
+                  src={REDIRECT_ICON}
+                  width={24}
+                  height={24}
+                  alt="View-full-icon"
+                />
+              </button>
+            </div>
+            <>
+              {isActive ? (
+                <div className="active-badge">Active</div>
+              ) : (
+                <div className="deposit-badge">Deposit</div>
+              )}
+            </>
+          </div>
+          <div className="flex gap-6">
+            <div className="flex space-x-1 min-w-[180px]">
+              <Image
+                src={TIMER_ICON}
+                width={16}
+                height={16}
+                alt="Address-icon"
+              />
+              <p className="secondary-text">
+                {isActive ? 'Voting ends in' : 'Deposit ends in'} {endTime}
+              </p>
+            </div>
+            <div className="flex items-center gap-1">
+              <Image
+                className="w-4 h-4"
+                src={chainLogo}
+                width={16}
+                height={16}
+                alt=""
+              />
+              <p className="secondary-text capitalize">{chainName} Network</p>
+            </div>
+          </div>
+        </div>
+        {selectedProposal ? null : (
+          <div className="flex items-end justify-end">
+            <button
+              onClick={() => {
+                if (isActive) {
+                } else {
+                  setDepositDialogOpen(true);
+                }
+              }}
+              className="primary-btn w-20"
+            >
+              {isActive ? 'Vote' : 'Deposit'}
+            </button>
+          </div>
+        )}
+      </div>
+      <div className="divider-line"></div>
+      {depositDialogOpen ? (
+        <DialogDeposit
+          chainID={chainID}
+          onClose={() => setDepositDialogOpen(false)}
+          open={depositDialogOpen}
+          proposalTitle={proposalTitle}
+          endTime={endTime}
+          proposalId={proposalId}
+        />
+      ) : null}
+    </div>
   );
 };

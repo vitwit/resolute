@@ -1,8 +1,12 @@
 import { REDIRECT_ICON } from '@/constants/image-names';
 import useGetProposals from '@/custom-hooks/governance/useGetProposals';
 import Image from 'next/image';
-import React from 'react';
+import React, { useState } from 'react';
 import Vote from './Vote';
+import CustomButton from '@/components/common/CustomButton';
+import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
+import { setConnectWalletOpen } from '@/store/features/wallet/walletSlice';
+import DialogDeposit from '../popups/DialogDeposit';
 
 const PROPOSAL_OVERVIEW_MAX_LENGTH = 300;
 
@@ -17,6 +21,7 @@ const ProposalOverview = ({
   isActive: boolean;
   onClose: () => void;
 }) => {
+  const dispatch = useAppDispatch();
   const { getProposalOverview } = useGetProposals();
   const { chainLogo, chainName, proposalInfo } = getProposalOverview({
     chainID,
@@ -24,12 +29,19 @@ const ProposalOverview = ({
     isActive,
   });
   const { endTime, proposalDescription, proposalTitle } = proposalInfo;
+  const [depositDialogOpen, setDepositDialogOpen] = useState(false);
+
+  const isWalletConnected = useAppSelector((state) => state.wallet.connected);
   const truncatedDescription = proposalDescription.slice(
     0,
     PROPOSAL_OVERVIEW_MAX_LENGTH
   );
   const isDescriptionTruncated =
     truncatedDescription.length < proposalDescription.length;
+
+  const connectWalletOpen = () => {
+    dispatch(setConnectWalletOpen(true));
+  };
   return (
     <div className="proposal-view">
       <div className="flex flex-col justify-between h-full">
@@ -60,7 +72,7 @@ const ProposalOverview = ({
                 )}
               </div>
               <div className="flex gap-6">
-                <div className="flex gap-1 items-center">
+                <div className="flex gap-2 items-center">
                   <p className="text-small-light ">
                     {isActive ? 'Voting' : 'Deposit'}
                   </p>
@@ -68,13 +80,15 @@ const ProposalOverview = ({
                 </div>
                 <div className="flex gap-2 items-center">
                   <p className="text-small-light ">on</p>
-                  <Image
-                    src={chainLogo}
-                    width={20}
-                    height={20}
-                    alt="Network-logo"
-                  />
-                  <p className="text-b1 capitalize">{chainName}</p>
+                  <div className="flex gap-[2px] items-center">
+                    <Image
+                      src={chainLogo}
+                      width={20}
+                      height={20}
+                      alt="Network-logo"
+                    />
+                    <p className="text-b1 capitalize">{chainName}</p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -89,8 +103,33 @@ const ProposalOverview = ({
           </div>
         </div>
 
-        <Vote proposalId={proposalId} chainID={chainID} />
+        {isActive ? (
+          <Vote proposalId={proposalId} chainID={chainID} />
+        ) : (
+          <CustomButton
+            btnText={
+              isWalletConnected ? 'Deposit' : 'Connect Wallet to Deposit'
+            }
+            btnOnClick={() => {
+              if (isWalletConnected) {
+                setDepositDialogOpen(true);
+              } else {
+                connectWalletOpen();
+              }
+            }}
+          />
+        )}
       </div>
+      {isActive ? null : (
+        <DialogDeposit
+          chainID={chainID}
+          endTime={endTime}
+          onClose={() => setDepositDialogOpen(false)}
+          open={depositDialogOpen}
+          proposalId={proposalId}
+          proposalTitle={proposalTitle}
+        />
+      )}
     </div>
   );
 };

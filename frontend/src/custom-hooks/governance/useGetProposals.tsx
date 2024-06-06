@@ -4,8 +4,6 @@ import { get } from 'lodash';
 import { getTimeDifferenceToFutureDate } from '@/utils/dataTime';
 import { ProposalsData } from '@/types/gov';
 
-
-
 interface ProposalOverview extends ProposalsData {
   proposalInfo: ProposalsData['proposalInfo'] & {
     proposalDescription: string;
@@ -113,7 +111,7 @@ const useGetProposals = () => {
       get(proposal, 'title', get(proposal, 'content.@type', '-'))
     );
     const endTime = getTimeDifferenceToFutureDate(
-      get(proposal, 'voting_end_time', '-')
+      get(proposal, isActive ? 'voting_end_time' : 'deposit_end_time', '-')
     );
     const proposalDescription = get(
       proposal,

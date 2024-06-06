@@ -55,3 +55,5 @@ interface CommonState {
   };
   nameToChainIDs: Record<string, string>;
 }
+
+type HandleChangeEvent = (e: React.ChangeEvent<HTMLInputElement>) => void;
