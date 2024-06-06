@@ -91,7 +91,7 @@ const DialogSelectNetwork = () => {
               </div>
             </div>
             <div className="flex gap-6 items-center">
-              <div className="search-network-field ">
+              <div className="search-network-field">
                 <SearchNetworkInput
                   handleSearchQueryChange={(e) =>
                     setSearchQuery(e.target.value)

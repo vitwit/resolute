@@ -1,5 +1,5 @@
 .gov-main {
-  @apply py-20 px-10 relative space-y-20 flex flex-col;
+  @apply pt-20 px-10 relative space-y-20 flex flex-col;
   height: calc(100vh - 60px) !important;
 }
 
@@ -32,7 +32,7 @@
   background: rgba(43, 164, 114, 0.5);
 }
 .proposal-view {
-  @apply shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] flex flex-col w-[50%] h-[60vh] gap-4 p-6 rounded-2xl;
+  @apply shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] flex flex-col w-[50%] gap-4 p-6 rounded-2xl;
   background: rgba(255, 255, 255, 0.02);
 }
 
@@ -93,4 +93,12 @@
 .deposit-btn {
   @apply h-[25px] flex justify-center items-center gap-2 border px-3 py-1 rounded-[100px] border-solid border-[#DA561E];
   background: rgba(218, 86, 30, 0.5);
+}
+
+.search-proposal-input {
+  @apply w-full border-none cursor-text focus:outline-none bg-transparent placeholder:text-[16px] placeholder:text-[#FFFFFF80] placeholder:font-normal text-[#ffffff];
+}
+
+.search-proposal-field {
+  @apply py-4 px-6 bg-[#FFFFFF05] rounded-full flex w-full max-w-[600px];
 }

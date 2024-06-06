@@ -197,3 +197,15 @@ interface TxDepositInputs {
 interface VoteOptionNumber {
   [key: string]: number;
 }
+
+interface ProposalsData {
+  chainID: string;
+  chainName: string;
+  chainLogo: string;
+  isActive: boolean;
+  proposalInfo: {
+    proposalTitle: string;
+    endTime: string; // voting end time or deposit end time
+    proposalId: string;
+  };
+}
