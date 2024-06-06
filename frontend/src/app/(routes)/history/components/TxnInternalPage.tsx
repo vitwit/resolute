@@ -3,10 +3,13 @@ import Image from 'next/image';
 import { useState } from 'react';
 import Messages from './Messages';
 import Rightbar from './Rightbar';
+import { copyToClipboard } from '@/utils/copyToClipboard';
+import { useAppDispatch } from '@/custom-hooks/StateHooks';
+import { setError } from '@/store/features/common/commonSlice';
 
 const TxnInternalPage = () => {
-  const [transactionStatus, setTransactionStatus] = useState('success');
-
+  const [transactionStatus] = useState('success');
+  const dispatch = useAppDispatch();
   return (
     <div className="flex pt-20 pb-10 px-10 w-full h-[calc(100vh_-_64px)]">
       <div className="flex gap-20 w-full">
@@ -41,11 +44,23 @@ const TxnInternalPage = () => {
 
                 <div className="flex gap-2 ml-8">
                   <p className="text-b1">98D7W5D4A6AH9 </p>
+
                   <Image
+                    className="cursor-pointer"
                     src="/copy.svg"
-                    width={24}
                     height={24}
-                    alt="copy-icon"
+                    width={24}
+                    alt="Copy"
+                    onClick={(e) => {
+                      copyToClipboard('8D7W5D4A6AH9');
+                      dispatch(
+                        setError({
+                          type: 'success',
+                          message: 'Copied',
+                        })
+                      );
+                      e.stopPropagation();
+                    }}
                   />
                 </div>
 

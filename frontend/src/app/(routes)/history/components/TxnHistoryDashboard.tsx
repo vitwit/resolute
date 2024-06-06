@@ -1,4 +1,5 @@
 
+
 import SearchBar from './SearchBar';
 import TxnView from './TxnView';
 
@@ -15,7 +16,7 @@ const TxnHistoryDashboard = () => {
         </div>
         <div className="flex flex-col w-full px-20 py-0 gap-10">
           <SearchBar />
-          <TxnView />
+          <TxnView timeStamp={''}  />
         </div>
       </div>
     </div>
