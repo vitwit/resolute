@@ -14,6 +14,8 @@ import ProposalOverivew from './ProposalOverivew';
 import { ProposalsData } from '@/types/gov';
 import DialogDeposit from '../popups/DialogDeposit';
 import DialogVote from '../popups/DialogVote';
+import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
+import { setError } from '@/store/features/common/commonSlice';
 
 interface SelectedProposal {
   chainID: string;
@@ -22,6 +24,7 @@ interface SelectedProposal {
 }
 
 type HandleInputChangeEvent = (e: React.ChangeEvent<HTMLInputElement>) => void;
+
 type HandleSelectProposalEvent = ({
   chainID,
   isActive,
@@ -256,8 +259,10 @@ const ProposalItem = ({
   endTime: string;
   chainID: string;
 }) => {
+  const dispatch = useAppDispatch();
   const [depositDialogOpen, setDepositDialogOpen] = useState(false);
   const [voteDialogOpen, setVoteDialogOpen] = useState(false);
+  const isWalletConnected = useAppSelector((state) => state.wallet.connected);
   return (
     <div className="flex flex-col gap-4 w-full">
       <div
@@ -336,6 +341,15 @@ const ProposalItem = ({
           <div className="flex items-end justify-end">
             <button
               onClick={() => {
+                if (!isWalletConnected) {
+                  dispatch(
+                    setError({
+                      type: 'error',
+                      message: 'Connect Wallet to proceed with transaction',
+                    })
+                  );
+                  return;
+                }
                 if (isActive) {
                   setVoteDialogOpen(true);
                 } else {
