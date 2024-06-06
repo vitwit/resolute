@@ -9,10 +9,11 @@ import {
 import useGetProposals from '@/custom-hooks/governance/useGetProposals';
 import useInitGovernance from '@/custom-hooks/governance/useInitGovernance';
 import Image from 'next/image';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import ProposalOverivew from './ProposalOverivew';
 import { ProposalsData } from '@/types/gov';
 import DialogDeposit from '../popups/DialogDeposit';
+import DialogVote from '../popups/DialogVote';
 
 interface SelectedProposal {
   chainID: string;
@@ -41,7 +42,7 @@ const GovDashboard = ({ chainIDs }: { chainIDs: string[] }) => {
   const [filteredProposals, setFilteredProposals] = useState<ProposalsData[]>(
     []
   );
-  let debounceTimeout = useRef<number | null>(null);
+  const debounceTimeout = useRef<number | null>(null);
 
   const [selectedProposal, setSelectedProposal] =
     useState<SelectedProposal | null>(null);
@@ -211,7 +212,7 @@ const ProposalsList = ({
 }) => {
   return (
     <>
-      {proposals.map((proposalsData, index) => {
+      {proposals.map((proposalsData) => {
         const { chainID, chainLogo, chainName, isActive, proposalInfo } =
           proposalsData;
         const { endTime, proposalId, proposalTitle } = proposalInfo;
@@ -256,6 +257,7 @@ const ProposalItem = ({
   chainID: string;
 }) => {
   const [depositDialogOpen, setDepositDialogOpen] = useState(false);
+  const [voteDialogOpen, setVoteDialogOpen] = useState(false);
   return (
     <div className="flex flex-col gap-4 w-full">
       <div
@@ -335,6 +337,7 @@ const ProposalItem = ({
             <button
               onClick={() => {
                 if (isActive) {
+                  setVoteDialogOpen(true);
                 } else {
                   setDepositDialogOpen(true);
                 }
@@ -352,6 +355,16 @@ const ProposalItem = ({
           chainID={chainID}
           onClose={() => setDepositDialogOpen(false)}
           open={depositDialogOpen}
+          proposalTitle={proposalTitle}
+          endTime={endTime}
+          proposalId={proposalId}
+        />
+      ) : null}
+      {voteDialogOpen ? (
+        <DialogVote
+          chainID={chainID}
+          onClose={() => setVoteDialogOpen(false)}
+          open={voteDialogOpen}
           proposalTitle={proposalTitle}
           endTime={endTime}
           proposalId={proposalId}

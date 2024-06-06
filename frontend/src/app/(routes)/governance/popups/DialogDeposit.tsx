@@ -182,6 +182,7 @@ const DialogDeposit = ({
             quickSelectAmount={quickSelectAmount}
             depositAmount={depositAmount}
             handleInputChange={handleDepositAmountChange}
+            balanceLoading={balanceLoading === TxStatus.PENDING}
           />
         </div>
         <div>

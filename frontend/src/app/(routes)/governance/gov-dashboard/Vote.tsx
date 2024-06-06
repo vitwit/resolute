@@ -99,6 +99,7 @@ const Vote = ({
       <div className="flex justify-between gap-4">
         {GOV_VOTE_OPTIONS?.map((option) => (
           <button
+          key={option.label}
             className={`vote-optn-btn flex-1 text-white text-base`}
             onClick={() => handleOptionClick(option.label)}
             style={{

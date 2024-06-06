@@ -8,12 +8,14 @@ const AmountInputWrapper = ({
   displayDenom,
   depositAmount,
   handleInputChange,
+  balanceLoading,
 }: {
   quickSelectAmount: QuickSelectAmountFunc;
   balance: number;
   displayDenom: string;
   depositAmount: string;
   handleInputChange: HandleChangeEvent;
+  balanceLoading: boolean;
 }) => {
   return (
     <div className="border-[0.25px] border-[#ffffff10] rounded-3xl py-4 px-6">
@@ -26,6 +28,7 @@ const AmountInputWrapper = ({
               className="amount-input-field"
               placeholder="0"
               required
+              autoFocus={true}
             />
           </div>
           <div className="flex items-center gap-6">
@@ -40,13 +43,21 @@ const AmountInputWrapper = ({
           </div>
         </div>
         <div className="secondary-text font-light !text-[12px] flex gap-1">
-          <div>Available Balance</div>
-          {balance ? (
-            <div>
-              {balance} {displayDenom}
+          <div>Available Balance:</div>
+          {balanceLoading ? (
+            <div className='italic'>
+              Fetching balance<span className="dots-flashing"></span>{' '}
             </div>
           ) : (
-            '-'
+            <>
+              {balance ? (
+                <div>
+                  {balance} {displayDenom}
+                </div>
+              ) : (
+                '-'
+              )}
+            </>
           )}
         </div>
       </div>
