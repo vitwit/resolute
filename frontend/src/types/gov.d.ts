@@ -209,3 +209,21 @@ interface ProposalsData {
     proposalId: string;
   };
 }
+
+interface SelectedProposal {
+  chainID: string;
+  proposalId: string;
+  isActive: boolean;
+}
+
+type HandleInputChangeEvent = (e: React.ChangeEvent<HTMLInputElement>) => void;
+
+type HandleSelectProposalEvent = ({
+  chainID,
+  isActive,
+  proposalId,
+}: {
+  proposalId: string;
+  chainID: string;
+  isActive: boolean;
+}) => void;
