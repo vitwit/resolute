@@ -99,6 +99,8 @@ const MultisigAccount = ({
           multisigAddress={multisigAccount.account.address}
           currency={currency}
           threshold={multisigAccount.account.threshold}
+          chainName={chainName}
+          walletAddress={walletAddress}
         />
       </div>
       <DialogVerifyAccount walletAddress={walletAddress} />

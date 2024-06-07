@@ -18,3 +18,4 @@ export const MINUS_ICON_DISABLED = '/icons/minus-icon-disabled.svg';
 export const PLUS_ICON_DISABLED = '/icons/plus-icon-disabled.svg';
 export const TOGGLE_OFF = '/icons/toggle-off.svg';
 export const TOGGLE_ON = '/icons/toggle-on.svg';
+export const I_ICON = '/icons/i-icon.svg';
