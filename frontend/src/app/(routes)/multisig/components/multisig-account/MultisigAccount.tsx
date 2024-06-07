@@ -16,6 +16,7 @@ import { formatStakedAmount, shortenAddress } from '@/utils/util';
 import { parseBalance } from '@/utils/denom';
 import Transactions from './Transactions';
 import DialogVerifyAccount from '../DialogVerifyAccount';
+import Loader from '../common/Loader';
 
 const MultisigAccount = ({
   chainName,
@@ -101,6 +102,7 @@ const MultisigAccount = ({
         />
       </div>
       <DialogVerifyAccount walletAddress={walletAddress} />
+      <Loader />
     </div>
   );
 };
