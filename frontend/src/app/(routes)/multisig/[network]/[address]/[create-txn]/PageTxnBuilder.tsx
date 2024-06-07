@@ -39,7 +39,10 @@ const PageTxnBuilder = ({
       {validChain ? (
         <>
           {isWalletConnected ? (
-            <PageTxnBuilderEntry chainName={chainName} />
+            <PageTxnBuilderEntry
+              chainName={chainName}
+              multisigAddress={multisigAddress}
+            />
           ) : (
             <div className="flex-1 flex items-center justify-center">
               <EmptyScreen
@@ -65,7 +68,13 @@ const PageTxnBuilder = ({
 
 export default PageTxnBuilder;
 
-const PageTxnBuilderEntry = ({ chainName }: { chainName: string }) => {
+const PageTxnBuilderEntry = ({
+  chainName,
+  multisigAddress,
+}: {
+  chainName: string;
+  multisigAddress: string;
+}) => {
   const dispatch = useAppDispatch();
   const nameToChainIDs = useAppSelector((state) => state.wallet.nameToChainIDs);
   const chainID = nameToChainIDs?.[chainName];
@@ -86,7 +95,11 @@ const PageTxnBuilderEntry = ({ chainName }: { chainName: string }) => {
   return (
     <>
       {isAccountVerified() ? (
-        <TxnBuilder chainID={chainID} />
+        <TxnBuilder
+          chainID={chainID}
+          multisigAddress={multisigAddress}
+          chainName={chainName}
+        />
       ) : (
         <EmptyScreen
           title="Verify Ownership"

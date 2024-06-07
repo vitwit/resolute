@@ -103,3 +103,25 @@ export const autoCompleteTextFieldStyles = {
   },
   borderRadius: '8px',
 };
+
+export const customMUITextFieldStyles = {
+  '& .MuiInputBase-input': {
+    color: 'white',
+    fontSize: '14px',
+    fontWeight: 200,
+    fontFamily: 'Libre Franklin',
+    lineHeight: '19px',
+  },
+  '& .MuiOutlinedInput-notchedOutline': {
+    border: 'none',
+  },
+  '& .MuiOutlinedInput-root': {
+    border: '0.25px solid #ffffff10',
+    borderRadius: '100px',
+    height: '40px',
+  },
+  '& .Mui-focused': {
+    border: '0.25px solid #ffffff4a',
+    borderRadius: '100px',
+  },
+};

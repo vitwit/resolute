@@ -461,6 +461,11 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
                     btnType="submit"
                     btnStyles="w-[150px]"
                   />
+                  {formError ? (
+                    <div className="text-center w-full text-red-400 text-[14px]">
+                      {formError}
+                    </div>
+                  ) : null}
                 </div>
               </form>
               {!importMultisig ? (

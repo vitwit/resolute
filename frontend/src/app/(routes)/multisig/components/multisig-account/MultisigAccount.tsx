@@ -4,6 +4,7 @@ import {
   getMultisigAccounts,
   getMultisigBalance,
   multisigByAddress,
+  resetCreateTxnState,
 } from '@/store/features/multisig/multisigSlice';
 import {
   getAllValidators,
@@ -76,6 +77,10 @@ const MultisigAccount = ({
       dispatch(getMultisigAccounts(walletAddress));
     }
   }, [chainID]);
+
+  useEffect(() => {
+    dispatch(resetCreateTxnState());
+  }, []);
 
   return (
     <div className="space-y-10">
