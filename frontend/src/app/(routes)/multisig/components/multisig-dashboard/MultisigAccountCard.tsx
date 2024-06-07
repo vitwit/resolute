@@ -59,6 +59,7 @@ const MultisigDetail = ({
   isAddress = false,
 }: {
   title: string;
+  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
   value: any;
   isAddress?: boolean;
 }) => {

@@ -152,6 +152,7 @@ export async function broadcastTransaction(data: {
     } = parseTxResult(txn?.data?.tx_response);
 
     return { result, code, transactionHash, fee, memo, rawLog, queryParams };
+    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
   } catch (error: any) {
     let errMsg =
       error?.message || 'Error while signing the transaction, Try again.';

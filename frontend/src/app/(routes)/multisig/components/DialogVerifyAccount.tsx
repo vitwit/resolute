@@ -1,11 +1,8 @@
-import { dialogBoxPaperPropStyles } from '@/utils/commonStyles';
 import { Dialog, DialogContent } from '@mui/material';
 import React from 'react';
-import VerifyAccount from './VerifyAccount';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { setVerifyDialogOpen } from '@/store/features/multisig/multisigSlice';
 import Image from 'next/image';
-import { CLOSE_ICON_PATH } from '@/utils/constants';
 import CustomButton from '@/components/common/CustomButton';
 import { VERIFY_ILLUSTRATION } from '@/constants/image-names';
 import useVerifyAccount from '@/custom-hooks/useVerifyAccount';

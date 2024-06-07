@@ -395,8 +395,9 @@ export const broadcastTransaction = createAsyncThunk(
         data: { code, transactionHash, fee, memo, rawLog },
         chainID: data.chainID,
       };
+      /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     } catch (error: any) {
-      let errMsg = error?.message;
+      const errMsg = error?.message;
       dispatch(
         setError({
           message: errMsg,
@@ -478,6 +479,7 @@ export const signTransaction = createAsyncThunk(
         }
       );
       return response.data;
+      /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     } catch (error: any) {
       let errMsg =
         error?.message || 'Error while signing the transaction, Try again.';

@@ -1,6 +1,5 @@
 import CustomButton from '@/components/common/CustomButton';
 import { DELETE_ILLUSTRATION } from '@/constants/image-names';
-import { useAppSelector } from '@/custom-hooks/StateHooks';
 import { Dialog, DialogContent } from '@mui/material';
 import Image from 'next/image';
 import React from 'react';

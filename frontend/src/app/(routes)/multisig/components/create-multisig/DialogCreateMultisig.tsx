@@ -1,10 +1,4 @@
-import {
-  CircularProgress,
-  Dialog,
-  DialogContent,
-  TextField,
-} from '@mui/material';
-import Image from 'next/image';
+import { TextField } from '@mui/material';
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import { setError } from '@/store/features/common/commonSlice';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
@@ -19,10 +13,7 @@ import {
   resetMultisigAccountData,
 } from '@/store/features/multisig/multisigSlice';
 import { RootState } from '@/store/store';
-import {
-  createMultisigTextFieldStyles,
-  createMultisigThresholdStyles,
-} from '../../styles';
+import { createMultisigTextFieldStyles } from '../../styles';
 import {
   ADDRESS_NOT_FOUND,
   DUPLICATE_PUBKEYS_ERROR,
@@ -33,14 +24,9 @@ import {
   MIN_PUBKEYS_ERROR,
   MIN_THRESHOLD_ERROR,
 } from '@/utils/errors';
-import {
-  customMUITextFieldStyles,
-  dialogBoxPaperPropStyles,
-} from '@/utils/commonStyles';
 import { TxStatus } from '@/types/enums';
 import { fromBech32 } from '@cosmjs/encoding';
 import { DialogCreateMultisigProps, PubKeyFields } from '@/types/multisig';
-import MultisigMemberTextField from '../MultisigMemberTextField';
 import {
   COSMOS_CHAIN_ID,
   DECREASE,
@@ -51,13 +37,6 @@ import useGetPubkey from '@/custom-hooks/useGetPubkey';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import useGetAccountInfo from '@/custom-hooks/useGetAccountInfo';
 import CustomDialog from '@/components/common/CustomDialog';
-import {
-  ADD_ICON,
-  MINUS_ICON,
-  MINUS_ICON_DISABLED,
-  PLUS_ICON,
-  PLUS_ICON_DISABLED,
-} from '@/constants/image-names';
 import CustomButton from '@/components/common/CustomButton';
 import ImportMultisig from './ImportMultisig';
 import AddMembers from './AddMember';
@@ -196,14 +175,6 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
     } else {
       setPubKeyFields([...pubKeyFields, pubKeyObj]);
     }
-  };
-
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (parseInt(e.target.value) > pubKeyFields?.length) {
-      alert(MAX_THRESHOLD_ERROR);
-      return;
-    }
-    setThreshold(parseInt(e.target.value));
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {

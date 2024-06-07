@@ -11,7 +11,6 @@ import { getTimeDifferenceToFutureDate } from '@/utils/dataTime';
 import { getAuthToken } from '@/utils/localStorage';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
-import DialogDeleteMultisig from './DialogDeleteMultisig';
 import { useRouter } from 'next/navigation';
 import { setError } from '@/store/features/common/commonSlice';
 import DialogConfirmDelete from './DialogConfirmDelete';
@@ -92,7 +91,7 @@ const MultisigAccountHeader = ({
             <div className="text-h1">{multisigName}</div>
             {createdTime ? (
               <div className="text-small-light">
-                Create {getTimeDifferenceToFutureDate(createdTime, true)} ago
+                Created {getTimeDifferenceToFutureDate(createdTime, true)} ago
               </div>
             ) : null}
           </div>

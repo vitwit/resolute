@@ -5,22 +5,12 @@ import {
   broadcastTransaction,
   resetUpdateTxnState,
   setVerifyDialogOpen,
-  updateTxn,
 } from '@/store/features/multisig/multisigSlice';
 import { RootState } from '@/store/store';
-import { getWalletAmino } from '@/txns/execute';
-import { MultisigAddressPubkey, Pubkey, Txn } from '@/types/multisig';
-import { getAuthToken } from '@/utils/localStorage';
-import { NewMultisigThresholdPubkey } from '@/utils/util';
-import { SigningStargateClient, makeMultisignedTx } from '@cosmjs/stargate';
-import { fromBase64 } from '@cosmjs/encoding';
-import { TxRaw } from 'cosmjs-types/cosmos/tx/v1beta1/tx';
-import React, { useEffect, useState } from 'react';
-import { MultisigTxStatus } from '@/types/enums';
+import { MultisigAddressPubkey, Txn } from '@/types/multisig';
+import React, { useEffect } from 'react';
 import { FAILED_TO_BROADCAST_ERROR } from '@/utils/errors';
-import { CircularProgress } from '@mui/material';
 import useVerifyAccount from '@/custom-hooks/useVerifyAccount';
-import { COSMOS_CHAIN_ID } from '@/utils/constants';
 import CustomButton from '@/components/common/CustomButton';
 
 interface BroadCastTxnProps {
@@ -35,7 +25,6 @@ interface BroadCastTxnProps {
 const BroadCastTxn: React.FC<BroadCastTxnProps> = (props) => {
   const { txn, multisigAddress, pubKeys, threshold, chainID, isMember } = props;
   const dispatch = useAppDispatch();
-  const [load, setLoad] = useState(false);
   const { getChainInfo } = useGetChainInfo();
   const {
     rpc,
@@ -88,11 +77,10 @@ const BroadCastTxn: React.FC<BroadCastTxnProps> = (props) => {
   return (
     <CustomButton
       btnText="Broadcast"
-      btnDisabled={load || !isMember}
-      btnLoading={load}
       btnOnClick={() => {
         broadcastTxn();
       }}
+      btnDisabled={!isMember}
       btnStyles="w-[115px]"
     />
   );

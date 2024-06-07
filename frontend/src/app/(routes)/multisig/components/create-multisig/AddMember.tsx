@@ -27,9 +27,8 @@ const AddMembers = ({
         <div className="text-b1-light !font-light">Add Members</div>
         <div className="add-members">
           {pubKeyFields.map((field, index) => (
-            <div>
+            <div key={index}>
               <MultisigMemberTextField
-                key={index}
                 handleRemoveValue={handleRemoveValue}
                 handleChangeValue={handleChangeValue}
                 index={index}

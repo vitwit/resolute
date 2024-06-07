@@ -15,6 +15,7 @@ import Copy from '@/components/common/Copy';
 import { formatStakedAmount, shortenAddress } from '@/utils/util';
 import { parseBalance } from '@/utils/denom';
 import Transactions from './Transactions';
+import DialogVerifyAccount from '../DialogVerifyAccount';
 
 const MultisigAccount = ({
   chainName,
@@ -99,6 +100,7 @@ const MultisigAccount = ({
           threshold={multisigAccount.account.threshold}
         />
       </div>
+      <DialogVerifyAccount walletAddress={walletAddress} />
     </div>
   );
 };
@@ -188,7 +190,11 @@ const MultisigAccountStats = ({
   return (
     <div className="flex gap-2">
       {stats.map((stat) => (
-        <MultisigAccountStatsCard name={stat.name} value={stat.value} />
+        <MultisigAccountStatsCard
+          key={stat.name}
+          name={stat.name}
+          value={stat.value}
+        />
       ))}
     </div>
   );
@@ -215,7 +221,7 @@ const MultisigMembersList = ({ members }: { members: string[] }) => {
       <div className="text-small-light">Members</div>
       <div className="flex items-end gap-6 flex-wrap">
         {members.map((address) => (
-          <MultisigMember address={address} />
+          <MultisigMember key={address} address={address} />
         ))}
       </div>
     </div>
