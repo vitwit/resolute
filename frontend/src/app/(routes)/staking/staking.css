@@ -1,4 +1,4 @@
-.staking-sidebar {
+/* .staking-sidebar {
   @apply p-6 w-[500px] bg-[#0E0B26] h-screen max-h-screen overflow-y-hidden;
   box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
 }
@@ -177,7 +177,7 @@
 .claim-button {
   @apply py-[10px] px-10 rounded-2xl flex justify-center items-center;
   background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
-}
+} */
 .amount-input-field {
   @apply bg-transparent w-full border-none focus:outline-none text-[40px] font-bold placeholder:text-[#FFFFFF33];
 }
@@ -196,4 +196,20 @@
 .staked-amount-red-badge {
   @apply border flex justify-center items-center gap-2 px-3 py-0 rounded-[100px] border-solid border-[#F15757];
   background: rgba(241, 87, 87, 0.5);
+}
+.status-active {
+  @apply flex justify-center items-center gap-2 border px-2 py-1 rounded-[100px] border-solid border-[#2BA472];
+  background: rgba(43, 164, 114, 0.5);
+}
+.status-jailed {
+  @apply flex justify-center items-center gap-2 border px-2 py-1 rounded-[100px] border-solid border-[#D92101];
+  background: rgba(217, 33, 1, 0.5);
+}
+.status-unbonded {
+  @apply border flex justify-center items-center gap-2 px-2 py-1 rounded-[100px] border-solid border-[#FFC13C];
+  background: rgba(255, 193, 60, 0.5);
+}
+.more-popup {
+  @apply flex w-[204px] flex-col items-start backdrop-blur-[15px] rounded-2xl;
+  background: rgba(255, 255, 255, 0.08);
 }
