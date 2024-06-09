@@ -7,6 +7,7 @@ import CustomButton from '@/components/common/CustomButton';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { setConnectWalletOpen } from '@/store/features/wallet/walletSlice';
 import DialogDeposit from '../popups/DialogDeposit';
+import { useRouter } from 'next/navigation';
 
 const PROPOSAL_OVERVIEW_MAX_LENGTH = 300;
 
@@ -22,6 +23,7 @@ const ProposalOverview = ({
   onClose: () => void;
 }) => {
   const dispatch = useAppDispatch();
+  const router = useRouter();
   const { getProposalOverview } = useGetProposals();
   const { chainLogo, chainName, proposalInfo } = getProposalOverview({
     chainID,
@@ -42,6 +44,11 @@ const ProposalOverview = ({
   const connectWalletOpen = () => {
     dispatch(setConnectWalletOpen(true));
   };
+
+  const navigateToProposal = () => {
+    router.push(`/governance/${chainName}/${proposalId}`);
+  }
+
   return (
     <div className="proposal-view">
       <div className="flex flex-col justify-between h-full">
@@ -55,8 +62,8 @@ const ProposalOverview = ({
             <div className="flex flex-col gap-2">
               <div className="flex items-center gap-4 justify-between">
                 <div className="flex space-x-1 items-center">
-                  <p className="text-h2 max-w-[400px] truncate">
-                    {proposalTitle}
+                  <p onClick={navigateToProposal} className="text-h2 max-w-[400px] truncate">
+                    {proposalTitle} 
                   </p>
                   <Image
                     src={REDIRECT_ICON}
