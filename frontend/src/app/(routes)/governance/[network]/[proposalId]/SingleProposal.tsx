@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
 import '../../style.css';
 import Image from 'next/image';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { useRemark } from 'react-remark';
 import { RootState } from '@/store/store';
 import { getPoolInfo } from '@/store/features/staking/stakeSlice';
-
 import {
     getProposal,
     getGovTallyParams,
@@ -14,14 +13,8 @@ import {
 } from '@/store/features/gov/govSlice';
 import { get } from 'lodash';
 import { getTimeDifferenceToFutureDate } from '@/utils/dataTime';
-import ProposalProjection from '../../ProposalProjection';
 import Vote from '../../gov-dashboard/Vote';
-
-interface SingleProposal {
-    chainID: string;
-    proposalID: string
-}
-
+import ProposalProjection from '../../ProposalProjection';
 
 const emptyTallyResult = {
     yes: '',
@@ -31,127 +24,60 @@ const emptyTallyResult = {
     proposal_id: '',
 };
 
-function SingleProposal({ chainID, proposalID }: SingleProposal) {
-    const [showFullText, setShowFullText] = useState(false);
-    // const [depositRequired, setDepositRequired] = useState(0);
-    // const nameToChainIDs = useAppSelector(
-    //     (state: RootState) => state.wallet.nameToChainIDs
-    // );
+interface SingleProposalProps {
+    chainID: string;
+    proposalID: string;
+}
 
+const SingleProposal: React.FC<SingleProposalProps> = ({ chainID, proposalID }) => {
+    const [showFullText, setShowFullText] = useState(false);
     const [proposalMarkdown, setProposalMarkdown] = useRemark();
+    const [quorumPercent, setQuorumPercent] = useState<string>('0');
 
     const dispatch = useAppDispatch();
 
-    const proposalInfo = useAppSelector(
-        (state: RootState) => state.gov.proposalDetails
-    );
-
-    const networkLogo = useAppSelector(
-        (state: RootState) => state.wallet.networks[chainID]?.network.logos.menu
-    );
-
-    const isStatusVoting =
-        get(proposalInfo, 'status') === 'PROPOSAL_STATUS_VOTING_PERIOD';
-
+    const proposalInfo = useAppSelector((state: RootState) => state.gov.proposalDetails);
+    const networkLogo = useAppSelector((state: RootState) => state.wallet.networks[chainID]?.network.logos.menu);
+    const isStatusVoting = get(proposalInfo, 'status') === 'PROPOSAL_STATUS_VOTING_PERIOD';
     const networks = useAppSelector((state: RootState) => state.wallet.networks);
+    const poolInfo = useAppSelector((state: RootState) => state.staking.chains[chainID]?.pool);
+    const tallyParams = useAppSelector((state: RootState) => state.gov.chains[chainID]?.tallyParams.params.tally_params);
+    const quorumRequired = (parseFloat(tallyParams?.quorum) * 100).toFixed(1);
+    const tallyResult = useAppSelector((state: RootState) => state.gov.chains[chainID]?.tally?.proposalTally?.[proposalID]);
 
-    const handleToggleText = () => {
-        setShowFullText(!showFullText);
+    const totalVotes = [
+        'yes',
+        'no',
+        'abstain',
+        'no_with_veto'
+    ].reduce((sum, key) => sum + Number(get(tallyResult, key, get(tallyResult, `${key}_count`)) || 0), 0);
+
+    const fetchProposalData = () => {
+        const chainInfo = networks[chainID]?.network;
+        if (!chainInfo) return;
+
+        const baseURLs = chainInfo.config.restURIs;
+        const baseURL = chainInfo.config.rest;
+        const govV1 = chainInfo.govV1;
+
+        dispatch(getProposal({ chainID, baseURLs, baseURL, proposalId: Number(proposalID), govV1 }));
+        dispatch(getProposalTally({ chainID, baseURLs, baseURL, proposalId: Number(proposalID), govV1 }));
+        dispatch(getPoolInfo({ chainID, baseURLs }));
+        dispatch(getDepositParams({ chainID, baseURLs, baseURL }));
+        dispatch(getGovTallyParams({ chainID, baseURL, baseURLs }));
     };
 
+    const handleToggleText = () => setShowFullText(!showFullText);
+
     useEffect(() => {
-        const proposalDescription = get(
-            proposalInfo,
-            'content.description',
-            get(proposalInfo, 'summary', '')
-        );
+        const proposalDescription = get(proposalInfo, 'content.description', get(proposalInfo, 'summary', ''));
         setProposalMarkdown(proposalDescription.replace(/\\n/g, '\n'));
     }, [proposalInfo]);
 
     useEffect(() => {
-        const allChainInfo = networks[chainID];
-        const chainInfo = allChainInfo?.network;
-        console.log({ chainInfo })
-        const govV1 = chainInfo?.govV1;
-        dispatch(
-            getProposal({
-                chainID,
-                baseURLs: chainInfo?.config.restURIs,
-                baseURL: chainInfo?.config.rest,
-                proposalId: Number(proposalID),
-                govV1: govV1,
-            })
-        );
-
-        dispatch(
-            getProposalTally({
-                baseURLs: chainInfo?.config.restURIs,
-                baseURL: chainInfo?.config.rest,
-                proposalId: Number(proposalID),
-                chainID: chainID,
-                govV1,
-            })
-        );
-
-        dispatch(
-            getPoolInfo({
-                baseURLs: chainInfo?.config.restURIs,
-                chainID: chainID,
-            })
-        );
-
-        dispatch(
-            getDepositParams({
-                baseURLs: chainInfo?.config.restURIs,
-                baseURL: chainInfo?.config.rest,
-                chainID: chainID,
-            })
-        );
-
-        dispatch(
-            getGovTallyParams({
-                chainID,
-                baseURL: chainInfo?.config.rest,
-                baseURLs: chainInfo?.config.restURIs,
-            })
-        );
+        fetchProposalData();
     }, []);
 
-
-    const poolInfo = useAppSelector(
-        (state: RootState) => state.staking.chains[chainID]?.pool
-    );
-    const tallyParams = useAppSelector(
-        (state: RootState) =>
-            state.gov.chains[chainID]?.tallyParams.params.tally_params
-    );
-    const quorumRequired = (parseFloat(tallyParams?.quorum) * 100).toFixed(1);
-
-    const tallyResult = useAppSelector((state: RootState) => {
-        if (
-            state.gov.chains[chainID] &&
-            state.gov.chains[chainID].tally &&
-            state.gov.chains[chainID].tally.proposalTally
-        ) {
-            return state.gov.chains[chainID].tally.proposalTally[proposalID];
-        }
-    });
-
-    const totalVotes =
-        Number(get(tallyResult, 'yes', get(tallyResult, 'yes_count')) || 0) +
-        Number(get(tallyResult, 'no', get(tallyResult, 'no_count')) || 0) +
-        Number(
-            get(tallyResult, 'abstain', get(tallyResult, 'abstain_count')) || 0
-        ) +
-        Number(
-            get(
-                tallyResult,
-                'no_with_veto',
-                get(tallyResult, 'no_with_veto_count')
-            ) || 0
-        ) || 0;
-
-    const [quorumPercent, setQuorumPercent] = useState<string>('0');
     useEffect(() => {
         if (poolInfo?.bonded_tokens) {
             const value = totalVotes / parseInt(poolInfo.bonded_tokens);
@@ -160,63 +86,14 @@ function SingleProposal({ chainID, proposalID }: SingleProposal) {
     }, [poolInfo, totalVotes]);
 
     const getVotesPercentage = (votesCount: number) => {
-        return (
-            (votesCount &&
-                totalVotes &&
-                ((votesCount / totalVotes) * 100).toFixed(2)) ||
-            0
-        );
+        return votesCount && totalVotes ? ((votesCount / totalVotes) * 100).toFixed(2) : '0';
     };
 
     const data = [
-        {
-            value: getVotesPercentage(
-                Number(get(tallyResult, 'yes', get(tallyResult, 'yes_count')) || 0)
-            ),
-            count: Number(get(tallyResult, 'yes', get(tallyResult, 'yes_count')) || 0),
-            color: '#4AA29C',
-            label: 'Yes',
-        },
-        {
-            value: getVotesPercentage(
-                Number(get(tallyResult, 'no', get(tallyResult, 'no_count')) || 0)
-            ),
-            count: Number(get(tallyResult, 'no', get(tallyResult, 'no_count')) || 0),
-            color: '#E57575',
-            label: 'No',
-        },
-        {
-            value: getVotesPercentage(
-                Number(
-                    get(tallyResult, 'abstain', get(tallyResult, 'abstain_count')) || 0
-                )
-            ),
-            count: Number(
-                get(tallyResult, 'abstain', get(tallyResult, 'abstain_count')) || 0
-            ),
-            color: '#EFFF34',
-            label: 'Abstain',
-        },
-        {
-            value: getVotesPercentage(
-                Number(
-                    get(
-                        tallyResult,
-                        'no_with_veto',
-                        get(tallyResult, 'no_with_veto_count' || 0)
-                    )
-                )
-            ),
-            count: Number(
-                get(
-                    tallyResult,
-                    'no_with_veto',
-                    get(tallyResult, 'no_with_veto_count' || 0)
-                )
-            ),
-            color: '#5885AF',
-            label: 'Veto',
-        },
+        { value: getVotesPercentage(Number(get(tallyResult, 'yes', get(tallyResult, 'yes_count')))), count: Number(get(tallyResult, 'yes', get(tallyResult, 'yes_count'))), color: '#4AA29C', label: 'Yes' },
+        { value: getVotesPercentage(Number(get(tallyResult, 'no', get(tallyResult, 'no_count')))), count: Number(get(tallyResult, 'no', get(tallyResult, 'no_count'))), color: '#E57575', label: 'No' },
+        { value: getVotesPercentage(Number(get(tallyResult, 'abstain', get(tallyResult, 'abstain_count')))), count: Number(get(tallyResult, 'abstain', get(tallyResult, 'abstain_count'))), color: '#EFFF34', label: 'Abstain' },
+        { value: getVotesPercentage(Number(get(tallyResult, 'no_with_veto', get(tallyResult, 'no_with_veto_count')))), count: Number(get(tallyResult, 'no_with_veto', get(tallyResult, 'no_with_veto_count'))), color: '#5885AF', label: 'Veto' }
     ];
 
     const isProposal2daysgo = () => {
@@ -225,12 +102,7 @@ function SingleProposal({ chainID, proposalID }: SingleProposal) {
         const twoDaysInMilliseconds = 2 * 24 * 60 * 60 * 1000;
 
         const timeDifference = targetDate.getTime() - currentDate.getTime();
-
-        if (timeDifference <= twoDaysInMilliseconds && timeDifference > 0) {
-            return true
-        }
-
-        return false
+        return timeDifference <= twoDaysInMilliseconds && timeDifference > 0;
     };
 
     return (
@@ -539,7 +411,7 @@ function SingleProposal({ chainID, proposalID }: SingleProposal) {
                 </div>
             </div>
         </>
-    )
-}
+    );
+};
 
-export default SingleProposal
+export default SingleProposal;
