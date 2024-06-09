@@ -371,7 +371,7 @@ function SingleProposal({ chainID, proposalID }: SingleProposal) {
                                 </> : null
                             }
 
-                           
+
                         </div>
                     </div>
 
@@ -454,13 +454,22 @@ function SingleProposal({ chainID, proposalID }: SingleProposal) {
                                     </div>
                                     <div className="flex flex-col gap-2">
                                         <p className="text-[#FFFFFF80]">
-                                            {getTimeDifferenceToFutureDate(
-                                                get(proposalInfo, 'voting_start_time', '-'),
-                                                true
-                                            )} ago
+                                            {
+                                                isStatusVoting ?
+                                                    getTimeDifferenceToFutureDate(
+                                                        get(proposalInfo, 'voting_start_time', '-'),
+                                                        true
+                                                    ) : getTimeDifferenceToFutureDate(
+                                                        get(proposalInfo, 'submit_time', '-'),
+                                                        true
+                                                    )
+                                            } ago
                                         </p>
                                         <p className="text-white text-xs font-normal leading-[normal]">
-                                            Voting started
+                                            {
+                                                isStatusVoting ? 'Voting' : 'Deposit Time '
+                                            }
+                                            started
                                         </p>
                                     </div>
                                 </div>
@@ -475,12 +484,16 @@ function SingleProposal({ chainID, proposalID }: SingleProposal) {
                                     </div>
                                     <div className="flex flex-col gap-2">
                                         <p className="text-[#FFFFFF80]">
-                                            in {getTimeDifferenceToFutureDate(
+                                            in {isStatusVoting ? getTimeDifferenceToFutureDate(
                                                 get(proposalInfo, 'voting_end_time', '-')
+                                            ) : getTimeDifferenceToFutureDate(
+                                                get(proposalInfo, 'deposit_end_time', '-')
                                             )}
                                         </p>
                                         <p className="text-white text-xs font-normal leading-[normal]">
-                                            Voting ends
+                                            {
+                                                isStatusVoting ? 'Voting' : 'Deposit Time '
+                                            } ends
                                         </p>
                                     </div>
                                 </div>
@@ -496,7 +509,7 @@ function SingleProposal({ chainID, proposalID }: SingleProposal) {
                             </div>
                             {
                                 data.map(v => (
-                                    <div className="flex flex-col gap-2">
+                                    <div key={v.label} className="flex flex-col gap-2">
                                         <div className="flex gap-1 items-center">
                                             <p className="text-white text-xs font-normal leading-[normal]">
                                                 {v.count}
@@ -521,8 +534,6 @@ function SingleProposal({ chainID, proposalID }: SingleProposal) {
                                     </div>
                                 ))
                             }
-
-                            
                         </div>
                     </div>
                 </div>
