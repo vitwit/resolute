@@ -209,7 +209,4 @@
   @apply border flex justify-center items-center gap-2 px-2 py-1 rounded-[100px] border-solid border-[#FFC13C];
   background: rgba(255, 193, 60, 0.5);
 }
-.more-popup {
-  @apply flex w-[204px] flex-col items-start backdrop-blur-[15px] rounded-2xl;
-  background: rgba(255, 255, 255, 0.08);
-}
+

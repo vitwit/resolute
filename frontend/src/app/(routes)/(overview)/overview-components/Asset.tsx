@@ -1,6 +1,6 @@
 import { formatAmount, formatCoin, formatDollarAmount } from '@/utils/util';
 import Link from 'next/link';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { RefObject, useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { txWithdrawAllRewards } from '@/store/features/distribution/distributionSlice';
@@ -127,7 +127,7 @@ const Asset = ({
 
   const [showPopup, setShowPopup] = useState(false);
   const popupRef = useRef<HTMLDivElement>(null);
-  const buttonRef = useRef<HTMLButtonElement>(null);
+  const buttonRef: RefObject<HTMLImageElement> = useRef<HTMLImageElement>(null);
 
   const togglePopup = () => {
     setShowPopup(!showPopup);
@@ -154,20 +154,20 @@ const Asset = ({
   return (
     <tr className="table-border-line">
       <th className="px-0 py-8">
-        <div className="flex flex-col items-center">
-          <div className="text-white text-base not-italic font-normal leading-[normal]">
+        <div className="flex flex-col items-start gap-1">
+          <div className="text-base font-normal leading-[normal]">
             {formatCoin(asset.balance, asset.displayDenom)}
           </div>
-          <div className="flex space-x-2">
+          <div className="flex space-x-1">
             <Image
               src={asset?.chainLogoURL}
               width={16}
               height={16}
-              alt="Akash-Logo"
+              alt="logos"
               loading="lazy"
             />
-            <p className="text-white text-sm not-italic font-extralight leading-[normal]">
-              on {' '}
+            <p className="text-b1-light">
+              on{' '}
               <Link href={`/overview/${asset.chainName}`}>
                 {asset.chainName}
               </Link>
@@ -176,53 +176,53 @@ const Asset = ({
         </div>
       </th>
       <th>
-        <div className="text-white text-base not-italic font-normal leading-[normal]">
+        <div className="text-base font-normal leading-[normal] text-left">
           {asset.type === 'native'
             ? formatCoin(asset.staked, asset.displayDenom)
             : '-'}
         </div>
       </th>
       <th>
-        <div className="text-white text-base not-italic font-normal leading-[normal]">
+        <div className="text-base font-normal leading-[normal] text-left">
           {asset.type === 'native'
             ? formatCoin(asset.rewards, asset.displayDenom)
             : '-'}
         </div>
       </th>
       <th>
-        <div className="flex flex-col text-red items-center">
-          <div className="text-white text-base not-italic font-normal leading-[normal]">
+        <div className="flex flex-col text-left">
+          <div className="text-base font-normal leading-[normal]">
             {formatDollarAmount(asset.usdPrice)}
           </div>
           <div className="flex">
-
+            <div
+              className={
+                'text-sm not-italic font-normal leading-[normal] ' +
+                (asset.inflation >= 0 ? 'text-[#238636]' : 'text-[#F1575780]')
+              }
+            >
+              <p className="text-[rgba(241,87,87,0.50)] text-sm font-extralight leading-[normal]">
+                {formatAmount(Math.abs(asset.inflation))}%
+              </p>
+            </div>
             <Image
-              src={`/${asset.inflation >= 0 ? 'up' : 'down'
-                }-arrow-filled-icon.svg`}
+              src={`/${
+                asset.inflation >= 0 ? 'up' : 'down'
+              }-arrow-filled-icon.svg`}
               width={9}
               height={5}
               alt="down-arrow-filled-icon"
             />
-            <div
-              className={
-                'text-sm not-italic font-normal leading-[normal] ' +
-                (asset.inflation >= 0 ? 'text-[#238636]' : 'text-[#E57575]')
-              }
-            >
-              <p className="text-[rgba(241,87,87,0.50)] text-sm not-italic font-extralight leading-[normal]">
-                {formatAmount(Math.abs(asset.inflation))}%
-              </p>
-            </div>
           </div>
         </div>
       </th>
       <th>
-        <div className="text-white text-base not-italic font-normal leading-[normal]">
+        <div className="text-base font-normal leading-[normal] text-left">
           {formatDollarAmount(asset.usdValue)}
         </div>
       </th>
       <th>
-        {/* <div className="items-center justify-center flex relative inline-block">
+        <div className="items-center justify-center relative inline-block">
           <Image
             src="/more.svg"
             width={24}
@@ -232,18 +232,16 @@ const Asset = ({
             ref={buttonRef}
             onClick={togglePopup}
           />
-        </div> */}
 
-        <div className="relative inline-block">
-          <button
+          {/* <button
             ref={buttonRef}
             onClick={togglePopup}
             className="w-8 h-8 border-2 border-transparent rounded-full text-white flex items-center justify-center bg-gradient-to-r from-blue-500 to-purple-500 p-[0.5px]"
           >
             <div className="flex items-center justify-center w-full h-full bg-black rounded-full">
-              <p className='mt-[-7px]'> ...</p>
+              <p className="mt-[-7px]"> ...</p>
             </div>
-          </button>
+          </button> */}
           {/* <button
             ref={buttonRef}
             onClick={togglePopup}
@@ -253,17 +251,18 @@ const Asset = ({
           </button> */}
 
           {showPopup && (
-            <div
-              ref={popupRef}
-              className="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-[10%] shadow-lg"
-            >
-              <div className="py-2">
+            <div ref={popupRef} className="absolute right-0 z-10 more-popup">
+              <div className="w-full">
                 <a
                   href="#"
-                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 text-left"
+                  className="flex items-center w-full p-4 text-b1 hover:bg-[#FFFFFF10]"
                 >
                   <Tooltip
-                    title={asset.type === 'ibc' ? 'IBC Deposit feature is coming soon..' : 'Claim'}
+                    title={
+                      asset.type === 'ibc'
+                        ? 'IBC Deposit feature is coming soon..'
+                        : 'Claim'
+                    }
                     placement="top-end"
                   >
                     <div
@@ -271,7 +270,8 @@ const Asset = ({
                         if (asset.type === 'native') claim(asset.chainID);
                       }}
                     >
-                      {asset.type !== 'ibc' && txClaimStatus === TxStatus.PENDING ? (
+                      {asset.type !== 'ibc' &&
+                      txClaimStatus === TxStatus.PENDING ? (
                         <CircularProgress size={16} />
                       ) : (
                         'Claim'
@@ -281,18 +281,24 @@ const Asset = ({
                 </a>
                 <a
                   href="#"
-                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 text-left"
+                  className="flex items-center w-full p-4 text-b1 hover:bg-[#FFFFFF10]"
                 >
                   <Tooltip
-                    title={asset.type === 'ibc' ? 'IBC Withdraw feature is coming soon..' : 'Claim & Stake'}
+                    title={
+                      asset.type === 'ibc'
+                        ? 'IBC Withdraw feature is coming soon..'
+                        : 'Claim & Stake'
+                    }
                     placement="top-start"
                   >
                     <div
                       onClick={() => {
-                        if (asset.type === 'native') claimAndStake(asset.chainID);
+                        if (asset.type === 'native')
+                          claimAndStake(asset.chainID);
                       }}
                     >
-                      {txRestakeStatus === TxStatus.PENDING && asset.type !== 'ibc' ? (
+                      {txRestakeStatus === TxStatus.PENDING &&
+                      asset.type !== 'ibc' ? (
                         <CircularProgress size={16} />
                       ) : (
                         'Claim And Stake'
@@ -304,7 +310,6 @@ const Asset = ({
             </div>
           )}
         </div>
-
       </th>
       {/* <td>
         <div className="flex gap-10 justify-center">
