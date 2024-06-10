@@ -1,13 +1,7 @@
-import {
-  Avatar,
-  Box,
-  CircularProgress,
-  InputAdornment,
-  TextField,
-} from '@mui/material';
+import { Avatar, Box, CircularProgress, TextField } from '@mui/material';
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
-import { customTextFieldStyles, swapTextFieldStyles } from '../styles';
+import { customTextFieldStyles } from '../styles';
 import AssetsList from './AssetsList';
 import useGetChains from '@/custom-hooks/useGetChains';
 import useGetAssets from '@/custom-hooks/useGetAssets';
@@ -36,7 +30,6 @@ import { fromBech32 } from '@cosmjs/encoding';
 import { shortenAddress } from '@/utils/util';
 import { setError } from '@/store/features/common/commonSlice';
 import RoutePreview from './RoutePreview';
-import { SWAP_ROUTE_ERROR } from '@/utils/constants';
 
 const emptyBalance = {
   amount: 0,
