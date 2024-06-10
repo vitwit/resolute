@@ -5,6 +5,7 @@ import Avatar from '@mui/material/Avatar';
 import { CircularProgress, Paper } from '@mui/material';
 import { shortenName } from '@/utils/util';
 import { ChainConfig } from '@/types/swaps';
+import { customAutoCompleteStyles, customTextFieldStyles } from '../styles';
 
 interface ChainOption {
   label: string;
@@ -47,7 +48,6 @@ export default function ChainsList({
   /* eslint-disable @typescript-eslint/no-explicit-any */
   const renderInput = (params: any) => (
     <TextField
-      className="bg-[#171328] rounded-2xl drop-down"
       placeholder="Select Network"
       {...params}
       InputProps={{
@@ -69,10 +69,9 @@ export default function ChainsList({
       sx={{
         '& .MuiInputBase-input': {
           color: 'white',
-          fontSize: '16px',
+          fontSize: '14px',
           fontWeight: 300,
-          fontFamily: 'inter',
-          textTransform: 'capitalize',
+          fontFamily: 'Libre Franklin',
         },
         '& .MuiOutlinedInput-notchedOutline': {
           border: 'none',
@@ -99,11 +98,11 @@ export default function ChainsList({
         PaperComponent={({ children }) => (
           <Paper
             style={{
-              background:
-                'linear-gradient(178deg, #241B61 1.71%, #69448D 98.35%, #69448D 98.35%)',
+              background: '#FFFFFF14',
               color: 'white',
-              borderRadius: '12px',
-              padding: 1,
+              borderRadius: '16px',
+              backdropFilter: 'blur(15px)',
+              marginTop: '8px',
             }}
           >
             {dataLoading ? (
@@ -115,6 +114,7 @@ export default function ChainsList({
             )}
           </Paper>
         )}
+        sx={{ ...customTextFieldStyles, ...customAutoCompleteStyles }}
       />
     </div>
   );

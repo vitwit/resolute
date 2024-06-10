@@ -5,6 +5,7 @@ import Avatar from '@mui/material/Avatar';
 import { CircularProgress, Paper } from '@mui/material';
 import { shortenName } from '@/utils/util';
 import { AssetConfig } from '@/types/swaps';
+import { customAutoCompleteStyles, customTextFieldStyles } from '../styles';
 
 export default function AssetsAutocomplete({
   options,
@@ -41,7 +42,6 @@ export default function AssetsAutocomplete({
   /* eslint-disable @typescript-eslint/no-explicit-any */
   const renderInput = (params: any) => (
     <TextField
-      className="bg-[#171328] rounded-2xl drop-down"
       placeholder="Select Asset"
       {...params}
       InputProps={{
@@ -63,9 +63,9 @@ export default function AssetsAutocomplete({
       sx={{
         '& .MuiInputBase-input': {
           color: 'white',
-          fontSize: '16px',
+          fontSize: '14px',
           fontWeight: 300,
-          fontFamily: 'inter',
+          fontFamily: 'Libre Franklin',
         },
         '& .MuiOutlinedInput-notchedOutline': {
           border: 'none',
@@ -91,11 +91,11 @@ export default function AssetsAutocomplete({
       PaperComponent={({ children }) => (
         <Paper
           style={{
-            background:
-              'linear-gradient(178deg, #241B61 1.71%, #69448D 98.35%, #69448D 98.35%)',
+            background: '#FFFFFF14',
             color: 'white',
-            borderRadius: '12px',
-            padding: 1,
+            borderRadius: '16px',
+            backdropFilter: 'blur(15px)',
+            marginTop: '8px',
           }}
         >
           {assetsLoading ? (
@@ -107,6 +107,7 @@ export default function AssetsAutocomplete({
           )}
         </Paper>
       )}
+      sx={{ ...customTextFieldStyles, ...customAutoCompleteStyles }}
     />
   );
 }

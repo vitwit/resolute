@@ -5,6 +5,7 @@ import { useAppSelector } from '@/custom-hooks/StateHooks';
 import useSortedAssets from '@/custom-hooks/useSortedAssets';
 import { useSearchParams } from 'next/navigation';
 import MultiSendPage from './multi-send/MultiSendPage';
+import IBCSwapPage from './ibc-swaps/IBCSwapPage';
 
 const TransfersPage = ({ chainIDs }: { chainIDs: string[] }) => {
   const [sortedAssets, authzSortedAssets] = useSortedAssets(chainIDs, {
@@ -37,6 +38,7 @@ const TransfersPage = ({ chainIDs }: { chainIDs: string[] }) => {
       {transferType === 'multi-send' ? (
         <MultiSendPage chainID={chainIDs[0]} />
       ) : null}
+      {transferType === 'ibc-swap' ? <IBCSwapPage /> : null}
     </div>
   );
 };
