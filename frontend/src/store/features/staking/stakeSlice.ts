@@ -51,6 +51,7 @@ interface Chain {
     totalUnbonded: number;
   };
   validator: {
+    [key: string]: Validator | undefined | TxStatus | string;
     validatorInfo: Validator | undefined;
     status: TxStatus;
     errMsg: string;
@@ -72,7 +73,7 @@ interface Chain {
   validatorProfiles: Record<string, { totalDelegators: number }>;
 }
 
-interface Chains {
+export interface Chains {
   [key: string]: Chain;
 }
 
@@ -94,6 +95,9 @@ interface StakingState {
     chains: Record<string, any>;
     delegators: Record<string, any>;
   };
+  allValidators: Record<string, any>;
+  filteredValidators: Record<string, any>;
+  searchQuery: string,
 }
 
 const initialState: StakingState = {
@@ -176,6 +180,9 @@ const initialState: StakingState = {
     cancelUnbondingTxStatus: TxStatus.INIT,
     isTxAll: false,
   },
+  allValidators: {},
+  filteredValidators: {},
+  searchQuery: '',
 };
 
 export const txRestake = createAsyncThunk(
@@ -194,8 +201,7 @@ export const txRestake = createAsyncThunk(
         data.msgs,
         399999 + Math.ceil(399999 * 0.1 * (data.msgs?.length || 1)),
         data.memo,
-        `${data.basicChainInfo.feeAmount * 10 ** data.basicChainInfo.decimals}${
-          data.denom
+        `${data.basicChainInfo.feeAmount * 10 ** data.basicChainInfo.decimals}${data.denom
         }`,
         rest,
         data?.feegranter?.length ? data.feegranter : undefined,
@@ -278,8 +284,7 @@ export const txDelegate = createAsyncThunk(
         msgs,
         GAS_FEE,
         '',
-        `${data.basicChainInfo.feeAmount * 10 ** data.basicChainInfo.decimals}${
-          data.denom
+        `${data.basicChainInfo.feeAmount * 10 ** data.basicChainInfo.decimals}${data.denom
         }`,
         data.basicChainInfo.rest,
         data?.feegranter?.length ? data.feegranter : undefined,
@@ -378,8 +383,7 @@ export const txReDelegate = createAsyncThunk(
         msgs,
         GAS_FEE,
         '',
-        `${data.basicChainInfo.feeAmount * 10 ** data.basicChainInfo.decimals}${
-          data.denom
+        `${data.basicChainInfo.feeAmount * 10 ** data.basicChainInfo.decimals}${data.denom
         }`,
         data.basicChainInfo.rest,
         data?.feegranter?.length ? data.feegranter : undefined,
@@ -457,8 +461,7 @@ export const txUnDelegate = createAsyncThunk(
         msgs,
         GAS_FEE,
         '',
-        `${data.basicChainInfo.feeAmount * 10 ** data.basicChainInfo.decimals}${
-          data.denom
+        `${data.basicChainInfo.feeAmount * 10 ** data.basicChainInfo.decimals}${data.denom
         }`,
         data.basicChainInfo.rest,
         data?.feegranter?.length ? data.feegranter : undefined,
@@ -551,8 +554,7 @@ export const txCancelUnbonding = createAsyncThunk(
         msgs,
         GAS_FEE,
         '',
-        `${data.basicChainInfo.feeAmount * 10 ** data.basicChainInfo.decimals}${
-          data.denom
+        `${data.basicChainInfo.feeAmount * 10 ** data.basicChainInfo.decimals}${data.denom
         }`,
         data.basicChainInfo.rest,
         data?.feegranter?.length ? data.feegranter : undefined,
@@ -671,9 +673,9 @@ export const getAllValidators = createAsyncThunk(
           data?.status,
           nextKey
             ? {
-                key: nextKey,
-                limit: limit,
-              }
+              key: nextKey,
+              limit: limit,
+            }
             : {}
         );
         validators.push(...response.data.validators);
@@ -754,9 +756,9 @@ export const getDelegations = createAsyncThunk(
           data.address,
           nextKey
             ? {
-                key: nextKey,
-                limit: limit,
-              }
+              key: nextKey,
+              limit: limit,
+            }
             : {}
         );
         delegations.push(...(response.data?.delegation_responses || []));
@@ -797,9 +799,9 @@ export const getAuthzDelegations = createAsyncThunk(
           data.address,
           nextKey
             ? {
-                key: nextKey,
-                limit: limit,
-              }
+              key: nextKey,
+              limit: limit,
+            }
             : {}
         );
         delegations.push(...(response.data?.delegation_responses || []));
@@ -992,6 +994,23 @@ export const stakeSlice = createSlice({
   name: 'staking',
   initialState,
   reducers: {
+    setValidators(state, action: PayloadAction<Record<string, Validator>>) {
+      state.allValidators = action.payload;
+      state.filteredValidators = action.payload;
+    },
+    setSearchQuery(state, action: PayloadAction<string>) {
+      state.searchQuery = action.payload;
+    },
+    filterValidators(state) {
+      const query = state.searchQuery.toLowerCase();
+      state.filteredValidators = Object.fromEntries(
+        Object.entries(state.allValidators).filter(
+          ([, validator]) =>
+            validator.operator_address.toLowerCase().includes(query) ||
+            validator.description?.moniker.toLowerCase().includes(query)
+        )
+      );
+    },
     resetRestakeTx: (state, action: PayloadAction<{ chainID: string }>) => {
       const chainID = action.payload.chainID;
       if (chainID?.length && state.chains[chainID]) {
@@ -1161,7 +1180,7 @@ export const stakeSlice = createSlice({
           } else if (
             validator.status !== 'BOND_STATUS_BONDED' &&
             !state.chains[chainID].validators.inactive[
-              validator.operator_address
+            validator.operator_address
             ]
           ) {
             state.chains[chainID].validators.inactive[
@@ -1401,6 +1420,8 @@ export const stakeSlice = createSlice({
         if (!state.chains[chainID])
           state.chains[chainID] = cloneDeep(initialState.defaultState);
         state.chains[chainID].validator.status = TxStatus.PENDING;
+        const valoperAddress = action.meta?.arg?.valoperAddress;
+        state.chains[chainID].validator[valoperAddress] = TxStatus.PENDING
         state.chains[chainID].validator.errMsg = '';
       })
       .addCase(getValidator.fulfilled, (state, action) => {
@@ -1408,11 +1429,17 @@ export const stakeSlice = createSlice({
         state.chains[chainID].validator.status = TxStatus.IDLE;
         state.chains[chainID].validator.validatorInfo =
           action.payload.data.validator;
+
+        const valoperAddress = action.meta?.arg?.valoperAddress;
+        state.chains[chainID].validator[valoperAddress] = action?.payload?.data?.validator
+
       })
       .addCase(getValidator.rejected, (state, action) => {
         const chainID = action.meta?.arg?.chainID;
         state.chains[chainID].validator.status = TxStatus.REJECTED;
         state.chains[chainID].validator.errMsg = '';
+        const valoperAddress = action.meta?.arg?.valoperAddress;
+        state.chains[chainID].validator[valoperAddress] = TxStatus.REJECTED
       });
 
     builder
@@ -1452,37 +1479,37 @@ export const stakeSlice = createSlice({
           },
         };
       })
-      .addCase(getTotalDelegationsCount.rejected, () => {});
+      .addCase(getTotalDelegationsCount.rejected, () => { });
 
     builder
-      .addCase(getWitvalPolygonValidator.pending, () => {})
+      .addCase(getWitvalPolygonValidator.pending, () => { })
       .addCase(getWitvalPolygonValidator.fulfilled, (state, action) => {
         state.witvalNonCosmosValidators.chains = {
           ...state.witvalNonCosmosValidators.chains,
           polygon: action.payload.data,
         };
       })
-      .addCase(getWitvalPolygonValidator.rejected, () => {});
+      .addCase(getWitvalPolygonValidator.rejected, () => { });
 
     builder
-      .addCase(getWitvalPolygonDelegatorsCount.pending, () => {})
+      .addCase(getWitvalPolygonDelegatorsCount.pending, () => { })
       .addCase(getWitvalPolygonDelegatorsCount.fulfilled, (state, action) => {
         state.witvalNonCosmosValidators.delegators = {
           ...state.witvalNonCosmosValidators.delegators,
           polygon: action.payload?.data?.summary?.total,
         };
       })
-      .addCase(getWitvalPolygonDelegatorsCount.rejected, () => {});
+      .addCase(getWitvalPolygonDelegatorsCount.rejected, () => { });
 
     builder
-      .addCase(getWitvalOasisDelegations.pending, () => {})
+      .addCase(getWitvalOasisDelegations.pending, () => { })
       .addCase(getWitvalOasisDelegations.fulfilled, (state, action) => {
         state.witvalNonCosmosValidators.delegators = {
           ...state.witvalNonCosmosValidators.delegators,
           oasis: action.payload?.data,
         };
       })
-      .addCase(getWitvalOasisDelegations.rejected, () => {});
+      .addCase(getWitvalOasisDelegations.rejected, () => { });
 
     builder
       .addCase(txDelegate.pending, (state, action) => {
@@ -1579,6 +1606,7 @@ export const {
   resetCompleteState,
   resetAuthz,
   resetAuthzDelegations,
+  setValidators, setSearchQuery, filterValidators,
 } = stakeSlice.actions;
 
 export default stakeSlice.reducer;

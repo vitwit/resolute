@@ -16,6 +16,7 @@ import {
 import { MultisigAddressPubkey } from '@/types/multisig';
 import { fromBech32 } from '@cosmjs/encoding';
 import { SUPPORTED_WALLETS } from './constants';
+import { FAILED_TO_FETCH } from './errors';
 
 export const convertPaginationToParams = (
   pagination?: KeyLimitPagination
@@ -537,4 +538,10 @@ export const getConnectWalletLogo = () => {
   );
 
   return wallet ? wallet.logo : '';
+};
+
+export const isNetworkError = (errMsg: string) => {
+  if (errMsg?.toLowerCase()?.includes(FAILED_TO_FETCH.toLowerCase()))
+    return true;
+  return false;
 };

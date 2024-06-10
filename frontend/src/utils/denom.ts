@@ -1,4 +1,4 @@
-import { Coin } from "cosmjs-types/cosmos/base/v1beta1/coin";
+import { Coin } from 'cosmjs-types/cosmos/base/v1beta1/coin';
 
 export function formatVotingPower(token: number, coinDecimals: number): string {
   const temp = token / 10.0 ** coinDecimals;
@@ -20,11 +20,11 @@ export function parseTokens(
   coinDecimals: number
 ): string {
   if (!tokens) {
-    return "0.0";
+    return '0.0';
   }
 
   if (tokens.length === 0) {
-    return "0.0";
+    return '0.0';
   }
 
   return `${parseFloat(
@@ -38,7 +38,7 @@ export function parseBalance(
   minimalDenom: string
 ): number {
   if (!tokens) {
-    return 0.0
+    return 0.0;
   }
 
   const precision = coinDecimals > 6 ? 6 : coinDecimals;
@@ -72,9 +72,26 @@ export function getDenomBalance(tokens: Coin[], denom: string): number {
 }
 
 export const formatNumber = (number: number): string => {
-  return number?.toLocaleString(undefined, {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2
-  }) || "N/A";
+  return (
+    number?.toLocaleString(undefined, {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }) || 'N/A'
+  );
 };
 
+export const getTotalAmount = (
+  originDenomInfo: OriginDenomInfo,
+  msgs: Msg[]
+) => {
+  let totalAmount = 0;
+  msgs.forEach((msg) => {
+    const parsedAmount = parseBalance(
+      msg.value.amount,
+      originDenomInfo.decimals,
+      msg.value.amount[0].denom
+    );
+    totalAmount += parsedAmount;
+  });
+  return totalAmount.toFixed(6);
+};
