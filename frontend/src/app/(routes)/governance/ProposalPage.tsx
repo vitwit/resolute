@@ -8,13 +8,16 @@ import { RootState } from '@/store/store';
 import AuthzExecLoader from '@/components/AuthzExecLoader';
 
 const ProposalPage = () => {
+
   const params = useParams();
   const { network, proposalId: id } = params;
+
   const chainName = typeof network === 'string' ? network : '';
   const proposalId = typeof id === 'string' ? id : '';
   const nameToChainIDs = useAppSelector(
     (state: RootState) => state.wallet.nameToChainIDs
   );
+
   const validChain = Object.keys(nameToChainIDs).some(
     (chain) => chainName.toLowerCase() === chain.toLowerCase()
   );
@@ -25,6 +28,7 @@ const ProposalPage = () => {
     const parsedValue = parseInt(proposalId, 10);
     return !isNaN(parsedValue) && Number.isInteger(parsedValue);
   };
+
   return (
     <div>
       <AuthzExecLoader chainIDs={chainID ? [chainID] : []} />
