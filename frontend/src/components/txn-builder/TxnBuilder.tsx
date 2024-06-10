@@ -8,6 +8,8 @@ import {
   FieldArrayWithId,
   useFieldArray,
   useForm,
+  UseFormGetValues,
+  UseFormSetValue,
 } from 'react-hook-form';
 import '@/app/(routes)/multiops/multiops.css';
 import { TextField } from '@mui/material';
@@ -24,29 +26,9 @@ import { setError } from '@/store/features/common/commonSlice';
 import { useRouter } from 'next/navigation';
 import { Decimal } from '@cosmjs/math';
 import DelegateMessage from './messages/DelegateMessage';
+import { msgDelegate } from '@/txns/staking/delegate';
 
 type MsgType = 'Send' | 'Delegate';
-
-type SendMsg = {
-  type: 'Send';
-  address: string;
-  amount: string;
-};
-
-type DelegateMsg = {
-  type: 'Delegate';
-  validator: string;
-  amount: string;
-};
-
-type Message = SendMsg | DelegateMsg;
-
-type FormData = {
-  gas: number;
-  memo: string;
-  fees: number;
-  msgs: Message[];
-};
 
 const TxnBuilder = ({
   chainID,
@@ -69,14 +51,15 @@ const TxnBuilder = ({
   };
   const { address: walletAddress, feeAmount } = basicChainInfo;
 
-  const { handleSubmit, control, reset } = useForm<FormData>({
-    defaultValues: {
-      gas: 900000,
-      memo: '',
-      fees: feeAmount * 10 ** currency.coinDecimals,
-      msgs: [],
-    },
-  });
+  const { handleSubmit, control, reset, setValue, getValues } =
+    useForm<TxnBuilderForm>({
+      defaultValues: {
+        gas: 900000,
+        memo: '',
+        fees: feeAmount * 10 ** currency.coinDecimals,
+        msgs: [],
+      },
+    });
 
   const { fields, append, remove } = useFieldArray({
     control,
@@ -100,7 +83,7 @@ const TxnBuilder = ({
     });
   };
 
-  const onSubmit = (data: FormData) => {
+  const onSubmit = (data: TxnBuilderForm) => {
     const feeObj = fee(
       currency.coinMinimalDenom,
       data.fees.toString(),
@@ -148,6 +131,8 @@ const TxnBuilder = ({
         remove={remove}
         handleClearAll={handleClearAll}
         handleBackToMultisig={handleBackToMultisig}
+        setValue={setValue}
+        chainID={chainID}
       />
     </form>
   );
@@ -172,7 +157,7 @@ const SelectMessage = ({
             <div className="text-b1-light">Select Message</div>
             <Image src={I_ICON} height={20} width={20} alt="" />
           </div>
-          <div>
+          <div className="flex gap-2">
             {TXN_BUILDER_MSGS.map((msg) => (
               <button
                 key={msg}
@@ -254,13 +239,17 @@ const MessagesList = ({
   remove,
   handleClearAll,
   handleBackToMultisig,
+  setValue,
+  chainID,
 }: {
   /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
   control: any;
-  fields: FieldArrayWithId<FormData, 'msgs', 'id'>[];
+  fields: FieldArrayWithId<TxnBuilderForm, 'msgs', 'id'>[];
   remove: (index: number) => void;
   handleClearAll: () => void;
   handleBackToMultisig: () => void;
+  setValue: UseFormSetValue<TxnBuilderForm>;
+  chainID: string;
 }) => {
   const dispatch = useAppDispatch();
   const createRes = useAppSelector((state) => state.multisig.createTxnRes);
@@ -298,7 +287,13 @@ const MessagesList = ({
               <SendMessage control={control} index={index} remove={remove} />
             )}
             {field.type === 'Delegate' && (
-              <DelegateMessage control={control} index={index} remove={remove} />
+              <DelegateMessage
+                control={control}
+                index={index}
+                remove={remove}
+                setValue={setValue}
+                chainID={chainID}
+              />
             )}
           </div>
         ))}
@@ -344,6 +339,22 @@ const formatMsgs = (
               denom: minimalDenom,
             },
           ],
+        },
+      });
+    } else if (msg.type === 'Delegate') {
+      const amountInAtomics = Decimal.fromUserInput(
+        msg.amount,
+        Number(coinDecimals)
+      ).atomics;
+      messages.push({
+        typeUrl: msgDelegate,
+        value: {
+          delegatorAddress: fromAddress,
+          validatorAddress: msg.validator,
+          amount: {
+            amount: amountInAtomics,
+            denom: minimalDenom,
+          },
         },
       });
     }

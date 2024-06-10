@@ -22,6 +22,27 @@ interface TxnMsgProps {
 
 interface ValidatorOption {
   address: string;
-  moniker: string;
-  logo: string;
+  label: string; // moniker name
+  identity: string;
 }
+
+type SendMsg = {
+  type: 'Send';
+  address: string;
+  amount: string;
+};
+
+type DelegateMsg = {
+  type: 'Delegate';
+  validator: string;
+  amount: string;
+};
+
+type Message = SendMsg | DelegateMsg;
+
+type TxnBuilderForm = {
+  gas: number;
+  memo: string;
+  fees: number;
+  msgs: Message[];
+};
