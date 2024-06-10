@@ -15,7 +15,7 @@ const Overview = () => {
     (chainName) => nameToChainIDs[chainName]
   );
 
-  return <div> {chainIDs}
+  return <div> 
   <OverviewTable chainIDs={chainIDs} />
   </div>;
 };

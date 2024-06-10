@@ -1,0 +1,12 @@
+<svg width="41" height="41" viewBox="0 0 41 41" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="gavel_FILL1_wght400_GRAD0_opsz24 1">
+<rect x="0.5" y="0.5" width="40" height="40" rx="8" fill="url(#paint0_linear_114_5056)"/>
+<path id="Vector" d="M13 28V26.3158H23.1053V28H13ZM17.7579 23.9158L13 19.1579L14.7684 17.3474L19.5684 22.1053L17.7579 23.9158ZM23.1053 18.5684L18.3474 13.7684L20.1579 12L24.9158 16.7579L23.1053 18.5684ZM26.9789 27.1579L15.9895 16.1684L17.1684 14.9895L28.1579 25.9789L26.9789 27.1579Z" fill="white"/>
+</g>
+<defs>
+<linearGradient id="paint0_linear_114_5056" x1="20.5" y1="0.5" x2="20.5" y2="40.5" gradientUnits="userSpaceOnUse">
+<stop stop-color="#4AA29C"/>
+<stop offset="1" stop-color="#8B3DA7"/>
+</linearGradient>
+</defs>
+</svg>

@@ -16,7 +16,7 @@ const StakingDashbrd = () => {
     totalUnStakedAmount,
     availableAmount,
   } = staking.getStakingAssets();
-  
+
   const delegations = staking.getAllDelegations();
 
   return (

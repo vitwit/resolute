@@ -84,7 +84,7 @@ const OverviewTable = ({ chainIDs }: { chainIDs: string[] }) => {
   }, []);
 
   return (
-    <div className="flex-col px-10 py-20">
+    <div className="flex-col px-10 pt-20">
       <div className="flex flex-col items-center gap-10 mb-20">
         <div className="flex flex-col items-start gap-2 w-full">
           <div className="flex space-x-2">
