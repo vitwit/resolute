@@ -19,3 +19,9 @@ interface TxnMsgProps {
   currency: Currency;
   index: number;
 }
+
+interface ValidatorOption {
+  address: string;
+  moniker: string;
+  logo: string;
+}

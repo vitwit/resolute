@@ -23,6 +23,7 @@ import { msgSendTypeUrl } from '@/txns/bank/send';
 import { setError } from '@/store/features/common/commonSlice';
 import { useRouter } from 'next/navigation';
 import { Decimal } from '@cosmjs/math';
+import DelegateMessage from './messages/DelegateMessage';
 
 type MsgType = 'Send' | 'Delegate';
 
@@ -295,6 +296,9 @@ const MessagesList = ({
           <div key={field.id}>
             {field.type === 'Send' && (
               <SendMessage control={control} index={index} remove={remove} />
+            )}
+            {field.type === 'Delegate' && (
+              <DelegateMessage control={control} index={index} remove={remove} />
             )}
           </div>
         ))}
