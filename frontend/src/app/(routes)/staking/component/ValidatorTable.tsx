@@ -112,7 +112,7 @@ const ValidatorTable: React.FC<{ chainID: string }> = ({ chainID }) => {
         openPopup={openDelegate}
       />: null
       }
-      
+
 
       <div className="space-y-1">
         <div className="text-white text-lg not-italic font-normal leading-[27px]">
