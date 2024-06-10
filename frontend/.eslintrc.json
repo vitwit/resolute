@@ -9,13 +9,7 @@
     "prettier"
   ],
   "rules": {
-
-    // "@typescript-eslint/no-unused-vars": "error",
-    // "@typescript-eslint/no-explicit-any": "error"
-    // "no-console": "off", // Example rule to turn off console warnings
-    "import/no-anonymous-default-export": "off", // Disabling specific rule
-    "react-hooks/exhaustive-deps": "off",
-    // Add any other rules you want to disable here
-    "no-warning-comments": "off" // Disable comments like TODO and FIXME
+    "@typescript-eslint/no-unused-vars": "error",
+    "@typescript-eslint/no-explicit-any": "error"
   }
 }
