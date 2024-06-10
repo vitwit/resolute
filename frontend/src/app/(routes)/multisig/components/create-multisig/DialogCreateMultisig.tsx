@@ -1,5 +1,4 @@
-import { CircularProgress, TextField } from '@mui/material';
-import Image from 'next/image';
+import { TextField } from '@mui/material';
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import { setError } from '@/store/features/common/commonSlice';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
@@ -14,10 +13,7 @@ import {
   resetMultisigAccountData,
 } from '@/store/features/multisig/multisigSlice';
 import { RootState } from '@/store/store';
-import {
-  createMultisigTextFieldStyles,
-  createMultisigThresholdStyles,
-} from '../styles';
+import { createMultisigTextFieldStyles } from '../../styles';
 import {
   ADDRESS_NOT_FOUND,
   DUPLICATE_PUBKEYS_ERROR,
@@ -28,16 +24,23 @@ import {
   MIN_PUBKEYS_ERROR,
   MIN_THRESHOLD_ERROR,
 } from '@/utils/errors';
-import { customMUITextFieldStyles } from '@/utils/commonStyles';
 import { TxStatus } from '@/types/enums';
 import { fromBech32 } from '@cosmjs/encoding';
 import { DialogCreateMultisigProps, PubKeyFields } from '@/types/multisig';
-import MultisigMemberTextField from './MultisigMemberTextField';
-import { COSMOS_CHAIN_ID, MULTISIG_PUBKEY_OBJECT } from '@/utils/constants';
+import {
+  COSMOS_CHAIN_ID,
+  DECREASE,
+  INCREASE,
+  MULTISIG_PUBKEY_OBJECT,
+} from '@/utils/constants';
 import useGetPubkey from '@/custom-hooks/useGetPubkey';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import useGetAccountInfo from '@/custom-hooks/useGetAccountInfo';
 import CustomDialog from '@/components/common/CustomDialog';
+import CustomButton from '@/components/common/CustomButton';
+import ImportMultisig from './ImportMultisig';
+import AddMembers from './AddMember';
+import Threshold from './Threshold';
 
 const MAX_PUB_KEYS = 7;
 const MULTISIG_NAME_MAX_LENGTH = 100;
@@ -55,7 +58,7 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
   const { pubkey: pubKey } = accountInfo;
   const [name, setName] = useState('');
   const [pubKeyFields, setPubKeyFields] = useState<PubKeyFields[]>([]);
-  const [threshold, setThreshold] = useState(0);
+  const [threshold, setThreshold] = useState(1);
   const [formError, setFormError] = useState('');
   const [importMultisig, setImportMultisig] = useState(false);
   const [page, setPage] = useState(1);
@@ -95,7 +98,7 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
       { ...pubKeyObj },
     ]);
     setName('');
-    setThreshold(0);
+    setThreshold(1);
     setPage(1);
   };
 
@@ -172,14 +175,6 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
     } else {
       setPubKeyFields([...pubKeyFields, pubKeyObj]);
     }
-  };
-
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (parseInt(e.target.value) > pubKeyFields?.length) {
-      alert(MAX_THRESHOLD_ERROR);
-      return;
-    }
-    setThreshold(parseInt(e.target.value));
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -349,6 +344,27 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
     );
   };
 
+  const handleThresholdChange = (value: string) => {
+    if (value === INCREASE) {
+      if (threshold + 1 > pubKeyFields?.length) {
+        dispatch(setError({ type: 'error', message: MAX_THRESHOLD_ERROR }));
+      } else {
+        setThreshold(threshold + 1);
+      }
+    } else if (value === DECREASE) {
+      if (threshold - 1 < 1) {
+        dispatch(setError({ type: 'error', message: MIN_THRESHOLD_ERROR }));
+      } else {
+        setThreshold(threshold - 1);
+      }
+    }
+  };
+
+  const switchToCreateMultisig = () => {
+    setImportMultisig(false);
+    setDefaultFormValues();
+  };
+
   useEffect(() => {
     if (importMultisigAccountRes.status === TxStatus.IDLE) {
       setImportMultisig(true);
@@ -371,190 +387,104 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
   return (
     <CustomDialog
       open={open}
-      title="Create Multisig"
+      title={importMultisig ? 'Import Multisig' : 'Create Multisig'}
       onClose={handleClose}
       styles="w-[800px]"
     >
-      <div>
-        <div className="px-10 pb-6 pt-10 flex justify-end">
-          <div
-            onClick={() => {
-              handleClose();
-            }}
-          >
-            <Image
-              className="cursor-pointer"
-              src="/close-icon.svg"
-              width={24}
-              height={24}
-              alt="Close"
-              draggable={false}
-            />
-          </div>
-        </div>
+      <div className="w-full">
         {page === 1 ? (
-          <div className="flex gap-10 items-center">
-            <div className="flex-1 flex flex-col px-10">
-              <h2 className="text-[20px] font-bold leading-[21px]">
-                {importMultisig ? 'Import Multisig' : 'Create Multisig'}
-              </h2>
-              <form onSubmit={(e) => handleSubmit(e)}>
-                <TextField
-                  className="bg-[#FFFFFF0D] rounded-2xl"
-                  onChange={handleNameChange}
-                  name="name"
-                  value={name}
-                  required
-                  autoFocus={true}
-                  placeholder="Name (Eg: Alice-Bob-Eve-Msig)"
-                  fullWidth
-                  sx={createMultisigTextFieldStyles}
-                  InputProps={{
-                    sx: {
-                      input: {
-                        color: 'white',
-                        fontSize: '14px',
-                        padding: 2,
-                      },
-                    },
-                  }}
-                />
-                {pubKeyFields.map((field, index) => (
-                  <>
-                    <MultisigMemberTextField
-                      key={index}
-                      handleRemoveValue={handleRemoveValue}
-                      handleChangeValue={handleChangeValue}
-                      index={index}
-                      field={field}
+          <div className="flex gap-10 items-center w-full">
+            <div className="space-y-10 w-full">
+              <form
+                className="space-y-10 w-full"
+                onSubmit={(e) => handleSubmit(e)}
+              >
+                <div className="flex gap-6">
+                  <div className="space-y-2 flex-1">
+                    <div className="text-b1-light !font-light">Name</div>
+                    <TextField
+                      className="bg-transparent rounded-full border-[1px] border-[#ffffff80] h-10"
+                      onChange={handleNameChange}
+                      name="name"
+                      value={name}
+                      required
+                      autoFocus={true}
+                      placeholder="Name (Eg: Alice-Bob-Eve-Msig)"
+                      fullWidth
+                      sx={createMultisigTextFieldStyles}
+                      InputProps={{
+                        sx: {
+                          input: {
+                            color: 'white',
+                            fontSize: '14px',
+                            padding: 2,
+                          },
+                        },
+                      }}
                     />
-                    {!importMultisig && (
-                      <div className="text-right font-light">
-                        {index !== 0 ? (
-                          <button
-                            onClick={() => {
-                              togglePubKey(index);
-                            }}
-                            type="button"
-                            className="text-[12px] underline underline-offset-2"
-                          >
-                            {field.isPubKey ? 'Use Address' : 'Use PubKey'}
-                          </button>
-                        ) : null}
-                      </div>
-                    )}
-                  </>
-                ))}
-                {!importMultisig && (
-                  <div className="text-right mt-4 text-[12px] font-light">
-                    <button
-                      type="button"
-                      className="create-multisig-btn cursor-pointer"
-                      onClick={handleAddPubKey}
-                    >
-                      Add New Member
-                    </button>
                   </div>
-                )}
-                <div className="mb-6 flex items-center gap-4">
-                  <TextField
-                    className="bg-[#FFFFFF0D] rounded-[4px]"
-                    name={'threshold'}
-                    value={threshold}
-                    required
-                    inputProps={{ maxLength: 1 }}
-                    onChange={handleChange}
-                    label=""
-                    type="number"
-                    size="small"
-                    disabled={importMultisig}
-                    style={{ maxWidth: 75 }}
-                    sx={{
-                      ...createMultisigTextFieldStyles,
-                      ...createMultisigThresholdStyles,
-                    }}
-                    InputProps={{
-                      sx: {
-                        input: {
-                          color: 'white',
-                          fontSize: '14px',
-                        },
-                      },
-                    }}
-                  />
-                  <div className="font-extralight text-[14px] mt-6 text-[#FFFFFF80]">
-                    of
-                  </div>
-                  <TextField
-                    className="bg-[#FFFFFF0D] rounded-[4px]"
-                    name={'threshold'}
-                    value={pubKeyFields?.length}
-                    label=""
-                    disabled
-                    size="small"
-                    style={{ maxWidth: 75 }}
-                    sx={createMultisigTextFieldStyles}
-                    InputProps={{
-                      sx: {
-                        input: {
-                          color: 'white',
-                          fontSize: '14px',
-                        },
-                      },
-                    }}
-                  />
-                  <div className="font-extralight text-[14px] mt-6">
-                    Threshold
+                  <div className="space-y-2">
+                    <div className="text-b1-light !font-light">Threshold</div>
+                    <Threshold
+                      threshold={threshold}
+                      handleThresholdChange={handleThresholdChange}
+                      membersCount={pubKeyFields.length}
+                    />
                   </div>
                 </div>
-                <div>{formError}</div>
-                <div className="flex gap-4 items-center">
-                  <button
-                    disabled={createMultiAccRes?.status === 'pending'}
-                    className="create-account-btn min-w-[144px]"
-                    type="submit"
-                  >
-                    {createMultiAccRes?.status === 'pending' ||
-                    pubkeyLoading ? (
-                      <CircularProgress size={16} sx={{ color: 'white' }} />
-                    ) : (
-                      <>{importMultisig ? 'Import' : 'Create'}</>
-                    )}
-                  </button>
-                  <div className="italic font-light">
-                    {pubkeyLoading ? (
-                      <div>
-                        <span>Validating inputs</span>
-                        <span className="dots-flashing"></span>
-                      </div>
-                    ) : createMultiAccRes?.status === 'pending' ? (
-                      <div>
-                        <span>Creating multisig account</span>
-                        <span className="dots-flashing"></span>
-                      </div>
-                    ) : null}
-                  </div>
+                <AddMembers
+                  handleAddPubKey={handleAddPubKey}
+                  handleChangeValue={handleChangeValue}
+                  handleRemoveValue={handleRemoveValue}
+                  importMultisig={importMultisig}
+                  pubKeyFields={pubKeyFields}
+                  togglePubKey={togglePubKey}
+                />
+                <div className="flex justify-end gap-">
+                  {importMultisig ? (
+                    <button
+                      type="button"
+                      className="secondary-btn w-[150px]"
+                      onClick={resetCreateMultisig}
+                    >
+                      Cancel
+                    </button>
+                  ) : null}
+                  <CustomButton
+                    btnText={importMultisig ? 'Import' : 'Create'}
+                    btnDisabled={
+                      createMultiAccRes?.status === 'pending' || pubkeyLoading
+                    }
+                    btnLoading={
+                      createMultiAccRes?.status === 'pending' || pubkeyLoading
+                    }
+                    btnType="submit"
+                    btnStyles="w-[150px]"
+                  />
+                  {formError ? (
+                    <div className="text-center w-full text-red-400 text-[14px]">
+                      {formError}
+                    </div>
+                  ) : null}
                 </div>
               </form>
               {!importMultisig ? (
-                <div className="create-multisig-dialog-footer">
-                  <div className="text-[14px] font-extralight">Or</div>
-                  <div className="flex gap-4 items-center">
-                    <div className="text-[16px]">
-                      Have an existing MultiSig account ?
-                    </div>{' '}
-                    <button
-                      onClick={() => {
-                        setMultisigAddress('');
-                        setAddressValidationError('');
-                        setName('');
-                        setPage(2);
-                      }}
-                      className="text-only-btn"
-                    >
-                      Import Here
-                    </button>
-                  </div>
+                <div className="flex gap-1 justify-center">
+                  <div className="text-[16px] font-extralight text-[#ffffff80]">
+                    Have an existing MultiSig account ? Import it
+                  </div>{' '}
+                  <button
+                    onClick={() => {
+                      setMultisigAddress('');
+                      setAddressValidationError('');
+                      setName('');
+                      setPage(2);
+                      setImportMultisig(true);
+                    }}
+                    className="secondary-btn !text-[16px] !font-bold !text-white"
+                  >
+                    here
+                  </button>
                 </div>
               ) : (
                 <div className="create-multisig-dialog-footer">
@@ -571,74 +501,13 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
             </div>
           </div>
         ) : (
-          <div className="flex gap-10 items-center">
-            <div className="flex-1 flex flex-col px-10">
-              <h2 className="text-[20px] font-bold leading-[21px]">
-                Import Multisig
-              </h2>
-              <div className="flex gap-6 my-6">
-                <div className="flex-1 relative">
-                  <TextField
-                    className="bg-[#FFFFFF0D] rounded-2xl w-full"
-                    name="granteeAddress"
-                    value={multisigAddress}
-                    onChange={handleMultisigAddressChange}
-                    required
-                    autoFocus={true}
-                    placeholder="Enter Multisig Address Here"
-                    InputProps={{
-                      sx: {
-                        input: {
-                          color: 'white',
-                          fontSize: '14px',
-                          padding: 2,
-                        },
-                      },
-                    }}
-                    sx={customMUITextFieldStyles}
-                  />
-                  <div className="error-box absolute right-0">
-                    <span
-                      className={
-                        addressValidationError
-                          ? 'error-chip opacity-80'
-                          : 'error-chip opacity-0'
-                      }
-                    >
-                      {addressValidationError}
-                    </span>
-                  </div>
-                </div>
-                <button
-                  onClick={() => fetchMultisigAccount()}
-                  className="primary-gradient import-multisig-btn"
-                >
-                  {importMultisigAccountRes.status === TxStatus.PENDING ? (
-                    <CircularProgress size={20} sx={{ color: 'white' }} />
-                  ) : (
-                    'Import Multisig'
-                  )}
-                </button>
-              </div>
-              <div className="create-multisig-dialog-footer">
-                <div className="text-[14px] font-extralight">Or</div>
-                <div className="flex gap-4 items-center">
-                  <div className="text-[16px]">
-                    Do not have an existing MultiSig account ?
-                  </div>{' '}
-                  <button
-                    onClick={() => {
-                      setImportMultisig(false);
-                      setDefaultFormValues();
-                    }}
-                    className="text-only-btn"
-                  >
-                    Create New Here
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
+          <ImportMultisig
+            addressValidationError={addressValidationError}
+            fetchMultisigAccount={fetchMultisigAccount}
+            handleMultisigAddressChange={handleMultisigAddressChange}
+            multisigAddress={multisigAddress}
+            switchToCreateMultisig={switchToCreateMultisig}
+          />
         )}
       </div>
     </CustomDialog>

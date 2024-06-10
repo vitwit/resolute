@@ -13,6 +13,7 @@ interface CustomButtonProps {
   btnDisabled?: boolean;
   /* eslint-disable @typescript-eslint/no-explicit-any */
   btnOnClick?: any;
+  btnType?: 'submit' | 'button';
 }
 
 const CustomButton = ({
@@ -21,12 +22,13 @@ const CustomButton = ({
   btnLoading,
   btnDisabled,
   btnOnClick,
+  btnType,
 }: CustomButtonProps) => {
   return (
     <button
       className={`primary-btn ${btnStyles}`}
       disabled={btnDisabled}
-      type="button"
+      type={btnType || 'button'}
       onClick={btnOnClick}
     >
       {btnLoading ? (

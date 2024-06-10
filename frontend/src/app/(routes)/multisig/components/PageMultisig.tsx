@@ -12,7 +12,7 @@ import { setConnectWalletOpen } from '@/store/features/wallet/walletSlice';
 import EmptyScreen from '@/components/common/EmptyScreen';
 import MultisigDashboard from './multisig-dashboard/MultisigDashboard';
 import CustomButton from '@/components/common/CustomButton';
-import DialogCreateMultisig from './DialogCreateMultisig';
+import DialogCreateMultisig from './create-multisig/DialogCreateMultisig';
 
 const PageMultisig = ({ chainName }: { chainName: string }) => {
   const dispatch = useAppDispatch();

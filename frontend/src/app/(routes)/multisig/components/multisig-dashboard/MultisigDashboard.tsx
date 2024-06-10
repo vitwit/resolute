@@ -10,7 +10,7 @@ import RecentTransactions from './RecentTransactions';
 import DialogVerifyAccount from '../DialogVerifyAccount';
 import { setError } from '@/store/features/common/commonSlice';
 import { TxStatus } from '@/types/enums';
-import { CircularProgress, Dialog, DialogContent } from '@mui/material';
+import Loader from '../common/Loader';
 
 interface MultisigDashboardI {
   walletAddress: string;
@@ -33,8 +33,6 @@ const MultisigDashboard: React.FC<MultisigDashboardI> = (props) => {
     (state) => state.multisig.broadcastTxnRes
   );
   const updateTxStatus = useAppSelector((state) => state.multisig.updateTxnRes);
-  const signTxLoading = signTxStatus.status === TxStatus.PENDING;
-  const broadcastTxnLoading = broadcastTxnStatus.status === TxStatus.PENDING;
 
   useEffect(() => {
     if (walletAddress) {
@@ -104,53 +102,7 @@ const MultisigDashboard: React.FC<MultisigDashboardI> = (props) => {
       <AllMultisigAccounts chainName={chainName} />
       <RecentTransactions chainID={chainID} />
       <DialogVerifyAccount walletAddress={walletAddress} />
-      <Dialog
-        open={signTxLoading}
-        PaperProps={{
-          sx: {
-            borderRadius: '24px',
-            background: '#ffffff1a',
-          },
-        }}
-        sx={{
-          backdropFilter: 'blur(2px)',
-        }}
-      >
-        <DialogContent>
-          <div className="flex gap-4 items-center">
-            <CircularProgress size={32} sx={{ color: 'white' }} />
-            <div className="text-white">
-              {' '}
-              <span className="italic">Loading...</span>
-              <span className="dots-flashing"></span>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      <Dialog
-        open={broadcastTxnLoading}
-        PaperProps={{
-          sx: {
-            borderRadius: '24px',
-            background: '#ffffff1a',
-          },
-        }}
-        sx={{
-          backdropFilter: 'blur(2px)',
-        }}
-      >
-        <DialogContent>
-          <div className="flex gap-4 items-center">
-            <CircularProgress size={32} sx={{ color: 'white' }} />
-            <div className="text-white">
-              {' '}
-              <span className="italic">Loading...</span>
-              <span className="dots-flashing"></span>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+      <Loader />
     </div>
   );
 };

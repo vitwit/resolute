@@ -65,6 +65,10 @@ body {
   @apply w-full bg-[#FFFFFF80] h-[0.25px] opacity-20;
 }
 
+.flex-center {
+  @apply flex justify-center items-center;
+}
+
 .form-label-text {
   @apply text-[var(--secondary-text-color)] font-light text-[12px] leading-[24px];
 }

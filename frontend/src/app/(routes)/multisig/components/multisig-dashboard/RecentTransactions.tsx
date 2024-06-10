@@ -1,19 +1,10 @@
 import SectionHeader from '@/components/common/SectionHeader';
 import { useAppSelector } from '@/custom-hooks/StateHooks';
-import React, { useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import { Txn } from '@/types/multisig';
-import TxnMsg from '../msgs/TxnMsg';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
-import {
-  DROP_DOWN_CLOSE,
-  DROP_DOWN_OPEN,
-  MENU_ICON,
-} from '@/constants/image-names';
-import Image from 'next/image';
 import LetterAvatar from '@/components/common/LetterAvatar';
-import SignTxn from '../SignTxn';
-import { isMultisigMember } from '@/utils/util';
-import BroadCastTxn from '../BroadCastTxn';
+import TxnsCard from '../common/TxnsCard';
 
 const RecentTransactions = ({ chainID }: { chainID: string }) => {
   const { getDenomInfo } = useGetChainInfo();
@@ -109,119 +100,10 @@ const MultisigAccountRecentTxns = ({
             threshold={threshold}
             multisigAddress={multisigAddress}
             chainID={chainID}
+            isHistory={false}
           />
         ))}
       </div>
     </div>
-  );
-};
-
-const TxnsCard = ({
-  txn,
-  currency,
-  threshold,
-  multisigAddress,
-  chainID,
-}: {
-  txn: Txn;
-  currency: Currency;
-  threshold: number;
-  multisigAddress: string;
-  chainID: string;
-}) => {
-  const { getChainInfo } = useGetChainInfo();
-  const { address: walletAddress } = getChainInfo(chainID);
-  const [showAll, setShowAll] = useState(false);
-  const { messages } = txn;
-  const pubKeys = txn.pubkeys || [];
-  const isMember = isMultisigMember(pubKeys, walletAddress);
-  const isReadyToBroadcast = () => {
-    const signs = txn?.signatures || [];
-    if (signs?.length >= threshold) return true;
-    else return false;
-  };
-
-  return (
-    <div className="txn-card">
-      <div className="space-y-2">
-        <div className="text-small-light">Transaction Messages</div>
-        <div className="space-y-4">
-          <div className="flex items-center gap-2">
-            <div className="flex gap-1">
-              <div className="text-b1">#1</div>
-              <TxnMsg msg={messages[0]} currency={currency} />
-            </div>
-            {messages?.length > 1 ? (
-              <ExpandViewButton
-                showAll={showAll}
-                toggleView={() => setShowAll((prev) => !prev)}
-              />
-            ) : null}
-          </div>
-          {showAll
-            ? messages.slice(1, messages?.length).map((msg, index) => (
-                <div key={index}>
-                  <div className="flex gap-2">
-                    <div className="font-bold">{`#${index + 2}`}</div>
-                    <TxnMsg msg={msg} currency={currency} />
-                  </div>
-                </div>
-              ))
-            : null}
-        </div>
-      </div>
-      <div className="space-y-2">
-        <div className="text-small-light">Signed</div>
-        <div className="flex gap-[2px] items-end">
-          <span className="text-b1">{txn.signatures.length}</span>
-          <span className="text-small-light">/</span>
-          <span className="text-small-light">{pubKeys.length}</span>
-        </div>
-      </div>
-      <div>
-        <div className="flex items-center gap-6">
-          {isReadyToBroadcast() ? (
-            <BroadCastTxn
-              txn={txn}
-              multisigAddress={multisigAddress}
-              pubKeys={txn.pubkeys || []}
-              threshold={threshold}
-              chainID={chainID}
-              isMember={isMember}
-            />
-          ) : (
-            <SignTxn
-              address={multisigAddress}
-              chainID={chainID}
-              isMember={isMember}
-              txId={txn.id}
-              unSignedTxn={txn}
-            />
-          )}
-          <button>
-            <Image src={MENU_ICON} height={24} width={24} alt="Menu" />
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-const ExpandViewButton = ({
-  showAll,
-  toggleView,
-}: {
-  showAll: boolean;
-  toggleView: () => void;
-}) => {
-  return (
-    <Image
-      className="cursor-pointer"
-      onClick={() => toggleView()}
-      src={showAll ? DROP_DOWN_CLOSE : DROP_DOWN_OPEN}
-      width={16}
-      height={16}
-      alt=""
-    />
   );
 };

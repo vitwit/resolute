@@ -23,7 +23,7 @@ interface BroadCastTxnProps {
 }
 
 const BroadCastTxn: React.FC<BroadCastTxnProps> = (props) => {
-  const { txn, multisigAddress, pubKeys, threshold, chainID } = props;
+  const { txn, multisigAddress, pubKeys, threshold, chainID, isMember } = props;
   const dispatch = useAppDispatch();
   const { getChainInfo } = useGetChainInfo();
   const {
@@ -80,6 +80,7 @@ const BroadCastTxn: React.FC<BroadCastTxnProps> = (props) => {
       btnOnClick={() => {
         broadcastTxn();
       }}
+      btnDisabled={!isMember}
       btnStyles="w-[115px]"
     />
   );

@@ -18,7 +18,7 @@ interface SignTxnProps {
 }
 
 const SignTxn: React.FC<SignTxnProps> = (props) => {
-  const { address, unSignedTxn, chainID } = props;
+  const { address, isMember, unSignedTxn, chainID } = props;
   const dispatch = useAppDispatch();
   const { getChainInfo } = useGetChainInfo();
   const { rpc, address: walletAddress } = getChainInfo(chainID);
@@ -45,6 +45,7 @@ const SignTxn: React.FC<SignTxnProps> = (props) => {
   return (
     <CustomButton
       btnText="Sign"
+      btnDisabled={!isMember}
       btnOnClick={() => {
         signTheTx();
       }}

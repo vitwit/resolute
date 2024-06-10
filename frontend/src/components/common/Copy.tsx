@@ -15,13 +15,22 @@ import React, { useEffect, useState } from 'react';
  * @returns {React.ReactNode} - React element representing the Copy component.
  */
 
-const Copy = ({ content }: { content: string }) => {
+const Copy = ({
+  content,
+  height = 20,
+  width = 20,
+}: {
+  content: string;
+  height?: number;
+  width?: number;
+}) => {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = (e: React.MouseEvent<HTMLDivElement>) => {
     copyToClipboard(content);
     setCopied(true);
     e.stopPropagation();
+    e.preventDefault();
   };
 
   useEffect(() => {
@@ -41,8 +50,8 @@ const Copy = ({ content }: { content: string }) => {
           className="cursor-pointer"
           onClick={handleCopy}
           src={'/icons/copy-icon.svg'}
-          width={20}
-          height={20}
+          width={width}
+          height={height}
           alt="copy"
         />
       </Tooltip>
