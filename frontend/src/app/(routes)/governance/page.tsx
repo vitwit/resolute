@@ -2,18 +2,19 @@
 import React from 'react';
 import { useAppSelector } from '@/custom-hooks/StateHooks';
 import { RootState } from '@/store/store';
-import GovPage from './GovPage';
+import GovDashboard from './gov-dashboard/GovDashboard';
+import './style.css';
 
 const Page = () => {
   const nameToChainIDs = useAppSelector(
-    (state: RootState) => state.wallet.nameToChainIDs
+    (state: RootState) => state.common.nameToChainIDs
   );
 
   const chainIDs = Object.keys(nameToChainIDs).map(
     (chainName) => nameToChainIDs[chainName]
   );
 
-  return <GovPage chainIDs={chainIDs} />;
+  return <GovDashboard chainIDs={chainIDs} />;
 };
 
 export default Page;

@@ -31,7 +31,7 @@ const Loader = () => {
           <CircularProgress size={32} sx={{ color: 'white' }} />
           <div className="text-white">
             {' '}
-            <span className="italic">Loading...</span>
+            <span className="italic">Loading</span>
             <span className="dots-flashing"></span>
           </div>
         </div>

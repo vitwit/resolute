@@ -53,4 +53,7 @@ interface CommonState {
     open: boolean;
     showSearch: boolean;
   };
+  nameToChainIDs: Record<string, string>;
 }
+
+type HandleChangeEvent = (e: React.ChangeEvent<HTMLInputElement>) => void;

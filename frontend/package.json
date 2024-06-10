@@ -6,7 +6,8 @@
     "dev": "yarn lint && next dev",
     "build": "next build",
     "start": "yarn lint && next start",
-    "lint": "next lint --no-cache"
+    "lint": "next lint --no-cache",
+    "analyze": "ANALYZE=true next build"
   },
   "dependencies": {
     "@0xsquid/sdk": "^1.14.15",
@@ -59,6 +60,7 @@
     "typescript": "5.3.2"
   },
   "devDependencies": {
+    "@next/bundle-analyzer": "^14.2.3",
     "@types/lodash": "^4.14.200",
     "@typescript-eslint/eslint-plugin": "^6.9.1",
     "eslint-config-prettier": "^9.0.0",

@@ -59,7 +59,7 @@ export const IBC_SEND_TYPE_URL = '/ibc.applications.transfer.v1.MsgTransfer';
 export const DEPOSIT_TYPE_URL = '/cosmos.gov.v1beta1.MsgDeposit';
 export const SEND_TEMPLATE = 'https://api.resolute.vitwit.com/_static/send.csv';
 export const VOTE_TYPE_URL = '/cosmos.gov.v1beta1.MsgVote';
-export const MULTI_TRANSFER_MSG_COUNT = 13;
+export const MULTI_TRANSFER_MSG_COUNT = 3;
 export const DELETE_TXN_DIALOG_IMAGE_PATH = '/delete-txn-popup-image.png';
 export const EMPTY_TXN = {
   id: NaN,
@@ -205,7 +205,7 @@ export const SIDENAV_MENU_ITEMS = {
     },
   ],
 };
-export const ALL_NETWORKS_ICON = '/all-networks-icon.png';
+export const ALL_NETWORKS_ICON = '/icons/all-networks-icon.png';
 export const CHANGE_NETWORK_ICON = '/switch-icon.svg';
 export const TXN_SUCCESS_ICON = '/transaction-success-icon.svg';
 export const TXN_FAILED_ICON = '/transaction-failed-icon.svg';

@@ -4,11 +4,11 @@ import {
   setChangeNetworkDialogOpen,
   setSelectedNetwork,
 } from '@/store/features/common/commonSlice';
-import { allNetworksLink } from '@/utils/util';
+import { allNetworksLink, changeNetworkRoute } from '@/utils/util';
 import { Dialog, DialogContent } from '@mui/material';
 import Image from 'next/image';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import NetworkItem from '../select-network/NetworkItem';
 import SearchNetworkInput from './SearchNetworkInput';
@@ -16,6 +16,7 @@ import SearchNetworkInput from './SearchNetworkInput';
 const DialogSelectNetwork = () => {
   const dispatch = useAppDispatch();
   const pathName = usePathname();
+  const searchParams = useSearchParams();
   const { getChainNamesAndLogos } = useGetChainInfo();
   const chains = getChainNamesAndLogos();
 
@@ -57,6 +58,17 @@ const DialogSelectNetwork = () => {
     }
   }, [pathName]);
 
+  const constructUrlWithQueryParams = (newChain: string) => {
+    const queryParams = new URLSearchParams(searchParams);
+    const baseUrl = changeNetworkRoute(pathName, newChain);
+    return `${baseUrl}?${queryParams.toString()}`;
+  };
+
+  const constructAllNetworksUrl = (pathParts: string[]) => {
+    const queryParams = new URLSearchParams(searchParams);
+    return `${allNetworksLink(pathParts)}?${queryParams.toString()}`;
+  };
+
   return (
     <Dialog
       open={dialogOpen}
@@ -91,7 +103,7 @@ const DialogSelectNetwork = () => {
               </div>
             </div>
             <div className="flex gap-6 items-center">
-              <div className="search-network-field ">
+              <div className="search-network-field">
                 <SearchNetworkInput
                   handleSearchQueryChange={(e) =>
                     setSearchQuery(e.target.value)
@@ -105,7 +117,7 @@ const DialogSelectNetwork = () => {
             </div>
           </div>
           <Link
-            href={allNetworksLink(pathParts)}
+            href={constructAllNetworksUrl(pathParts)}
             onClick={() => {
               dispatch(setSelectedNetwork({ chainName: '' }));
               onClose();
@@ -135,7 +147,7 @@ const DialogSelectNetwork = () => {
                   key={chain.chainID}
                   chainName={chain.chainName}
                   chainLogo={chain.chainLogo}
-                  pathName={pathName}
+                  pathName={constructUrlWithQueryParams(chain.chainName)}
                   handleClose={onClose}
                   selected={isSelected(chain.chainName)}
                 />
