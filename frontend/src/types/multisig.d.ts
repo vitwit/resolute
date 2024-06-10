@@ -121,12 +121,25 @@ interface MultisigState {
   updateTxnRes: TxRes;
   txns: Txns;
   signTxRes: TxRes;
+  signTransactionRes: TxRes;
   multisigAccountData: {
     account: ImportMultisigAccountRes;
     status: TxStatus;
     error: string;
   };
   verifyDialogOpen: boolean;
+  broadcastTxnRes: {
+    status: TxStatus;
+    error: string;
+    txHash: string;
+    txResponse: {
+      code: number;
+      fee: Coin[];
+      transactionHash: string;
+      rawLog: string;
+      memo: string;
+    };
+  };
 }
 
 interface VerifyAccountRes {
@@ -232,11 +245,7 @@ interface ImportMultisigAccountRes {
 interface DialogCreateMultisigProps {
   open: boolean;
   onClose: () => void;
-  addressPrefix: string;
   chainID: string;
-  address: string;
-  pubKey: string;
-  baseURLs: string[];
 }
 
 interface PubKeyFields {

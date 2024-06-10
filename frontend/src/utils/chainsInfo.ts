@@ -526,18 +526,18 @@ export const networks: Network[] = [
     config: {
       chainId: 'omniflixhub-1',
       chainName: 'OmniflixHub',
-      rest: 'https://omniflixhub-api.lavenderfive.com',
-      rpc: 'https://omniflixhub-rpc.lavenderfive.com',
+      rest: 'https://api-omniflixhub-ia.cosmosia.notional.ventures',
+      rpc: 'https://rpc-omniflixhub-ia.cosmosia.notional.ventures',
       restURIs: [
-        'https://omniflixhub-api.lavenderfive.com',
-        'https://omniflix-rest.publicnode.com',
         'https://api-omniflixhub-ia.cosmosia.notional.ventures',
+        'https://omniflix-rest.publicnode.com',
+        'https://omniflixhub-api.lavenderfive.com',
         'https://api.resolute.vitwit.com/omniflix_api',
       ],
       rpcURIs: [
-        'https://omniflixhub-rpc.lavenderfive.com',
-        'https://omniflix-rpc.publicnode.com:443',
         'https://rpc-omniflixhub-ia.cosmosia.notional.ventures',
+        'https://omniflix-rpc.publicnode.com:443',
+        'https://omniflixhub-rpc.lavenderfive.com',
         'https://api.resolute.vitwit.com/omniflix_rpc',
       ],
       currencies: [

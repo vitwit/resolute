@@ -25,6 +25,22 @@ body {
   font-family: 'Libre Franklin', sans-serif !important;
   font-optical-sizing: auto !important;
 }
+.text-bg {
+  background: linear-gradient(270deg, #fff -67.89%, #999 99.95%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.table-border-line {
+  @apply h-[1px] self-stretch border-b border-[#1C1C20];
+}
+.horizontal-line {
+  @apply h-[1px] self-stretch bg-[#1C1C20];
+}
+.search-bar {
+  @apply flex h-14 items-center gap-2 self-stretch px-6 py-4 rounded-[100px];
+  background: rgba(255, 255, 255, 0.02);
+}
 
 .primary-btn {
   @apply border-[1px] text-white text-[16px] rounded-full px-4 py-[10.5px] leading-[19px] h-10 flex justify-center items-center;
@@ -93,7 +109,6 @@ body {
   }
 }
 
-
 .empty-screen-title {
   @apply text-[32px] font-bold;
   background: linear-gradient(270deg, #fff -67.89%, #999 99.95%);
@@ -144,4 +159,16 @@ body {
 
 .more-msgs {
   @apply bg-[#FFFFFF14] flex justify-center items-center text-[12px] h-6 min-w-6 rounded-2xl p-2;
+}
+.search-bar {
+  @apply flex h-14 justify-between items-center  px-6 py-4 rounded-[100px];
+  background: rgba(255, 255, 255, 0.02);
+}
+input[type='checkbox'] {
+  accent-color: gray;
+  display: block;
+}
+.dashboard-card {
+  @apply flex flex-col items-center gap-2 flex-[1_0_0] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)_inset] p-4 rounded-2xl;
+  background: rgba(255, 255, 255, 0.02);
 }

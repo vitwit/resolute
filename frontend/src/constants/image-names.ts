@@ -7,3 +7,5 @@ export const TXN_SUCCESS_ICON = '/icons/success-icon.png';
 export const TXN_FAILED_ICON = '/icons/failed-icon.png';
 export const SHARE_ICON = '/icons/share-icon.svg';
 export const REDIRECT_ICON = '/icons/redirect-icon.svg';
+export const TIMER_ICON = '/icons/timer-icon.svg';
+export const SEARCH_ICON = '/icons/search-icon.svg';

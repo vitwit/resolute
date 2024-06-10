@@ -13,10 +13,10 @@ const SideMenu = () => {
   return (
     <div className="scrollable-content w-full">
       <div className="flex flex-col gap-2">
-        {SIDEBAR_MENU_OPTIONS.map((item) => (
+        {SIDEBAR_MENU_OPTIONS.map((item, index) => (
           <>
             {item.multipleOptions ? (
-              <MoreOptions item={item} selectedPart={selectedPart} />
+              <MoreOptions key={index} item={item} selectedPart={selectedPart} />
             ) : (
               <MenuItem
                 key={item.name}
@@ -47,7 +47,7 @@ const MoreOptions = ({
   return (
     <>
       {item.name.toLowerCase() === 'transfers' ? (
-        <div className="space-y-2">
+        <div key={item.name} className="space-y-2">
           <MenuItem key={item.name} itemData={item} pathName={selectedPart} />
           <div className="text-[12px] font-medium space-y-4">
             <div className="flex gap-2 items-center pl-3">
