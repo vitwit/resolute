@@ -15,9 +15,11 @@ const Overview = () => {
     (chainName) => nameToChainIDs[chainName]
   );
 
-  return <div> {chainIDs}
-  <OverviewTable chainIDs={chainIDs} />
-  </div>;
+  return (
+    <div>
+      <OverviewTable chainIDs={chainIDs} />
+    </div>
+  );
 };
 
 export default Overview;
