@@ -8,6 +8,7 @@ const DelegateMessage = ({
   index,
   remove,
 }: {
+  /* eslint-disable @typescript-eslint/no-explicit-any */
   control: any;
   index: number;
   remove: (index: number) => void;
