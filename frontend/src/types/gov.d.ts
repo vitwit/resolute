@@ -197,3 +197,33 @@ interface TxDepositInputs {
 interface VoteOptionNumber {
   [key: string]: number;
 }
+
+interface ProposalsData {
+  chainID: string;
+  chainName: string;
+  chainLogo: string;
+  isActive: boolean;
+  proposalInfo: {
+    proposalTitle: string;
+    endTime: string; // voting end time or deposit end time
+    proposalId: string;
+  };
+}
+
+interface SelectedProposal {
+  chainID: string;
+  proposalId: string;
+  isActive: boolean;
+}
+
+type HandleInputChangeEvent = (e: React.ChangeEvent<HTMLInputElement>) => void;
+
+type HandleSelectProposalEvent = ({
+  chainID,
+  isActive,
+  proposalId,
+}: {
+  proposalId: string;
+  chainID: string;
+  isActive: boolean;
+}) => void;

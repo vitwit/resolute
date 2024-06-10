@@ -1,244 +1,110 @@
-.proposals-head {
-  @apply flex flex-col items-start gap-4;
-}
-.cstm-btn {
-  @apply flex h-8 flex-col justify-center items-start gap-2 backdrop-blur-[2px] px-6 py-2 rounded-[100px];
-  background: rgba(255, 255, 255, 0.1);
+.gov-main {
+  @apply pt-20 px-10 relative space-y-20 flex flex-col;
+  height: calc(100vh - 60px) !important;
 }
 
-.cstm-btn-selected {
-  @apply flex h-8 flex-col justify-center items-start gap-2 backdrop-blur-[2px] px-6 py-2 rounded-[100px];
-  background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
+.text-bg {
+  background: linear-gradient(270deg, #fff -67.89%, #999 99.95%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
-.main-page {
-  @apply flex flex-col items-start gap-10 px-10 py-6;
-}
-.view-history {
-  @apply flex flex-col justify-center cursor-pointer text-[rgba(255,255,255,0.50)] text-xs font-extralight leading-[normal] underline;
+.selected-btns {
+  @apply flex justify-center items-center gap-4 px-4 py-[10.5px] rounded-lg border-[0.25px]  hover:bg-[#ffffff14];
 }
 
 .proposal-id {
-  @apply flex w-8 h-8 justify-center items-center gap-2.5 rounded-[100px] text-[8px];
-  background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
-}
-.proposal-id-static {
-  background: rgba(255, 255, 255, 0.1);
-}
-.proposal {
-  @apply px-2 py-4 flex items-start gap-4;
-}
-
-.proposal:hover,
-.proposal-selected {
-  @apply rounded-2xl cursor-pointer bg-[#FFFFFF0D];
-  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
-}
-
-.proposal:hover .proposal-id {
-  background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
-}
-
-.proposal-text-small {
-  @apply flex items-center text-[rgba(255,255,255,0.75)] text-sm font-light leading-[14px];
-}
-.proposal-text-extralight {
-  @apply text-white text-xs font-extralight text-[14px] leading-[14px];
-}
-.proposal-text-normal {
-  @apply text-white text-sm font-normal leading-6;
-}
-.proposal-text-normal-base {
-  @apply text-white text-base font-normal leading-[18px];
-}
-.proposal-text-medium {
-  @apply flex items-center text-white text-base font-medium;
-}
-.proposal-text-big {
-  @apply text-white text-xl leading-[normal];
-}
-.proposal-text-main {
-  @apply text-white text-xl font-medium leading-[normal];
-}
-.popup-grid {
-  @apply flex w-[889px]  flex-col justify-center items-center gap-6 opacity-95 backdrop-blur-[2px] rounded-3xl;
+  @apply relative flex items-center justify-center font-bold rounded-lg w-16 text-white text-[14px] tracking-[1.96px] h-[35px];
   background: linear-gradient(
-    178deg,
-    #241b61 1.71%,
-    #69448d 98.35%,
-    #69448d 98.35%
+    180deg,
+    rgba(122, 126, 156, 0.2) 0.5%,
+    rgba(9, 9, 10, 0.2) 100%
   );
 }
-.cross {
-  @apply flex justify-end items-center gap-2.5 self-stretch pl-6 pr-10 py-10;
-}
-.image-grid {
-  @apply flex justify-end items-center gap-10 pr-0;
-}
-.text-grid {
-  @apply w-[451px];
-}
-.placeholder-text {
-  @apply flex h-[54px] flex-col justify-center items-start gap-2 px-4 py-0 rounded-2xl;
-  background: rgba(255, 255, 255, 0.1);
-}
-.placeholder-text input::placeholder {
-  @apply text-white text-xs font-extralight;
-}
-.placeholder-text input {
-  background-color: transparent;
-}
-.button {
-  @apply flex justify-center items-center gap-6 px-10 py-2.5 rounded-2xl;
-  background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
-}
-.proposal-div {
-  @apply flex justify-between gap-10 space-y-6;
-}
-.proposal-brief {
-  @apply flex-1 flex-col items-start gap-4 p-6 rounded-2xl;
-  background: #0e0b26;
-}
-.status-grid {
-  @apply flex flex-col justify-center items-start gap-4 backdrop-blur-[2px] px-0 py-6 rounded-2xl;
-  background: #0e0b26;
-}
-.status-view-grid {
-  @apply flex flex-col justify-center items-start gap-6 px-6 py-6;
-}
-.status-view {
-  @apply flex flex-col justify-center items-start gap-6;
-}
-.status-pass {
-  @apply flex justify-center items-center gap-2.5  py-0;
-}
-.voting-grid {
-  @apply flex flex-col justify-center items-start gap-4 backdrop-blur-[2px] px-6 py-6 rounded-2xl;
-}
-.voting-view {
-  @apply flex flex-col justify-center items-center gap-6;
-}
-.horizontal-line {
-  @apply h-2 rounded-[100px];
-  background: white;
-}
-.proposal-details-grid {
-  @apply flex flex-col justify-center items-start gap-6 backdrop-blur-[2px] px-6 py-6 rounded-2xl;
-}
-.proposal-details {
-  @apply flex justify-between items-start px-6 py-0;
-}
-.right-bar {
-  @apply flex w-[500px] h-screen flex-col items-center gap-10 shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] p-6;
-  background: #0e0b26;
-}
-.radio-buttons {
-  @apply flex flex-row w-full justify-between items-center;
-}
-.radio-container {
-  @apply relative cursor-pointer block mb-2.5 pl-[30px] text-white items-center;
-}
-.radio-container input {
-  @apply absolute opacity-0 cursor-pointer;
-}
-.radio-checkmark {
-  @apply absolute h-4 w-4 border rounded-[50%] border-solid border-white left-0 top-0 flex justify-center items-center;
-}
-.radio-container input:checked ~ .radio-checkmark .radio-check {
-  @apply bg-white w-[6px] h-[6px] rounded-full;
-}
-.vote-grid {
-  @apply flex flex-col w-full items-start gap-4 backdrop-blur-[2px] py-6 px-6 rounded-2xl;
-  background: rgba(255, 255, 255, 0.05);
-}
-.view-full {
-  @apply flex flex-col justify-center text-center leading-[normal] underline cursor-pointer text-[#FFFFFFBF] text-[12px] font-extralight underline-offset-2;
+
+.bottom-network-logo {
+  @apply absolute bottom-[-8px] right-[-4px] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] rounded-[100px] border-2 border-solid border-[#111115];
+  background: lightgray 50% / cover no-repeat;
 }
 
-.scrollable-container {
-  @apply max-h-screen overflow-y-scroll;
+.active-badge {
+  @apply h-[25px] w-[85px] border flex justify-center items-center gap-2 px-3 py-1 rounded-[100px] border-solid border-[#2BA472];
+  background: rgba(43, 164, 114, 0.5);
 }
-.ad-close {
-  @apply absolute right-[-2px] top-[-2px] cursor-pointer rounded-full bg-[#ffffff1a];
-}
-
-.custom-radio-button-label {
-  @apply flex items-center cursor-pointer gap-2;
+.proposal-view {
+  @apply shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] flex flex-col w-[50%] gap-4 p-6 rounded-2xl;
+  background: rgba(255, 255, 255, 0.02);
 }
 
-.custom-radio-button {
-  @apply border-2 w-4 h-4 border-[#FFFFFF80] rounded-full flex justify-center items-center;
+.vote-optn-btn {
+  @apply flex justify-center items-center gap-2 h-10 px-4 py-[10.5px] rounded-[100px] border-[1px];
 }
 
-.custom-radio-button-checked {
-  @apply h-[6px] w-[6px] bg-white rounded-full;
-}
-.cstm-btn:hover {
-  background-color: #8f8a8a1a;
-}
-.search-validator-input {
-  @apply w-full pl-2 border-none cursor-pointer focus:outline-none bg-transparent placeholder:text-[16px] placeholder:text-[#FFFFFFBF];
-}
-.amount-chip {
-  @apply opacity-80 rounded-lg text-[#E57575] text-center text-sm not-italic font-normal leading-[normal] max-w-fit py-1 px-2 truncate;
-  background: rgba(229, 117, 117, 0.2);
-}
-.raw-content {
-  @apply p-2 bg-black max-h-[600px] overflow-y-scroll;
-}
-.back {
-  @apply rounded-2xl w-52 h-10 p-4 pb-8;
-  background: rgba(255, 255, 255, 0.1);
+.header {
+  @apply flex flex-col justify-center items-start gap-4 px-6 py-4 top-0 sticky;
+  background: #ffc13c;
 }
 
-.proposal-description-markdown {
-  @apply opacity-80;
+.cast-vote-grid {
+  @apply flex flex-col items-end gap-6 self-stretch pt-4 pb-6 px-4 rounded-3xl;
+  background: #ffffff05;
 }
 
-.proposal-description-markdown p,
-.proposal-description-markdown h1,
-.proposal-description-markdown h2,
-.proposal-description-markdown ul,
-.proposal-description-markdown ol {
-  margin: 0;
+.proposal-passed-text {
+  @apply bg-clip-text text-sm font-light leading-[normal];
+  background: linear-gradient(90deg, #b7e183 0%, #71de56 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
-.proposal-description-markdown h1 {
-  @apply text-2xl font-bold;
-}
-.proposal-description-markdown h2 {
-  @apply text-xl font-bold;
-}
-.proposal-description-markdown h3 {
-  @apply text-lg font-bold;
-}
-.proposal-description-markdown a {
-  @apply text-blue-600 underline;
+.vertical-line {
+  @apply w-[0.25px] h-14 bg-[#FFFFFF80] opacity-20;
 }
 
-.proposal-description-markdown ol {
-  list-style: decimal;
-  list-style-position: inside;
-  margin-left: 1em;
+.blur {
+  @apply backdrop-blur-[2px];
+  background: linear-gradient(
+    174deg,
+    rgba(217, 217, 217, 0) -235.54%,
+    rgba(14, 16, 27, 0.02) 95.6%
+  );
 }
 
-.proposal-description-markdown ul {
-  list-style-type: disc;
-  list-style-position: inside;
-  margin-left: 1em;
+.yes-bg {
+  background: linear-gradient(90deg, #2ba472 0%, rgba(43, 164, 114, 0.5) 100%);
 }
 
-.vote-popup-btn,
-.deposit-popup-btn {
-  @apply button w-36 min-h-[44px];
+.no-bg {
+  background: linear-gradient(90deg, #d92101 0%, rgba(217, 33, 1, 0.5) 100%);
 }
 
-.error-box {
-  @apply flex justify-end mt-2 h-[26px];
+.abstain-bg {
+  background: linear-gradient(90deg, #ffc13c 0%, rgba(255, 193, 60, 0.5) 100%);
 }
 
-.error-chip {
-  @apply text-[12px] rounded-lg bg-[#ff00005b] text-white text-center leading-normal max-w-fit py-1 px-2 truncate;
+.veto-bg {
+  background: linear-gradient(90deg, #da561e 0%, rgba(218, 86, 30, 0.5) 100%);
+}
+
+.badge-bg {
+  @apply flex justify-center items-center gap-2 px-4 py-2 rounded-[100px] bg-[#FFFFFF05] w-[158px];
+}
+
+.deposit-badge {
+  @apply h-[25px] w-[85px] flex justify-center items-center gap-2 border px-3 py-1 rounded-[100px] border-solid border-[#DA561E];
+  background: rgba(218, 86, 30, 0.5);
+}
+
+.search-proposal-input {
+  @apply w-full border-none cursor-text focus:outline-none bg-transparent placeholder:text-[16px] placeholder:text-[#FFFFFF80] placeholder:font-normal text-[#ffffff];
+}
+
+.search-proposal-field {
+  @apply py-4 px-6 bg-[#FFFFFF05] rounded-full flex w-full max-w-[600px];
+}
+
+.amount-input-field {
+  @apply bg-transparent w-full border-none focus:outline-none text-[40px] font-bold placeholder:text-[#FFFFFF33];
 }
 
 /* New css */

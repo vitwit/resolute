@@ -3,14 +3,14 @@ import { useAppSelector } from '@/custom-hooks/StateHooks';
 import { RootState } from '@/store/store';
 import { useParams } from 'next/navigation';
 import React from 'react';
-import GovPage from '../GovPage';
+import GovDashboard from '../gov-dashboard/GovDashboard';
 
 const ChainProposals = () => {
   const params = useParams();
   const paramChain = params.network;
   const chainName = typeof paramChain === 'string' ? paramChain : '';
   const nameToChainIDs = useAppSelector(
-    (state: RootState) => state.wallet.nameToChainIDs
+    (state: RootState) => state.common.nameToChainIDs
   );
   let chainID: string = '';
   Object.keys(nameToChainIDs).forEach((chain) => {
@@ -19,7 +19,7 @@ const ChainProposals = () => {
   return (
     <>
       {chainID.length ? (
-        <GovPage chainIDs={[chainID]} />
+        <GovDashboard chainIDs={[chainID]} />
       ) : (
         <div className="w-full h-full text-white flex justify-center items-center">
           - Chain Not found -
