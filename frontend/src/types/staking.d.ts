@@ -5,7 +5,7 @@ interface GetValidatorsResponse {
   pagination: Pagination;
 }
 
-interface Validator {
+export interface Validator {
   operator_address: string;
   consensus_pubkey: PubKey;
   jailed: boolean;

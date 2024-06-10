@@ -40,6 +40,7 @@ const initialState: CommonState = {
     chainName: '',
   },
   allNetworksInfo: {},
+  nameToChainIDs: {},
 };
 
 export const getTokenPrice = createAsyncThunk(
@@ -116,6 +117,9 @@ export const commonSlice = createSlice({
       state.allNetworksInfo = {};
       for (let i = 0; i < networks.length; i++) {
         state.allNetworksInfo[networks[i].config.chainId] = networks[i];
+        state.nameToChainIDs[
+          networks[i].config.chainName?.toLowerCase().split(' ').join('')
+        ] = networks[i].config.chainId;
       }
     },
   },

@@ -33,68 +33,58 @@ const AssetsTable = ({ chainIDs }: { chainIDs: string[] }) => {
     isAuthzMode && (authzBalanceLoading || authzDelegationsLoading);
 
   return (
-    <div className="flex flex-col flex-1 overflow-y-scroll">
-      <div className="assets-table bg-[#1a1a1b] px-8 py-8">
-        <div className="flex flex-col flex-1">
-          {assets.length ? (
-            <div className="flex-1">
-              <table className="w-full text-sm leading-normal">
-                <thead className="border-b-[0.5px] border-[#B0B0B033] relative">
-                  <tr className="text-left">
-                    <th className="w-1/5">
-                      <div className="min-h-[17px] flex items-center text-sm not-italic font-normal leading-[normal]">
-                        Available
-                      </div>
-                    </th>
-                    <th className="w-1/5">
-                      <div className="min-h-[17px] flex items-center text-sm not-italic font-normal leading-[normal]">
-                        Staked
-                      </div>
-                    </th>
-                    <th className="w-1/5">
-                      <div className="min-h-[17px] flex items-center text-sm not-italic font-normal leading-[normal]">
-                        Rewards
-                      </div>
-                    </th>
-                    <th className="w-1/5">
-                      <div className="min-h-[17px] flex items-center text-sm not-italic font-normal leading-[normal]">
-                        Price
-                      </div>
-                    </th>
-                    <th className="w-1/5">
-                      <div className="min-h-[17px] flex items-center text-sm not-italic font-normal leading-[normal]">
-                        Value
-                      </div>
-                    </th>
-                    <th className="max-h-[104px]">
-                      <div className="min-h-[17px] flex items-center text-sm not-italic font-normal leading-[normal]">
-                        Actions
-                      </div>
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="flex-1">
-                  {assets.map((asset) => (
-                    <Asset
-                      asset={asset}
-                      key={asset.chainID + asset.denom}
-                      showChainName={chainIDs.length > 1}
-                    />
-                  ))}
-                </tbody>
-              </table>
-            </div>
+    <div className="flex flex-col gap-10 w-full overflow-scroll h-[50vh]">
+      <div className="space-y-1">
+        <div className="text-h2">Asset Information</div>
+        <div className="secondary-text">
+          Connect your wallet now to access all the modules on resolute
+        </div>
+        <div className="divider-line"></div>
+      </div>
+
+      {/* table */}
+
+      {assets.length ? (
+        <div className="flex flex-col items-start gap-2 w-full p-6">
+          <table className="relative w-full">
+            <thead className="w-full">
+              <tr>
+                {[
+                  'Available',
+                  'Staked',
+                  'Rewards',
+                  'Price',
+                  'Value',
+                  'Actions',
+                ].map((header, hIndex) => (
+                  <th key={hIndex} className="w-1/6">
+                    <div className="text-[rgba(255,255,255,0.50)] text-base font-normal leading-[normal]">
+                      {header}
+                    </div>
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {assets.map((asset) => (
+                <Asset
+                  asset={asset}
+                  key={asset.chainID + asset.denom}
+                  // showChainName={chainIDs.length > 1}
+                />
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        <div className="w-full flex flex-col flex-1 items-center justify-center text-white">
+          {loading || authzLoading ? (
+            <CircularProgress size={32} />
           ) : (
-            <div className="w-full flex flex-col flex-1 items-center justify-center text-white">
-              {loading || authzLoading ? (
-                <CircularProgress size={32} />
-              ) : (
-                <NoAssets />
-              )}
-            </div>
+            <NoAssets />
           )}
         </div>
-      </div>
+      )}
     </div>
   );
 };

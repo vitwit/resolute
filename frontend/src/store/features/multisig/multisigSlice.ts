@@ -5,17 +5,20 @@ import multisigService from './multisigService';
 import { AxiosError } from 'axios';
 import {
   ERR_UNKNOWN,
+  FAILED_TO_BROADCAST_ERROR,
+  NETWORK_ERROR,
   NOT_MULTISIG_ACCOUNT_ERROR,
   NOT_MULTISIG_MEMBER_ERROR,
   WALLET_REQUEST_ERROR,
 } from '../../../utils/errors';
 import {
+  COSMOS_CHAIN_ID,
   MAX_SALT_VALUE,
   MIN_SALT_VALUE,
   MULTISIG_LEGACY_AMINO_PUBKEY_TYPE,
   OFFCHAIN_VERIFICATION_MESSAGE,
 } from '@/utils/constants';
-import { TxStatus } from '@/types/enums';
+import { MultisigTxStatus, TxStatus } from '@/types/enums';
 import bankService from '@/store/features/bank/bankService';
 import {
   CreateAccountPayload,
@@ -25,14 +28,23 @@ import {
   GetMultisigBalanceInputs,
   GetTxnsInputs,
   ImportMultisigAccountRes,
+  MultisigAddressPubkey,
   MultisigState,
   QueryParams,
   SignTxInputs,
+  Txn,
   UpdateTxnInputs,
 } from '@/types/multisig';
-import { getRandomNumber, isMultisigAccountMember } from '@/utils/util';
+import {
+  getRandomNumber,
+  isMultisigAccountMember,
+  isNetworkError,
+} from '@/utils/util';
 import authService from './../auth/authService';
 import { get } from 'lodash';
+import { getAuthToken } from '@/utils/localStorage';
+import multisigSigning from '@/app/(routes)/multisig/utils/multisigSigning';
+import { setError } from '../common/commonSlice';
 
 const initialState: MultisigState = {
   createMultisigAccountRes: {
@@ -87,6 +99,22 @@ const initialState: MultisigState = {
   signTxRes: {
     status: TxStatus.INIT,
     error: '',
+  },
+  signTransactionRes: {
+    status: TxStatus.INIT,
+    error: '',
+  },
+  broadcastTxnRes: {
+    status: TxStatus.INIT,
+    error: '',
+    txHash: '',
+    txResponse: {
+      code: 0,
+      fee: [],
+      transactionHash: '',
+      rawLog: '',
+      memo: '',
+    },
   },
   txns: {
     list: [],
@@ -301,6 +329,101 @@ export const getAccountAllMultisigTxns = createAsyncThunk(
   }
 );
 
+export const broadcastTransaction = createAsyncThunk(
+  'multisig/broadcastTransaction',
+  async (
+    data: {
+      rpc: string;
+      chainID: string;
+      multisigAddress: string;
+      signedTxn: Txn;
+      walletAddress: string;
+      pubKeys: MultisigAddressPubkey[];
+      threshold: number;
+      baseURLs: string[];
+    },
+    { rejectWithValue, dispatch }
+  ) => {
+    const authToken = getAuthToken(COSMOS_CHAIN_ID);
+    const queryParams = {
+      address: data.walletAddress,
+      signature: authToken?.signature || '',
+    };
+    try {
+      const { result, code, transactionHash, fee, memo, rawLog, queryParams } =
+        await multisigSigning.broadcastTransaction(data);
+
+      if (result.code === 0) {
+        dispatch(
+          updateTxn({
+            queryParams: queryParams,
+            data: {
+              txId: data.signedTxn?.id,
+              address: data.multisigAddress,
+              body: {
+                status: MultisigTxStatus.SUCCESS,
+                hash: result?.transactionHash || '',
+                error_message: '',
+              },
+            },
+          })
+        );
+      } else {
+        dispatch(
+          setError({
+            type: 'error',
+            message: result?.rawLog || FAILED_TO_BROADCAST_ERROR,
+          })
+        );
+        dispatch(
+          updateTxn({
+            queryParams: queryParams,
+            data: {
+              txId: data.signedTxn?.id,
+              address: data.multisigAddress,
+              body: {
+                status: MultisigTxStatus.FAILED,
+                hash: result?.transactionHash || '',
+                error_message: result?.rawLog || FAILED_TO_BROADCAST_ERROR,
+              },
+            },
+          })
+        );
+      }
+      return {
+        data: { code, transactionHash, fee, memo, rawLog },
+        chainID: data.chainID,
+      };
+      /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+    } catch (error: any) {
+      const errMsg = error?.message;
+      dispatch(
+        setError({
+          message: errMsg,
+          type: 'error',
+        })
+      );
+
+      dispatch(
+        updateTxn({
+          queryParams,
+          data: {
+            txId: data.signedTxn?.id,
+            address: data.multisigAddress,
+            body: {
+              status: MultisigTxStatus.FAILED,
+              hash: '',
+              error_message: error?.message || FAILED_TO_BROADCAST_ERROR,
+            },
+          },
+        })
+      );
+
+      return rejectWithValue(errMsg);
+    }
+  }
+);
+
 export const updateTxn = createAsyncThunk(
   'multisig/updateTxn',
   async (data: UpdateTxnInputs, { rejectWithValue }) => {
@@ -316,6 +439,59 @@ export const updateTxn = createAsyncThunk(
       if (error instanceof AxiosError)
         return rejectWithValue({ message: error.message });
       return rejectWithValue({ message: ERR_UNKNOWN });
+    }
+  }
+);
+
+export const signTransaction = createAsyncThunk(
+  'multisig/signTransaction',
+  async (
+    data: {
+      rpc: string;
+      chainID: string;
+      multisigAddress: string;
+      unSignedTxn: Txn;
+      walletAddress: string;
+    },
+    { rejectWithValue, dispatch }
+  ) => {
+    try {
+      const payload = await multisigSigning.signTransaction(
+        data.rpc,
+        data.chainID,
+        data.multisigAddress,
+        data.unSignedTxn,
+        data.walletAddress
+      );
+      const authToken = getAuthToken(COSMOS_CHAIN_ID);
+
+      const response = await multisigService.signTx(
+        {
+          address: data.walletAddress,
+          signature: authToken?.signature || '',
+        },
+        data.multisigAddress,
+        data.unSignedTxn.id,
+        {
+          signer: payload.signer,
+          signature: payload.signature,
+        }
+      );
+      return response.data;
+      /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+    } catch (error: any) {
+      let errMsg =
+        error?.message || 'Error while signing the transaction, Try again.';
+      if (isNetworkError(errMsg)) {
+        errMsg = `${NETWORK_ERROR}: ${errMsg}`;
+      }
+      dispatch(
+        setError({
+          message: errMsg,
+          type: 'error',
+        })
+      );
+      return rejectWithValue(errMsg);
     }
   }
 );
@@ -600,6 +776,33 @@ export const multisigSlice = createSlice({
         state.signTxRes.status = TxStatus.REJECTED;
         const payload = action.payload as { message: string };
         state.signTxRes.error = payload.message || '';
+      });
+    builder
+      .addCase(signTransaction.pending, (state) => {
+        state.signTransactionRes.status = TxStatus.PENDING;
+      })
+      .addCase(signTransaction.fulfilled, (state) => {
+        state.signTransactionRes.status = TxStatus.IDLE;
+      })
+      .addCase(signTransaction.rejected, (state, action) => {
+        state.signTransactionRes.status = TxStatus.REJECTED;
+        const payload = action.payload as { message: string };
+        state.signTransactionRes.error = payload.message || '';
+      });
+    builder
+      .addCase(broadcastTransaction.pending, (state) => {
+        state.broadcastTxnRes.status = TxStatus.PENDING;
+        state.broadcastTxnRes.error = '';
+      })
+      .addCase(broadcastTransaction.fulfilled, (state, action) => {
+        state.broadcastTxnRes.status = TxStatus.IDLE;
+        state.broadcastTxnRes.error = '';
+        state.broadcastTxnRes.txResponse = action.payload.data;
+        state.broadcastTxnRes.txHash = action.payload.data.transactionHash;
+      })
+      .addCase(broadcastTransaction.rejected, (state, action) => {
+        state.broadcastTxnRes.status = TxStatus.REJECTED;
+        state.broadcastTxnRes.error = action.error.message || ERR_UNKNOWN;
       });
     builder
       .addCase(importMultisigAccount.pending, (state) => {
