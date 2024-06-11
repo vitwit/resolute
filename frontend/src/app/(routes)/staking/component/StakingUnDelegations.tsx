@@ -20,6 +20,14 @@ function StakingUnDelegations({ undelegations }: { undelegations: Chains }) {
       height)
   }
 
+  let unbondingCount = 0;
+
+  Object.entries(undelegations).forEach(([, value]) => {
+    get(value, 'unbonding.unbonding.unbonding_responses', []).forEach((ud) => {
+      unbondingCount = get(ud, 'entries.length', 0)
+    })
+  })
+
   return (
     <div className="flex flex-col w-full gap-10">
       <div className="space-y-2 items-start">
@@ -35,7 +43,7 @@ function StakingUnDelegations({ undelegations }: { undelegations: Chains }) {
       ) : null}
 
       {
-        staking.undelegationsLoading === 0 && staking.totalUnbondedAmount === 0 ?
+        !unbondingCount ?
           <WithConnectionIllustration message='No Un Delegations' /> : null
       }
 
