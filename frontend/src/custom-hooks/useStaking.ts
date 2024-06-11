@@ -46,6 +46,14 @@ const useStaking = () => {
         (state: RootState) => state.staking.delegationsLoading
     )
 
+    const undelegationsLoading = useAppSelector(
+        (state: RootState) => state.staking.undelegationsLoading
+    )
+
+    const totalUnbondedAmount = useAppSelector(
+        (state: RootState) => state.staking.totalUndelegationsAmount
+    )
+
     const { txWithdrawAllRewardsInputs, txWithdrawValidatorRewardsInputs } = useGetTxInputs();
 
     useEffect(() => {
@@ -327,6 +335,8 @@ const useStaking = () => {
         txWithdrawValRewards,
         chainTotalValRewards,
         delegationsLoading,
+        undelegationsLoading,
+        totalUnbondedAmount
     }
 };
 

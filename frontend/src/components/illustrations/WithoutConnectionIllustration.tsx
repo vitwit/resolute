@@ -1,15 +1,22 @@
+import { useAppDispatch } from '@/custom-hooks/StateHooks';
 import Image from 'next/image';
+import { setConnectWalletOpen } from '@/store/features/wallet/walletSlice';
 
 const WithoutConnectionIllustration = () => {
+  const dispatch = useAppDispatch();
+  const connectWallet = () => {
+    dispatch(setConnectWalletOpen(true));
+  };
+
   return (
     <div className="flex flex-col justify-center  gap-10 w-full px-10 py-20">
-      <div className="flex flex-col items-start space-y-1">
+      {/* <div className="flex flex-col items-start space-y-1">
         <div className="text-h1">Staking</div>
         <div className="text-b1-light">
           Connect your wallet now to access all the modules on resolute{' '}
         </div>
         <div className="divider-line"></div>
-      </div>
+      </div> */}
       <div className="flex flex-col justify-center items-center gap-10">
         <div>
           <Image
@@ -25,7 +32,7 @@ const WithoutConnectionIllustration = () => {
             </p>
           </div>
         </div>
-        <button className="primary-btn">Connect wallet</button>
+        <button onClick={connectWallet} className="primary-btn">Connect wallet</button>
       </div>
     </div>
   );

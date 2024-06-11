@@ -6,6 +6,8 @@ import ValidatorName from './ValidatorName';
 import { getTimeDifferenceToFutureDate } from '@/utils/dataTime';
 import { Chains } from '@/store/features/staking/stakeSlice';
 import '../staking.css';
+import WithConnectionIllustration from '@/components/illustrations/withConnectionIllustration';
+import CustomLoader from '@/components/common/CustomLoader';
 
 function StakingUnDelegations({ undelegations }: { undelegations: Chains }) {
   const staking = useStaking();
@@ -27,6 +29,16 @@ function StakingUnDelegations({ undelegations }: { undelegations: Chains }) {
         </div>
         <div className="horizontal-line"></div>
       </div>
+
+      {staking.undelegationsLoading !== 0 ? (
+        <CustomLoader loadingText="Loading..." />
+      ) : null}
+
+      {
+        staking.undelegationsLoading === 0 && staking.totalUnbondedAmount === 0 ?
+          <WithConnectionIllustration message='No Un Delegations' /> : null
+      }
+
       <div className="grid grid-cols-3 gap-10 px-6 py-0">
         {Object.entries(undelegations).map(([key, value]) => {
           return get(value, 'unbonding.unbonding.unbonding_responses', []).map(

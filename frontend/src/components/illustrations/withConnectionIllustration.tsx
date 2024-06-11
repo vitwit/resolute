@@ -1,6 +1,6 @@
 import Image from 'next/image';
 
-const WithConnectionIllustration = () => {
+const WithConnectionIllustration = ({message}: {message: string}) => {
   return (
     <div className="flex flex-col justify-center  gap-10 w-full px-10 py-20">
       <div className="flex flex-col items-start space-y-1">
@@ -20,7 +20,7 @@ const WithConnectionIllustration = () => {
             alt="Illustration"
           />
           <div className="flex flex-col justify-center items-center w-full">
-            <p className="empty-screen-title">No Delegations </p>
+            <p className="empty-screen-title"> {message} </p>
             <p className="secondary-text">
               Connect your wallet to access your account on Resolute
             </p>

@@ -9,6 +9,7 @@ import DelegatePopup from '../components/DelegatePopup';
 import UndelegatePopup from '../components/UndelegatePopup';
 import ReDelegatePopup from '../components/ReDelegatePopup';
 import CustomLoader from '@/components/common/CustomLoader';
+import WithConnectionIllustration from '@/components/illustrations/withConnectionIllustration';
 
 function StakingDelegations({ delegations }: { delegations: Chains }) {
   const staking = useStaking();
@@ -51,6 +52,11 @@ function StakingDelegations({ delegations }: { delegations: Chains }) {
       {staking.delegationsLoading !== 0 ? (
         <CustomLoader loadingText="Loading..." />
       ) : null}
+
+      {
+        staking.delegationsLoading === 0 && Object.keys(delegations).length === 0 ?
+        <WithConnectionIllustration message='No Delegations' />: null
+      }
 
       {Object.entries(delegations).map(([key, value], index) =>
         get(value, 'delegations.delegations.delegation_responses.length') ? (

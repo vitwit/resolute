@@ -115,7 +115,7 @@ const OverviewTable = ({ chainIDs }: { chainIDs: string[] }) => {
             </div>
           </div>
           <div className="secondary-text">
-            Connect your wallet now to access all the modules on resolute
+            Summary of your assets across all chains
           </div>
           <div className="divider-line"></div>
         </div>

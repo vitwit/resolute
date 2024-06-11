@@ -36,9 +36,9 @@ const AssetsTable = ({ chainIDs }: { chainIDs: string[] }) => {
     <div className="flex flex-col gap-10 w-full overflow-scroll h-[50vh]">
       <div className="space-y-1">
         <div className="text-h2">Asset Information</div>
-        <div className="secondary-text">
+        {/* <div className="secondary-text">
           Connect your wallet now to access all the modules on resolute
-        </div>
+        </div> */}
         <div className="divider-line"></div>
       </div>
 
