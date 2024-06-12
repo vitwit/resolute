@@ -12,9 +12,12 @@ import {
     getDepositParams,
 } from '@/store/features/gov/govSlice';
 import { get } from 'lodash';
-import { getTimeDifferenceToFutureDate } from '@/utils/dataTime';
+import { getLocalTime, getTimeDifferenceToFutureDate } from '@/utils/dataTime';
 import Vote from '../../gov-dashboard/Vote';
 import ProposalProjection from '../../ProposalProjection';
+import { Tooltip } from '@mui/material';
+import DialogDeposit from '../../popups/DialogDeposit';
+import CustomButton from '@/components/common/CustomButton';
 
 const emptyTallyResult = {
     yes: '',
@@ -33,6 +36,7 @@ const SingleProposal: React.FC<SingleProposalProps> = ({ chainID, proposalID }) 
     const [showFullText, setShowFullText] = useState(false);
     const [proposalMarkdown, setProposalMarkdown] = useRemark();
     const [quorumPercent, setQuorumPercent] = useState<string>('0');
+    const [depositDialogOpen, setDepositDialogOpen] = useState(false);
 
     const dispatch = useAppDispatch();
 
@@ -223,11 +227,10 @@ const SingleProposal: React.FC<SingleProposalProps> = ({ chainID, proposalID }) 
                                         </div>
                                         <div className="blur w-full absolute bottom-0  h-32"> </div>
                                     </div>
+                                    
                                 )}
                             </div>
-                        </div>
-
-                        <div className="cast-vote-grid ">
+                            <div className="cast-vote-grid ">
                             {
                                 isStatusVoting ? <>
                                     <div className="flex px-6 py-4 rounded-2xl bg-[#FFFFFF05] justify-between w-full">
@@ -240,11 +243,37 @@ const SingleProposal: React.FC<SingleProposalProps> = ({ chainID, proposalID }) 
                                     </div>
 
                                     <Vote proposalId={proposalID} chainID={chainID} />
-                                </> : null
+                                </> : <>
+                                    <CustomButton
+                                        btnText={
+                                            true ? 'Deposit' : 'Connect Wallet to Deposit'
+                                        }
+                                        btnOnClick={() => {
+                                            setDepositDialogOpen(true)
+                                        }}
+                                        btnStyles='items-center'
+                                    />
+                                    <DialogDeposit
+                                        chainID={chainID}
+                                        endTime={get(proposalInfo, 'deposit_end_time', '-')}
+                                        onClose={() => setDepositDialogOpen(false)}
+                                        open={depositDialogOpen}
+                                        proposalId={proposalID}
+                                        proposalTitle={get(
+                                            proposalInfo,
+                                            'content.title',
+                                            get(proposalInfo, 'title', '-')
+                                        ) || get(proposalInfo, 'content.@type', '')}
+                                    />
+                                </>
                             }
-
+                        </div>
 
                         </div>
+
+                      
+
+
                     </div>
 
                     {/* RightSide View */}
@@ -303,12 +332,14 @@ const SingleProposal: React.FC<SingleProposalProps> = ({ chainID, proposalID }) 
                                         <div className="vertical-line "></div>
                                     </div>
                                     <div className="flex flex-col gap-2">
-                                        <p className="text-[#FFFFFF80]">
-                                            {getTimeDifferenceToFutureDate(
-                                                get(proposalInfo, 'submit_time'),
-                                                true
-                                            )} ago
-                                        </p>
+                                        <Tooltip title={getLocalTime(get(proposalInfo, 'submit_time'))} placement='top'>
+                                            <p className="text-[#FFFFFF80]">
+                                                {getTimeDifferenceToFutureDate(
+                                                    get(proposalInfo, 'submit_time'),
+                                                    true
+                                                )} ago
+                                            </p>
+                                        </Tooltip>
                                         <p className="text-white text-xs font-normal leading-[normal]">
                                             Proposal Created
                                         </p>
@@ -325,21 +356,26 @@ const SingleProposal: React.FC<SingleProposalProps> = ({ chainID, proposalID }) 
                                         <div className="vertical-line"></div>
                                     </div>
                                     <div className="flex flex-col gap-2">
-                                        <p className="text-[#FFFFFF80]">
-                                            {
-                                                isStatusVoting ?
-                                                    getTimeDifferenceToFutureDate(
-                                                        get(proposalInfo, 'voting_start_time', '-'),
-                                                        true
-                                                    ) : getTimeDifferenceToFutureDate(
-                                                        get(proposalInfo, 'submit_time', '-'),
-                                                        true
-                                                    )
-                                            } ago
-                                        </p>
+                                        <Tooltip title={
+                                            isStatusVoting ?
+                                                getLocalTime(get(proposalInfo, 'voting_start_time', '-')) :
+                                                getLocalTime(get(proposalInfo, 'submit_time', '-'))} placement="top">
+                                            <p className="text-[#FFFFFF80]">
+                                                {
+                                                    isStatusVoting ?
+                                                        getTimeDifferenceToFutureDate(
+                                                            get(proposalInfo, 'voting_start_time', '-'),
+                                                            true
+                                                        ) : getTimeDifferenceToFutureDate(
+                                                            get(proposalInfo, 'submit_time', '-'),
+                                                            true
+                                                        )
+                                                } ago
+                                            </p>
+                                        </Tooltip>
                                         <p className="text-white text-xs font-normal leading-[normal]">
                                             {
-                                                isStatusVoting ? 'Voting' : 'Deposit Time '
+                                                isStatusVoting ? 'Voting ' : 'Deposit Time '
                                             }
                                             started
                                         </p>
@@ -355,13 +391,18 @@ const SingleProposal: React.FC<SingleProposalProps> = ({ chainID, proposalID }) 
                                         />
                                     </div>
                                     <div className="flex flex-col gap-2">
-                                        <p className="text-[#FFFFFF80]">
-                                            in {isStatusVoting ? getTimeDifferenceToFutureDate(
-                                                get(proposalInfo, 'voting_end_time', '-')
-                                            ) : getTimeDifferenceToFutureDate(
-                                                get(proposalInfo, 'deposit_end_time', '-')
-                                            )}
-                                        </p>
+                                        <Tooltip title={
+                                            isStatusVoting ?
+                                                getLocalTime(get(proposalInfo, 'voting_end_time', '-')) :
+                                                getLocalTime(get(proposalInfo, 'deposit_end_time', '-'))} placement="top">
+                                            <p className="text-[#FFFFFF80]">
+                                                in {isStatusVoting ? getTimeDifferenceToFutureDate(
+                                                    get(proposalInfo, 'voting_end_time', '-')
+                                                ) : getTimeDifferenceToFutureDate(
+                                                    get(proposalInfo, 'deposit_end_time', '-')
+                                                )}
+                                            </p>
+                                        </Tooltip>
                                         <p className="text-white text-xs font-normal leading-[normal]">
                                             {
                                                 isStatusVoting ? 'Voting' : 'Deposit Time '
