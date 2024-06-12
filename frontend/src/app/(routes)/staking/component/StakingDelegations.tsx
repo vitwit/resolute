@@ -41,7 +41,7 @@ function StakingDelegations({ delegations }: { delegations: Chains }) {
   const claimTxStatus = staking.getClaimTxStatus();
 
   return (
-    <div className="flex flex-col w-full gap-10">
+    <div className="flex flex-col w-full gap-10 pb-28">
       <div className="space-y-2 items-start">
         <div className="text-h2">Delegations</div>
         <div className="secondary-text">
@@ -53,10 +53,10 @@ function StakingDelegations({ delegations }: { delegations: Chains }) {
         <CustomLoader loadingText="Loading..." />
       ) : null}
 
-      {
-        staking.delegationsLoading === 0 && Object.keys(delegations).length === 0 ?
-        <WithConnectionIllustration message='No Delegations' />: null
-      }
+      {staking.delegationsLoading === 0 &&
+      Object.keys(delegations).length === 0 ? (
+        <WithConnectionIllustration message="No Delegations" />
+      ) : null}
 
       {Object.entries(delegations).map(([key, value], index) =>
         get(value, 'delegations.delegations.delegation_responses.length') ? (
@@ -241,7 +241,7 @@ const StakingActionsPopup: React.FC<PopupProps> = ({
         onClick={handleImageClick}
       />
       {showPopup && (
-        <div className="absolute top-0 left-5 z-10 more-popup">
+        <div className="absolute top-4 right-0 z-10 more-popup-grid">
           <button
             className="flex items-center w-full p-4 text-b1 hover:bg-[#FFFFFF10]"
             onClick={openDelegatePopup}
