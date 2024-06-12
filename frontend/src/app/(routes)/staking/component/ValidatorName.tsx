@@ -57,6 +57,9 @@ const ValidatorName: React.FC<ValidatorNameProps> = ({
           {/* Copy address icon */}
           <WalletAddress address={valoperAddress} displayAddress={false} />
           {hasStatus ? (
+            // If the status is Active than use this css "status-active"
+            // If the status is Jailed than we can use this "status-jailed"
+            //And the status is Unbonded  we can use this "status-unbonded"
             <div
               className={`h-5 text-[8px] ${valStatusObj[get(validatorDetails, 'status', '')] === 'Active' ? 'status-active' : ''}
               ${get(validatorDetails, 'jailed') ? 'status-jailed' : ''} relative`}
