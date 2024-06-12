@@ -11,7 +11,7 @@ import ReDelegatePopup from '../components/ReDelegatePopup';
 import CustomLoader from '@/components/common/CustomLoader';
 import WithConnectionIllustration from '@/components/illustrations/withConnectionIllustration';
 
-function StakingDelegations({ delegations }: { delegations: Chains }) {
+function StakingDelegations({ delegations, isSingleChain }: { delegations: Chains, isSingleChain?: boolean }) {
   const staking = useStaking();
   const validator = useValidator();
 
@@ -49,7 +49,7 @@ function StakingDelegations({ delegations }: { delegations: Chains }) {
         </div>
         <div className="horizontal-line"></div>
       </div>
-      {staking.delegationsLoading !== 0 ? (
+      {!isSingleChain && staking.delegationsLoading !== 0 ? (
         <CustomLoader loadingText="Loading..." />
       ) : null}
 

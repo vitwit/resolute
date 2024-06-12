@@ -9,7 +9,7 @@ import '../staking.css';
 import WithConnectionIllustration from '@/components/illustrations/withConnectionIllustration';
 import CustomLoader from '@/components/common/CustomLoader';
 
-function StakingUnDelegations({ undelegations }: { undelegations: Chains }) {
+function StakingUnDelegations({ undelegations, isSingleChain }: { undelegations: Chains, isSingleChain?: boolean }) {
   const staking = useStaking();
 
   const cancelUnbonding = (
@@ -35,12 +35,13 @@ function StakingUnDelegations({ undelegations }: { undelegations: Chains }) {
       <div className="space-y-2 items-start">
         <div className="text-h2">Unbonding</div>
         <div className="secondary-text">
-          Connect your wallet now to access all the modules on resolute{' '}
+          Unbonding delegations will be locked until their locked time, after which they will be available in your balance.
         </div>
         <div className="horizontal-line"></div>
       </div>
 
-      {staking.undelegationsLoading !== 0 ? (
+
+      {!isSingleChain && staking.undelegationsLoading !== 0 ? (
         <CustomLoader loadingText="Loading..." />
       ) : null}
 
