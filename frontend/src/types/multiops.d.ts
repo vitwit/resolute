@@ -38,7 +38,20 @@ type DelegateMsg = {
   amount: string;
 };
 
-type Message = SendMsg | DelegateMsg;
+type UndelegateMsg = {
+  type: 'Undelegate';
+  validator: string;
+  amount: string;
+};
+
+type RedelegateMsg = {
+  type: 'Redelegate';
+  sourceValidator: string;
+  destValidator: string;
+  amount: string;
+};
+
+type Message = SendMsg | DelegateMsg | UndelegateMsg | RedelegateMsg;
 
 type TxnBuilderForm = {
   gas: number;

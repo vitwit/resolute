@@ -1,15 +1,19 @@
 import { customMUITextFieldStyles } from '@/app/(routes)/multiops/styles';
-import { TextField } from '@mui/material';
+import { TextField, InputAdornment } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { Controller, UseFormSetValue } from 'react-hook-form';
 import CustomAutoComplete from '../components/CustomAutoComplete';
 import useStaking from '@/custom-hooks/txn-builder/useStaking';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
-import { getAllValidators } from '@/store/features/staking/stakeSlice';
+import {
+  getAllValidators,
+  getDelegations,
+} from '@/store/features/staking/stakeSlice';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import { TxStatus } from '@/types/enums';
+import { formatCoin } from '@/utils/util';
 
-const DelegateMessage = ({
+const UndelegateMessage = ({
   control,
   index,
   remove,
@@ -24,31 +28,53 @@ const DelegateMessage = ({
   chainID: string;
 }) => {
   const dispatch = useAppDispatch();
-  const { getChainInfo } = useGetChainInfo();
-  const { restURLs: baseURLs } = getChainInfo(chainID);
-  const { getValidators } = useStaking();
-  const { validatorsList } = getValidators({ chainID });
+  const { getChainInfo, getDenomInfo } = useGetChainInfo();
+  const { restURLs: baseURLs, address } = getChainInfo(chainID);
+  const { decimals: coinDecimals, displayDenom } = getDenomInfo(chainID);
+  const { getValidatorsForUndelegation } = useStaking();
+  const { delegatedValidators, delegationsData } = getValidatorsForUndelegation(
+    { chainID }
+  );
   const [selectedOption, setSelectedOption] = useState<ValidatorOption | null>(
     null
   );
+  const [amountForUndelegation, setAmountForUndelegation] = useState<
+    { amount: string; denom: string } | undefined
+  >();
   const validatorsLoading = useAppSelector(
     (state) => state.staking.chains?.[chainID]?.validators.status
   );
   const handleChange = (option: ValidatorOption | null) => {
     setValue(`msgs.${index}.validator`, option?.address || '');
     setSelectedOption(option);
+    updateAmount(option?.address);
+  };
+
+  const updateAmount = (address: string | undefined) => {
+    if (address) {
+      const item = delegationsData.find(
+        (item) => item.validatorAddress === address
+      );
+      setAmountForUndelegation({
+        amount: (Number(item?.amount) / 10 ** coinDecimals).toFixed(6) || '',
+        denom: item?.denom || '',
+      });
+    } else {
+      setAmountForUndelegation(undefined);
+    }
   };
 
   useEffect(() => {
     if (chainID) {
       dispatch(getAllValidators({ chainID, baseURLs }));
+      dispatch(getDelegations({ chainID, baseURLs, address }));
     }
   }, []);
 
   return (
     <div className="bg-[#FFFFFF05] rounded-2xl space-y-2">
       <div className="bg-[#FFFFFF05] rounded-2xl px-6 py-4 flex items-center justify-between">
-        <div className="text-b1">Delegate</div>
+        <div className="text-b1">Undelegate</div>
         <div className="secondary-btn" onClick={() => remove(index)}>
           Remove
         </div>
@@ -59,7 +85,7 @@ const DelegateMessage = ({
           <CustomAutoComplete
             dataLoading={validatorsLoading === TxStatus.PENDING}
             handleChange={handleChange}
-            options={validatorsList}
+            options={delegatedValidators}
             selectedOption={selectedOption}
           />
         </div>
@@ -85,6 +111,22 @@ const DelegateMessage = ({
                       padding: 2,
                     },
                   },
+                  endAdornment: (
+                    <div className="text-small-light">
+                      {amountForUndelegation ? (
+                        <InputAdornment
+                          position="start"
+                          sx={{ color: '#ffffff80' }}
+                        >
+                          {'Staked :'}{' '}
+                          {formatCoin(
+                            Number(amountForUndelegation?.amount),
+                            displayDenom
+                          )}{' '}
+                        </InputAdornment>
+                      ) : null}
+                    </div>
+                  ),
                 }}
               />
             )}
@@ -95,4 +137,4 @@ const DelegateMessage = ({
   );
 };
 
-export default DelegateMessage;
+export default UndelegateMessage;

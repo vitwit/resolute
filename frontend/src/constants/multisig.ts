@@ -1,1 +1,6 @@
-export const TXN_BUILDER_MSGS = ['Send', 'Delegate'];
+export const TXN_BUILDER_MSGS = [
+  'Send',
+  'Delegate',
+  'Undelegate',
+  'Redelegate',
+];

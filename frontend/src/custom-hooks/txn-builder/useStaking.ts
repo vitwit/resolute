@@ -1,4 +1,3 @@
-import React from 'react';
 import { useAppSelector } from '../StateHooks';
 
 const useStaking = () => {
@@ -32,7 +31,34 @@ const useStaking = () => {
     return { validatorsList };
   };
 
-  return { getValidators };
+  const getValidatorsForUndelegation = ({ chainID }: { chainID: string }) => {
+    const { validatorsList } = getValidators({ chainID });
+    const totalDelegations =
+      stakingData?.[chainID]?.delegations?.delegations?.delegation_responses ||
+      [];
+    const delegationsData = [];
+    const delegatedValidators = [];
+    console.log(totalDelegations)
+
+    for (const validator of validatorsList) {
+      const delegation = totalDelegations.find(
+        (item) => item.delegation.validator_address === validator.address
+      );
+
+      if (delegation) {
+        delegationsData.push({
+          validatorAddress: validator.address,
+          amount: delegation.balance.amount,
+          denom: delegation.balance.denom
+        });
+        delegatedValidators.push(validator);
+      }
+    }
+
+    return { delegationsData, delegatedValidators };
+  };
+
+  return { getValidators, getValidatorsForUndelegation };
 };
 
 export default useStaking;

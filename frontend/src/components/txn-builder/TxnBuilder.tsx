@@ -8,7 +8,6 @@ import {
   FieldArrayWithId,
   useFieldArray,
   useForm,
-  UseFormGetValues,
   UseFormSetValue,
 } from 'react-hook-form';
 import '@/app/(routes)/multiops/multiops.css';
@@ -27,8 +26,12 @@ import { useRouter } from 'next/navigation';
 import { Decimal } from '@cosmjs/math';
 import DelegateMessage from './messages/DelegateMessage';
 import { msgDelegate } from '@/txns/staking/delegate';
+import UndelegateMessage from './messages/UndelegateMessage';
+import RedelegateMessage from './messages/RedelegateMessage';
+import { msgUnDelegate } from '@/txns/staking/undelegate';
+import { msgReDelegate } from '@/txns/staking/redelegate';
 
-type MsgType = 'Send' | 'Delegate';
+type MsgType = 'Send' | 'Delegate' | 'Undelegate' | 'Redelegate';
 
 const TxnBuilder = ({
   chainID,
@@ -51,7 +54,7 @@ const TxnBuilder = ({
   };
   const { address: walletAddress, feeAmount } = basicChainInfo;
 
-  const { handleSubmit, control, reset, setValue, getValues } =
+  const { handleSubmit, control, reset, setValue } =
     useForm<TxnBuilderForm>({
       defaultValues: {
         gas: 900000,
@@ -71,6 +74,15 @@ const TxnBuilder = ({
       append({ type: 'Send', address: '', amount: '' });
     } else if (type === 'Delegate') {
       append({ type: 'Delegate', validator: '', amount: '' });
+    } else if (type === 'Undelegate') {
+      append({ type: 'Undelegate', validator: '', amount: '' });
+    } else if (type === 'Redelegate') {
+      append({
+        type: 'Redelegate',
+        sourceValidator: '',
+        destValidator: '',
+        amount: '',
+      });
     }
   };
 
@@ -295,6 +307,24 @@ const MessagesList = ({
                 chainID={chainID}
               />
             )}
+            {field.type === 'Undelegate' && (
+              <UndelegateMessage
+                control={control}
+                index={index}
+                remove={remove}
+                setValue={setValue}
+                chainID={chainID}
+              />
+            )}
+            {field.type === 'Redelegate' && (
+              <RedelegateMessage
+                control={control}
+                index={index}
+                remove={remove}
+                setValue={setValue}
+                chainID={chainID}
+              />
+            )}
           </div>
         ))}
       </div>
@@ -351,6 +381,39 @@ const formatMsgs = (
         value: {
           delegatorAddress: fromAddress,
           validatorAddress: msg.validator,
+          amount: {
+            amount: amountInAtomics,
+            denom: minimalDenom,
+          },
+        },
+      });
+    } else if (msg.type === 'Undelegate') {
+      const amountInAtomics = Decimal.fromUserInput(
+        msg.amount,
+        Number(coinDecimals)
+      ).atomics;
+      messages.push({
+        typeUrl: msgUnDelegate,
+        value: {
+          delegatorAddress: fromAddress,
+          validatorAddress: msg.validator,
+          amount: {
+            amount: amountInAtomics,
+            denom: minimalDenom,
+          },
+        },
+      });
+    } else if (msg.type === 'Redelegate') {
+      const amountInAtomics = Decimal.fromUserInput(
+        msg.amount,
+        Number(coinDecimals)
+      ).atomics;
+      messages.push({
+        typeUrl: msgReDelegate,
+        value: {
+          delegatorAddress: fromAddress,
+          validatorDstAddress: msg.destValidator,
+          validatorSrcAddress: msg.sourceValidator,
           amount: {
             amount: amountInAtomics,
             denom: minimalDenom,
