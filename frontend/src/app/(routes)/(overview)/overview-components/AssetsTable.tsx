@@ -49,11 +49,17 @@ const AssetsTable = ({ chainIDs }: { chainIDs: string[] }) => {
           <table className="relative w-full">
             <thead className="w-full">
               <tr>
-                {['Available', 'Staked', 'Rewards', 'Price', 'Value', ''].map(
-                  (header, hIndex) => (
-                    <th key={hIndex} className="w-1/6">
-                      <div className="secondary-text items-start flex">
-                        {header}
+                {[
+                  'Available',
+                  'Staked',
+                  'Rewards',
+                  'Price',
+                  'Value',
+                  'Actions',
+                ].map((header, hIndex) => (
+                  <th key={hIndex} className="w-1/5">
+                    <div className="secondary-text items-start flex">
+                      {header}
                     </div>
                   </th>
                 ))}

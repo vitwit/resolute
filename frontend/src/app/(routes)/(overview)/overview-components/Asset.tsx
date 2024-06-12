@@ -1,6 +1,6 @@
 import { formatAmount, formatCoin, formatDollarAmount } from '@/utils/util';
 import Link from 'next/link';
-import React, {RefObject, useEffect, useRef, useState } from 'react';
+import React, { RefObject, useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { txWithdrawAllRewards } from '@/store/features/distribution/distributionSlice';
@@ -154,20 +154,21 @@ const Asset = ({
   return (
     <tr className="table-border-line">
       <th className="px-0 py-8">
-        <div className="flex flex-col items-start">
+        <div className="flex flex-col items-start gap-2">
           <div className="text-base font-normal leading-[normal]">
             {formatCoin(asset.balance, asset.displayDenom)}
           </div>
-          <div className="flex space-x-1">
+          <div className="flex space-x-1 justify-center items-center">
             <Image
               src={asset?.chainLogoURL}
               width={16}
               height={16}
               alt="chain-Logo"
               loading="lazy"
+              className="w-4 h-4"
             />
             <p className="text-b1-light">
-              on {' '}
+              on{' '}
               <Link href={`/overview/${asset.chainName}`}>
                 {asset.chainName}
               </Link>
@@ -176,53 +177,53 @@ const Asset = ({
         </div>
       </th>
       <th>
-        <div className="text-base font-normal leading-[normal]">
+        <div className="text-base font-normal leading-[normal] items-start flex">
           {asset.type === 'native'
             ? formatCoin(asset.staked, asset.displayDenom)
             : '-'}
         </div>
       </th>
       <th>
-        <div className="text-base font-normal leading-[normal]">
+        <div className="text-base font-normal leading-[normal] items-start flex">
           {asset.type === 'native'
             ? formatCoin(asset.rewards, asset.displayDenom)
             : '-'}
         </div>
       </th>
       <th>
-        <div className="flex flex-col items-center">
-          <div className="text-base font-normal leading-[normal]">
+        <div className="flex flex-col gap-2">
+          <div className="text-base font-normal leading-[normal] items-start flex">
             {formatDollarAmount(asset.usdPrice)}
           </div>
           <div className="flex">
-          <div
+            <div
               className={
-                'text-sm not-italic font-normal leading-[normal] ' +
-                (asset.inflation >= 0 ? 'text-[#238636]' : 'text-[#F1575780]]')
+                'text-sm font-normal leading-[normal] ' +
+                (asset.inflation >= 0 ? 'text-[#238636]' : 'text-[#F1575780]')
               }
             >
-              <p className="text-[rgba(241,87,87,0.50)] text-sm not-italic font-extralight leading-[normal]">
+              <p className="text-sm font-extralight leading-[normal]">
                 {formatAmount(Math.abs(asset.inflation))}%
               </p>
             </div>
             <Image
-              src={`/${asset.inflation >= 0 ? 'up' : 'down'
-                }-arrow-filled-icon.svg`}
-              width={9}
+              src={`/${
+                asset.inflation >= 0 ? 'up' : 'down'
+              }-arrow-filled-icon.svg`}
+              width={18}
               height={5}
               alt="down-arrow-filled-icon"
             />
-           
           </div>
         </div>
       </th>
       <th>
-        <div className="text-base font-normal leading-[normal]">
+        <div className="text-base font-normal leading-[normal] items-start flex">
           {formatDollarAmount(asset.usdValue)}
         </div>
       </th>
       <th>
-        <div className="items-center justify-center flex relative inline-block">
+        <div className="items-center justify-center relative inline-block">
           <Image
             src="/more.svg"
             width={24}
@@ -232,9 +233,7 @@ const Asset = ({
             ref={buttonRef}
             onClick={togglePopup}
           />
-    
 
-      
           {/* <button
             ref={buttonRef}
             onClick={togglePopup}
@@ -252,8 +251,11 @@ const Asset = ({
             . . .
           </button> */}
 
-{showPopup && (
-            <div ref={popupRef} className="absolute right-0 z-10 more-popup">
+          {showPopup && (
+            <div
+              ref={popupRef}
+              className="absolute right-0 z-10 more-popup-grid"
+            >
               <div className="w-full">
                 <a
                   href="#"
