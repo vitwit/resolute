@@ -1,6 +1,5 @@
 import React, { useEffect, useCallback, useMemo, useState } from 'react';
 import { get } from 'lodash';
-import Image from 'next/image';
 import CustomLoader from '@/components/common/CustomLoader';
 import useSingleStaking from '@/custom-hooks/useSingleStaking';
 import { WalletAddress } from '@/components/main-layout/SelectNetwork';
