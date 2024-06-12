@@ -8,9 +8,17 @@ import ValidatorLogo from '../components/ValidatorLogo';
 import DelegatePopup from '../components/DelegatePopup';
 import { useAppDispatch } from '@/custom-hooks/StateHooks';
 import { useSelector } from 'react-redux';
-import { selectFilteredValidators, selectSearchQuery } from '../selectors/validatorsSelectors';
-import { filterValidators, setSearchQuery, setValidators } from '@/store/features/staking/stakeSlice';
+import {
+  selectFilteredValidators,
+  selectSearchQuery,
+} from '../selectors/validatorsSelectors';
+import {
+  filterValidators,
+  setSearchQuery,
+  setValidators,
+} from '@/store/features/staking/stakeSlice';
 import { Validator } from '@/types/staking';
+import SearchValidator from './SearchValidator';
 
 interface ValStatusObj {
   [key: string]: string;
@@ -47,84 +55,95 @@ const ValidatorTable: React.FC<{ chainID: string }> = ({ chainID }) => {
 
   const { getAmountWithDecimal } = useSingleStaking(chainID);
   const [openDelegate, setOpenDelegate] = useState<boolean>(false);
-  const [selectedValidator, setSelectedValidator] = useState<Validator>()
+  const [selectedValidator, setSelectedValidator] = useState<Validator>();
 
   const toggleDelegatePopup = useCallback(() => {
-    console.log({ openDelegate })
-    setOpenDelegate(prev => !prev);
+    console.log({ openDelegate });
+    setOpenDelegate((prev) => !prev);
   }, []);
 
   const validatorRows = useMemo(() => {
-    return Object.entries(filteredValidators || {}).map(([key, value], index) => (
-      <React.Fragment key={key}>
-        <tr className="table-border-line">
-          <td className="px-0 py-8">
-            <div className="mr-auto flex">
-              <div className="text-white text-base not-italic font-normal leading-[normal]">
-                #{index + 1}
+    return Object.entries(filteredValidators || {}).map(
+      ([key, value], index) => (
+        <React.Fragment key={key}>
+          <tr className="table-border-line">
+            <td className="px-0 py-8">
+              <div className="mr-auto flex">
+                <div className="text-white text-base font-normal leading-[normal]">
+                  #{index + 1}
+                </div>
               </div>
-            </div>
-          </td>
-          <td className="">
-            <div className="flex space-x-2">
-              <ValidatorLogo width={20} height={20} identity={get(value, 'description.identity', '')} /> &nbsp;
-              <p className="text-white text-sm not-italic font-normal leading-[normal]">
-                {get(value, 'description.moniker')}
-              </p> &nbsp;
-              <WalletAddress address={get(value, 'operator_address')} displayAddress={false} />
-            </div>
-          </td>
-          <td className="">
-            <div className="text-white text-left text-base not-italic font-normal leading-[normal]">
-              {Number(get(value, 'commission.commission_rates.rate')) * 100}%
-            </div>
-          </td>
-          <td className="">
-            <div className="text-white text-left text-base not-italic font-normal leading-[normal]">
-              {getAmountWithDecimal(Number(get(value, 'tokens')), chainID)}
-            </div>
-          </td>
-          <td className="">
-            <div className="text-white text-left text-base not-italic font-normal leading-[normal]">
-              {valStatusObj[get(value, 'status')]}
-            </div>
-          </td>
-          <td className="">
-            <div className="text-white text-base not-italic font-normal leading-[normal] ">
-              <button onClick={() => {
-                setOpenDelegate(true)
-                setSelectedValidator(value)
-              }} className="custom-btn">Delegate</button>
-            </div>
-          </td>
-        </tr>
-      </React.Fragment>
-    ));
+            </td>
+            <td className="">
+              <div className="flex space-x-2 items-center">
+                <ValidatorLogo
+                  width={20}
+                  height={20}
+                  identity={get(value, 'description.identity', '')}
+                />{' '}
+                &nbsp;
+                <p className="text-white text-sm font-normal leading-[normal]">
+                  {get(value, 'description.moniker')}
+                </p>{' '}
+                &nbsp;
+                <WalletAddress
+                  address={get(value, 'operator_address')}
+                  displayAddress={false}
+                />
+              </div>
+            </td>
+            <td className="">
+              <div className="text-white text-left text-base font-normal leading-[normal]">
+                {Number(get(value, 'commission.commission_rates.rate')) * 100}%
+              </div>
+            </td>
+            <td className="">
+              <div className="text-left text-base font-normal leading-[normal]">
+                {getAmountWithDecimal(Number(get(value, 'tokens')), chainID)}
+              </div>
+            </td>
+            <td className="">
+              <div className="text-left text-base font-normal leading-[normal]">
+                {valStatusObj[get(value, 'status')]}
+              </div>
+            </td>
+            <td className="">
+              <button
+                onClick={() => {
+                  setOpenDelegate(true);
+                  setSelectedValidator(value);
+                }}
+                className="primary-btn"
+              >
+                Delegate
+              </button>
+            </td>
+          </tr>
+        </React.Fragment>
+      )
+    );
   }, [filteredValidators, chainID]);
 
   return (
-    <div className="flex flex-col gap-10 self-stretch overflow-scroll h-[50vh] px-10">
-      {
-        openDelegate?<DelegatePopup
-        validator={selectedValidator?.operator_address || ''}
-        chainID={chainID}
-        openDelegatePopup={toggleDelegatePopup}
-        openPopup={openDelegate}
-      />: null
-      }
-
+    <div className="flex flex-col gap-10 w-full overflow-scroll h-[50vh] px-10">
+      {openDelegate ? (
+        <DelegatePopup
+          validator={selectedValidator?.operator_address || ''}
+          chainID={chainID}
+          openDelegatePopup={toggleDelegatePopup}
+          openPopup={openDelegate}
+        />
+      ) : null}
 
       <div className="space-y-1">
-        <div className="text-white text-lg not-italic font-normal leading-[27px]">
-          Validators
-        </div>
-        <div className="text-[rgba(255,255,255,0.50)] text-sm not-italic font-extralight leading-[21px]">
+        <div className="text-h2">Validators</div>
+        <div className="secondary-text">
           Connect your wallet now to access all the modules on resolute
         </div>
         <div className="horizontal-line"></div>
       </div>
-      <div className="flex flex-col items-start gap-10 self-stretch px-6 py-0">
-        <div className="search-bar flex items-center">
+      <div className="flex flex-col items-start gap-10 w-full px-6 py-0">
+        {/* <div className="search-bar flex items-center">
           <Image src="/search.svg" width={24} height={24} alt="Search-Icon" />
           <input
             value={searchQuery}
@@ -132,33 +151,37 @@ const ValidatorTable: React.FC<{ chainID: string }> = ({ chainID }) => {
             className="text-[rgba(255,255,255,0.50)] w-full h-[37px] pl-1 text-base not-italic font-normal leading-[normal] bg-transparent border-none ml-2"
             placeholder="Search Validator"
           />
-        </div>
-        <div className="w-full flex flex-col items-start gap-2 self-stretch overflow-y-scroll h-[30vh]">
+        </div> */}
+        <SearchValidator
+          handleSearchQueryChange={(e) => handleSearch(e.target.value)}
+          searchQuery={searchQuery}
+        />
+        <div className="w-full flex flex-col items-start gap-2 overflow-y-scroll h-[30vh]">
           <table className="relative w-full">
             <thead className="w-full">
               <tr>
                 <th className="w-1/6">
-                  <div className="text-[rgba(255,255,255,0.50)] text-left text-base not-italic font-normal leading-[normal]">
+                  <div className="text-[rgba(255,255,255,0.50)] text-left text-base font-normal leading-[normal]">
                     Rank
                   </div>
                 </th>
                 <th className="w-1/5">
-                  <div className="text-[rgba(255,255,255,0.50)] text-left text-base not-italic font-normal leading-[normal]">
+                  <div className="text-[rgba(255,255,255,0.50)] text-left text-base font-normal leading-[normal]">
                     Validator
                   </div>
                 </th>
                 <th className="w-1/5">
-                  <div className="text-[rgba(255,255,255,0.50)] text-left text-base not-italic font-normal leading-[normal]">
+                  <div className="text-[rgba(255,255,255,0.50)] text-left text-base font-normal leading-[normal]">
                     Commission
                   </div>
                 </th>
                 <th className="w-1/5">
-                  <div className="text-[rgba(255,255,255,0.50)] text-left text-base not-italic font-normal leading-[normal]">
+                  <div className="text-[rgba(255,255,255,0.50)] text-left text-base font-normal leading-[normal]">
                     Voting Power
                   </div>
                 </th>
                 <th className="w-1/5">
-                  <div className="text-[rgba(255,255,255,0.50)] text-left text-base not-italic font-normal leading-[normal]">
+                  <div className="text-[rgba(255,255,255,0.50)] text-left text-base font-normal leading-[normal]">
                     Status
                   </div>
                 </th>
@@ -168,7 +191,11 @@ const ValidatorTable: React.FC<{ chainID: string }> = ({ chainID }) => {
               </tr>
             </thead>
             <tbody>
-              {validators?.status === 'pending' ? <CustomLoader loadingText="Loading..." /> : validatorRows}
+              {validators?.status === 'pending' ? (
+                <CustomLoader loadingText="Loading..." />
+              ) : (
+                validatorRows
+              )}
             </tbody>
           </table>
         </div>
