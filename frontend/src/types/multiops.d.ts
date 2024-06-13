@@ -51,7 +51,13 @@ type RedelegateMsg = {
   amount: string;
 };
 
-type Message = SendMsg | DelegateMsg | UndelegateMsg | RedelegateMsg;
+type VoteMsg = {
+  type: 'Vote';
+  proposalId: string;
+  option: string;
+}
+
+type Message = SendMsg | DelegateMsg | UndelegateMsg | RedelegateMsg | VoteMsg;
 
 type TxnBuilderForm = {
   gas: number;
@@ -59,3 +65,13 @@ type TxnBuilderForm = {
   fees: number;
   msgs: Message[];
 };
+
+interface ProposalOption {
+  label: string;
+  value: string;
+}
+
+interface VoteOption {
+  label: string;
+  value: number;
+}

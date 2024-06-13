@@ -30,8 +30,10 @@ import UndelegateMessage from './messages/UndelegateMessage';
 import RedelegateMessage from './messages/RedelegateMessage';
 import { msgUnDelegate } from '@/txns/staking/undelegate';
 import { msgReDelegate } from '@/txns/staking/redelegate';
+import VoteMessage from './messages/VoteMessage';
+import { msgVoteTypeUrl } from '@/txns/gov/vote';
 
-type MsgType = 'Send' | 'Delegate' | 'Undelegate' | 'Redelegate';
+type MsgType = 'Send' | 'Delegate' | 'Undelegate' | 'Redelegate' | 'Vote';
 
 const TxnBuilder = ({
   chainID,
@@ -54,15 +56,14 @@ const TxnBuilder = ({
   };
   const { address: walletAddress, feeAmount } = basicChainInfo;
 
-  const { handleSubmit, control, reset, setValue } =
-    useForm<TxnBuilderForm>({
-      defaultValues: {
-        gas: 900000,
-        memo: '',
-        fees: feeAmount * 10 ** currency.coinDecimals,
-        msgs: [],
-      },
-    });
+  const { handleSubmit, control, reset, setValue } = useForm<TxnBuilderForm>({
+    defaultValues: {
+      gas: 900000,
+      memo: '',
+      fees: feeAmount * 10 ** currency.coinDecimals,
+      msgs: [],
+    },
+  });
 
   const { fields, append, remove } = useFieldArray({
     control,
@@ -82,6 +83,12 @@ const TxnBuilder = ({
         sourceValidator: '',
         destValidator: '',
         amount: '',
+      });
+    } else if (type === 'Vote') {
+      append({
+        type: 'Vote',
+        option: '',
+        proposalId: '',
       });
     }
   };
@@ -169,7 +176,7 @@ const SelectMessage = ({
             <div className="text-b1-light">Select Message</div>
             <Image src={I_ICON} height={20} width={20} alt="" />
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-2 flex-wrap">
             {TXN_BUILDER_MSGS.map((msg) => (
               <button
                 key={msg}
@@ -325,6 +332,14 @@ const MessagesList = ({
                 chainID={chainID}
               />
             )}
+            {field.type === 'Vote' && (
+              <VoteMessage
+                index={index}
+                remove={remove}
+                setValue={setValue}
+                chainID={chainID}
+              />
+            )}
           </div>
         ))}
       </div>
@@ -418,6 +433,15 @@ const formatMsgs = (
             amount: amountInAtomics,
             denom: minimalDenom,
           },
+        },
+      });
+    } else if (msg.type === 'Vote') {
+      messages.push({
+        typeUrl: msgVoteTypeUrl,
+        value: {
+          voter: fromAddress,
+          option: Number(msg.option),
+          proposalId: Number(msg.proposalId),
         },
       });
     }

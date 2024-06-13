@@ -98,6 +98,7 @@ export const MAP_TXNS = {
   '/cosmos.bank.v1beta1.MsgSend': 'Send',
   '/cosmos.staking.v1beta1.MsgBeginRedelegate': 'ReDelegate',
   '/cosmos.staking.v1beta1.MsgUndelegate': 'UnDelegate',
+  '/cosmos.gov.v1beta1.MsgVote': 'Vote',
   Msg: 'Tx Msg',
 };
 export const MULTISIG_TX_TYPES = {
