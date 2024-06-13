@@ -33,12 +33,18 @@ function StakingDelegations({ delegations, isSingleChain }: { delegations: Chain
   const withClaimRewards = (chainID: string) =>
     staking.txWithdrawCliamRewards(chainID);
 
+  // Function to restake rewards for a specific chain
+  const restakeRewards = (chainID: string) =>
+    staking.transactionRestake(chainID);
+
   // Function to get the rewards for a specific validator
   const getValRewards = (val: string, chainID: string) =>
     staking.chainTotalValRewards(val, chainID);
 
   // Get the status of claim transactions
   const claimTxStatus = staking.getClaimTxStatus();
+
+  const restakeStatus = staking.txAllChainStakeTxStatus;
 
   return (
     <div className="flex flex-col w-full gap-10 pb-28">
@@ -54,7 +60,7 @@ function StakingDelegations({ delegations, isSingleChain }: { delegations: Chain
       ) : null}
 
       {staking.delegationsLoading === 0 &&
-      Object.keys(delegations).length === 0 ? (
+        Object.keys(delegations).length === 0 ? (
         <WithConnectionIllustration message="No Delegations" />
       ) : null}
 
@@ -88,11 +94,24 @@ function StakingDelegations({ delegations, isSingleChain }: { delegations: Chain
                 className="primary-btn"
               >
                 {claimTxStatus[key]?.tx?.status === 'pending' ? (
-                  'loading....'
+                  'pending....'
                 ) : (
                   <>
                     Claim {getChainTotalRewards(key)}
                     <p className="ml-2 text-small-light">Rewards</p>
+                  </>
+                )}
+              </button>
+              <button
+                onClick={() => restakeRewards(key)}
+                className="primary-btn"
+              >
+                {restakeStatus[key]?.reStakeTxStatus === 'pending' ? (
+                  'pending....'
+                ) : (
+                  <>
+                    Claim & Stake
+                    {/* <p className="ml-2 text-small-light">Rewards</p> */}
                   </>
                 )}
               </button>
