@@ -5,7 +5,7 @@ import {
   multisigByAddress,
   resetBroadcastTxnRes,
   resetCreateTxnState,
-  resetSignTxnState,
+  resetsignTransactionRes,
   resetUpdateTxnState,
 } from '@/store/features/multisig/multisigSlice';
 import {
@@ -90,7 +90,7 @@ const MultisigAccount = ({
     dispatch(resetCreateTxnState());
     dispatch(resetUpdateTxnState());
     dispatch(resetBroadcastTxnRes());
-    dispatch(resetSignTxnState());
+    dispatch(resetsignTransactionRes());
   }, []);
 
   return (
@@ -267,7 +267,7 @@ const MultisigMember = ({ address }: { address: string }) => {
   return (
     <div className="flex items-center gap-2">
       <div className="text-[20px] font-bold">{shortenAddress(address, 10)}</div>
-      <Copy content="address" height={24} width={24} />
+      <Copy content={address} height={24} width={24} />
     </div>
   );
 };

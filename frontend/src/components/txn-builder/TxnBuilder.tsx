@@ -1,4 +1,4 @@
-import { I_ICON } from '@/constants/image-names';
+import { I_ICON, NO_MESSAGES_ILLUSTRATION } from '@/constants/image-names';
 import { TXN_BUILDER_MSGS } from '@/constants/multisig';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import Image from 'next/image';
@@ -368,8 +368,14 @@ const MessagesList = ({
           btnLoading={createRes.status === 'pending'}
         />
       ) : (
-        <div className="my-20 h-80 flex items-center justify-center">
-          - No Messages -
+        <div className="h-full flex flex-col items-center justify-center">
+          <Image
+            src={NO_MESSAGES_ILLUSTRATION}
+            height={260}
+            width={390}
+            alt="No Messages"
+          />
+          <div className="text-b1 font-light">No messages yet</div>
         </div>
       )}
     </div>

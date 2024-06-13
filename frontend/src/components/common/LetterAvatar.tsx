@@ -23,11 +23,11 @@ function stringAvatar(name: string, width: string, height: string) {
   const spaceIndex = name.indexOf(' ');
   const firstName = spaceIndex !== -1 ? name.split(' ')[0] : name;
 
-  const firstInitial = firstName[0].toUpperCase();
+  const firstInitial = firstName[0].toLowerCase();
 
   const secondInitial =
     spaceIndex !== -1 && name.split(' ')[1]
-      ? name.split(' ')[1][0].toUpperCase()
+      ? name.split(' ')[1][0].toLowerCase()
       : '';
 
   return {

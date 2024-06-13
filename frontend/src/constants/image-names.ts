@@ -22,3 +22,5 @@ export const I_ICON = '/icons/i-icon.svg';
 export const TIMER_ICON = '/icons/timer-icon.svg';
 export const SEARCH_ICON = '/icons/search-icon.svg';
 export const NO_DATA_ILLUSTRATION = '/illustrations/no-data-illustration.png';
+export const NO_MESSAGES_ILLUSTRATION =
+  '/illustrations/no-messages-illustration.png';
