@@ -19,7 +19,7 @@ const SearchProposalInput = ({
           <Image src={SEARCH_ICON} height={24} width={24} alt="" />
           <input
             type="text"
-            placeholder="Search Propoal by Name, ID, and Network"
+            placeholder="Search Proposal by Name, ID, and Network"
             value={searchQuery}
             onChange={handleSearchQueryChange}
             className="search-proposal-input flex-1"

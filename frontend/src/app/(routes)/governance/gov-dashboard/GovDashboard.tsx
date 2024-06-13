@@ -54,44 +54,41 @@ const GovDashboard = ({ chainIDs }: { chainIDs: string[] }) => {
     }
 
     debounceTimeout.current = window.setTimeout(() => {
-      const filtered = propsData.filter(
-        (proposal) => {
-          return  proposal.proposalInfo.proposalId.includes(query) ||
+      const filtered = propsData.filter((proposal) => {
+        return (
+          proposal.proposalInfo.proposalId.includes(query) ||
           proposal.proposalInfo.proposalTitle
             .toLowerCase()
             .includes(query.toLowerCase()) ||
           proposal.chainName.toLowerCase().includes(query.toLowerCase())
-        }
-         
-      );
+        );
+      });
       setFilteredProposals(filtered);
     }, 500);
   };
 
-  const handleFiltersChange = (days: number) => {  
-    setFilterDays(days)
+  const handleFiltersChange = (days: number) => {
+    setFilterDays(days);
 
     if (debounceTimeout.current) {
       clearTimeout(debounceTimeout.current);
     }
 
     debounceTimeout.current = window.setTimeout(() => {
-      const filtered = propsData.filter(
-        (proposal) => {
-          if (!days) {
-            return true
-          }
+      const filtered = propsData.filter((proposal) => {
+        if (!days) {
+          return true;
+        }
 
-          const daysNo = proposal.proposalInfo.endTime.match(/\d+/) || 0;
-          if (daysNo && daysNo.length) {
-            if (Number(daysNo[0])<= days){
-              return true
-            } 
+        const daysNo = proposal.proposalInfo.endTime.match(/\d+/) || 0;
+        if (daysNo && daysNo.length) {
+          if (Number(daysNo[0]) <= days) {
+            return true;
           }
         }
-      );
+      });
 
-      console.log({filtered})
+      console.log({ filtered });
       setFilteredProposals(filtered);
     }, 500);
   };
@@ -110,6 +107,7 @@ const GovDashboard = ({ chainIDs }: { chainIDs: string[] }) => {
           searchQuery={searchQuery}
           handleShowAllProposals={handleShowAllProposals}
           handleFiltersChange={handleFiltersChange}
+          filterDays={filterDays}
         />
       </div>
       <div className="flex gap-6 w-full flex-1 h-full overflow-y-scroll py-6">
@@ -148,28 +146,39 @@ const QuickFilters = ({
   searchQuery,
   handleShowAllProposals,
   handleFiltersChange,
+  filterDays,
 }: {
   searchQuery: string;
   handleSearchQueryChange: HandleInputChangeEvent;
   handleShowAllProposals: HandleInputChangeEvent;
   handleFiltersChange: (n: number) => void;
+  filterDays: number;
 }) => {
   // TODO: Add quick filters (Voting ends in 1 day & Deposit ends in 1 day)
   return (
-    <div>
-      <div className='flex py-2 gap-4'>
-      <button onClick={()=>handleFiltersChange(0)} className='bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded'>
+    <div className="flex gap-20">
+      <div className="flex py-2 gap-4">
+        <button
+          onClick={() => handleFiltersChange(0)}
+          className={`selected-btns text-base ${filterDays === 0 ? 'bg-[#ffffff14] border-none' : 'border-[#ffffff26]'}`}
+        >
           All
         </button>
-        <button onClick={()=>handleFiltersChange(2)} className='bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded'>
+        <button
+          onClick={() => handleFiltersChange(2)}
+          className={`selected-btns text-base ${filterDays === 2 ? 'bg-[#ffffff14] border-none' : 'border-[#ffffff26]'}`}
+        >
           Voting ends in 2 days
         </button>
-        <button onClick={()=>handleFiltersChange(1)} className='bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded'>
-          Voting ends in 1 days
+        <button
+          onClick={() => handleFiltersChange(1)}
+          className={`selected-btns text-base ${filterDays === 1 ? 'bg-[#ffffff14] border-none' : 'border-[#ffffff26]'}`}
+        >
+          Voting ends in 1 day
         </button>
       </div>
 
-      <div className="h-[56px] flex flex-col items-end">
+      <div className="flex items-end flex-1">
         <SearchProposalInput
           handleSearchQueryChange={handleSearchQueryChange}
           searchQuery={searchQuery}
@@ -177,7 +186,6 @@ const QuickFilters = ({
         />
       </div>
     </div>
-
   );
 };
 

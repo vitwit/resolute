@@ -47,7 +47,7 @@ const ProposalOverview = ({
 
   const navigateToProposal = () => {
     router.push(`/governance/${chainName}/${proposalId}`);
-  }
+  };
 
   return (
     <div className="proposal-view">
@@ -62,14 +62,19 @@ const ProposalOverview = ({
             <div className="flex flex-col gap-2">
               <div className="flex items-center gap-4 justify-between">
                 <div className="flex space-x-1 items-center">
-                  <p onClick={navigateToProposal} className="text-h2 max-w-[400px] truncate">
-                    {proposalTitle} 
+                  <p
+                    onClick={navigateToProposal}
+                    className="text-h2 max-w-[400px] truncate cursor-pointer"
+                  >
+                    {proposalTitle}
                   </p>
                   <Image
                     src={REDIRECT_ICON}
                     width={24}
                     height={24}
                     alt="View Proposal"
+                    onClick={navigateToProposal}
+                    className="cursor-pointer"
                   />
                 </div>
                 {isActive ? (
