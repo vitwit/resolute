@@ -156,7 +156,7 @@ const useStaking = () => {
                 const rewards =
                     rewardsChains?.[chainID]?.delegatorRewards
 
-                rewards.list.forEach(r => {
+                rewards?.list?.forEach(r => {
                     if (r.validator_address === validator) {
 
                         const { decimals, displayDenom } = getDenomInfo(chainID);
