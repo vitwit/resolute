@@ -80,6 +80,8 @@ export interface Chains {
 interface StakingState {
   validatorsLoading: number;
   delegationsLoading: number;
+  undelegationsLoading: number;
+  totalUndelegationsAmount: number;
   chains: Chains;
   hasDelegations: boolean;
   hasUnbonding: boolean;
@@ -104,6 +106,8 @@ const initialState: StakingState = {
   chains: {},
   validatorsLoading: 0,
   delegationsLoading: 0,
+  undelegationsLoading: 0,
+  totalUndelegationsAmount: 0,
   hasUnbonding: false,
   hasDelegations: false,
   authz: {
@@ -1343,11 +1347,13 @@ export const stakeSlice = createSlice({
 
     builder
       .addCase(getUnbonding.pending, (state, action) => {
+        state.undelegationsLoading++;
         const { chainID } = action.meta.arg;
         state.chains[chainID].unbonding.status = TxStatus.PENDING;
         state.chains[chainID].unbonding.errMsg = '';
       })
       .addCase(getUnbonding.fulfilled, (state, action) => {
+        state.undelegationsLoading--;
         const { chainID } = action.meta.arg;
         const unbonding_responses = action.payload.data.unbonding_responses;
         let totalUnbonded = 0.0;
@@ -1358,6 +1364,7 @@ export const stakeSlice = createSlice({
             });
           });
           state.chains[chainID].unbonding.totalUnbonded = totalUnbonded;
+          state.totalUndelegationsAmount +=totalUnbonded
           if (unbonding_responses[0].entries.length) {
             state.chains[chainID].unbonding.hasUnbonding = true;
             state.hasUnbonding = true;
@@ -1371,6 +1378,7 @@ export const stakeSlice = createSlice({
         state.chains[chainID].unbonding.errMsg = '';
       })
       .addCase(getUnbonding.rejected, (state, action) => {
+        state.undelegationsLoading--;
         const { chainID } = action.meta.arg;
         state.chains[chainID].unbonding.status = TxStatus.REJECTED;
         state.chains[chainID].unbonding.errMsg = action.error.message || '';

@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "./StateHooks";
 import { RootState } from '@/store/store';
 import useGetChainInfo from "./useGetChainInfo";
-import { getDelegations, getUnbonding, getValidator, txCancelUnbonding, txDelegate, txReDelegate, txUnDelegate } from "@/store/features/staking/stakeSlice";
+import { getDelegations, getUnbonding, getValidator, txCancelUnbonding, txDelegate, txReDelegate, txRestake, txUnDelegate } from "@/store/features/staking/stakeSlice";
 import { getDelegatorTotalRewards, txWithdrawAllRewards } from "@/store/features/distribution/distributionSlice";
 import { getBalances } from "@/store/features/bank/bankSlice";
 // import useGetAssets from "./useGetAssets";
@@ -46,8 +46,17 @@ const useStaking = () => {
         (state: RootState) => state.staking.delegationsLoading
     )
 
-    const { txWithdrawAllRewardsInputs, txWithdrawValidatorRewardsInputs } = useGetTxInputs();
+    const undelegationsLoading = useAppSelector(
+        (state: RootState) => state.staking.undelegationsLoading
+    )
 
+    const totalUnbondedAmount = useAppSelector(
+        (state: RootState) => state.staking.totalUndelegationsAmount
+    )
+
+    const { txWithdrawAllRewardsInputs, txWithdrawValidatorRewardsInputs, txRestakeInputs } = useGetTxInputs();
+
+   
     useEffect(() => {
         if (chainIDs.length > 0 && isWalletConnected) {
             chainIDs.forEach((chainID) => {
@@ -175,6 +184,12 @@ const useStaking = () => {
         if (txInputs.msgs.length) dispatch(txWithdrawAllRewards(txInputs));
     }
 
+    const transactionRestake = (chainID: string) => {
+        const txInputs = txRestakeInputs(chainID);
+        txInputs.isTxAll = true;
+        if (txInputs.msgs.length) dispatch(txRestake(txInputs));
+    }
+
 
     const txWithdrawValRewards = (validator: string, chainID: string) => {
         const delegatorAddress = networks[chainID]?.walletInfo?.bech32Address
@@ -192,8 +207,6 @@ const useStaking = () => {
         (state: RootState) => state.staking.chains
     );
 
-    console.log('txAllchainTxstatus', txAllChainTxStatus)
-
     const getClaimTxStatus = () => {
         return txAllChainTxStatus
     }
@@ -209,18 +222,6 @@ const useStaking = () => {
 
         const { feeAmount: avgFeeAmount } = getChainInfo(chainID);
         const feeAmount = avgFeeAmount * 10 ** currency?.coinDecimals;
-
-        alert(JSON.stringify({
-            isAuthzMode: false,
-            // basicChainInfo: basicChainInfo,
-            delegator: delegator,
-            validator: validator,
-            amount: amount * 10 ** currency?.coinDecimals,
-            denom: currency?.coinMinimalDenom,
-            feeAmount: feeAmount,
-            feegranter: '',
-            creationHeight: creationHeight,
-        }))
 
         dispatch(
             txCancelUnbonding({
@@ -327,6 +328,9 @@ const useStaking = () => {
         txWithdrawValRewards,
         chainTotalValRewards,
         delegationsLoading,
+        undelegationsLoading,
+        totalUnbondedAmount,
+        transactionRestake
     }
 };
 

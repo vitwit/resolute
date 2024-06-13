@@ -1,8 +1,20 @@
-import { useAppSelector } from '@/custom-hooks/StateHooks';
+import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { getConnectWalletLogo } from '@/utils/util';
 import { Dialog, DialogContent, Slide, SlideProps } from '@mui/material';
 import Image from 'next/image';
 import React, { forwardRef, useEffect, useState } from 'react';
+
+import { resetWallet } from '@/store/features/wallet/walletSlice';
+import { logout } from '@/utils/localStorage';
+import {
+  resetError,
+  resetTxAndHash,
+} from '@/store/features/common/commonSlice';
+import { resetState as bankReset } from '@/store/features/bank/bankSlice';
+import { resetState as rewardsReset } from '@/store/features/distribution/distributionSlice';
+import { resetCompleteState as stakingReset } from '@/store/features/staking/stakeSlice';
+import { resetState as authzReset } from '@/store/features/authz/authzSlice';
+import { resetState as feegrantReset } from '@/store/features/feegrant/feegrantSlice';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const Transition = forwardRef(function Transition(
@@ -26,6 +38,23 @@ const ProfileDialog = ({
   useEffect(() => {
     setWalletLogo(getConnectWalletLogo());
   }, []);
+
+
+  const dispatch = useAppDispatch();
+
+  const handleLogout = () => {
+    dispatch(resetWallet());
+    dispatch(resetError());
+    dispatch(resetTxAndHash());
+    dispatch(bankReset());
+    dispatch(rewardsReset());
+    dispatch(stakingReset());
+    dispatch(authzReset());
+    dispatch(feegrantReset());
+    logout();
+    onClose();
+  }
+
 
   return (
     <Dialog
@@ -67,7 +96,7 @@ const ProfileDialog = ({
               <div className="font-medium">{walletUserName}</div>
             </div>
             <div>
-              <button className="primary-btn w-full">Logout</button>
+              <button onClick={handleLogout} className="primary-btn w-full">Logout</button>
             </div>
             <button onClick={onClose} className="secondary-btn w-full">
               Close Tab

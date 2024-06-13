@@ -6,27 +6,49 @@ import ValidatorName from './ValidatorName';
 import { getTimeDifferenceToFutureDate } from '@/utils/dataTime';
 import { Chains } from '@/store/features/staking/stakeSlice';
 import '../staking.css';
+import WithConnectionIllustration from '@/components/illustrations/withConnectionIllustration';
+import CustomLoader from '@/components/common/CustomLoader';
 
-function StakingUnDelegations({ undelegations }: { undelegations: Chains }) {
+function StakingUnDelegations({ undelegations, isSingleChain }: { undelegations: Chains, isSingleChain?: boolean }) {
   const staking = useStaking();
 
-  const cancelUnbonding = (chainID: string, delegator: string, validator: string, height: string, amount: number) => {
-    staking.txCancelUnbond(chainID,
-      delegator,
-      validator,
-      amount,
-      height)
-  }
+  const cancelUnbonding = (
+    chainID: string,
+    delegator: string,
+    validator: string,
+    height: string,
+    amount: number
+  ) => {
+    staking.txCancelUnbond(chainID, delegator, validator, amount, height);
+  };
+
+  let unbondingCount = 0;
+
+  Object.entries(undelegations).forEach(([, value]) => {
+    get(value, 'unbonding.unbonding.unbonding_responses', []).forEach((ud) => {
+      unbondingCount = get(ud, 'entries.length', 0);
+    });
+  });
 
   return (
-    <div className="flex flex-col w-full gap-10">
+    <div className={`flex flex-col w-full ${unbondingCount ? ' gap-10' : ''}`}>
       <div className="space-y-2 items-start">
         <div className="text-h2">Unbonding</div>
         <div className="secondary-text">
-          Connect your wallet now to access all the modules on resolute{' '}
+          Unbonding delegations will be locked until their locked time, after which they will be available in your balance.
         </div>
         <div className="horizontal-line"></div>
       </div>
+
+
+      {!isSingleChain && staking.undelegationsLoading !== 0 ? (
+        <CustomLoader loadingText="Loading..." />
+      ) : null}
+
+      {!unbondingCount ? (
+        <WithConnectionIllustration message="No Un Delegations" />
+      ) : null}
+
       <div className="grid grid-cols-3 gap-10 px-6 py-0">
         {Object.entries(undelegations).map(([key, value]) => {
           return get(value, 'unbonding.unbonding.unbonding_responses', []).map(
@@ -43,11 +65,19 @@ function StakingUnDelegations({ undelegations }: { undelegations: Chains }) {
                       </div>
                       <div className="">
                         <button
-                          onClick={() => cancelUnbonding(key,
-                            get(ud, 'delegator_address'),
-                            get(ud, 'validator_address'),
-                            get(e, 'creation_height'), Number(get(e, 'balance')),)}
-                          className="primary-btn">Cancel</button>
+                          onClick={() =>
+                            cancelUnbonding(
+                              key,
+                              get(ud, 'delegator_address'),
+                              get(ud, 'validator_address'),
+                              get(e, 'creation_height'),
+                              Number(get(e, 'balance'))
+                            )
+                          }
+                          className="primary-btn"
+                        >
+                          Cancel
+                        </button>
                       </div>
                     </div>
                     <div className="flex justify-between w-full">

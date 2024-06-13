@@ -9,7 +9,7 @@ import ValidatorTable from '../component/ValidatorTable';
 // import { RootState } from '@/store/store';
 // import { useAppSelector } from '@/custom-hooks/StateHooks';
 
-const SingleStakingDashboard = ({chainID}: {chainID: string}) => {
+const SingleStakingDashboard = ({ chainID }: { chainID: string }) => {
   const staking = useSingleStaking(chainID);
   const { totalStakedAmount, rewardsAmount, totalUnStakedAmount, availableAmount } = staking.getStakingAssets()
   const delegations = staking.getAllDelegations(chainID)
@@ -22,7 +22,7 @@ const SingleStakingDashboard = ({chainID}: {chainID: string}) => {
             Staking
           </div>
           <div className="text-[rgba(255,255,255,0.50)] text-sm not-italic font-extralight leading-8">
-            Connect your wallet now to access all the modules on resolute{' '}
+            Summary of Staked Assets: This includes the total value of staked assets, accumulated rewards, and available balance.
           </div>
           <div className="horizontal-line"></div>
         </div>
@@ -35,10 +35,10 @@ const SingleStakingDashboard = ({chainID}: {chainID: string}) => {
       </div>
 
       {/* Unbonding */}
-      <StakingUnDelegations undelegations={delegations}  />
+      <StakingUnDelegations isSingleChain={true} undelegations={delegations} />
 
       {/* Delegations */}
-      <StakingDelegations delegations={delegations}  />
+      <StakingDelegations isSingleChain={true} delegations={delegations} />
 
       {/* Validator */}
       <ValidatorTable chainID={chainID} />

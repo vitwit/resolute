@@ -18,6 +18,7 @@ const GovDashboard = ({ chainIDs }: { chainIDs: string[] }) => {
   const { getProposals } = useGetProposals();
   const [showAll, setShowAll] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [filterDays, setFilterDays] = useState(0);
   const propsData = getProposals({ chainIDs, showAll: showAll });
   const proposalsData = getProposals({ chainIDs, showAll: showAll });
   const [filteredProposals, setFilteredProposals] = useState<ProposalsData[]>(
@@ -53,14 +54,41 @@ const GovDashboard = ({ chainIDs }: { chainIDs: string[] }) => {
     }
 
     debounceTimeout.current = window.setTimeout(() => {
-      const filtered = propsData.filter(
-        (proposal) =>
+      const filtered = propsData.filter((proposal) => {
+        return (
           proposal.proposalInfo.proposalId.includes(query) ||
           proposal.proposalInfo.proposalTitle
             .toLowerCase()
             .includes(query.toLowerCase()) ||
           proposal.chainName.toLowerCase().includes(query.toLowerCase())
-      );
+        );
+      });
+      setFilteredProposals(filtered);
+    }, 500);
+  };
+
+  const handleFiltersChange = (days: number) => {
+    setFilterDays(days);
+
+    if (debounceTimeout.current) {
+      clearTimeout(debounceTimeout.current);
+    }
+
+    debounceTimeout.current = window.setTimeout(() => {
+      const filtered = propsData.filter((proposal) => {
+        if (!days) {
+          return true;
+        }
+
+        const daysNo = proposal.proposalInfo.endTime.match(/\d+/) || 0;
+        if (daysNo && daysNo.length) {
+          if (Number(daysNo[0]) <= days) {
+            return true;
+          }
+        }
+      });
+
+      console.log({ filtered });
       setFilteredProposals(filtered);
     }, 500);
   };
@@ -78,11 +106,13 @@ const GovDashboard = ({ chainIDs }: { chainIDs: string[] }) => {
           handleSearchQueryChange={handleSearchQueryChange}
           searchQuery={searchQuery}
           handleShowAllProposals={handleShowAllProposals}
+          handleFiltersChange={handleFiltersChange}
+          filterDays={filterDays}
         />
       </div>
       <div className="flex gap-6 w-full flex-1 h-full overflow-y-scroll py-6">
         <div className="flex flex-col w-full gap-6 py-0 pb-6 flex-1 overflow-y-scroll">
-          {searchQuery?.length ? (
+          {searchQuery?.length || filterDays ? (
             <ProposalsList
               proposals={filteredProposals}
               handleViewProposal={handleViewProposal}
@@ -115,19 +145,46 @@ const QuickFilters = ({
   handleSearchQueryChange,
   searchQuery,
   handleShowAllProposals,
+  handleFiltersChange,
+  filterDays,
 }: {
   searchQuery: string;
   handleSearchQueryChange: HandleInputChangeEvent;
   handleShowAllProposals: HandleInputChangeEvent;
+  handleFiltersChange: (n: number) => void;
+  filterDays: number;
 }) => {
   // TODO: Add quick filters (Voting ends in 1 day & Deposit ends in 1 day)
   return (
-    <div className="h-[56px] flex flex-col items-end">
-      <SearchProposalInput
-        handleSearchQueryChange={handleSearchQueryChange}
-        searchQuery={searchQuery}
-        handleShowAllProposals={handleShowAllProposals}
-      />
+    <div className="flex gap-20">
+      <div className="flex py-2 gap-4">
+        <button
+          onClick={() => handleFiltersChange(0)}
+          className={`selected-btns text-base ${filterDays === 0 ? 'bg-[#ffffff14] border-none' : 'border-[#ffffff26]'}`}
+        >
+          All
+        </button>
+        <button
+          onClick={() => handleFiltersChange(2)}
+          className={`selected-btns text-base ${filterDays === 2 ? 'bg-[#ffffff14] border-none' : 'border-[#ffffff26]'}`}
+        >
+          Voting ends in 2 days
+        </button>
+        <button
+          onClick={() => handleFiltersChange(1)}
+          className={`selected-btns text-base ${filterDays === 1 ? 'bg-[#ffffff14] border-none' : 'border-[#ffffff26]'}`}
+        >
+          Voting ends in 1 day
+        </button>
+      </div>
+
+      <div className="flex items-end flex-1">
+        <SearchProposalInput
+          handleSearchQueryChange={handleSearchQueryChange}
+          searchQuery={searchQuery}
+          handleShowAllProposals={handleShowAllProposals}
+        />
+      </div>
     </div>
   );
 };

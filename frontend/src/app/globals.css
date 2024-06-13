@@ -184,10 +184,14 @@ body {
   background: rgba(255, 255, 255, 0.02);
 }
 input[type='checkbox'] {
-  accent-color: gray;
+  accent-color: #2BA472;;
   display: block;
 }
 .dashboard-card {
   @apply flex flex-col items-center gap-2 flex-[1_0_0] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)_inset] p-4 rounded-2xl;
   background: rgba(255, 255, 255, 0.02);
+}
+.more-popup-grid {
+  @apply backdrop-blur-[15px] flex w-[200px] flex-col items-start rounded-2xl;
+  background: rgba(255, 255, 255, 0.08);
 }

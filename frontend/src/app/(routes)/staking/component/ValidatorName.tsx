@@ -22,7 +22,7 @@ const valStatusObj: ValStatusObj = {
 const ValidatorName: React.FC<ValidatorNameProps> = ({
   valoperAddress,
   chainID,
-  hasStatus
+  hasStatus,
 }) => {
   const { fetchValidator, getValidatorDetails } = useValidator();
 
@@ -37,7 +37,7 @@ const ValidatorName: React.FC<ValidatorNameProps> = ({
   const validatorDetails = getValidatorDetails(valoperAddress, chainID);
 
   return (
-    <div className="flex space-x-1">
+    <div className="flex space-x-1 items-center">
       {!validatorDetails ? (
         'Loading....'
       ) : (
@@ -56,14 +56,19 @@ const ValidatorName: React.FC<ValidatorNameProps> = ({
           &nbsp;
           {/* Copy address icon */}
           <WalletAddress address={valoperAddress} displayAddress={false} />
-
-          {
-            hasStatus ?
-              <div className={`border  h-5 items-center ${valStatusObj[get(validatorDetails, 'status', '')]==='Active'?'bg-green-900 border-green': 'bg-red-600 border-red'} text-sm px-3 text-white rounded-[25px] relative`}>
-                {get(validatorDetails, 'jailed') ? 'Jailed' : valStatusObj[get(validatorDetails, 'status') || '']}
-              </div> : null
-          }
-
+          {hasStatus ? (
+            // If the status is Active than use this css "status-active"
+            // If the status is Jailed than we can use this "status-jailed"
+            //And the status is Unbonded  we can use this "status-unbonded"
+            <div
+              className={`h-5 text-[8px] ${valStatusObj[get(validatorDetails, 'status', '')] === 'Active' ? 'status-active' : ''}
+              ${get(validatorDetails, 'jailed') ? 'status-jailed' : ''} relative`}
+            >
+              {get(validatorDetails, 'jailed')
+                ? 'Jailed'
+                : valStatusObj[get(validatorDetails, 'status') || '']}
+            </div>
+          ) : null}
         </>
       )}
     </div>
