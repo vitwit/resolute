@@ -579,6 +579,9 @@ export const multisigSlice = createSlice({
     resetUpdateTxnState: (state) => {
       state.updateTxnRes = initialState.updateTxnRes;
     },
+    resetBroadcastTxnRes: (state) => {
+      state.broadcastTxnRes = initialState.broadcastTxnRes;
+    },
     resetSignTxnState: (state) => {
       state.signTxRes = initialState.signTxRes;
     },
@@ -833,6 +836,7 @@ export const {
   resetVerifyAccountRes,
   resetDeleteMultisigRes,
   resetMultisigAccountData,
+  resetBroadcastTxnRes,
   setVerifyDialogOpen,
 } = multisigSlice.actions;
 

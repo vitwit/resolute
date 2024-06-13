@@ -64,7 +64,7 @@ const PageMultisig = ({ chainName }: { chainName: string }) => {
       </div>
       <div>
         {!isWalletConnected ? (
-          <div className="flex-1 flex items-center justify-center">
+          <div className="flex-1 flex items-center justify-center mt-16">
             <EmptyScreen
               title="Connect your wallet"
               description="Connect your wallet to access your account on Resolute"

@@ -9,7 +9,6 @@ import {
 import { COSMOS_CHAIN_ID } from '@/utils/constants';
 import { getTimeDifferenceToFutureDate } from '@/utils/dataTime';
 import { getAuthToken } from '@/utils/localStorage';
-import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { setError } from '@/store/features/common/commonSlice';
@@ -19,7 +18,6 @@ const MultisigAccountHeader = ({
   isAdmin,
   multisigName,
   createdTime,
-  goBackURL,
   multisigAddress,
   walletAddress,
   chainName,
@@ -27,7 +25,6 @@ const MultisigAccountHeader = ({
   isAdmin: boolean;
   multisigName: string;
   createdTime: string;
-  goBackURL: string;
   multisigAddress: string;
   walletAddress: string;
   chainName: string;
@@ -80,9 +77,6 @@ const MultisigAccountHeader = ({
   return (
     <div className="flex items-center gap-2 w-full">
       <div className="flex-1 space-y-6">
-        <Link href={goBackURL} className="text-btn h-8 flex items-center w-fit">
-          <span>Back to List</span>
-        </Link>
         <div className="space-y-2">
           <div className="flex items-center gap-2">
             <div>

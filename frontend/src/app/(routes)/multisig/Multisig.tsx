@@ -1,18 +1,55 @@
 'use client';
-import { useAppDispatch } from '@/custom-hooks/StateHooks';
+import EmptyScreen from '@/components/common/EmptyScreen';
+import PageHeader from '@/components/common/PageHeader';
+import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { setChangeNetworkDialogOpen } from '@/store/features/common/commonSlice';
-import React from 'react';
+import { setConnectWalletOpen } from '@/store/features/wallet/walletSlice';
+import React, { useEffect } from 'react';
 
 const Multisig = () => {
   const dispatch = useAppDispatch();
+  const isWalletConnected = useAppSelector((state) => state.wallet.connected);
+
   const openChangeNetwork = () => {
     dispatch(setChangeNetworkDialogOpen({ open: true, showSearch: true }));
   };
+  const connectWalletOpen = () => {
+    dispatch(setConnectWalletOpen(true));
+  };
+
+  useEffect(() => {
+    if(isWalletConnected) {
+      openChangeNetwork();
+    }
+  }, [])
+
   return (
-    <div>
-      <button className="primary-btn" onClick={openChangeNetwork}>
-        Select Network
-      </button>
+    <div className="py-20 px-10 h-full flex flex-col">
+      <PageHeader
+        title="MultiSig"
+        description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga, fugit."
+      />
+      <div>
+        <div className="flex-1 flex items-center justify-center mt-16">
+          {isWalletConnected ? (
+            <EmptyScreen
+              title="Please select a network"
+              description="All networks page is not supported for multisig, Please select a network."
+              hasActionBtn={true}
+              btnText={'Select Network'}
+              btnOnClick={openChangeNetwork}
+            />
+          ) : (
+            <EmptyScreen
+              title="Connect your wallet"
+              description="Connect your wallet to access your account on Resolute"
+              hasActionBtn={true}
+              btnText={'Connect Wallet'}
+              btnOnClick={connectWalletOpen}
+            />
+          )}
+        </div>
+      </div>
     </div>
   );
 };
