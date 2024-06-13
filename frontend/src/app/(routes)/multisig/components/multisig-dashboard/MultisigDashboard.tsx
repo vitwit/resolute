@@ -21,10 +21,11 @@ interface MultisigDashboardI {
   walletAddress: string;
   chainName: string;
   chainID: string;
+  setCreateDialogOpen: () => void;
 }
 
 const MultisigDashboard: React.FC<MultisigDashboardI> = (props) => {
-  const { walletAddress, chainName, chainID } = props;
+  const { walletAddress, chainName, chainID, setCreateDialogOpen } = props;
   const dispatch = useAppDispatch();
 
   const createMultiAccRes = useAppSelector(
@@ -125,7 +126,10 @@ const MultisigDashboard: React.FC<MultisigDashboardI> = (props) => {
 
   return (
     <div className="mt-10 space-y-20">
-      <AllMultisigAccounts chainName={chainName} />
+      <AllMultisigAccounts
+        chainName={chainName}
+        setCreateDialogOpen={setCreateDialogOpen}
+      />
       <RecentTransactions chainID={chainID} />
       <DialogVerifyAccount walletAddress={walletAddress} />
       <Loader />

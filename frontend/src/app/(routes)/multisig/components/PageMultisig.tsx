@@ -27,6 +27,10 @@ const PageMultisig = ({ chainName }: { chainName: string }) => {
   const createMultiAccRes = useAppSelector(
     (state: RootState) => state.multisig.createMultisigAccountRes
   );
+  const multisigAccounts = useAppSelector(
+    (state) => state.multisig.multisigAccounts
+  );
+  const accounts = multisigAccounts.accounts;
   const chainID = nameToChainIDs[chainName];
 
   const { getChainInfo } = useGetChainInfo();
@@ -75,7 +79,7 @@ const PageMultisig = ({ chainName }: { chainName: string }) => {
             description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga, fugit."
           />
         </div>
-        {isWalletConnected ? (
+        {isWalletConnected && accounts?.length ? (
           <CustomButton
             btnOnClick={openCreateDialog}
             btnText="Create Multisig"
@@ -99,6 +103,7 @@ const PageMultisig = ({ chainName }: { chainName: string }) => {
             chainID={chainID}
             chainName={chainName}
             walletAddress={walletAddress}
+            setCreateDialogOpen={() => setCreateDialogOpen(true)}
           />
         )}
       </div>
