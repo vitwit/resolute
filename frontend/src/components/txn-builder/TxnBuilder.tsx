@@ -32,8 +32,15 @@ import { msgUnDelegate } from '@/txns/staking/undelegate';
 import { msgReDelegate } from '@/txns/staking/redelegate';
 import VoteMessage from './messages/VoteMessage';
 import { msgVoteTypeUrl } from '@/txns/gov/vote';
+import CustomMessage from './messages/CustomMessage';
 
-type MsgType = 'Send' | 'Delegate' | 'Undelegate' | 'Redelegate' | 'Vote';
+type MsgType =
+  | 'Send'
+  | 'Delegate'
+  | 'Undelegate'
+  | 'Redelegate'
+  | 'Vote'
+  | 'Custom';
 
 const TxnBuilder = ({
   chainID,
@@ -89,6 +96,12 @@ const TxnBuilder = ({
         type: 'Vote',
         option: '',
         proposalId: '',
+      });
+    } else if (type === 'Custom') {
+      append({
+        type: 'Custom',
+        typeUrl: '',
+        value: '',
       });
     }
   };
@@ -340,6 +353,9 @@ const MessagesList = ({
                 chainID={chainID}
               />
             )}
+            {field.type === 'Custom' && (
+              <CustomMessage control={control} index={index} remove={remove} />
+            )}
           </div>
         ))}
       </div>
@@ -443,6 +459,11 @@ const formatMsgs = (
           option: Number(msg.option),
           proposalId: Number(msg.proposalId),
         },
+      });
+    } else if (msg.type === 'Custom') {
+      messages.push({
+        typeUrl: msg.typeUrl,
+        value: JSON.parse(msg.value),
       });
     }
   });

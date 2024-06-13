@@ -55,9 +55,22 @@ type VoteMsg = {
   type: 'Vote';
   proposalId: string;
   option: string;
-}
+};
 
-type Message = SendMsg | DelegateMsg | UndelegateMsg | RedelegateMsg | VoteMsg;
+type CustomMsg = {
+  type: 'Custom';
+  typeUrl: string;
+  /* eslint-disable @typescript-eslint/no-explicit-any */
+  value: any;
+};
+
+type Message =
+  | SendMsg
+  | DelegateMsg
+  | UndelegateMsg
+  | RedelegateMsg
+  | VoteMsg
+  | CustomMsg;
 
 type TxnBuilderForm = {
   gas: number;

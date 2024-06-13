@@ -4,4 +4,5 @@ export const TXN_BUILDER_MSGS = [
   'Undelegate',
   'Redelegate',
   'Vote',
+  'Custom',
 ];
