@@ -184,7 +184,7 @@ body {
   background: rgba(255, 255, 255, 0.02);
 }
 input[type='checkbox'] {
-  accent-color: gray;
+  accent-color: #2BA472;;
   display: block;
 }
 .dashboard-card {
