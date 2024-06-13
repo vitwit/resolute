@@ -19,7 +19,7 @@ const PageTxnBuilder = ({
   multisigAddress: string;
 }) => {
   const dispatch = useAppDispatch();
-  const nameToChainIDs = useAppSelector((state) => state.wallet.nameToChainIDs);
+  const nameToChainIDs = useAppSelector((state) => state.common.nameToChainIDs);
   const chainName = paramChain.toLowerCase();
   const validChain = chainName in nameToChainIDs;
   const isWalletConnected = useAppSelector((state) => state.wallet.connected);

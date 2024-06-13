@@ -15,7 +15,7 @@ const PageMultisigInfo = ({
 }) => {
   const dispatch = useAppDispatch();
   const nameToChainIDs = useAppSelector(
-    (state: RootState) => state.wallet.nameToChainIDs
+    (state: RootState) => state.common.nameToChainIDs
   );
   const chainName = paramChain.toLowerCase();
   const validChain = chainName in nameToChainIDs;
