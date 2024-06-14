@@ -15,15 +15,15 @@ const WithConnectionIllustration = ({message}: {message: string}) => {
         <div className="flex flex-col gap-6">
           <Image
             src="/illustrate.png"
-            width={400}
-            height={400}
+            width={232}
+            height={200}
             alt="Illustration"
           />
           <div className="flex flex-col justify-center items-center w-full">
             <p className="empty-screen-title"> {message} </p>
-            <p className="secondary-text">
+            {/* <p className="secondary-text">
               Connect your wallet to access your account on Resolute
-            </p>
+            </p> */}
           </div>
         </div>
       </div>

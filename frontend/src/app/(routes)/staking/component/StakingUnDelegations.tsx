@@ -49,6 +49,12 @@ function StakingUnDelegations({ undelegations, isSingleChain }: { undelegations:
         <WithConnectionIllustration message="No Un Delegations" />
       ) : null}
 
+      {
+        isSingleChain && !unbondingCount ? (
+          <WithConnectionIllustration message="No Un Delegations" />
+        ): null
+      }
+
       <div className="grid grid-cols-3 gap-10 px-6 py-0">
         {Object.entries(undelegations).map(([key, value]) => {
           return get(value, 'unbonding.unbonding.unbonding_responses', []).map(

@@ -71,6 +71,12 @@ function StakingDelegations({ delegations, isSingleChain }: { delegations: Chain
         <WithConnectionIllustration message="No Delegations" />
       ) : null}
 
+      {
+        isSingleChain && !bondingCount ? (
+          <WithConnectionIllustration message="No Delegations" />
+        ): null
+      }
+
       {Object.entries(delegations).map(([key, value], index) =>
         get(value, 'delegations.delegations.delegation_responses.length') ? (
           <div key={index} className="px-6 py-0">
