@@ -1,4 +1,3 @@
-import ValidatorLogo from '@/app/(routes)/staking/components/ValidatorLogo';
 import {
   customAutoCompleteStyles,
   customTextFieldStyles,
@@ -12,51 +11,33 @@ import {
 } from '@mui/material';
 import React from 'react';
 
-const CustomAutoComplete = ({
+const ProposalsList = ({
   options,
   selectedOption,
   handleChange,
   dataLoading,
 }: {
-  options: ValidatorOption[];
-  selectedOption: ValidatorOption | null;
-  handleChange: (option: ValidatorOption | null) => void;
+  options: ProposalOption[];
+  selectedOption: ProposalOption | null;
+  handleChange: (option: ProposalOption | null) => void;
   dataLoading: boolean;
 }) => {
   /* eslint-disable @typescript-eslint/no-explicit-any */
-  const renderOption = (props: any, option: ValidatorOption) => (
-    <li {...props} key={option.address}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-        <ValidatorLogo height={24} width={24} identity={option.identity} />
-        <div className="flex flex-col">
-          <span className="font-semibold truncate">
-            {shortenName(option.label, 15)}
-          </span>
-        </div>
-      </div>
-    </li>
+  const renderOption = (props: any, option: ProposalOption) => (
+    <li {...props} key={option.value}>
+    <div className="flex gap-2 items-center">
+      <span className="font-semibold">#{option.value}</span>
+      <span className="truncate">{shortenName(option.label, 36)}</span>
+    </div>
+  </li>
   );
 
   /* eslint-disable @typescript-eslint/no-explicit-any */
   const renderInput = (params: any) => (
     <TextField
-      placeholder="Select Asset"
+      placeholder="Select Proposal"
       {...params}
-      InputProps={{
-        ...params.InputProps,
-        startAdornment: (
-          <React.Fragment>
-            {selectedOption && (
-              <ValidatorLogo
-                height={24}
-                width={24}
-                identity={selectedOption.identity}
-              />
-            )}
-            {params.InputProps.startAdornment}
-          </React.Fragment>
-        ),
-      }}
+      required
       sx={{
         '& .MuiInputBase-input': {
           color: 'white',
@@ -78,9 +59,9 @@ const CustomAutoComplete = ({
     <Autocomplete
       disablePortal
       fullWidth
-      id="chain-autocomplete"
+      id="proposals-list"
       options={options}
-      getOptionLabel={(option: ValidatorOption) => option.label}
+      getOptionLabel={(option: ProposalOption) => option.label}
       renderOption={renderOption}
       renderInput={renderInput}
       onChange={(_, newValue) => handleChange(newValue)}
@@ -109,4 +90,4 @@ const CustomAutoComplete = ({
   );
 };
 
-export default CustomAutoComplete;
+export default ProposalsList;

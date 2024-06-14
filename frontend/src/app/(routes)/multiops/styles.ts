@@ -125,3 +125,24 @@ export const customMUITextFieldStyles = {
     borderRadius: '100px',
   },
 };
+
+export const customMessageValueFieldStyles = {
+  '& .MuiInputBase-input': {
+    color: 'white',
+    fontSize: '14px',
+    fontWeight: 200,
+    fontFamily: 'Libre Franklin',
+    lineHeight: '19px',
+  },
+  '& .MuiOutlinedInput-notchedOutline': {
+    border: 'none',
+  },
+  '& .MuiOutlinedInput-root': {
+    border: '0.25px solid #ffffff10',
+    borderRadius: '16px',
+  },
+  '& .Mui-focused': {
+    border: '0.25px solid #ffffff4a',
+    borderRadius: '16px',
+  },
+};

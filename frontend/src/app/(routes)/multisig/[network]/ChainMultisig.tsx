@@ -6,7 +6,7 @@ import PageMultisig from '../components/PageMultisig';
 
 const ChainMultisig = ({ network }: { network: string }) => {
   const nameToChainIDs = useAppSelector(
-    (state: RootState) => state.wallet.nameToChainIDs
+    (state: RootState) => state.common.nameToChainIDs
   );
   const chainName = network.toLowerCase();
   const validChain = chainName in nameToChainIDs;

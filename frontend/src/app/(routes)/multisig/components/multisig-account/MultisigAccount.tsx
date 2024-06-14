@@ -1,10 +1,12 @@
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import {
-  getMultisigAccounts,
   getMultisigBalance,
   multisigByAddress,
+  resetBroadcastTxnRes,
   resetCreateTxnState,
+  resetsignTransactionRes,
+  resetUpdateTxnState,
 } from '@/store/features/multisig/multisigSlice';
 import {
   getAllValidators,
@@ -18,6 +20,9 @@ import { parseBalance } from '@/utils/denom';
 import Transactions from './Transactions';
 import DialogVerifyAccount from '../DialogVerifyAccount';
 import Loader from '../common/Loader';
+import Link from 'next/link';
+import { TxStatus } from '@/types/enums';
+import CustomLoader from '@/components/common/CustomLoader';
 
 const MultisigAccount = ({
   chainName,
@@ -31,6 +36,10 @@ const MultisigAccount = ({
   const nameToChainIDs = useAppSelector((state) => state.wallet.nameToChainIDs);
 
   const chainID = nameToChainIDs[chainName];
+
+  const multigAccountRes = useAppSelector(
+    (state) => state.multisig.multisigAccount.status
+  );
 
   const { getChainInfo, getDenomInfo } = useGetChainInfo();
   const { address: walletAddress, baseURL, restURLs } = getChainInfo(chainID);
@@ -74,42 +83,59 @@ const MultisigAccount = ({
       );
       dispatch(getAllValidators({ baseURLs: restURLs, chainID }));
       dispatch(multisigByAddress({ address: multisigAddress }));
-      dispatch(getMultisigAccounts(walletAddress));
     }
   }, [chainID]);
 
   useEffect(() => {
     dispatch(resetCreateTxnState());
+    dispatch(resetUpdateTxnState());
+    dispatch(resetBroadcastTxnRes());
+    dispatch(resetsignTransactionRes());
   }, []);
 
   return (
-    <div className="space-y-10">
-      <MultisigAccountHeader
-        isAdmin={isAdmin}
-        multisigName={multisigName}
-        createdTime={createdTime}
-        goBackURL={`/multisig/${chainName}`}
-        multisigAddress={multisigAddress}
-        walletAddress={walletAddress}
-        chainName={chainName}
-      />
-      <div className="space-y-20">
-        <MultisigAccountInfo
-          chainID={chainID}
-          coinMinimalDenom={coinMinimalDenom}
-          currency={currency}
-        />
-        <Transactions
-          chainID={chainID}
-          multisigAddress={multisigAccount.account.address}
-          currency={currency}
-          threshold={multisigAccount.account.threshold}
-          chainName={chainName}
-          walletAddress={walletAddress}
-        />
-      </div>
-      <DialogVerifyAccount walletAddress={walletAddress} />
-      <Loader />
+    <div>
+      {multigAccountRes === TxStatus.PENDING ? (
+        <div className="my-20">
+          <CustomLoader />
+        </div>
+      ) : (
+        <div className="space-y-10">
+          <div className="space-y-6">
+            <Link
+              href={`/multisig/${chainName}`}
+              className="text-btn h-8 flex items-center w-fit"
+            >
+              <span>Back to List</span>
+            </Link>
+            <MultisigAccountHeader
+              isAdmin={isAdmin}
+              multisigName={multisigName}
+              createdTime={createdTime}
+              multisigAddress={multisigAddress}
+              walletAddress={walletAddress}
+              chainName={chainName}
+            />
+          </div>
+          <div className="space-y-20">
+            <MultisigAccountInfo
+              chainID={chainID}
+              coinMinimalDenom={coinMinimalDenom}
+              currency={currency}
+            />
+            <Transactions
+              chainID={chainID}
+              multisigAddress={multisigAccount.account.address}
+              currency={currency}
+              threshold={multisigAccount.account.threshold}
+              chainName={chainName}
+              walletAddress={walletAddress}
+            />
+          </div>
+          <DialogVerifyAccount walletAddress={walletAddress} />
+          <Loader />
+        </div>
+      )}
     </div>
   );
 };
@@ -241,7 +267,7 @@ const MultisigMember = ({ address }: { address: string }) => {
   return (
     <div className="flex items-center gap-2">
       <div className="text-[20px] font-bold">{shortenAddress(address, 10)}</div>
-      <Copy content="address" height={24} width={24} />
+      <Copy content={address} height={24} width={24} />
     </div>
   );
 };
