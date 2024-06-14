@@ -1,7 +1,7 @@
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { setSlippage } from '@/store/features/swaps/swapsSlice';
 import { TextField } from '@mui/material';
-import React from 'react'
+import React from 'react';
 import { customTextFieldStyles } from '../../styles';
 import CustomButton from '@/components/common/CustomButton';
 
@@ -19,9 +19,9 @@ const Settings = ({
   };
   return (
     <div className="w-full h-[700px] flex flex-col justify-between">
-      <div className="w-full space-y-10">
+      <div className="w-full space-y-4">
         <div className="flex items-center justify-between w-full">
-          <div className="text-b1 text-[#ffffff80]">Swap</div>
+          <div className="text-b1 text-[#ffffff80]">Settings</div>
           <button onClick={onClose} className="secondary-btn">
             close
           </button>
@@ -86,4 +86,4 @@ const Settings = ({
   );
 };
 
-export default Settings
+export default Settings;
