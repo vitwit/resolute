@@ -1,20 +1,27 @@
-import { HandleSelectProposalEvent, ProposalsData, SelectedProposal } from '@/types/gov';
-import React from 'react'
+import {
+  HandleSelectProposalEvent,
+  ProposalsData,
+  SelectedProposal,
+} from '@/types/gov';
+import React from 'react';
 import ProposalItem from './ProposalItem';
+import EmptyScreen from '@/components/common/EmptyScreen';
+import { NO_DATA_ILLUSTRATION } from '@/constants/image-names';
 
 const ProposalsList = ({
-    proposals,
-    selectedProposal,
-    handleViewProposal,
-  }: {
-    proposals: ProposalsData[];
-    
-    selectedProposal: SelectedProposal | null;
-    handleViewProposal: HandleSelectProposalEvent;
-  }) => {
-    return (
-      <>
-        {proposals.map((proposalsData) => {
+  proposals,
+  selectedProposal,
+  handleViewProposal,
+}: {
+  proposals: ProposalsData[];
+
+  selectedProposal: SelectedProposal | null;
+  handleViewProposal: HandleSelectProposalEvent;
+}) => {
+  return (
+    <>
+      {proposals?.length ? (
+        proposals.map((proposalsData) => {
           const { chainID, chainLogo, chainName, isActive, proposalInfo } =
             proposalsData;
           const { endTime, proposalId, proposalTitle } = proposalInfo;
@@ -32,9 +39,18 @@ const ProposalsList = ({
               selectedProposal={selectedProposal}
             />
           );
-        })}
-      </>
-    );
-  };
+        })
+      ) : (
+        <EmptyScreen
+          title="No Proposals"
+          description=""
+          bgImage={NO_DATA_ILLUSTRATION}
+          width={400}
+          height={400}
+        />
+      )}
+    </>
+  );
+};
 
-export default ProposalsList
+export default ProposalsList;

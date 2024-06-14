@@ -12,6 +12,8 @@ import {
 } from '@/types/gov';
 import ProposalsList from './ProposalsList';
 import SearchProposalInput from './SearchProposalInput';
+import { useAppSelector } from '@/custom-hooks/StateHooks';
+import CustomLoader from '@/components/common/CustomLoader';
 
 const GovDashboard = ({ chainIDs }: { chainIDs: string[] }) => {
   useInitGovernance({ chainIDs });
@@ -25,9 +27,12 @@ const GovDashboard = ({ chainIDs }: { chainIDs: string[] }) => {
     []
   );
   const debounceTimeout = useRef<number | null>(null);
-
   const [selectedProposal, setSelectedProposal] =
     useState<SelectedProposal | null>(null);
+
+  const proposalsLoading =
+    useAppSelector((state) => state.gov?.activeProposalsLoading) >
+    chainIDs?.length;
 
   const handleViewProposal = ({
     chainID,
@@ -88,9 +93,8 @@ const GovDashboard = ({ chainIDs }: { chainIDs: string[] }) => {
         }
       });
 
-      console.log({ filtered });
       setFilteredProposals(filtered);
-    }, 500);
+    }, 100);
   };
 
   const handleShowAllProposals = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -112,18 +116,24 @@ const GovDashboard = ({ chainIDs }: { chainIDs: string[] }) => {
       </div>
       <div className="flex gap-6 w-full flex-1 h-full overflow-y-scroll py-6">
         <div className="flex flex-col w-full gap-6 py-0 pb-6 flex-1 overflow-y-scroll">
-          {searchQuery?.length || filterDays ? (
-            <ProposalsList
-              proposals={filteredProposals}
-              handleViewProposal={handleViewProposal}
-              selectedProposal={selectedProposal}
-            />
+          {proposalsLoading ? (
+            <CustomLoader />
           ) : (
-            <ProposalsList
-              proposals={proposalsData}
-              handleViewProposal={handleViewProposal}
-              selectedProposal={selectedProposal}
-            />
+            <>
+              {searchQuery?.length || filterDays ? (
+                <ProposalsList
+                  proposals={filteredProposals}
+                  handleViewProposal={handleViewProposal}
+                  selectedProposal={selectedProposal}
+                />
+              ) : (
+                <ProposalsList
+                  proposals={proposalsData}
+                  handleViewProposal={handleViewProposal}
+                  selectedProposal={selectedProposal}
+                />
+              )}
+            </>
           )}
         </div>
         {selectedProposal ? (
@@ -154,25 +164,24 @@ const QuickFilters = ({
   handleFiltersChange: (n: number) => void;
   filterDays: number;
 }) => {
-  // TODO: Add quick filters (Voting ends in 1 day & Deposit ends in 1 day)
   return (
     <div className="flex gap-20">
       <div className="flex py-2 gap-4">
         <button
           onClick={() => handleFiltersChange(0)}
-          className={`selected-btns text-base ${filterDays === 0 ? 'bg-[#ffffff14] border-none' : 'border-[#ffffff26]'}`}
+          className={`selected-btns text-base ${filterDays === 0 ? 'bg-[#ffffff14] border-transparent' : 'border-[#ffffff26]'}`}
         >
           All
         </button>
         <button
           onClick={() => handleFiltersChange(2)}
-          className={`selected-btns text-base ${filterDays === 2 ? 'bg-[#ffffff14] border-none' : 'border-[#ffffff26]'}`}
+          className={`selected-btns text-base ${filterDays === 2 ? 'bg-[#ffffff14] border-transparent' : 'border-[#ffffff26]'}`}
         >
           Voting ends in 2 days
         </button>
         <button
           onClick={() => handleFiltersChange(1)}
-          className={`selected-btns text-base ${filterDays === 1 ? 'bg-[#ffffff14] border-none' : 'border-[#ffffff26]'}`}
+          className={`selected-btns text-base ${filterDays === 1 ? 'bg-[#ffffff14] border-transparent' : 'border-[#ffffff26]'}`}
         >
           Voting ends in 1 day
         </button>

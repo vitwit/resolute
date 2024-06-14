@@ -26,42 +26,16 @@ const useGetProposals = () => {
       const activeProposals = govState?.[chainID]?.active?.proposals || [];
       const depositProposals = govState?.[chainID]?.deposit?.proposals || [];
 
-      activeProposals?.forEach((proposal) => {
-        const proposalTitle = get(
-          proposal,
-          'content.title',
-          get(proposal, 'title', get(proposal, 'content.@type', ''))
-        );
-
-        const endTime = getTimeDifferenceToFutureDate(
-          get(proposal, 'voting_end_time')
-        );
-        const proposalId = get(
-          proposal,
-          'proposal_id',
-          get(proposal, 'id', '')
-        );
-        proposalsData.push({
-          chainID,
-          chainName,
-          chainLogo,
-          isActive: true,
-          proposalInfo: {
-            proposalTitle,
-            proposalId,
-            endTime,
-          },
-        });
-      });
-      if (showAll) {
-        depositProposals?.forEach((proposal) => {
+      if (Array.isArray(activeProposals)) {
+        activeProposals?.forEach((proposal) => {
           const proposalTitle = get(
             proposal,
             'content.title',
             get(proposal, 'title', get(proposal, 'content.@type', ''))
           );
+
           const endTime = getTimeDifferenceToFutureDate(
-            get(proposal, 'deposit_end_time')
+            get(proposal, 'voting_end_time')
           );
           const proposalId = get(
             proposal,
@@ -72,14 +46,44 @@ const useGetProposals = () => {
             chainID,
             chainName,
             chainLogo,
-            isActive: false,
+            isActive: true,
             proposalInfo: {
-              endTime,
-              proposalId,
               proposalTitle,
+              proposalId,
+              endTime,
             },
           });
         });
+      }
+      if (showAll) {
+        if (Array.isArray(depositProposals)) {
+          depositProposals?.forEach((proposal) => {
+            const proposalTitle = get(
+              proposal,
+              'content.title',
+              get(proposal, 'title', get(proposal, 'content.@type', ''))
+            );
+            const endTime = getTimeDifferenceToFutureDate(
+              get(proposal, 'deposit_end_time')
+            );
+            const proposalId = get(
+              proposal,
+              'proposal_id',
+              get(proposal, 'id', '')
+            );
+            proposalsData.push({
+              chainID,
+              chainName,
+              chainLogo,
+              isActive: false,
+              proposalInfo: {
+                endTime,
+                proposalId,
+                proposalTitle,
+              },
+            });
+          });
+        }
       }
     });
     return proposalsData;
