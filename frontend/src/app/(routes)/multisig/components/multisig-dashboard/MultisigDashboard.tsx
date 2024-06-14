@@ -2,7 +2,12 @@ import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import {
   getAccountAllMultisigTxns,
   getMultisigAccounts,
+  resetBroadcastTxnRes,
   resetCreateMultisigRes,
+  resetCreateTxnState,
+  resetsignTransactionRes,
+  resetSignTxnState,
+  resetUpdateTxnState,
 } from '@/store/features/multisig/multisigSlice';
 import React, { useEffect } from 'react';
 import AllMultisigAccounts from './AllMultisigAccounts';
@@ -16,10 +21,11 @@ interface MultisigDashboardI {
   walletAddress: string;
   chainName: string;
   chainID: string;
+  setCreateDialogOpen: () => void;
 }
 
 const MultisigDashboard: React.FC<MultisigDashboardI> = (props) => {
-  const { walletAddress, chainName, chainID } = props;
+  const { walletAddress, chainName, chainID, setCreateDialogOpen } = props;
   const dispatch = useAppDispatch();
 
   const createMultiAccRes = useAppSelector(
@@ -53,6 +59,16 @@ const MultisigDashboard: React.FC<MultisigDashboardI> = (props) => {
     );
   };
 
+  const resetSignTxn = () => {
+    dispatch(resetSignTxnState());
+    dispatch(resetsignTransactionRes());
+  };
+
+  const resetBroadcastTxn = () => {
+    dispatch(resetUpdateTxnState());
+    dispatch(resetBroadcastTxnRes());
+  };
+
   useEffect(() => {
     if (walletAddress) {
       fetchAllTransactions();
@@ -62,6 +78,7 @@ const MultisigDashboard: React.FC<MultisigDashboardI> = (props) => {
   useEffect(() => {
     if (signTxStatus.status === TxStatus.IDLE) {
       dispatch(setError({ type: 'success', message: 'Successfully signed' }));
+      resetSignTxn();
       fetchAllTransactions();
     } else if (signTxStatus.status === TxStatus.REJECTED) {
       dispatch(
@@ -70,6 +87,7 @@ const MultisigDashboard: React.FC<MultisigDashboardI> = (props) => {
           message: signTxStatus.error || 'Error while signing the transaction',
         })
       );
+      resetSignTxn();
       fetchAllTransactions();
     }
   }, [signTxStatus]);
@@ -79,6 +97,7 @@ const MultisigDashboard: React.FC<MultisigDashboardI> = (props) => {
       dispatch(
         setError({ type: 'success', message: 'Broadcasted successfully' })
       );
+      resetBroadcastTxn();
     } else if (broadcastTxnStatus.status === TxStatus.REJECTED) {
       dispatch(
         setError({
@@ -86,6 +105,7 @@ const MultisigDashboard: React.FC<MultisigDashboardI> = (props) => {
           message: broadcastTxnStatus.error || 'Failed to broadcasted',
         })
       );
+      resetBroadcastTxn();
     }
   }, [broadcastTxnStatus]);
 
@@ -97,9 +117,19 @@ const MultisigDashboard: React.FC<MultisigDashboardI> = (props) => {
     }
   }, [updateTxStatus]);
 
+  useEffect(() => {
+    dispatch(resetCreateTxnState());
+    dispatch(resetUpdateTxnState());
+    dispatch(resetBroadcastTxnRes());
+    dispatch(resetsignTransactionRes());
+  }, []);
+
   return (
     <div className="mt-10 space-y-20">
-      <AllMultisigAccounts chainName={chainName} />
+      <AllMultisigAccounts
+        chainName={chainName}
+        setCreateDialogOpen={setCreateDialogOpen}
+      />
       <RecentTransactions chainID={chainID} />
       <DialogVerifyAccount walletAddress={walletAddress} />
       <Loader />

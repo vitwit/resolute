@@ -12,6 +12,8 @@ import CustomLoader from '@/components/common/CustomLoader';
 import TxnsCard from '../common/TxnsCard';
 import { useRouter } from 'next/navigation';
 import useVerifyAccount from '@/custom-hooks/useVerifyAccount';
+import useFetchTxns from '@/custom-hooks/multisig/useFetchTxns';
+import NoData from '@/components/common/NoData';
 
 const TXNS_TYPES = [
   { option: 'to-sign', value: 'To be Signed' },
@@ -51,6 +53,10 @@ const Transactions = ({
 
   const txnsStatus = useAppSelector((state) => state.multisig.txns.status);
   const deleteTxnRes = useAppSelector((state) => state.multisig.deleteTxnRes);
+  const signTxStatus = useAppSelector(
+    (state) => state.multisig.signTransactionRes
+  );
+  const updateTxStatus = useAppSelector((state) => state.multisig.updateTxnRes);
 
   const handleTxnsTypeChange = (type: string) => {
     setTxnsType(type);
@@ -121,6 +127,23 @@ const Transactions = ({
     }
   }, [deleteTxnRes]);
 
+  useEffect(() => {
+    if (
+      signTxStatus.status === TxStatus.IDLE ||
+      updateTxStatus.status === TxStatus.IDLE ||
+      updateTxStatus.status === TxStatus.REJECTED
+    ) {
+      if (['failed', 'history', 'completed'].includes(txnsType)) {
+        fetchTxns('history');
+      } else {
+        fetchTxns('current');
+      }
+    }
+  }, [signTxStatus.status, updateTxStatus.status]);
+
+  // To refetch txns after singing or broadcasting txn
+  useFetchTxns();
+
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-2 w-full">
@@ -143,14 +166,20 @@ const Transactions = ({
             <CustomLoader />
           </div>
         ) : (
-          <TransactionsList
-            txns={txnsList}
-            currency={currency}
-            threshold={threshold}
-            multisigAddress={multisigAddress}
-            chainID={chainID}
-            txnsType={txnsType}
-          />
+          <div>
+            {txnsList?.length ? (
+              <TransactionsList
+                txns={txnsList}
+                currency={currency}
+                threshold={threshold}
+                multisigAddress={multisigAddress}
+                chainID={chainID}
+                txnsType={txnsType}
+              />
+            ) : (
+              <NoData height={200} width={232} message="No Transactions" />
+            )}
+          </div>
         )}
       </div>
     </div>

@@ -181,18 +181,25 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
     e.preventDefault();
     setFormError('');
 
+    console.log("111")
+
     if (Number(threshold) < 1) {
       dispatch(setError({ type: 'error', message: MIN_THRESHOLD_ERROR }));
       return;
     }
+
+    console.log("222")
 
     if (!pubKeyFields?.length) {
       dispatch(setError({ type: 'error', message: MIN_PUBKEYS_ERROR }));
       return;
     }
 
+    console.log("333")
+
     let isValid = true;
     const pubKeyValidationPromises = pubKeyFields.map(async (field, index) => {
+      console.log("444")
       if (!field.isPubKey) {
         const pubKey = await getPubkey(field.address, baseURLs);
         if (pubKey.length) {
@@ -212,6 +219,8 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
       return { index, pubKey: '', error: '' };
     });
 
+    console.log("555")
+
     const results = await Promise.all(pubKeyValidationPromises);
     results.forEach((result) => {
       const pubKeysList = [...pubKeyFields];
@@ -220,9 +229,13 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
       setPubKeyFields(pubKeysList);
     });
 
+    console.log("666")
+
     if (!isValid) {
       return;
     }
+
+    console.log("777")
 
     const pubKeys = pubKeyFields.map((v) => v.pubKey);
 
@@ -273,7 +286,7 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
       dispatch(
         setError({
           type: 'error',
-          message: error || FAILED_TO_GENERATE_MULTISIG,
+          message: error?.message || FAILED_TO_GENERATE_MULTISIG,
         })
       );
     }
@@ -429,6 +442,7 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
                       threshold={threshold}
                       handleThresholdChange={handleThresholdChange}
                       membersCount={pubKeyFields.length}
+                      isImportMultisig={importMultisig}
                     />
                   </div>
                 </div>
@@ -486,18 +500,7 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
                     here
                   </button>
                 </div>
-              ) : (
-                <div className="create-multisig-dialog-footer">
-                  <div className="flex gap-4 items-center">
-                    <button
-                      onClick={resetCreateMultisig}
-                      className="text-only-btn opacity-50"
-                    >
-                      Cancel Import
-                    </button>
-                  </div>
-                </div>
-              )}
+              ) : null}
             </div>
           </div>
         ) : (

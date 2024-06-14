@@ -1,4 +1,4 @@
-import { I_ICON } from '@/constants/image-names';
+import { I_ICON, NO_MESSAGES_ILLUSTRATION } from '@/constants/image-names';
 import { TXN_BUILDER_MSGS } from '@/constants/multisig';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import Image from 'next/image';
@@ -8,6 +8,7 @@ import {
   FieldArrayWithId,
   useFieldArray,
   useForm,
+  UseFormSetValue,
 } from 'react-hook-form';
 import '@/app/(routes)/multiops/multiops.css';
 import { TextField } from '@mui/material';
@@ -24,29 +25,22 @@ import { setError } from '@/store/features/common/commonSlice';
 import { useRouter } from 'next/navigation';
 import { Decimal } from '@cosmjs/math';
 import DelegateMessage from './messages/DelegateMessage';
+import { msgDelegate } from '@/txns/staking/delegate';
+import UndelegateMessage from './messages/UndelegateMessage';
+import RedelegateMessage from './messages/RedelegateMessage';
+import { msgUnDelegate } from '@/txns/staking/undelegate';
+import { msgReDelegate } from '@/txns/staking/redelegate';
+import VoteMessage from './messages/VoteMessage';
+import { msgVoteTypeUrl } from '@/txns/gov/vote';
+import CustomMessage from './messages/CustomMessage';
 
-type MsgType = 'Send' | 'Delegate';
-
-type SendMsg = {
-  type: 'Send';
-  address: string;
-  amount: string;
-};
-
-type DelegateMsg = {
-  type: 'Delegate';
-  validator: string;
-  amount: string;
-};
-
-type Message = SendMsg | DelegateMsg;
-
-type FormData = {
-  gas: number;
-  memo: string;
-  fees: number;
-  msgs: Message[];
-};
+type MsgType =
+  | 'Send'
+  | 'Delegate'
+  | 'Undelegate'
+  | 'Redelegate'
+  | 'Vote'
+  | 'Custom';
 
 const TxnBuilder = ({
   chainID,
@@ -69,7 +63,7 @@ const TxnBuilder = ({
   };
   const { address: walletAddress, feeAmount } = basicChainInfo;
 
-  const { handleSubmit, control, reset } = useForm<FormData>({
+  const { handleSubmit, control, reset, setValue } = useForm<TxnBuilderForm>({
     defaultValues: {
       gas: 900000,
       memo: '',
@@ -88,6 +82,27 @@ const TxnBuilder = ({
       append({ type: 'Send', address: '', amount: '' });
     } else if (type === 'Delegate') {
       append({ type: 'Delegate', validator: '', amount: '' });
+    } else if (type === 'Undelegate') {
+      append({ type: 'Undelegate', validator: '', amount: '' });
+    } else if (type === 'Redelegate') {
+      append({
+        type: 'Redelegate',
+        sourceValidator: '',
+        destValidator: '',
+        amount: '',
+      });
+    } else if (type === 'Vote') {
+      append({
+        type: 'Vote',
+        option: '',
+        proposalId: '',
+      });
+    } else if (type === 'Custom') {
+      append({
+        type: 'Custom',
+        typeUrl: '',
+        value: '',
+      });
     }
   };
 
@@ -100,7 +115,7 @@ const TxnBuilder = ({
     });
   };
 
-  const onSubmit = (data: FormData) => {
+  const onSubmit = (data: TxnBuilderForm) => {
     const feeObj = fee(
       currency.coinMinimalDenom,
       data.fees.toString(),
@@ -148,6 +163,8 @@ const TxnBuilder = ({
         remove={remove}
         handleClearAll={handleClearAll}
         handleBackToMultisig={handleBackToMultisig}
+        setValue={setValue}
+        chainID={chainID}
       />
     </form>
   );
@@ -172,7 +189,7 @@ const SelectMessage = ({
             <div className="text-b1-light">Select Message</div>
             <Image src={I_ICON} height={20} width={20} alt="" />
           </div>
-          <div>
+          <div className="flex gap-2 flex-wrap">
             {TXN_BUILDER_MSGS.map((msg) => (
               <button
                 key={msg}
@@ -254,13 +271,17 @@ const MessagesList = ({
   remove,
   handleClearAll,
   handleBackToMultisig,
+  setValue,
+  chainID,
 }: {
   /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
   control: any;
-  fields: FieldArrayWithId<FormData, 'msgs', 'id'>[];
+  fields: FieldArrayWithId<TxnBuilderForm, 'msgs', 'id'>[];
   remove: (index: number) => void;
   handleClearAll: () => void;
   handleBackToMultisig: () => void;
+  setValue: UseFormSetValue<TxnBuilderForm>;
+  chainID: string;
 }) => {
   const dispatch = useAppDispatch();
   const createRes = useAppSelector((state) => state.multisig.createTxnRes);
@@ -298,7 +319,42 @@ const MessagesList = ({
               <SendMessage control={control} index={index} remove={remove} />
             )}
             {field.type === 'Delegate' && (
-              <DelegateMessage control={control} index={index} remove={remove} />
+              <DelegateMessage
+                control={control}
+                index={index}
+                remove={remove}
+                setValue={setValue}
+                chainID={chainID}
+              />
+            )}
+            {field.type === 'Undelegate' && (
+              <UndelegateMessage
+                control={control}
+                index={index}
+                remove={remove}
+                setValue={setValue}
+                chainID={chainID}
+              />
+            )}
+            {field.type === 'Redelegate' && (
+              <RedelegateMessage
+                control={control}
+                index={index}
+                remove={remove}
+                setValue={setValue}
+                chainID={chainID}
+              />
+            )}
+            {field.type === 'Vote' && (
+              <VoteMessage
+                index={index}
+                remove={remove}
+                setValue={setValue}
+                chainID={chainID}
+              />
+            )}
+            {field.type === 'Custom' && (
+              <CustomMessage control={control} index={index} remove={remove} />
             )}
           </div>
         ))}
@@ -312,8 +368,14 @@ const MessagesList = ({
           btnLoading={createRes.status === 'pending'}
         />
       ) : (
-        <div className="my-20 h-80 flex items-center justify-center">
-          - No Messages -
+        <div className="h-full flex flex-col items-center justify-center">
+          <Image
+            src={NO_MESSAGES_ILLUSTRATION}
+            height={260}
+            width={390}
+            alt="No Messages"
+          />
+          <div className="text-b1 font-light">No messages yet</div>
         </div>
       )}
     </div>
@@ -345,6 +407,69 @@ const formatMsgs = (
             },
           ],
         },
+      });
+    } else if (msg.type === 'Delegate') {
+      const amountInAtomics = Decimal.fromUserInput(
+        msg.amount,
+        Number(coinDecimals)
+      ).atomics;
+      messages.push({
+        typeUrl: msgDelegate,
+        value: {
+          delegatorAddress: fromAddress,
+          validatorAddress: msg.validator,
+          amount: {
+            amount: amountInAtomics,
+            denom: minimalDenom,
+          },
+        },
+      });
+    } else if (msg.type === 'Undelegate') {
+      const amountInAtomics = Decimal.fromUserInput(
+        msg.amount,
+        Number(coinDecimals)
+      ).atomics;
+      messages.push({
+        typeUrl: msgUnDelegate,
+        value: {
+          delegatorAddress: fromAddress,
+          validatorAddress: msg.validator,
+          amount: {
+            amount: amountInAtomics,
+            denom: minimalDenom,
+          },
+        },
+      });
+    } else if (msg.type === 'Redelegate') {
+      const amountInAtomics = Decimal.fromUserInput(
+        msg.amount,
+        Number(coinDecimals)
+      ).atomics;
+      messages.push({
+        typeUrl: msgReDelegate,
+        value: {
+          delegatorAddress: fromAddress,
+          validatorDstAddress: msg.destValidator,
+          validatorSrcAddress: msg.sourceValidator,
+          amount: {
+            amount: amountInAtomics,
+            denom: minimalDenom,
+          },
+        },
+      });
+    } else if (msg.type === 'Vote') {
+      messages.push({
+        typeUrl: msgVoteTypeUrl,
+        value: {
+          voter: fromAddress,
+          option: Number(msg.option),
+          proposalId: Number(msg.proposalId),
+        },
+      });
+    } else if (msg.type === 'Custom') {
+      messages.push({
+        typeUrl: msg.typeUrl,
+        value: JSON.parse(msg.value),
       });
     }
   });

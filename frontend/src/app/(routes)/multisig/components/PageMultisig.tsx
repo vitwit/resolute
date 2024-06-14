@@ -4,7 +4,9 @@ import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { RootState } from '@/store/store';
 import {
   getMultisigAccounts,
+  resetCreateMultisigRes,
   resetDeleteMultisigRes,
+  setVerifyDialogOpen,
 } from '@/store/features/multisig/multisigSlice';
 import { resetError } from '@/store/features/common/commonSlice';
 import PageHeader from '@/components/common/PageHeader';
@@ -13,6 +15,7 @@ import EmptyScreen from '@/components/common/EmptyScreen';
 import MultisigDashboard from './multisig-dashboard/MultisigDashboard';
 import CustomButton from '@/components/common/CustomButton';
 import DialogCreateMultisig from './create-multisig/DialogCreateMultisig';
+import useVerifyAccount from '@/custom-hooks/useVerifyAccount';
 
 const PageMultisig = ({ chainName }: { chainName: string }) => {
   const dispatch = useAppDispatch();
@@ -21,10 +24,20 @@ const PageMultisig = ({ chainName }: { chainName: string }) => {
   const nameToChainIDs = useAppSelector(
     (state: RootState) => state.wallet.nameToChainIDs
   );
+  const createMultiAccRes = useAppSelector(
+    (state: RootState) => state.multisig.createMultisigAccountRes
+  );
+  const multisigAccounts = useAppSelector(
+    (state) => state.multisig.multisigAccounts
+  );
+  const accounts = multisigAccounts.accounts;
   const chainID = nameToChainIDs[chainName];
 
   const { getChainInfo } = useGetChainInfo();
   const { address: walletAddress } = getChainInfo(chainID);
+  const { isAccountVerified } = useVerifyAccount({
+    address: walletAddress,
+  });
 
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
 
@@ -37,13 +50,25 @@ const PageMultisig = ({ chainName }: { chainName: string }) => {
     dispatch(resetDeleteMultisigRes());
   }, []);
 
-  useEffect(() => {
-    if (walletAddress) dispatch(getMultisigAccounts(walletAddress));
-  }, []);
-
-  const toggleCreateDialog = () => {
-    setCreateDialogOpen((prev) => !prev);
+  const openCreateDialog = () => {
+    if (isAccountVerified()) {
+      setCreateDialogOpen(true);
+    } else {
+      dispatch(setVerifyDialogOpen(true));
+    }
   };
+
+  const closeCreateDialog = () => {
+    setCreateDialogOpen(false);
+  };
+
+  useEffect(() => {
+    if (createMultiAccRes.status === 'idle') {
+      setCreateDialogOpen(false);
+      dispatch(getMultisigAccounts(walletAddress));
+      dispatch(resetCreateMultisigRes());
+    }
+  }, [createMultiAccRes]);
 
   return (
     <div className="py-20 px-10 h-full flex flex-col">
@@ -54,9 +79,9 @@ const PageMultisig = ({ chainName }: { chainName: string }) => {
             description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga, fugit."
           />
         </div>
-        {isWalletConnected ? (
+        {isWalletConnected && accounts?.length ? (
           <CustomButton
-            btnOnClick={toggleCreateDialog}
+            btnOnClick={openCreateDialog}
             btnText="Create Multisig"
             btnStyles="w-fit"
           />
@@ -64,7 +89,7 @@ const PageMultisig = ({ chainName }: { chainName: string }) => {
       </div>
       <div>
         {!isWalletConnected ? (
-          <div className="flex-1 flex items-center justify-center">
+          <div className="flex-1 flex items-center justify-center mt-16">
             <EmptyScreen
               title="Connect your wallet"
               description="Connect your wallet to access your account on Resolute"
@@ -78,13 +103,14 @@ const PageMultisig = ({ chainName }: { chainName: string }) => {
             chainID={chainID}
             chainName={chainName}
             walletAddress={walletAddress}
+            setCreateDialogOpen={() => setCreateDialogOpen(true)}
           />
         )}
       </div>
       {isWalletConnected ? (
         <DialogCreateMultisig
           open={createDialogOpen}
-          onClose={toggleCreateDialog}
+          onClose={closeCreateDialog}
           chainID={chainID}
         />
       ) : null}

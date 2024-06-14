@@ -18,6 +18,7 @@ interface EmptyScreenProps {
   btnDisabled?: boolean;
   /* eslint-disable @typescript-eslint/no-explicit-any */
   btnOnClick?: any;
+  bgImage?: string;
 }
 
 const EmptyScreen = ({
@@ -31,13 +32,14 @@ const EmptyScreen = ({
   btnLoading,
   btnDisabled,
   btnOnClick,
+  bgImage = EMPTY_ILLUSTRATION,
 }: EmptyScreenProps) => {
   return (
     <div className="flex flex-col items-center gap-10">
       <div className="flex flex-col items-center gap-3">
         <div className="flex flex-col items-center">
           <Image
-            src={EMPTY_ILLUSTRATION}
+            src={bgImage}
             width={width}
             height={height}
             alt=""
