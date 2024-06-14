@@ -31,7 +31,7 @@ import { fromBech32 } from '@cosmjs/encoding';
 import { shortenAddress } from '@/utils/util';
 import { setError } from '@/store/features/common/commonSlice';
 import RoutePreview from './RoutePreview';
-import { FLIP_ICON, ROUTE_ICON, SETTINGS_ICON } from '@/constants/image-names';
+import { FLIP_ICON, SETTINGS_ICON } from '@/constants/image-names';
 import { SWAP_ROUTE_ERROR } from '@/utils/constants';
 import Settings from './ibc-swaps/Settings';
 
