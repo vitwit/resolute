@@ -1,4 +1,10 @@
-import { Avatar, Box, CircularProgress, TextField } from '@mui/material';
+import {
+  Avatar,
+  Box,
+  CircularProgress,
+  TextField,
+  Tooltip,
+} from '@mui/material';
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 import { customTextFieldStyles } from '../styles';
@@ -31,7 +37,7 @@ import { fromBech32 } from '@cosmjs/encoding';
 import { shortenAddress } from '@/utils/util';
 import { setError } from '@/store/features/common/commonSlice';
 import RoutePreview from './RoutePreview';
-import { FLIP_ICON, SETTINGS_ICON } from '@/constants/image-names';
+import { FLIP_ICON, ROUTE_ICON, SETTINGS_ICON } from '@/constants/image-names';
 import { SWAP_ROUTE_ERROR } from '@/utils/constants';
 import Settings from './ibc-swaps/Settings';
 
@@ -485,6 +491,11 @@ const IBCSwap = () => {
           onClose={() => setSettingsOpen(false)}
           handleSlippageChange={handleSlippageChange}
         />
+      ) : showRoute && swapRoute ? (
+        <RoutePreview
+          swapRoute={swapRoute}
+          onClose={() => setShowRoute(false)}
+        />
       ) : (
         <div className="flex flex-col justify-between items-center gap-4">
           <div className="flex flex-col justify-between items-center gap-6 w-full relative">
@@ -492,23 +503,28 @@ const IBCSwap = () => {
               <div className="flex items-center justify-between w-full">
                 <div className="text-b1 text-[#ffffff80]">Swap</div>
                 <div className="flex items-center gap-2">
-                  {/* TODO: Show route preview  */}
-                  {/* <button type="button">
-                    <Image
-                      src={ROUTE_ICON}
-                      height={24}
-                      width={24}
-                      alt="View Route"
-                    />
-                  </button> */}
-                  <button type="button" onClick={() => setSettingsOpen(true)}>
-                    <Image
-                      src={SETTINGS_ICON}
-                      height={24}
-                      width={24}
-                      alt="Settings"
-                    />
-                  </button>
+                  {swapRoute ? (
+                    <Tooltip title="View Route" placement="left">
+                      <button onClick={() => setShowRoute(true)} type="button">
+                        <Image
+                          src={ROUTE_ICON}
+                          height={24}
+                          width={24}
+                          alt="View Route"
+                        />
+                      </button>
+                    </Tooltip>
+                  ) : null}
+                  <Tooltip title="Settings" placement="bottom">
+                    <button type="button" onClick={() => setSettingsOpen(true)}>
+                      <Image
+                        src={SETTINGS_ICON}
+                        height={24}
+                        width={24}
+                        alt="Settings"
+                      />
+                    </button>
+                  </Tooltip>
                 </div>
               </div>
               <div className="bg-[#FFFFFF05] rounded-2xl w-full">
@@ -731,12 +747,12 @@ const IBCSwap = () => {
                 </div>
               </div>
             </div>
-            {showRoute && swapRoute ? (
+            {/* {showRoute && swapRoute ? (
               <RoutePreview
                 swapRoute={swapRoute}
                 onClose={() => setShowRoute(false)}
               />
-            ) : null}
+            ) : null} */}
           </div>
           <div className="w-full">
             <button
