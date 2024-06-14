@@ -62,7 +62,7 @@ const IBCSwapTxStatus = () => {
           severity="info"
           sx={{
             width: '100%',
-            backgroundColor: '#0B071D',
+            backgroundColor: '#09090a',
             borderRadius: '8px',
             border: '1px solid #ffffffD0',
           }}
@@ -129,7 +129,7 @@ const IBCSwapTxStatus = () => {
           severity="info"
           sx={{
             width: '100%',
-            backgroundColor: '#0B071D',
+            backgroundColor: '#09090a',
             borderRadius: '8px',
             border: '1px solid #ffffffD0',
           }}

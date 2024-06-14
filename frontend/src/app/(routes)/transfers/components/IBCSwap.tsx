@@ -492,14 +492,15 @@ const IBCSwap = () => {
               <div className="flex items-center justify-between w-full">
                 <div className="text-b1 text-[#ffffff80]">Swap</div>
                 <div className="flex items-center gap-2">
-                  <button type="button">
+                  {/* TODO: Show route preview  */}
+                  {/* <button type="button">
                     <Image
                       src={ROUTE_ICON}
                       height={24}
                       width={24}
                       alt="View Route"
                     />
-                  </button>
+                  </button> */}
                   <button type="button" onClick={() => setSettingsOpen(true)}>
                     <Image
                       src={SETTINGS_ICON}
