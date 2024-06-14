@@ -1,4 +1,4 @@
-import { useAppDispatch } from '@/custom-hooks/StateHooks';
+import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import {
   resetError,
   resetTxAndHash,
@@ -19,6 +19,7 @@ const ExitSession = () => {
   const dispatch = useAppDispatch();
   const { disableAuthzMode } = useAuthzGrants();
   const { disableFeegrantMode } = useFeeGrants();
+  const isWalletConnected = useAppSelector((state) => state.wallet.connected);
 
   const onExitSession = () => {
     dispatch(resetWallet());
@@ -34,22 +35,26 @@ const ExitSession = () => {
     logout();
   };
   return (
-    <div className="fixed-bottom w-full">
-      <button
-        onClick={() => onExitSession()}
-        className="flex gap-2 h-10 items-center pl-3 pr-6 w-full font-medium rounded-full hover:bg-[#FFFFFF0A]"
-      >
-        <Image
-          src="/sidebar-menu-icons/logout-icon.svg"
-          height={20}
-          width={20}
-          alt="Dashboard"
-        />
-        <div className="text-white text-[16px] leading-[19px]">
-          Exit Session
+    <>
+      {isWalletConnected ? (
+        <div className="fixed-bottom w-full">
+          <button
+            onClick={() => onExitSession()}
+            className="flex gap-2 h-10 items-center pl-3 pr-6 w-full font-medium rounded-full hover:bg-[#FFFFFF0A]"
+          >
+            <Image
+              src="/sidebar-menu-icons/logout-icon.svg"
+              height={20}
+              width={20}
+              alt="Dashboard"
+            />
+            <div className="text-white text-[16px] leading-[19px]">
+              Exit Session
+            </div>
+          </button>
         </div>
-      </button>
-    </div>
+      ) : null}
+    </>
   );
 };
 

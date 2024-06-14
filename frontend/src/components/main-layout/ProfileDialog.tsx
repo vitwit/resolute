@@ -87,7 +87,7 @@ const ProfileDialog = ({
                 Profile
               </div>
               <div className="secondary-text">
-                Connect your wallet now to access all the modules on resolute
+                Profile
               </div>
               <div className="divider-line"></div>
             </div>
