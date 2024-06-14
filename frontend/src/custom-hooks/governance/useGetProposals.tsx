@@ -23,8 +23,8 @@ const useGetProposals = () => {
     const proposalsData: ProposalsData[] = [];
     chainIDs.forEach((chainID) => {
       const { chainLogo, chainName } = getChainInfo(chainID);
-      const activeProposals = govState?.[chainID]?.active?.proposals;
-      const depositProposals = govState?.[chainID]?.deposit?.proposals;
+      const activeProposals = govState?.[chainID]?.active?.proposals || [];
+      const depositProposals = govState?.[chainID]?.deposit?.proposals || [];
 
       activeProposals?.forEach((proposal) => {
         const proposalTitle = get(
