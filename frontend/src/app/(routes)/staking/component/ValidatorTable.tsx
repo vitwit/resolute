@@ -124,7 +124,7 @@ const ValidatorTable: React.FC<{ chainID: string }> = ({ chainID }) => {
   }, [filteredValidators, chainID]);
 
   return (
-    <div className="flex flex-col gap-10 w-full overflow-scroll h-[50vh] px-10">
+    <div className="flex flex-col gap-10 w-full overflow-scroll h-[50vh]">
       {openDelegate ? (
         <DelegatePopup
           validator={selectedValidator?.operator_address || ''}

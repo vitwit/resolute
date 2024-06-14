@@ -45,7 +45,7 @@ function StakingUnDelegations({ undelegations, isSingleChain }: { undelegations:
         <CustomLoader loadingText="Loading..." />
       ) : null}
 
-      {!unbondingCount ? (
+      { staking.undelegationsLoading === 0 && !unbondingCount ? (
         <WithConnectionIllustration message="No Un Delegations" />
       ) : null}
 

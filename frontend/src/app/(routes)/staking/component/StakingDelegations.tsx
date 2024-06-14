@@ -46,6 +46,14 @@ function StakingDelegations({ delegations, isSingleChain }: { delegations: Chain
 
   const restakeStatus = staking.txAllChainStakeTxStatus;
 
+  let bondingCount = 0;
+
+  Object.entries(delegations).forEach(([, value]) => {
+    get(value, 'delegations.delegations.delegation_responses', []).forEach(() => {
+      bondingCount++
+    });
+  });
+
   return (
     <div className="flex flex-col w-full gap-10 pb-28">
       <div className="space-y-2 items-start">
@@ -59,8 +67,7 @@ function StakingDelegations({ delegations, isSingleChain }: { delegations: Chain
         <CustomLoader loadingText="Loading..." />
       ) : null}
 
-      {staking.delegationsLoading === 0 &&
-        Object.keys(delegations).length === 0 ? (
+      {staking.delegationsLoading === 0 && !bondingCount ? (
         <WithConnectionIllustration message="No Delegations" />
       ) : null}
 
