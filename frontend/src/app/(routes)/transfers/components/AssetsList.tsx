@@ -6,6 +6,7 @@ import { CircularProgress, Paper } from '@mui/material';
 import { shortenName } from '@/utils/util';
 import { AssetConfig } from '@/types/swaps';
 import { customAutoCompleteStyles, customTextFieldStyles } from '../styles';
+import NoOptions from '@/components/common/NoOptions';
 
 export default function AssetsAutocomplete({
   options,
@@ -86,6 +87,7 @@ export default function AssetsAutocomplete({
       getOptionLabel={(option: AssetConfig) => option.symbol}
       renderOption={renderOption}
       renderInput={renderInput}
+      noOptionsText={<NoOptions text="No Assets" />}
       onChange={(_, newValue) => handleChange(newValue)}
       value={selectedAsset}
       PaperComponent={({ children }) => (

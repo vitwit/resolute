@@ -3,6 +3,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import React from 'react';
 import MenuItem from './MenuItem';
 import { getSelectedPartFromURL } from '@/utils/util';
+import { useAppSelector } from '@/custom-hooks/StateHooks';
 
 const SideMenu = () => {
   const pathName = usePathname();
@@ -45,8 +46,15 @@ const MoreOptions = ({
   selectedPart: string;
 }) => {
   const router = useRouter();
+  const selectedNetwork = useAppSelector(
+    (state) => state.common.selectedNetwork.chainName
+  );
+
   const changePath = (type: string) => {
-    router.push(`/transfers?type=${type}`);
+    const path = selectedNetwork
+      ? `/transfers/${selectedNetwork.toLowerCase()}?type=${type}`
+      : `/transfers?type=${type}`;
+    router.push(path);
   };
   return (
     <>

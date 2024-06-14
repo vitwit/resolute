@@ -19,7 +19,7 @@ const AddMessages = ({
 }) => {
   const dispatch = useAppDispatch();
   const address = useAppSelector(
-    (state) => state.wallet.networks[chainID].walletInfo.bech32Address
+    (state) => state.wallet?.networks?.[chainID]?.walletInfo?.bech32Address
   );
   const [inputs, setInputs] = useState('');
   const handleInputChange = (

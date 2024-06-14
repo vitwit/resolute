@@ -103,7 +103,7 @@ const PageMultisig = ({ chainName }: { chainName: string }) => {
             chainID={chainID}
             chainName={chainName}
             walletAddress={walletAddress}
-            setCreateDialogOpen={() => setCreateDialogOpen(true)}
+            setCreateDialogOpen={openCreateDialog}
           />
         )}
       </div>
