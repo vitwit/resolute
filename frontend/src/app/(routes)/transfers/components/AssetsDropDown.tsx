@@ -1,6 +1,7 @@
 import { Autocomplete, Avatar, Paper, TextField } from '@mui/material';
 import React from 'react';
 import { customAutoCompleteStyles, customTextFieldStyles } from '../styles';
+import NoOptions from '@/components/common/NoOptions';
 
 const AssetsDropDown = ({
   sortedAssets = [],
@@ -109,6 +110,7 @@ const AssetsDropDown = ({
       getOptionLabel={(option: ParsedAsset) => option.displayDenom}
       renderOption={renderOption}
       renderInput={renderInput}
+      noOptionsText={<NoOptions text="No Assets" />}
       onChange={(_, newValue) => handleAssetChange(newValue)}
       value={selectedAsset || null}
       PaperComponent={({ children }) => (

@@ -4,6 +4,7 @@ import { RootState } from '@/store/store';
 import { useParams } from 'next/navigation';
 import React from 'react';
 import GovDashboard from '../gov-dashboard/GovDashboard';
+import '../style.css'
 
 const ChainProposals = () => {
   const params = useParams();
