@@ -20,6 +20,7 @@ interface GetRouteInputs {
   amount: number;
   fromAddress: string;
   toAddress: string;
+  slippage: number;
 }
 
 const useSwaps = () => {
@@ -37,6 +38,7 @@ const useSwaps = () => {
     sourceDenom,
     fromAddress,
     toAddress,
+    slippage,
   }: GetRouteInputs) => {
     const params: GetRoute = {
       fromAddress: fromAddress,
@@ -46,7 +48,7 @@ const useSwaps = () => {
       toAddress: toAddress,
       toChain: destChainID,
       toToken: destDenom,
-      slippage: 1,
+      slippage: slippage,
       quoteOnly: false,
     };
     try {

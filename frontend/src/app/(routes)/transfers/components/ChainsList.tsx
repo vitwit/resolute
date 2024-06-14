@@ -34,7 +34,7 @@ export default function ChainsList({
           sx={{ width: '24px', height: '24px' }}
         />
         <div className="flex flex-col">
-          <span className="font-semibold truncate text-capitalize">
+          <span className="font-semibold truncate capitalize">
             {shortenName(option.label, 15)}
           </span>
           <span className="font-extralight truncate text-[12px]">
@@ -72,6 +72,7 @@ export default function ChainsList({
           fontSize: '14px',
           fontWeight: 300,
           fontFamily: 'Libre Franklin',
+          textTransform: 'capitalize',
         },
         '& .MuiOutlinedInput-notchedOutline': {
           border: 'none',

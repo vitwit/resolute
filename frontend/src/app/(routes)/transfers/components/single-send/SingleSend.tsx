@@ -174,7 +174,7 @@ const SingleSend = ({ sortedAssets }: { sortedAssets: ParsedAsset[] }) => {
         sx={{
           background:
             chainGradient ||
-            'linear-gradient(180deg, #7A7E9C 0.5%, #09090A 100%)',
+            'linear-gradient(180deg, #72727360 0%, #12131C80 100%)',
         }}
         className="select-network"
       >

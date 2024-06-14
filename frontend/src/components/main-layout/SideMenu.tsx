@@ -16,7 +16,11 @@ const SideMenu = () => {
         {SIDEBAR_MENU_OPTIONS.map((item, index) => (
           <>
             {item.multipleOptions ? (
-              <MoreOptions key={index} item={item} selectedPart={selectedPart} />
+              <MoreOptions
+                key={index}
+                item={item}
+                selectedPart={selectedPart}
+              />
             ) : (
               <MenuItem
                 key={item.name}
@@ -66,6 +70,15 @@ const MoreOptions = ({
                 className="cursor-pointer hover:font-semibold"
               >
                 Multiple
+              </div>
+            </div>
+            <div className="flex gap-2 items-center pl-3">
+              <div className="w-5"></div>
+              <div
+                onClick={() => changePath('ibc-swap')}
+                className="cursor-pointer hover:font-semibold"
+              >
+                IBC Swap
               </div>
             </div>
           </div>
