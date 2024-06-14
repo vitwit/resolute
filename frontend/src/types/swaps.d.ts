@@ -26,6 +26,7 @@ interface SwapState {
   amountOut: string;
   toAddress: string;
   fromAddress: string;
+  slippage: number;
   txStatus: {
     status: TxStatus;
     error: string;

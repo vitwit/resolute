@@ -21,3 +21,6 @@ export const TOGGLE_ON = '/icons/toggle-on.svg';
 export const I_ICON = '/icons/i-icon.svg';
 export const TIMER_ICON = '/icons/timer-icon.svg';
 export const SEARCH_ICON = '/icons/search-icon.svg';
+export const FLIP_ICON = '/icons/flip-icon.svg';
+export const ROUTE_ICON = '/icons/route-icon.svg';
+export const SETTINGS_ICON = '/icons/settings-icon.svg';

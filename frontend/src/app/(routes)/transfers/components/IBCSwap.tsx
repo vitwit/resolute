@@ -17,6 +17,7 @@ import {
   setDestAsset,
   setDestChain,
   setFromAddress,
+  setSlippage,
   setSourceAsset,
   setSourceChain,
   setToAddress,
@@ -30,6 +31,9 @@ import { fromBech32 } from '@cosmjs/encoding';
 import { shortenAddress } from '@/utils/util';
 import { setError } from '@/store/features/common/commonSlice';
 import RoutePreview from './RoutePreview';
+import { FLIP_ICON, ROUTE_ICON, SETTINGS_ICON } from '@/constants/image-names';
+import { SWAP_ROUTE_ERROR } from '@/utils/constants';
+import Settings from './ibc-swaps/Settings';
 
 const emptyBalance = {
   amount: 0,
@@ -77,6 +81,7 @@ const IBCSwap = () => {
   const fromAddress = useAppSelector((state) => state.swaps.fromAddress);
   const txStatus = useAppSelector((state) => state.swaps.txStatus.status);
   const sourceTxHash = useAppSelector((state) => state.swaps.txSuccess.txHash);
+  const slippage = useAppSelector((state) => state.swaps.slippage);
 
   const balanceStatus = useAppSelector(
     (state) => state.bank.balances?.[selectedSourceChain?.chainID || '']?.status
@@ -95,6 +100,7 @@ const IBCSwap = () => {
   const [swapRoute, setSwapRoute] = useState<RouteData | null>(null);
   const [addressValidationError, setAddressValidationError] = useState('');
   const [allInputsProvided, setAllInputsProvided] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
 
   const handleSelectSourceChain = async (option: ChainConfig | null) => {
     dispatch(setFromAddress(''));
@@ -238,6 +244,7 @@ const IBCSwap = () => {
         sourceDenom: selectedSourceAsset?.denom || '',
         fromAddress: fromAddress,
         toAddress: toAddress,
+        slippage: slippage,
       });
       setSwapRoute(route);
       const resultDecimals = selectedDestAsset?.decimals;
@@ -271,6 +278,18 @@ const IBCSwap = () => {
     setReceiverAddress(value);
   };
 
+  const handleSlippageChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const input = e.target.value;
+    if (/^-?\d*\.?\d*$/.test(input)) {
+      if ((input.match(/\./g) || []).length <= 1) {
+        dispatch(setSlippage(Number(input)));
+        setUserInputChange(true);
+      }
+    }
+  };
+
   const validateAddress = (address: string) => {
     if (address.length) {
       try {
@@ -293,6 +312,12 @@ const IBCSwap = () => {
       setUserInputChange(false);
     }
   }, [amountIn]);
+
+  useEffect(() => {
+    if (slippage > 0) {
+      fetchSwapRoute();
+    }
+  }, [slippage]);
 
   useEffect(() => {
     if (selectedDestAsset) {
@@ -454,252 +479,279 @@ const IBCSwap = () => {
   const [showRoute, setShowRoute] = useState(false);
 
   return (
-    <div className="flex justify-center">
-      <div className="flex flex-col justify-between items-center gap-4 min-w-[550px]">
-        <div className="flex flex-col justify-between items-center gap-6 w-full relative">
-          <div className="bg-[#FFFFFF05] rounded-2xl w-full">
-            <Box
-              sx={{
-                background:
-                  'linear-gradient(180deg, rgba(136, 8, 8, 0.50) 0%, rgba(17, 18, 24, 0.50) 100%)',
-                paddingY: '8px',
-                paddingX: '24px',
-              }}
-              className="flex items-center justify-between rounded-t-2xl"
-            >
-              <Avatar
-                src={selectedSourceChain?.logoURI || ''}
-                sx={{ width: '40px', height: '40px' }}
-              />
-              {fromAddress ? (
-                <div className="bg-[#ffffff14] text-[14px] px-3 py-1 rounded-full font-light">
-                  {shortenAddress(fromAddress, 20)}
-                </div>
-              ) : (
-                <button className="btn-small" onClick={connectSourceWallet}>
-                  Connect Wallet
-                </button>
-              )}
-            </Box>
-            <div className="space-y-6 w-full p-6">
-              <div className="flex justify-between gap-4">
-                <div className="flex-1">
-                  <ChainsList
-                    options={chainsInfo}
-                    handleChange={handleSelectSourceChain}
-                    selectedChain={selectedSourceChain}
-                    dataLoading={chainsLoading}
-                  />
-                </div>
-                <div className="flex-1">
-                  <AssetsList
-                    options={selectedSourceChainAssets}
-                    handleChange={handleSelectSourceAsset}
-                    selectedAsset={selectedSourceAsset}
-                    assetsLoading={srcAssetsLoading}
-                  />
+    <div className="flex justify-center p-6 w-[600px] bg-[#FFFFFF05] rounded-2xl">
+      {settingsOpen ? (
+        <Settings
+          onClose={() => setSettingsOpen(false)}
+          handleSlippageChange={handleSlippageChange}
+        />
+      ) : (
+        <div className="flex flex-col justify-between items-center gap-4">
+          <div className="flex flex-col justify-between items-center gap-6 w-full relative">
+            <div className="space-y-4 w-full">
+              <div className="flex items-center justify-between w-full">
+                <div className="text-b1 text-[#ffffff80]">Swap</div>
+                <div className="flex items-center gap-2">
+                  <button type="button">
+                    <Image
+                      src={ROUTE_ICON}
+                      height={24}
+                      width={24}
+                      alt="View Route"
+                    />
+                  </button>
+                  <button type="button" onClick={() => setSettingsOpen(true)}>
+                    <Image
+                      src={SETTINGS_ICON}
+                      height={24}
+                      width={24}
+                      alt="Settings"
+                    />
+                  </button>
                 </div>
               </div>
-              <div className="space-y-6">
-                <AmountInputWrapper
-                  handleAmountChange={handleAmountInChange}
-                  amount={amountIn}
-                  quickSelectAmount={quickSelectAmount}
-                  displayDenom={availableBalance.displayDenom}
-                />
-                <div className="secondary-text !font-light flex gap-1">
-                  <div>Available Balance</div>
-                  {balanceStatus === TxStatus.PENDING &&
-                  !availableBalance.parsedAmount &&
-                  !availableBalance.displayDenom ? (
-                    <CircularProgress size={14} sx={{ color: 'white' }} />
+              <div className="bg-[#FFFFFF05] rounded-2xl w-full">
+                <Box
+                  sx={{
+                    background:
+                      'linear-gradient(180deg, #5A0DA660 0%, #12131C80 100%)',
+                    paddingY: '8px',
+                    paddingX: '16px',
+                    height: '72px',
+                  }}
+                  className="flex items-center justify-between rounded-t-2xl"
+                >
+                  {selectedSourceChain?.logoURI ? (
+                    <Avatar
+                      src={selectedSourceChain?.logoURI || ''}
+                      sx={{ width: '40px', height: '40px' }}
+                    />
                   ) : (
-                    <>
-                      <div>{availableBalance.parsedAmount || 0}</div>
-                      <div>{availableBalance.displayDenom || null}</div>
-                    </>
+                    <div className="h-10 w-10"></div>
                   )}
+                  {fromAddress ? (
+                    <div className="bg-[#ffffff14] text-[14px] px-3 py-1 rounded-full font-light">
+                      {shortenAddress(fromAddress, 20)}
+                    </div>
+                  ) : (
+                    <button className="btn-small" onClick={connectSourceWallet}>
+                      Connect
+                    </button>
+                  )}
+                </Box>
+                <div className="space-y-6 w-full p-4">
+                  <div className="flex justify-between gap-4">
+                    <div className="flex-1">
+                      <ChainsList
+                        options={chainsInfo}
+                        handleChange={handleSelectSourceChain}
+                        selectedChain={selectedSourceChain}
+                        dataLoading={chainsLoading}
+                      />
+                    </div>
+                    <div className="flex-1">
+                      <AssetsList
+                        options={selectedSourceChainAssets}
+                        handleChange={handleSelectSourceAsset}
+                        selectedAsset={selectedSourceAsset}
+                        assetsLoading={srcAssetsLoading}
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-1">
+                    <AmountInputWrapper
+                      handleAmountChange={handleAmountInChange}
+                      amount={amountIn}
+                      quickSelectAmount={quickSelectAmount}
+                    />
+                    <div className="secondary-text !font-light flex gap-1">
+                      <div>Available Balance</div>
+                      {balanceStatus === TxStatus.PENDING &&
+                      !availableBalance.parsedAmount &&
+                      !availableBalance.displayDenom ? (
+                        <CircularProgress size={14} sx={{ color: 'white' }} />
+                      ) : (
+                        <>
+                          <div>{availableBalance.parsedAmount || 0}</div>
+                          <div>{availableBalance.displayDenom || null}</div>
+                        </>
+                      )}
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-          <div
-            onClick={flipChains}
-            className={`transition-transform transform cursor-pointer delay-400 ${isRotated ? 'rotate-180' : ''}`}
-          >
-            <Image
-              src="/icons/flip-icon.svg"
-              width={48}
-              height={48}
-              alt="Swap"
-            />
-          </div>
-          <div className="bg-[#FFFFFF05] rounded-2xl w-full">
-            {/* <div className="flex justify-between items-center">
-              <div className="text-[16px]">To</div>
-              <div className={`${otherAddress ? 'invisible' : 'visible'}`}>
+            <div
+              onClick={flipChains}
+              className={`transition-transform transform cursor-pointer delay-400 ${isRotated ? 'rotate-180' : ''}`}
+            >
+              <Image src={FLIP_ICON} width={24} height={24} alt="Swap" />
+            </div>
+            <div className="bg-[#FFFFFF05] rounded-2xl w-full">
+              <Box
+                sx={{
+                  background:
+                    'linear-gradient(180deg, #5A0DA660 0%, #12131C80 100%)',
+                  paddingY: '8px',
+                  paddingX: '16px',
+                  height: '72px',
+                }}
+                className="flex items-center justify-between rounded-t-2xl"
+              >
+                {selectedDestChain?.logoURI ? (
+                  <Avatar
+                    src={selectedDestChain?.logoURI || ''}
+                    sx={{ width: '40px', height: '40px' }}
+                  />
+                ) : (
+                  <div className="h-10 w-10"></div>
+                )}
                 {toAddress ? (
-                  <div className="bg-[#2E2B3E] text-[14px] px-3 py-1 rounded-full font-light">
+                  <div className="bg-[#ffffff14] text-[14px] px-3 py-1 rounded-full font-light">
                     {shortenAddress(toAddress, 20)}
                   </div>
                 ) : (
-                  <button
-                    className="primary-gradient text-[14px] rounded-full px-3 py-1"
-                    onClick={connectDestWallet}
-                  >
-                    Connect Wallet
+                  <button className="btn-small" onClick={connectDestWallet}>
+                    Connect
                   </button>
                 )}
-              </div>
-            </div> */}
-            <Box
-              sx={{
-                background:
-                  'linear-gradient(180deg, rgba(136, 8, 8, 0.50) 0%, rgba(17, 18, 24, 0.50) 100%)',
-                paddingY: '8px',
-                paddingX: '24px',
-              }}
-              className="flex items-center justify-between rounded-t-2xl"
-            >
-              <Avatar
-                src={selectedDestChain?.logoURI || ''}
-                sx={{ width: '40px', height: '40px' }}
-              />
-              {toAddress ? (
-                <div className="bg-[#ffffff14] text-[14px] px-3 py-1 rounded-full font-light">
-                  {shortenAddress(toAddress, 20)}
-                </div>
-              ) : (
-                <button className="btn-small" onClick={connectDestWallet}>
-                  Connect Wallet
-                </button>
-              )}
-            </Box>
-            <div
-              className={`space-y-6 w-full p-6 ${routeLoading ? 'animate-pulse' : ''}`}
-            >
-              <div className="flex justify-between gap-4">
-                <div className="flex-1">
-                  <ChainsList
-                    options={chainsInfo}
-                    handleChange={handleSelectDestChain}
-                    selectedChain={selectedDestChain}
-                    dataLoading={chainsLoading}
-                  />
-                </div>
-                <div className="flex-1">
-                  <AssetsList
-                    options={selectDestChainAssets}
-                    handleChange={handleSelectDestAsset}
-                    selectedAsset={selectedDestAsset}
-                    assetsLoading={destAssetLoading}
-                  />
-                </div>
-              </div>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  {selectedDestAsset?.symbol ? (
-                    <div className="text-[14px] font-light leading-[24px] mt-3">
-                      {selectedDestAsset?.symbol}
-                    </div>
-                  ) : null}
-                  <AmountInputField
-                    amount={amountOut === '0' ? '' : amountOut}
-                  />
-                </div>
-                <div
-                  onClick={handleSendToAnotherAddress}
-                  className="secondary-btn w-[250px] text-right"
-                >
-                  {otherAddress
-                    ? 'Receive on same wallet'
-                    : 'Receive on another wallet'}
-                </div>
-              </div>
-              <div className={otherAddress ? `visible` : `invisible`}>
-                <TextField
-                  name="toAddress"
-                  className="bg-transparent rounded-full border-[1px] border-[#ffffff80] h-10"
-                  fullWidth
-                  required={false}
-                  size="small"
-                  autoFocus={true}
-                  placeholder="Enter Address"
-                  sx={customTextFieldStyles}
-                  value={receiverAddress}
-                  InputProps={{
-                    sx: {
-                      input: {
-                        color: 'white !important',
-                        fontSize: '14px',
-                        padding: 2,
-                      },
-                    },
-                  }}
-                  onChange={handleAddressChange}
-                />
-              </div>
-              <Slippage />
-            </div>
-          </div>
-          {showRoute && swapRoute ? (
-            <RoutePreview
-              swapRoute={swapRoute}
-              onClose={() => setShowRoute(false)}
-            />
-          ) : null}
-        </div>
-        {/* <div className="bg-[#FFFFFF0D] rounded-lg w-full py-2 px-4">
-          {!allInputsProvided ? (
-            'Please provide the required fields'
-          ) : routeLoading ? (
-            <div>
-              Fetching route <span className="dots-flashing"></span>{' '}
-            </div>
-          ) : routeError ? (
-            <div className="flex justify-between">
-              <div className="text-red-400">{routeError}</div>
-              {routeError === SWAP_ROUTE_ERROR ? (
-                <div
-                  onClick={fetchSwapRoute}
-                  className="text-[14px] underline font-extralight underline-offset-[3px] cursor-pointer"
-                >
-                  Retry
-                </div>
-              ) : null}
-            </div>
-          ) : (
-            <div>
-              {!routeLoading && swapRoute ? (
-                <div className="flex justify-between">
-                  <div>Route found</div>
-                  <div
-                    className="text-[14px] underline font-extralight underline-offset-[3px] cursor-pointer"
-                    onClick={() => setShowRoute((prev) => !prev)}
-                  >
-                    {showRoute ? 'Close Preview' : 'View route'}
+              </Box>
+              <div
+                className={`space-y-6 w-full p-4 ${routeLoading ? 'animate-pulse' : ''}`}
+              >
+                <div className="flex justify-between gap-4">
+                  <div className="flex-1">
+                    <ChainsList
+                      options={chainsInfo}
+                      handleChange={handleSelectDestChain}
+                      selectedChain={selectedDestChain}
+                      dataLoading={chainsLoading}
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <AssetsList
+                      options={selectDestChainAssets}
+                      handleChange={handleSelectDestAsset}
+                      selectedAsset={selectedDestAsset}
+                      assetsLoading={destAssetLoading}
+                    />
                   </div>
                 </div>
-              ) : (
-                ''
-              )}
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <AmountInputField
+                      amount={amountOut === '0' ? '' : amountOut}
+                    />
+                  </div>
+                  <div
+                    onClick={handleSendToAnotherAddress}
+                    className="secondary-btn w-[250px] text-right"
+                  >
+                    {otherAddress
+                      ? 'Receive on same wallet'
+                      : 'Receive on another wallet'}
+                  </div>
+                </div>
+                {otherAddress ? (
+                  <div>
+                    <TextField
+                      name="toAddress"
+                      className="bg-transparent rounded-full border-[1px] border-[#ffffff80] h-10"
+                      fullWidth
+                      required={false}
+                      size="small"
+                      autoFocus={true}
+                      placeholder="Enter Address"
+                      sx={customTextFieldStyles}
+                      value={receiverAddress}
+                      InputProps={{
+                        sx: {
+                          input: {
+                            color: 'white !important',
+                            fontSize: '14px',
+                            padding: 2,
+                          },
+                        },
+                      }}
+                      onChange={handleAddressChange}
+                    />
+                  </div>
+                ) : null}
+                <div className="divider-line !bg-[#ffffff14]"></div>
+                <div className="flex justify-between items-center w-full">
+                  <div>
+                    {routeLoading ? (
+                      <div>
+                        Fetching Route<span className="dots-flashing"></span>{' '}
+                      </div>
+                    ) : (
+                      <div>
+                        {routeError ? (
+                          <div className="flex justify-between gap-1 text-b1">
+                            <div className="text-red-300">{routeError}</div>
+                            {routeError === SWAP_ROUTE_ERROR ? (
+                              <div
+                                onClick={fetchSwapRoute}
+                                className="secondary-btn"
+                              >
+                                Retry
+                              </div>
+                            ) : null}
+                          </div>
+                        ) : (
+                          <div>
+                            {swapRoute &&
+                            selectedSourceAsset &&
+                            selectedDestAsset ? (
+                              <div className="text-b1 text-[#ffffff80] flex items-center gap-[2px]">
+                                <div>{amountIn}</div>
+                                <div>{selectedSourceAsset?.symbol}</div>
+                                <div>=</div>
+                                <div>{amountOut}</div>
+                                <div>{selectedDestAsset?.symbol}</div>
+                              </div>
+                            ) : null}
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                  <div
+                    onClick={() => setSettingsOpen(true)}
+                    className="text-b1 flex items-center gap-[2px] cursor-pointer"
+                  >
+                    <div className="text-white underline underline-offset-[3px]">
+                      {slippage || swapRoute?.params?.slippage}%
+                    </div>
+                    <div className="text-[#ffffff80] underline underline-offset-[3px]">
+                      Slippage
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-          )}
-        </div> */}
-        <div className="w-full">
-          <button
-            className={`primary-btn w-full ${disableSwapBtn ? 'cursor-not-allowed' : 'cursor-pointer'}`}
-            onClick={onTxSwap}
-            disabled={disableSwapBtn}
-          >
-            {txStatus === TxStatus.PENDING ? (
-              <CircularProgress sx={{ color: 'white' }} size={16} />
-            ) : (
-              'Swap'
-            )}
-          </button>
+            {showRoute && swapRoute ? (
+              <RoutePreview
+                swapRoute={swapRoute}
+                onClose={() => setShowRoute(false)}
+              />
+            ) : null}
+          </div>
+          <div className="w-full">
+            <button
+              className={`primary-btn w-full ${disableSwapBtn ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+              onClick={onTxSwap}
+              disabled={disableSwapBtn}
+            >
+              {txStatus === TxStatus.PENDING ? (
+                <CircularProgress sx={{ color: 'white' }} size={16} />
+              ) : (
+                'Swap'
+              )}
+            </button>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };
@@ -708,24 +760,17 @@ export default IBCSwap;
 
 const AmountInputWrapper = ({
   quickSelectAmount,
-  displayDenom,
   handleAmountChange,
   amount,
 }: {
   /* eslint-disable @typescript-eslint/no-explicit-any */
   quickSelectAmount: QuickSelectAmountFunc;
-  displayDenom: string;
   handleAmountChange: HandleAmountChangeFunc;
   amount: string;
 }) => {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-2">
-        {displayDenom ? (
-          <div className="text-[14px] font-light leading-[24px] mt-3">
-            {displayDenom}
-          </div>
-        ) : null}
         <div className="flex-1 h-10">
           <AmountInputField
             amount={amount}
@@ -775,53 +820,11 @@ const AmountInputField = ({
 }) => {
   return (
     <input
-      className="amount-input-field"
+      className="amount-input-field !text-[28px]"
       onChange={handleAmountChange}
       value={amount}
       placeholder="0"
       required
     />
-  );
-};
-
-const Slippage = () => {
-  return (
-    <div className="flex items-center justify-between">
-      <div className="secondary-text !font-light">Slippage</div>
-      <div className="flex gap-4 items-center">
-        <button className="px-4 py-[6px] w-16 flex-center-center rounded-full border-[1px] border-[#FFFFFF10]">
-          1%
-        </button>
-        <button className="px-4 py-[6px] w-16 flex-center-center rounded-full border-[1px] border-[#FFFFFF10]">
-          2%
-        </button>
-        <button className="px-4 py-[6px] w-16 flex-center-center rounded-full border-[1px] border-[#FFFFFF10]">
-          3%
-        </button>
-        <div>
-          <TextField
-            name="toAddress"
-            className="bg-transparent rounded-full border-[1px] border-[#ffffff80] h-10"
-            fullWidth
-            required={false}
-            size="small"
-            autoFocus={true}
-            placeholder="Enter Address"
-            sx={customTextFieldStyles}
-            // value={receiverAddress}
-            InputProps={{
-              sx: {
-                input: {
-                  color: 'white !important',
-                  fontSize: '14px',
-                  padding: 2,
-                },
-              },
-            }}
-            // onChange={handleAddressChange}
-          />
-        </div>
-      </div>
-    </div>
   );
 };
