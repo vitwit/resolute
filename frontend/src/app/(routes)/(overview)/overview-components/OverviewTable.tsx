@@ -40,7 +40,7 @@ const OverviewTable = ({ chainIDs }: { chainIDs: string[] }) => {
   // const isFeegrantMode = useAppSelector(
   //   (state) => state.feegrant.feegrantModeEnabled
   // );
-  const { getAllChainAddresses } = useGetChainInfo();
+  const { getAllChainAddresses, getCosmosAddress } = useGetChainInfo();
 
   const addresses = getAllChainAddresses(chainIDs);
 
@@ -91,7 +91,7 @@ const OverviewTable = ({ chainIDs }: { chainIDs: string[] }) => {
             <div className="text-h1 italic space-x-4">Hello</div>
             <div className="flex items-center space-x-2">
               <p className="text-white text-2xl font-normal leading-[normal]">
-                {shortenAddress(addresses?.[0]?.address, 20)}
+                {shortenAddress(getCosmosAddress(), 20)}
               </p>
               <Image
                 onClick={(e) => {
