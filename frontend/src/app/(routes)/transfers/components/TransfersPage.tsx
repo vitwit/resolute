@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import SingleTransfer from './SingleTransfer';
 import useInitBalances from '@/custom-hooks/useInitBalances';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import useSortedAssets from '@/custom-hooks/useSortedAssets';
@@ -8,6 +7,7 @@ import MultiSendPage from './multi-send/MultiSendPage';
 import IBCSwapPage from './ibc-swaps/IBCSwapPage';
 import { setConnectWalletOpen } from '@/store/features/wallet/walletSlice';
 import EmptyScreen from '@/components/common/EmptyScreen';
+import SingleTransfer from './single-send/SingleTransfer';
 
 const TransfersPage = ({ chainIDs }: { chainIDs: string[] }) => {
   const [sortedAssets, authzSortedAssets] = useSortedAssets(chainIDs, {
