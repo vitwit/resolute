@@ -1,7 +1,7 @@
 import { PubKeyFields } from '@/types/multisig';
 import React, { ChangeEvent } from 'react';
-import MultisigMemberTextField from '../MultisigMemberTextField';
 import AddMemberButton from './AddMembersButton';
+import MultisigMemberTextField from './MultisigMemberTextField';
 
 const AddMembers = ({
   handleChangeValue,

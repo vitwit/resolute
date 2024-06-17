@@ -20,8 +20,8 @@ import Link from 'next/link';
 import MoreOptions from './MoreOptions';
 import DialogConfirmDelete from '../multisig-account/DialogConfirmDelete';
 import CustomDialog from '@/components/common/CustomDialog';
-import BroadCastTxn from '../BroadCastTxn';
-import SignTxn from '../SignTxn';
+import BroadCastTxn from './BroadCastTxn';
+import SignTxn from './SignTxn';
 
 export const TxnsCard = ({
   txn,
