@@ -5,7 +5,7 @@ import Avatar from '@mui/material/Avatar';
 import { CircularProgress, Paper } from '@mui/material';
 import { shortenName } from '@/utils/util';
 import { ChainConfig } from '@/types/swaps';
-import { customAutoCompleteStyles, customTextFieldStyles } from '../styles';
+import { customAutoCompleteStyles, customTextFieldStyles } from '../../styles';
 
 interface ChainOption {
   label: string;

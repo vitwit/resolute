@@ -1,5 +1,5 @@
 import React from 'react';
-import SingleSend from './single-send/SingleSend';
+import SingleSend from './SingleSend';
 
 const SingleTransfer = ({ sortedAssets }: { sortedAssets: ParsedAsset[] }) => {
   return (
@@ -8,9 +8,7 @@ const SingleTransfer = ({ sortedAssets }: { sortedAssets: ParsedAsset[] }) => {
         <div className="text-[20px] font-bold">Single Transfer</div>
         <div className="divider-line"></div>
         <div className="secondary-text">
-          Nodes ensuring transaction accuracy, ledger integrity, and network
-          security through consensus mechanisms, building trust in decentralized
-          systems.
+          Single Transfer
         </div>
       </div>
       <div className="max-w-[600px]">

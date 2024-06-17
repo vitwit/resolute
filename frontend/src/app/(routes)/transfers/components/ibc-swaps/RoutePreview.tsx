@@ -2,10 +2,10 @@ import useSwaps from '@/custom-hooks/useSwaps';
 import { RouteData } from '@0xsquid/sdk';
 import Image from 'next/image';
 import React from 'react';
-import TransferPath from './route-preview/TransferPath';
-import SwapPath from './route-preview/SwapPath';
-import ChainToken from './route-preview/ChainToken';
 import CustomButton from '@/components/common/CustomButton';
+import SwapPath from './route-preview/SwapPath';
+import TransferPath from './route-preview/TransferPath';
+import ChainToken from './route-preview/ChainToken';
 
 const RoutePreview = ({
   swapRoute,
