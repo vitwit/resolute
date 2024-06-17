@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import AssetsDropDown from '../AssetsDropDown';
 import SingleSendForm from './SingleSendForm';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
@@ -16,6 +15,7 @@ import Image from 'next/image';
 import { shortenName } from '@/utils/util';
 import { Box } from '@mui/material';
 import { ALL_NETWORKS_ICON } from '@/utils/constants';
+import AssetsDropDown from './AssetsDropDown';
 
 const SingleSend = ({ sortedAssets }: { sortedAssets: ParsedAsset[] }) => {
   const dispatch = useAppDispatch();
