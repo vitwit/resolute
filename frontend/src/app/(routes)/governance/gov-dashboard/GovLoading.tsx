@@ -1,9 +1,12 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import SearchProposalInput from './SearchProposalInput';
 import PageHeader from '@/components/common/PageHeader';
 
 const GovLoading = () => {
-  let filterDays = 0;
+  const [filterDays, setFilterDays] = useState(1);
+  useEffect(() => {
+    setFilterDays(0);
+  }, []);
   return (
     <div className="gov-main">
       <div className="flex flex-col gap-10">
