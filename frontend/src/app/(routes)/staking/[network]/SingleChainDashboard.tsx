@@ -1,11 +1,11 @@
 'use client';
 
 // import ValidatorTable from './ValidatorTable';
-import StakingDelegations from '../component/StakingDelegations';
-import StakingUnDelegations from '../component/StakingUnDelegations';
-import StakingSummary from '../component/StakingSummary';
 import useSingleStaking from '@/custom-hooks/useSingleStaking';
-import ValidatorTable from '../component/ValidatorTable';
+import StakingSummary from '../components/StakingSummary';
+import StakingUnDelegations from '../components/StakingUnDelegations';
+import StakingDelegations from '../components/StakingDelegations';
+import ValidatorTable from '../components/ValidatorTable';
 // import { RootState } from '@/store/store';
 // import { useAppSelector } from '@/custom-hooks/StateHooks';
 
