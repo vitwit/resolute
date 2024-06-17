@@ -1,5 +1,5 @@
 import React from 'react';
-import IBCSwap from '../IBCSwap';
+import IBCSwap from './IBCSwap';
 
 const IBCSwapPage = () => {
   return (

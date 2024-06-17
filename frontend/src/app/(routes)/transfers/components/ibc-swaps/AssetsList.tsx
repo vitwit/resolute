@@ -5,7 +5,7 @@ import Avatar from '@mui/material/Avatar';
 import { CircularProgress, Paper } from '@mui/material';
 import { shortenName } from '@/utils/util';
 import { AssetConfig } from '@/types/swaps';
-import { customAutoCompleteStyles, customTextFieldStyles } from '../styles';
+import { customAutoCompleteStyles, customTextFieldStyles } from '../../styles';
 import NoOptions from '@/components/common/NoOptions';
 
 export default function AssetsAutocomplete({
