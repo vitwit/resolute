@@ -7,10 +7,10 @@ import AddressField from './AddressField';
 import useSingleStaking from '@/custom-hooks/useSingleStaking';
 import useStaking from '@/custom-hooks/useStaking';
 import { get } from 'lodash';
-import ValidatorName from '../component/ValidatorName';
 import ValidatorLogo from './ValidatorLogo';
 import { WalletAddress } from '@/components/main-layout/SelectNetwork';
 import { Validator } from '@/types/staking';
+import ValidatorName from './ValidatorName';
 
 interface PopupProps {
   validator: string;

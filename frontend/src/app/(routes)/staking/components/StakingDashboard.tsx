@@ -1,37 +1,81 @@
-import React from 'react';
-import Image from 'next/image';
+'use client';
+
+// import ValidatorTable from './ValidatorTable';
+import useStaking from '@/custom-hooks/useStaking';
+import { useAppSelector } from '@/custom-hooks/StateHooks';
+import { RootState } from '@/store/store';
+import EmptyScreen from '@/components/common/EmptyScreen';
+import { setConnectWalletOpen } from '@/store/features/wallet/walletSlice';
+import { useAppDispatch } from '@/custom-hooks/StateHooks';
+import StakingSummary from './StakingSummary';
+import StakingUnDelegations from './StakingUnDelegations';
+import StakingDelegations from './StakingDelegations';
+// import { RootState } from '@/store/store';
+// import { useAppSelector } from '@/custom-hooks/StateHooks';
 
 const StakingDashboard = () => {
+  const staking = useStaking();
+  const {
+    totalStakedAmount,
+    rewardsAmount,
+    totalUnStakedAmount,
+    availableAmount,
+  } = staking.getStakingAssets();
+
+  const delegations = staking.getAllDelegations();
+
+  const isWalletConnected = useAppSelector(
+    (state: RootState) => state.wallet.connected
+  );
+  const dispatch = useAppDispatch();
+  const connectWalletOpen = () => {
+    dispatch(setConnectWalletOpen(true));
+  };
+
   return (
-    <div className="flex flex-col justify-center  gap-10 flex-[1_0_0] self-stretch px-10 py-20">
-      <div className="flex flex-col items-start">
-        <div className="text-white text-[28px] not-italic font-bold leading-[normal] text-start">
-          Staking
-        </div>
-        <div className="text-[rgba(255,255,255,0.50)] text-sm not-italic font-extralight leading-8">
-          Connect your wallet now to access all the modules on resolute{' '}
-        </div>
-      </div>
-      <div className="flex flex-col justify-center items-center gap-10">
-        <div>
-          <Image
-            src="/dashboard.png"
-            width={914}
-            height={480}
-            alt="Dashboard-Image"
-          />
-          <div className="flex flex-col justify-center items-center gap-6 self-stretch">
-            <p className="text-[32px] not-italic font-bold leading-[21px] text-bg">
-              Connect your Wallet{' '}
-            </p>
-            <p className="text-bg text-base not-italic font-extralight leading-[21px] tracking-[1.6px]">
-              Connect your wallet to access your account on Resolute
-            </p>
+    <div className="flex flex-col items-start gap-20 w-full px-10 py-20">
+      <div
+        className={`flex flex-col w-full ${isWalletConnected ? ' gap-10' : ''}`}
+      >
+        <div className="space-y-2 items-start">
+          <div className="text-h1">Staking</div>
+          <div className="secondary-text">
+            {isWalletConnected ? (
+              'Connect your wallet now to access all the modules on resolute'
+            ) : (
+              <p>
+                Here’s an overview of your staked assets, including delegation
+                and undelegation details, and your total staked balance.
+              </p>
+            )}
           </div>
+          <div className="horizontal-line"></div>
         </div>
-        <div className="custom-btn text-white text-base not-italic font-normal leading-[normal]">
-          Connect wallet
-        </div>
+
+        {isWalletConnected ? (
+          <>
+            {/* Staking summary */}
+            <StakingSummary
+              availableAmount={availableAmount}
+              stakedAmount={totalStakedAmount}
+              unstakeAmount={totalUnStakedAmount}
+              rewardsAmount={rewardsAmount}
+            />
+            {/* Unbonding */}
+            <StakingUnDelegations undelegations={delegations} />
+
+            {/* Delegations */}
+            <StakingDelegations delegations={delegations} />
+          </>
+        ) : (
+          <EmptyScreen
+            title="Connect your wallet"
+            description="Connect your wallet to access your account on Resolute"
+            hasActionBtn={true}
+            btnText={'Connect Wallet'}
+            btnOnClick={connectWalletOpen}
+          />
+        )}
       </div>
     </div>
   );
