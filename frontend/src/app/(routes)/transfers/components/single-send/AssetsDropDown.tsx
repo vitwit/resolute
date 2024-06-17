@@ -1,6 +1,6 @@
 import { Autocomplete, Avatar, Paper, TextField } from '@mui/material';
 import React from 'react';
-import { customAutoCompleteStyles, customTextFieldStyles } from '../styles';
+import { customAutoCompleteStyles, customTextFieldStyles } from '../../styles';
 import NoOptions from '@/components/common/NoOptions';
 
 const AssetsDropDown = ({

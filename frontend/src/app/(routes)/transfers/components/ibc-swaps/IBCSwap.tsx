@@ -7,7 +7,6 @@ import {
 } from '@mui/material';
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
-import { customTextFieldStyles } from '../styles';
 import AssetsList from './AssetsList';
 import useGetChains from '@/custom-hooks/useGetChains';
 import useGetAssets from '@/custom-hooks/useGetAssets';
@@ -39,7 +38,8 @@ import { setError } from '@/store/features/common/commonSlice';
 import RoutePreview from './RoutePreview';
 import { FLIP_ICON, ROUTE_ICON, SETTINGS_ICON } from '@/constants/image-names';
 import { SWAP_ROUTE_ERROR } from '@/utils/constants';
-import Settings from './ibc-swaps/Settings';
+import { customTextFieldStyles } from '../../styles';
+import Settings from './Settings';
 
 const emptyBalance = {
   amount: 0,
