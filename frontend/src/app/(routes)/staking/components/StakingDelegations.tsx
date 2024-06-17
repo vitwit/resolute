@@ -2,7 +2,6 @@ import useStaking from '@/custom-hooks/useStaking';
 import { get } from 'lodash';
 import Image from 'next/image';
 import React, { useState } from 'react';
-import ValidatorName from './ValidatorName';
 import useValidator from '@/custom-hooks/useValidator';
 import { Chains } from '@/store/features/staking/stakeSlice';
 import DelegatePopup from '../components/DelegatePopup';
@@ -10,6 +9,7 @@ import UndelegatePopup from '../components/UndelegatePopup';
 import ReDelegatePopup from '../components/ReDelegatePopup';
 import CustomLoader from '@/components/common/CustomLoader';
 import WithConnectionIllustration from '@/components/illustrations/withConnectionIllustration';
+import ValidatorName from './ValidatorName';
 
 function StakingDelegations({ delegations, isSingleChain }: { delegations: Chains, isSingleChain?: boolean }) {
   const staking = useStaking();

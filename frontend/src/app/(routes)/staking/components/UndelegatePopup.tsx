@@ -7,7 +7,7 @@ import AddressField from './AddressField';
 import useStaking from '@/custom-hooks/useStaking';
 import { get } from 'lodash';
 import useSingleStaking from '@/custom-hooks/useSingleStaking';
-import ValidatorName from '../component/ValidatorName';
+import ValidatorName from './ValidatorName';
 
 interface PopupProps {
   validator: string;

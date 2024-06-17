@@ -2,12 +2,12 @@ import useStaking from '@/custom-hooks/useStaking';
 import { get } from 'lodash';
 // import Image from 'next/image'
 import React from 'react';
-import ValidatorName from './ValidatorName';
 import { getTimeDifferenceToFutureDate } from '@/utils/dataTime';
 import { Chains } from '@/store/features/staking/stakeSlice';
 import '../staking.css';
 import WithConnectionIllustration from '@/components/illustrations/withConnectionIllustration';
 import CustomLoader from '@/components/common/CustomLoader';
+import ValidatorName from './ValidatorName';
 
 function StakingUnDelegations({ undelegations, isSingleChain }: { undelegations: Chains, isSingleChain?: boolean }) {
   const staking = useStaking();

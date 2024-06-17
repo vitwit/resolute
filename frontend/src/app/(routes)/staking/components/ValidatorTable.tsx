@@ -17,7 +17,7 @@ import {
   setValidators,
 } from '@/store/features/staking/stakeSlice';
 import { Validator } from '@/types/staking';
-import SearchValidator from './SearchValidator';
+import SearchValidator from '../components/SearchValidator';
 
 interface ValStatusObj {
   [key: string]: string;
