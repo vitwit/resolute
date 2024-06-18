@@ -1,8 +1,8 @@
 import Image from 'next/image';
 
-const WithConnectionIllustration = ({message}: {message: string}) => {
+const WithConnectionIllustration = ({ message }: { message: string }) => {
   return (
-    <div className="flex flex-col justify-center  gap-10 w-full px-10 py-20">
+    <div className="flex flex-col justify-center  gap-10 w-full px-10 mt-20">
       {/* <div className="flex flex-col items-start space-y-1">
         <div className="text-h1">Staking</div>
         <div className="text-b1-light">
