@@ -1,7 +1,7 @@
 import { InputTextComponentProps } from '@/types/multisig';
 import { InputAdornment, TextField } from '@mui/material';
 import React from 'react';
-import { createMultisigTextFieldStyles } from '../styles';
+import { createMultisigTextFieldStyles } from '../../styles';
 import Image from 'next/image';
 import { REMOVE_ICON, TOGGLE_OFF, TOGGLE_ON } from '@/constants/image-names';
 

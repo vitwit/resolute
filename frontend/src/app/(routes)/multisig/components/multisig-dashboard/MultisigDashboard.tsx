@@ -12,10 +12,10 @@ import {
 import React, { useEffect } from 'react';
 import AllMultisigAccounts from './AllMultisigAccounts';
 import RecentTransactions from './RecentTransactions';
-import DialogVerifyAccount from '../DialogVerifyAccount';
 import { setError } from '@/store/features/common/commonSlice';
 import { TxStatus } from '@/types/enums';
 import Loader from '../common/Loader';
+import DialogVerifyAccount from '../common/DialogVerifyAccount';
 
 interface MultisigDashboardI {
   walletAddress: string;

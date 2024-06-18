@@ -18,11 +18,11 @@ import Copy from '@/components/common/Copy';
 import { formatStakedAmount, shortenAddress } from '@/utils/util';
 import { parseBalance } from '@/utils/denom';
 import Transactions from './Transactions';
-import DialogVerifyAccount from '../DialogVerifyAccount';
 import Loader from '../common/Loader';
 import Link from 'next/link';
 import { TxStatus } from '@/types/enums';
 import CustomLoader from '@/components/common/CustomLoader';
+import DialogVerifyAccount from '../common/DialogVerifyAccount';
 
 const MultisigAccount = ({
   chainName,
