@@ -3,6 +3,7 @@ import { get } from 'lodash';
 import useValidator from '@/custom-hooks/useValidator';
 import ValidatorLogo from '../components/ValidatorLogo';
 import { WalletAddress } from '@/components/main-layout/SelectNetwork';
+import { Tooltip } from '@mui/material';
 
 interface ValidatorNameProps {
   valoperAddress: string;
@@ -50,9 +51,11 @@ const ValidatorName: React.FC<ValidatorNameProps> = ({
           />{' '}
           &nbsp;
           {/* Validator name  */}
-          <p className="text-b1 flex items-center">
-            {get(validatorDetails, 'description.moniker')}
-          </p>{' '}
+          <Tooltip title={get(validatorDetails, 'description.moniker')}>
+            <p className="text-b1 flex items-center truncate">
+              {get(validatorDetails, 'description.moniker')}
+            </p>
+          </Tooltip>
           &nbsp;
           {/* Copy address icon */}
           <WalletAddress address={valoperAddress} displayAddress={false} />
@@ -62,7 +65,7 @@ const ValidatorName: React.FC<ValidatorNameProps> = ({
             //And the status is Unbonded  we can use this "status-unbonded"
             <div
               className={`h-5 text-[8px] ${valStatusObj[get(validatorDetails, 'status', '')] === 'Active' ? 'status-active' : ''}
-              ${get(validatorDetails, 'jailed') ? 'status-jailed' : ''} relative`}
+              ${get(validatorDetails, 'jailed') ? 'status-jailed' : valStatusObj[get(validatorDetails, 'status', '')] === 'InActive' ? 'status-unbonded' : ''} relative`}
             >
               {get(validatorDetails, 'jailed')
                 ? 'Jailed'

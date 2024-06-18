@@ -93,7 +93,7 @@ function StakingDelegations({
                     src={staking.chainLogo(key)}
                     width={32}
                     height={32}
-                    className="h-8 w-8"
+                    className="h-8 w-8 rounded-full"
                     alt="chain-logo"
                   />
                   <p className="text-base font-normal leading-8 flex justify-center items-center">
@@ -308,7 +308,7 @@ const StakingActionsPopup: React.FC<PopupProps> = ({
           className="absolute top-4 right-0 z-10 more-popup-grid"
         >
           <button
-            className="flex items-center w-full p-4 text-b1 hover:bg-[#FFFFFF10]"
+            className="flex items-center w-full p-4 text-b1 hover:bg-[#FFFFFF10] rounded-t-2xl"
             onClick={openDelegatePopup}
           >
             Delegate
@@ -326,7 +326,7 @@ const StakingActionsPopup: React.FC<PopupProps> = ({
             Un Delegate
           </button>
           <button
-            className="flex items-center w-full p-4 text-b1 hover:bg-[#FFFFFF10]"
+            className="flex items-center w-full p-4 text-b1 hover:bg-[#FFFFFF10] rounded-b-2xl"
             onClick={openReDelegatePopup}
           >
             Re Delegate
