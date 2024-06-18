@@ -7,9 +7,9 @@ import useVerifyAccount from '@/custom-hooks/useVerifyAccount';
 import { setVerifyDialogOpen } from '@/store/features/multisig/multisigSlice';
 import { setConnectWalletOpen } from '@/store/features/wallet/walletSlice';
 import React, { useEffect } from 'react';
-import DialogVerifyAccount from '../../../components/DialogVerifyAccount';
 import PageHeader from '@/components/common/PageHeader';
 import TxnBuilder from '@/components/txn-builder/TxnBuilder';
+import DialogVerifyAccount from '../../../components/common/DialogVerifyAccount';
 
 const PageTxnBuilder = ({
   paramChain,
