@@ -1,7 +1,7 @@
 import useStaking from '@/custom-hooks/useStaking';
 import { get } from 'lodash';
 import Image from 'next/image';
-import React, { useState } from 'react';
+import React, { useState, useRef, RefObject, useEffect } from 'react';
 import useValidator from '@/custom-hooks/useValidator';
 import { Chains } from '@/store/features/staking/stakeSlice';
 import DelegatePopup from '../components/DelegatePopup';
@@ -11,7 +11,13 @@ import CustomLoader from '@/components/common/CustomLoader';
 import WithConnectionIllustration from '@/components/illustrations/withConnectionIllustration';
 import ValidatorName from './ValidatorName';
 
-function StakingDelegations({ delegations, isSingleChain }: { delegations: Chains, isSingleChain?: boolean }) {
+function StakingDelegations({
+  delegations,
+  isSingleChain,
+}: {
+  delegations: Chains;
+  isSingleChain?: boolean;
+}) {
   const staking = useStaking();
   const validator = useValidator();
 
@@ -49,9 +55,11 @@ function StakingDelegations({ delegations, isSingleChain }: { delegations: Chain
   let bondingCount = 0;
 
   Object.entries(delegations).forEach(([, value]) => {
-    get(value, 'delegations.delegations.delegation_responses', []).forEach(() => {
-      bondingCount++
-    });
+    get(value, 'delegations.delegations.delegation_responses', []).forEach(
+      () => {
+        bondingCount++;
+      }
+    );
   });
 
   return (
@@ -71,17 +79,15 @@ function StakingDelegations({ delegations, isSingleChain }: { delegations: Chain
         <WithConnectionIllustration message="No Delegations" />
       ) : null}
 
-      {
-        isSingleChain && !bondingCount ? (
-          <WithConnectionIllustration message="No Delegations" />
-        ): null
-      }
+      {isSingleChain && !bondingCount ? (
+        <WithConnectionIllustration message="No Delegations" />
+      ) : null}
 
       {Object.entries(delegations).map(([key, value], index) =>
         get(value, 'delegations.delegations.delegation_responses.length') ? (
           <div key={index} className="px-6 py-0">
             <div className="flex justify-between w-full mb-4">
-              <div className="flex space-x-4">
+              <div className="flex space-x-4 items-center">
                 <div className="space-x-2 flex justify-center items-center">
                   <Image
                     src={staking.chainLogo(key)}
@@ -90,7 +96,7 @@ function StakingDelegations({ delegations, isSingleChain }: { delegations: Chain
                     className="h-8 w-8"
                     alt="chain-logo"
                   />
-                  <p className="text-white text-base font-normal leading-8 flex justify-center items-center">
+                  <p className="text-base font-normal leading-8 flex justify-center items-center">
                     {key}
                   </p>
                 </div>
@@ -102,32 +108,34 @@ function StakingDelegations({ delegations, isSingleChain }: { delegations: Chain
                   )}
                 </div>
               </div>
-              <button
-                onClick={() => withClaimRewards(key)}
-                className="primary-btn"
-              >
-                {claimTxStatus[key]?.tx?.status === 'pending' ? (
-                  'pending....'
-                ) : (
-                  <>
-                    Claim {getChainTotalRewards(key)}
-                    <p className="ml-2 text-small-light">Rewards</p>
-                  </>
-                )}
-              </button>
-              <button
-                onClick={() => restakeRewards(key)}
-                className="primary-btn"
-              >
-                {restakeStatus[key]?.reStakeTxStatus === 'pending' ? (
-                  'pending....'
-                ) : (
-                  <>
-                    Claim & Stake
-                    {/* <p className="ml-2 text-small-light">Rewards</p> */}
-                  </>
-                )}
-              </button>
+              <div className="flex justify-end gap-4">
+                <button
+                  onClick={() => withClaimRewards(key)}
+                  className="primary-btn"
+                >
+                  {claimTxStatus[key]?.tx?.status === 'pending' ? (
+                    'pending....'
+                  ) : (
+                    <>
+                      Claim {getChainTotalRewards(key)}
+                      <p className="ml-2 text-small-light">Rewards</p>
+                    </>
+                  )}
+                </button>
+                <button
+                  onClick={() => restakeRewards(key)}
+                  className="primary-btn"
+                >
+                  {restakeStatus[key]?.reStakeTxStatus === 'pending' ? (
+                    'pending....'
+                  ) : (
+                    <>
+                      Claim & Stake
+                      {/* <p className="ml-2 text-small-light">Rewards</p> */}
+                    </>
+                  )}
+                </button>
+              </div>
             </div>
             <div className="grid grid-cols-1 w-full gap-4">
               {get(
@@ -214,6 +222,27 @@ const StakingActionsPopup: React.FC<PopupProps> = ({
   const [openUnDelegate, setOpenUnDelegate] = useState<boolean>(false);
   const [openReDelegate, setOpenReDelegate] = useState<boolean>(false);
   console.log({ popupPosition });
+  const popupRef = useRef<HTMLDivElement>(null);
+  const buttonRef: RefObject<HTMLImageElement> = useRef<HTMLImageElement>(null);
+
+  const handleClickOutside = (event: MouseEvent) => {
+    if (
+      popupRef.current &&
+      !popupRef.current.contains(event.target as Node) &&
+      buttonRef.current &&
+      !buttonRef.current.contains(event.target as Node)
+    ) {
+      setShowPopup(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener('click', handleClickOutside);
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, []);
+
   // Handle click on the image to toggle the popup
   const handleImageClick = (e: React.MouseEvent<HTMLImageElement>): void => {
     setShowPopup(!showPopup);
@@ -271,9 +300,13 @@ const StakingActionsPopup: React.FC<PopupProps> = ({
         alt="More-Icon"
         className="cursor-pointer"
         onClick={handleImageClick}
+        ref={buttonRef}
       />
-      {showPopup && (
-        <div className="absolute top-4 right-0 z-10 more-popup-grid">
+      {showPopup ? (
+        <div
+          ref={popupRef}
+          className="absolute top-4 right-0 z-10 more-popup-grid"
+        >
           <button
             className="flex items-center w-full p-4 text-b1 hover:bg-[#FFFFFF10]"
             onClick={openDelegatePopup}
@@ -299,7 +332,7 @@ const StakingActionsPopup: React.FC<PopupProps> = ({
             Re Delegate
           </button>
         </div>
-      )}
+      ) : null}
     </div>
   );
 };

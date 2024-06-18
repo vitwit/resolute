@@ -194,7 +194,7 @@
   background: rgba(255, 255, 255, 0.02);
 }
 .staked-amount-red-badge {
-  @apply border flex justify-center items-center gap-2 px-3 py-0 rounded-[100px] border-solid border-[#F15757];
+  @apply border flex justify-center items-center gap-2 px-3 py-0 rounded-[100px] border-solid border-[#F15757] h-[25px];
   background: rgba(241, 87, 87, 0.5);
 }
 .status-active {

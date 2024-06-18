@@ -33,7 +33,7 @@ const StakingDashboard = () => {
   };
 
   return (
-    <div className="flex flex-col items-start gap-20 w-full px-10 py-20">
+    <div className="flex flex-col items-start  w-full px-10 py-20">
       <div
         className={`flex flex-col w-full ${isWalletConnected ? ' gap-10' : ''}`}
       >
