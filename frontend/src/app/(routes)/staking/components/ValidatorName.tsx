@@ -9,6 +9,7 @@ interface ValidatorNameProps {
   valoperAddress: string;
   chainID: string;
   hasStatus?: boolean;
+  smallFont?: boolean;
 }
 
 interface ValStatusObj {
@@ -24,6 +25,7 @@ const ValidatorName: React.FC<ValidatorNameProps> = ({
   valoperAddress,
   chainID,
   hasStatus,
+  smallFont,
 }) => {
   const { fetchValidator, getValidatorDetails } = useValidator();
 
@@ -52,7 +54,9 @@ const ValidatorName: React.FC<ValidatorNameProps> = ({
           &nbsp;
           {/* Validator name  */}
           <Tooltip title={get(validatorDetails, 'description.moniker')}>
-            <p className="text-b1 flex items-center truncate">
+            <p
+              className={` ${smallFont ? 'text-[18px]' : 'text-b1'} flex items-center truncate`}
+            >
               {get(validatorDetails, 'description.moniker')}
             </p>
           </Tooltip>

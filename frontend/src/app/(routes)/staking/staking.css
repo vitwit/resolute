@@ -209,3 +209,7 @@
   @apply border h-[18px] flex justify-center items-center gap-2 px-2 py-1 rounded-[100px] border-solid border-[#FFC13C];
   background: rgba(255, 193, 60, 0.5);
 }
+.reDelegate-dropdown {
+  @apply backdrop-blur-[15px] flex flex-col items-start rounded-2xl;
+  background: rgba(255, 255, 255, 0.08);
+}

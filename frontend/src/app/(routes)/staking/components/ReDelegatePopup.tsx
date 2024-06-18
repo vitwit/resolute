@@ -84,15 +84,23 @@ const ReDelegatePopup: React.FC<PopupProps> = ({
         }}
         title="Re-Delegate"
       >
-        <div className="flex flex-col items-center gap-6 w-full">
+        <div className="flex flex-col w-[800px] items-center gap-6">
           {/* Validator details */}
           <div className="flex flex-col gap-2 w-full">
-            <div className="flex gap-2">
-              <ValidatorName valoperAddress={validator} chainID={chainID} />
+            <div className="flex gap-2 items-center">
+              <ValidatorName
+                valoperAddress={validator}
+                chainID={chainID}
+                smallFont
+              />
             </div>
-            <div className="flex justify-between w-full">
-              <p>{get(val, 'description.details', '-')}</p>
-              <p>{getCommisionRate()}% Commission</p>
+            <div className="flex justify-between w-full items-center gap-10">
+              <p className="truncate flex-1 secondary-text">
+                {get(val, 'description.details', '-')}
+              </p>
+              <p className="flex secondary-text">
+                {getCommisionRate()}% Commission
+              </p>
             </div>
             <div className="divider-line"></div>
           </div>
@@ -109,11 +117,12 @@ const ReDelegatePopup: React.FC<PopupProps> = ({
 
           {/* Destination validator selection */}
           <div className="flex flex-col w-full">
-            <p>Destination Validator</p>
+            <p className="secondary-text pb-1">Destination Validator</p>
             <div className="relative inline-block text-left">
               <button
                 type="button"
-                className="flex items-center gap-2 px-4 py-[10.5px] w-full rounded-[100px] border-[0.25px] border-solid border-[rgba(255,255,255,0.50)]"
+                className="flex items-center gap-1 w-full px-4 py-[10.5px] rounded-[100px] border-[0.25px] border-[#ffffff30]
+}"
                 onClick={toggleDropdown}
               >
                 {destValidator ? (
@@ -134,14 +143,14 @@ const ReDelegatePopup: React.FC<PopupProps> = ({
                     />
                   </>
                 ) : (
-                  ' Choose Destination Validator'
+                  <p className="secondary-text">Choose Destination Validator</p>
                 )}
               </button>
 
               {isOpen && (
-                <div className="origin-top-right absolute right-0 mt-2 w-full rounded-[25px] shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
+                <div className="origin-top-right absolute right-0 mt-2 w-full reDelegate-dropdown">
                   <div
-                    className="py-1"
+                    className="max-h-[20vh] overflow-y-scroll w-full rounded-2xl"
                     role="menu"
                     aria-orientation="vertical"
                     aria-labelledby="options-menu"
@@ -149,7 +158,7 @@ const ReDelegatePopup: React.FC<PopupProps> = ({
                     {Object.entries(allVals || {}).map(([key, value]) => (
                       <button
                         key={key}
-                        className="w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-600 hover:text-white flex items-center rounded-[25px]"
+                        className="w-full px-4 py-2 flex items-center hover:bg-[#FFFFFF10] gap-1"
                         role="menuitem"
                         onClick={() => {
                           toggleDropdown();
@@ -180,8 +189,13 @@ const ReDelegatePopup: React.FC<PopupProps> = ({
 
           {/* Staking alert */}
           <div className="staking-alert w-full">
-            <div className="flex space-x-2">
-              <Image src="/info.svg" width={24} height={24} alt="info-icon" />
+            <div className="flex space-x-2 items-center">
+              <Image
+                src="/info-yellow.svg"
+                width={24}
+                height={24}
+                alt="info-icon"
+              />
               <p className="text-[#FFC13C] text-b1">Important</p>
               <p className="text-b1-light">
                 Staking will lock your funds for 21 days
