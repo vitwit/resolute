@@ -93,7 +93,24 @@ func main() {
 	e.GET("/tokens-info", h.GetTokensInfo)
 	e.GET("/tokens-info/:denom", h.GetTokenInfo)
 
-	e.Any("/*", proxyHandler)
+	e.POST("/cosmos/tx/v1beta1/txs", func(c echo.Context) error {
+		type RequestBody struct {
+			Mode    string `json:"mode"`
+			TxBytes string `json:"tx_bytes"`
+		}
+
+		reqBody := new(RequestBody)
+
+		// Bind the request body to the struct
+		if err := c.Bind(reqBody); err != nil {
+			return c.String(http.StatusBadRequest, "Invalid request")
+		}
+
+		// Process the request body (e.g., print it)
+		return c.JSON(http.StatusOK, reqBody)
+	})
+
+	// e.Any("/*", proxyHandler)
 
 	e.GET("/", func(c echo.Context) error {
 
