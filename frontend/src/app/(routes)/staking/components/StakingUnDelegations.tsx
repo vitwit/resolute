@@ -6,10 +6,15 @@ import { getTimeDifferenceToFutureDate } from '@/utils/dataTime';
 import { Chains } from '@/store/features/staking/stakeSlice';
 import '../staking.css';
 import WithConnectionIllustration from '@/components/illustrations/withConnectionIllustration';
-import CustomLoader from '@/components/common/CustomLoader';
 import ValidatorName from './ValidatorName';
 
-function StakingUnDelegations({ undelegations, isSingleChain }: { undelegations: Chains, isSingleChain?: boolean }) {
+function StakingUnDelegations({
+  undelegations,
+  isSingleChain,
+}: {
+  undelegations: Chains;
+  isSingleChain?: boolean;
+}) {
   const staking = useStaking();
 
   const cancelUnbonding = (
@@ -35,25 +40,16 @@ function StakingUnDelegations({ undelegations, isSingleChain }: { undelegations:
       <div className="space-y-2 items-start">
         <div className="text-h2">Unbonding</div>
         <div className="secondary-text">
-          Unbonding delegations will be locked until their locked time, after which they will be available in your balance.
+          Unbonding delegations will be locked until their locked time, after
+          which they will be available in your balance.
         </div>
         <div className="horizontal-line"></div>
       </div>
 
-
-      {!isSingleChain && staking.undelegationsLoading !== 0 ? (
-        <CustomLoader loadingText="Loading..." />
-      ) : null}
-
-      { staking.undelegationsLoading === 0 && !unbondingCount ? (
+      {(staking.undelegationsLoading === 0 && !unbondingCount) ||
+      (isSingleChain && !unbondingCount) ? (
         <WithConnectionIllustration message="No Un Delegations" />
       ) : null}
-
-      {
-        isSingleChain && !unbondingCount ? (
-          <WithConnectionIllustration message="No Un Delegations" />
-        ): null
-      }
 
       <div className="grid grid-cols-3 gap-10 px-6 py-0">
         {Object.entries(undelegations).map(([key, value]) => {
