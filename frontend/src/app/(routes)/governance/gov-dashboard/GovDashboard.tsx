@@ -13,7 +13,7 @@ import {
 import ProposalsList from './ProposalsList';
 import SearchProposalInput from './SearchProposalInput';
 import { useAppSelector } from '@/custom-hooks/StateHooks';
-import GovLoading from './GovLoading';
+import GovDashboardLoading from '../loaders/GovDashboardLoading';
 
 const GovDashboard = ({ chainIDs }: { chainIDs: string[] }) => {
   useInitGovernance({ chainIDs });
@@ -117,7 +117,7 @@ const GovDashboard = ({ chainIDs }: { chainIDs: string[] }) => {
       <div className="flex gap-6 w-full flex-1 h-full overflow-y-scroll py-6">
         <div className="flex flex-col w-full gap-6 py-0 pb-6 flex-1 overflow-y-scroll">
           {proposalsLoading ? (
-            <GovLoading />
+            <GovDashboardLoading />
           ) : (
             <>
               {searchQuery?.length || filterDays ? (

@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-const GovLoading = () => {
+const GovDashboardLoading = () => {
   return (
     <div className="px-10">
       <div className="flex flex-col w-full gap-6 py-0 pb-6 flex-1 overflow-y-scroll">
@@ -28,4 +28,4 @@ const GovLoading = () => {
   );
 };
 
-export default GovLoading;
+export default GovDashboardLoading;
