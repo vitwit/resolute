@@ -234,14 +234,16 @@ const MessagesList = ({
   loading: boolean;
 }) => {
   return (
-    <div className="flex-1 space-y-6 h-full overflow-y-scroll">
+    <div className="flex-1 space-y-6 h-full flex flex-col justify-between">
       <div className="flex items-center justify-between">
-        <div>Messages</div>
+        <div>
+          Messages {fields?.length ? <span>({fields?.length})</span> : null}{' '}
+        </div>
         <div className="secondary-btn cursor-pointer" onClick={handleClearAll}>
           Clear All
         </div>
       </div>
-      <div className="space-y-6">
+      <div className="space-y-6 flex-1 overflow-y-scroll">
         {fields.map((field, index) => (
           <div key={field.id}>
             {field.type === 'Send' && (
