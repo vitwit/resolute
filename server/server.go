@@ -3,12 +3,14 @@
 package main
 
 import (
+	"io"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/labstack/gommon/log"
 
+	"github.com/vitwit/resolute/server/clients"
 	"github.com/vitwit/resolute/server/config"
 	"github.com/vitwit/resolute/server/cron"
 	"github.com/vitwit/resolute/server/handler"
@@ -20,6 +22,11 @@ import (
 
 	_ "github.com/lib/pq"
 )
+
+func init() {
+	// Initialize the Redis client
+	clients.InitializeRedis("localhost:6379", "", 0)
+}
 
 func main() {
 	e := echo.New()
@@ -58,11 +65,11 @@ func main() {
 	h := &handler.Handler{DB: db}
 	m := &middle.Handler{DB: db}
 
-	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins: []string{"*"},
-		AllowMethods: []string{echo.GET, echo.POST, echo.PUT, echo.DELETE},
-		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
-	}))
+	// e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+	// 	AllowOrigins: []string{"localhost"},
+	// 	AllowMethods: []string{echo.GET, echo.POST, echo.PUT, echo.DELETE},
+	// 	AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
+	// }))
 
 	// Routes
 	e.POST("/multisig", h.CreateMultisigAccount, m.AuthMiddleware)
@@ -86,7 +93,10 @@ func main() {
 	e.GET("/tokens-info", h.GetTokensInfo)
 	e.GET("/tokens-info/:denom", h.GetTokenInfo)
 
+	e.Any("/*", proxyHandler)
+
 	e.GET("/", func(c echo.Context) error {
+
 		return c.JSON(http.StatusOK, model.SuccessResponse{
 			Status:  "success",
 			Message: "server up",
@@ -106,4 +116,62 @@ func main() {
 	// Start server
 	// TODO: add ip and port
 	e.Logger.Fatal(e.Start(fmt.Sprintf(":%s", apiCfg.Port)))
+}
+
+func proxyHandler(c echo.Context) error {
+
+	chanDetails := clients.GetChain(c.QueryParam("chain"))
+
+	fmt.Println("dynamic params paths================= ", c.Request().RequestURI)
+
+	// Construct the target URL based on the incoming request
+	targetBase := chanDetails.RestURI // Change this to your target service base URL
+
+	targetURL := targetBase + c.Request().URL.Path
+	if c.Request().URL.RawQuery != "" {
+		targetURL += "?" + c.Request().URL.RawQuery
+	}
+
+	// Create a new request to the target URL
+	req, err := http.NewRequest(c.Request().Method, targetURL, c.Request().Body)
+	if err != nil {
+		log.Printf("Failed to create request: %v", err)
+		return c.String(http.StatusInternalServerError, "Failed to create request")
+	}
+	// Forward headers from the original request
+	for name, values := range c.Request().Header {
+		for _, value := range values {
+			req.Header.Add(name, value)
+		}
+	}
+	req.Header.Set("Content-Type", "application/json")
+	// Add Authorization header
+	req.Header.Add("Authorization", "Bearer token") // Change this to your actual token
+
+	// Make the request
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		log.Printf("Failed to make request: %v", err)
+		return c.String(http.StatusInternalServerError, "Failed to make request")
+	}
+	defer resp.Body.Close()
+
+	// Copy the response headers and status code to the original response
+	for name, values := range resp.Header {
+		for _, value := range values {
+			c.Response().Header().Add(name, value)
+		}
+	}
+	c.Response().WriteHeader(resp.StatusCode)
+
+	// Copy the response body to the original response
+	_, err = io.Copy(c.Response().Writer, resp.Body)
+	if err != nil {
+		log.Printf("Failed to read response body: %v", err)
+		return c.String(http.StatusInternalServerError, "Failed to read response body")
+	}
+
+	return nil
+
 }

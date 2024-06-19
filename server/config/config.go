@@ -1,8 +1,12 @@
 package config
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
+	"log"
+	"os"
+	"path/filepath"
 
 	"github.com/spf13/viper"
 )
@@ -96,4 +100,32 @@ func ParseConfig() (Config, error) {
 	}
 
 	return cfg, nil
+}
+
+type ChainConfig struct {
+	ChainId     string   `json:"chainId"`
+	RestURIs    []string `json:"restURIs"`
+	RestURI     string   `json:"restURI"`
+	RpcURI      string   `json:"rpcURI"`
+	CheckStatus bool     `json:"checkStatus"`
+}
+
+func GetChainAPIs() []*ChainConfig {
+	wd, _ := os.Getwd()
+	filePath := filepath.Join(wd, "/", "networks.json")
+	jsonData, err := os.ReadFile(filePath)
+	if err != nil {
+		log.Fatalln("Error reading JSON file:", err)
+		return nil
+	}
+
+	var data []*ChainConfig
+
+	err = json.Unmarshal([]byte(jsonData), &data)
+	if err != nil {
+		log.Fatalln("Error unmarshaling JSON data:", err)
+		return nil
+	}
+
+	return data
 }

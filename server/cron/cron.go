@@ -36,9 +36,15 @@ func (c *Cron) Start() error {
 	cron := cron.New()
 
 	// Every 15 minute
-	cron.AddFunc("15 * * * * *", func() {
-		c.CoinsPriceInfoList()
-		log.Println("successfully saved price information list")
+	// cron.AddFunc("15 * * * * *", func() {
+	// 	c.CoinsPriceInfoList()
+	// 	log.Println("successfully saved price information list")
+	// })
+
+	// Every 15 minute
+	cron.AddFunc("1/5 * * * * *", func() {
+		c.StartCheckUris()
+		log.Println("successfully saved chain information list")
 	})
 
 	go cron.Start()
