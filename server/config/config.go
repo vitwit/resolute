@@ -16,6 +16,7 @@ type Config struct {
 	API                APIConfig        `mapstructure:"api"`
 	COINGECKO          CoingeckoConfig  `mapstructure:"coingecko"`
 	NUMIA_BEARER_TOKEN NumiaBearerToken `mapstructure:"numiaBearerToken"`
+	MINTSCAN_TOKEN     MintscanToken    `mapstructure:"mintscanToken"`
 }
 
 type DBConfig struct {
@@ -35,6 +36,10 @@ type CoingeckoConfig struct {
 }
 
 type NumiaBearerToken struct {
+	Token string `yaml:"token"`
+}
+
+type MintscanToken struct {
 	Token string `yaml:"token"`
 }
 
@@ -73,6 +78,9 @@ func ParseConfig() (Config, error) {
 			cfg.NUMIA_BEARER_TOKEN = NumiaBearerToken{
 				Token: viper.GetString("production.numiaBearerToken"),
 			}
+			cfg.MINTSCAN_TOKEN = MintscanToken{
+				Token: viper.GetString("production.mintscanToken"),
+			}
 		}
 
 	case "dev":
@@ -92,6 +100,9 @@ func ParseConfig() (Config, error) {
 			}
 			cfg.NUMIA_BEARER_TOKEN = NumiaBearerToken{
 				Token: viper.GetString("dev.numiaBearerToken"),
+			}
+			cfg.MINTSCAN_TOKEN = MintscanToken{
+				Token: viper.GetString("production.mintscanToken"),
 			}
 		}
 
