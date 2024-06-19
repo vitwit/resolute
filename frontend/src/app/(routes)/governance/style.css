@@ -98,3 +98,4 @@
 .badge-bg {
   @apply flex justify-center items-center gap-2 px-4 py-2 rounded-[100px] bg-[#FFFFFF05] w-[158px];
 }
+

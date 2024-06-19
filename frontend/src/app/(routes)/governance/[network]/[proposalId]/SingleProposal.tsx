@@ -209,7 +209,7 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
             <div className="flex flex-col gap-6">
               <div className="secondary-btn">Go back</div>
               <div className="flex flex-col gap-4">
-                <div className="flex justify-between w-full">
+                <div className="flex justify-between w-full items-center">
                   <p className="text-white text-[28px] font-bold leading-[normal]">
                     {/* Aave v3.1 Cantina competitione */}
                     {get(proposalInfo, 'proposal_id', get(proposalInfo, 'id'))}.
@@ -233,7 +233,7 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
                                             0x2cc1...c54Df1
                                         </p>
                                     </div> */}
-                  <div className="flex gap-2">
+                  <div className="flex gap-2 items-center">
                     {isStatusVoting ? (
                       <>
                         <p className="text-[rgba(255,255,255,0.50)] text-xs font-extralight leading-[normal]">
@@ -248,7 +248,7 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
                       </>
                     ) : null}
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex gap-2 items-center">
                     <p className="text-[rgba(255,255,255,0.50)] text-xs font-extralight leading-[normal]">
                       on
                     </p>
@@ -266,9 +266,9 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
                 <div className="divider-line"></div>
               </div>
 
-              <div className="text-white h-[40vh]  flex flex-col justify-between relative">
+              <div className="text-white h-[40vh] flex flex-col justify-between relative">
                 <p
-                  className={`h-[40vh] ${showFullText ? 'overflow-scroll' : 'overflow-hidden'}`}
+                  className={`h-[40vh] secondary-text ${showFullText ? 'overflow-scroll' : 'overflow-hidden'}`}
                 >
                   {/* {ProposalSummary} */}
                   {proposalMarkdown}
@@ -288,7 +288,7 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
                     />
                   </p>
                 ) : (
-                  <div className="h-32 w-full relative flex">
+                  <div className="h-40 w-full relative flex">
                     <div
                       onClick={handleToggleText}
                       className="cursor-pointer justify-center w-full bottom-14 absolute flex z-10 text-lg font-normal leading-[normal] underline  space-x-1  "
@@ -310,10 +310,8 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
                 {isStatusVoting ? (
                   <>
                     <div className="flex px-6 py-4 rounded-2xl bg-[#FFFFFF05] justify-between w-full">
-                      <p className="text-white text-xs not-italic font-normal leading-[18px]">
-                        Caste your vote
-                      </p>
-                      <p className="text-white text-xs font-extralight leading-[18px]">
+                      <p className="text-b1">Caste your vote</p>
+                      <p className="text-xs font-extralight leading-[18px]">
                         Voting ends in{' '}
                         {getTimeDifferenceToFutureDate(
                           get(proposalInfo, 'voting_end_time')
@@ -321,16 +319,38 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
                       </p>
                     </div>
 
-                    <Vote proposalId={proposalID} chainID={chainID} />
+                    <Vote
+                      proposalId={proposalID}
+                      chainID={chainID}
+                      colCount={2}
+                    />
                   </>
                 ) : (
                   <>
+                    <div className="flex px-6 py-4 rounded-2xl bg-[#FFFFFF05] justify-between w-full">
+                      <p className="text-b1">Deposit</p>
+                      <p className="text-xs font-extralight leading-[18px]">
+                        Deposit Period ends in{' '}
+                        {getTimeDifferenceToFutureDate(
+                          get(proposalInfo, 'voting_end_time')
+                        )}
+                      </p>
+                    </div>
+                    <div className="space-y-2 w-full">
+                      <div className="form-label-text">Enter Amount here</div>
+                      <input
+                        type="number"
+                        className="search-network-field w-full"
+                        placeholder=""
+                      />
+                    </div>
+
                     <CustomButton
                       btnText={true ? 'Deposit' : 'Connect Wallet to Deposit'}
                       btnOnClick={() => {
                         setDepositDialogOpen(true);
                       }}
-                      btnStyles="items-center"
+                      btnStyles="items-center w-full"
                     />
                     <DialogDeposit
                       chainID={chainID}
@@ -356,7 +376,7 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
           <div className="flex flex-col justify-between h-full gap-5">
             <div className="flex flex-col gap-6 p-6 rounded-2xl bg-[#FFFFFF05]">
               <div className="flex flex-col gap-2">
-                <p className="text-white">Proposal Timeline</p>
+                <p className="text-b1">Proposal Prediction</p>
                 <div className="divider-line"></div>
               </div>
               <div className="flex space-x-2 justify-center">
@@ -392,7 +412,7 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
 
             <div className="flex flex-col gap-6 p-6 rounded-2xl bg-[#FFFFFF05]">
               <div className="flex flex-col gap-2">
-                <p className="text-white">Proposal Timeline</p>
+                <p className="text-b1">Proposal Timeline</p>
                 <div className="divider-line"></div>
               </div>
               <div className="">
@@ -411,7 +431,7 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
                       title={getLocalTime(get(proposalInfo, 'submit_time'))}
                       placement="top"
                     >
-                      <p className="text-[#FFFFFF80]">
+                      <p className="text-[#FFFFFF80] text-[10px]">
                         {getTimeDifferenceToFutureDate(
                           get(proposalInfo, 'submit_time'),
                           true
@@ -419,7 +439,7 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
                         ago
                       </p>
                     </Tooltip>
-                    <p className="text-white text-xs font-normal leading-[normal]">
+                    <p className="text-xs font-normal leading-[normal]">
                       Proposal Created
                     </p>
                   </div>
@@ -445,7 +465,7 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
                       }
                       placement="top"
                     >
-                      <p className="text-[#FFFFFF80]">
+                      <p className="text-[#FFFFFF80] text-[10px]">
                         {isStatusVoting
                           ? getTimeDifferenceToFutureDate(
                               get(proposalInfo, 'voting_start_time', '-'),
@@ -486,7 +506,7 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
                       }
                       placement="top"
                     >
-                      <p className="text-[#FFFFFF80]">
+                      <p className="text-[#FFFFFF80] text-[10px]">
                         in{' '}
                         {isStatusVoting
                           ? getTimeDifferenceToFutureDate(
@@ -518,10 +538,12 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
                     <p className="text-white text-xs font-normal leading-[normal]">
                       {v.count}
                     </p>
-                    <p className="secondary-text">Voted {v.label}</p>
+                    <p className="text-[#FFFFFF80] text-[10px]">
+                      Voted {v.label}
+                    </p>
                   </div>
                   <div className="flex space-x-2 items-center">
-                    <div className="bg-[#FFFFFF0D] w-full h-[10px] rounded-full relative">
+                    <div className="bg-[#FFFFFF0D] w-[300px] h-[10px] rounded-full relative">
                       <div
                         style={{
                           width: `${v.value}%`,
@@ -532,9 +554,9 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
                     </div>
                     {v.label === 'Yes' ? (
                       <Image
-                        src="/tick.png"
-                        width={12}
-                        height={12}
+                        src="/right.png"
+                        width={24}
+                        height={24}
                         alt="tick-icon"
                       />
                     ) : (
