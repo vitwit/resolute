@@ -194,18 +194,22 @@
   background: rgba(255, 255, 255, 0.02);
 }
 .staked-amount-red-badge {
-  @apply border flex justify-center items-center gap-2 px-3 py-0 rounded-[100px] border-solid border-[#F15757];
+  @apply border flex justify-center items-center gap-2 px-3 py-0 rounded-[100px] border-solid border-[#F15757] h-[25px];
   background: rgba(241, 87, 87, 0.5);
 }
 .status-active {
-  @apply flex justify-center items-center gap-2 border px-2 py-1 rounded-[100px] border-solid border-[#2BA472];
+  @apply flex h-[18px] justify-center items-center gap-2 border px-2 py-1 rounded-[100px] border-solid border-[#2BA472];
   background: rgba(43, 164, 114, 0.5);
 }
 .status-jailed {
-  @apply flex justify-center items-center gap-2 border px-2 py-1 rounded-[100px] border-solid border-[#D92101];
+  @apply flex h-[18px] justify-center items-center gap-2 border px-2 py-1 rounded-[100px] border-solid border-[#D92101];
   background: rgba(217, 33, 1, 0.5);
 }
 .status-unbonded {
-  @apply border flex justify-center items-center gap-2 px-2 py-1 rounded-[100px] border-solid border-[#FFC13C];
+  @apply border h-[18px] flex justify-center items-center gap-2 px-2 py-1 rounded-[100px] border-solid border-[#FFC13C];
   background: rgba(255, 193, 60, 0.5);
+}
+.reDelegate-dropdown {
+  @apply backdrop-blur-[15px] flex flex-col items-start rounded-2xl;
+  background: rgba(255, 255, 255, 0.08);
 }

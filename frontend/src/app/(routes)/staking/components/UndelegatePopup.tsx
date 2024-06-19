@@ -71,15 +71,23 @@ const UndelegatePopup: React.FC<PopupProps> = ({
       }}
       title="Undelegate"
     >
-      <div className="flex flex-col items-center gap-6 w-full">
+      <div className="flex flex-col w-[800px] items-center gap-6">
         {/* Validator details */}
         <div className="flex flex-col gap-2 w-full">
-          <div className="flex gap-2">
-            <ValidatorName valoperAddress={validator} chainID={chainID} />
+          <div className="flex gap-2 items-center">
+            <ValidatorName
+              valoperAddress={validator}
+              chainID={chainID}
+              smallFont
+            />
           </div>
-          <div className="flex justify-between w-full">
-            <p>{get(val, 'description.details', '-')}</p>
-            <p>{getCommisionRate()}% Commission</p>
+          <div className="flex justify-between w-full items-center gap-10">
+            <p className="truncate flex-1 secondary-text">
+              {get(val, 'description.details', '-')}
+            </p>
+            <p className="flex secondary-text">
+              {getCommisionRate()}% Commission
+            </p>
           </div>
           <div className="divider-line"></div>
         </div>
@@ -96,8 +104,13 @@ const UndelegatePopup: React.FC<PopupProps> = ({
 
         {/* Staking alert */}
         <div className="staking-alert w-full">
-          <div className="flex space-x-2">
-            <Image src="/info.svg" width={24} height={24} alt="info-icon" />
+          <div className="flex space-x-1 items-center">
+            <Image
+              src="/info-yellow.svg"
+              width={24}
+              height={24}
+              alt="info-icon"
+            />
             <p className="text-[#FFC13C] text-b1">Important</p>
             <p className="text-b1-light">
               Staking will lock your funds for 21 days.
