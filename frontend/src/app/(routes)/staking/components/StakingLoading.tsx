@@ -7,7 +7,7 @@ const StakingLoading = () => {
         <div className="space-y-2 items-start w-full">
           <div className="text-h1">Staking</div>
           <div className="secondary-text">
-            Here’s an overview of your staked assets, including delegation and
+            Here&apos;s an overview of your staked assets, including delegation and
             undelegation details, and your total staked balance.
           </div>
           <div className="horizontal-line"></div>

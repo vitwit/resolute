@@ -19,7 +19,7 @@ const CustomLoader = ({
       <CircularProgress size={size} sx={{ color: 'white' }} />
       {loadingText ? (
         <span>
-          <span className={textStyles}></span>
+          <span className={textStyles}>{loadingText}</span>
           <span className="dots-flashing"></span>
         </span>
       ) : null}

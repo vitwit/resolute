@@ -1,6 +1,5 @@
 import React, { useEffect, useCallback, useMemo, useState } from 'react';
 import { get } from 'lodash';
-import CustomLoader from '@/components/common/CustomLoader';
 import useSingleStaking from '@/custom-hooks/useSingleStaking';
 import { WalletAddress } from '@/components/main-layout/SelectNetwork';
 import ValidatorLogo from '../components/ValidatorLogo';
@@ -191,7 +190,21 @@ const ValidatorTable: React.FC<{ chainID: string }> = ({ chainID }) => {
             </thead>
             <tbody>
               {validators?.status === 'pending' ? (
-                <CustomLoader loadingText="Loading..." />
+                <>
+                  {Array(3)
+                    .fill(null)
+                    .map((_, colIndex) => (
+                      <tr key={colIndex} className=" animate-pulse  w-full">
+                        {Array(6)
+                          .fill(null)
+                          .map((_, colIndex) => (
+                            <td key={colIndex}>
+                              <div className="h-10 bg-[#252525]  rounded my-6 mx-1"></div>
+                            </td>
+                          ))}
+                      </tr>
+                    ))}
+                </>
               ) : (
                 validatorRows
               )}
