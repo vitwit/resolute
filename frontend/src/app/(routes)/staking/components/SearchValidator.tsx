@@ -9,7 +9,7 @@ const SearchValidator = ({
   handleSearchQueryChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }) => {
   return (
-    <div className="flex gap-2 items-center">
+    <div className="flex gap-2 items-center search-bar">
       <Image src="/icons/search-icon.svg" height={24} width={24} alt="" />
       <input
         type="text"
