@@ -68,11 +68,11 @@ func main() {
 	h := &handler.Handler{DB: db}
 	m := &middle.Handler{DB: db}
 
-	// e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-	// 	AllowOrigins: []string{"localhost"},
-	// 	AllowMethods: []string{echo.GET, echo.POST, echo.PUT, echo.DELETE},
-	// 	AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
-	// }))
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: []string{"*"},
+		AllowMethods: []string{echo.GET, echo.POST, echo.PUT, echo.DELETE},
+		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
+	}))
 
 	// Routes
 	e.POST("/multisig", h.CreateMultisigAccount, m.AuthMiddleware)
