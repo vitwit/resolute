@@ -2,15 +2,18 @@ import { Autocomplete, Avatar, Paper, TextField } from '@mui/material';
 import React from 'react';
 import { customAutoCompleteStyles, customTextFieldStyles } from '../../styles';
 import NoOptions from '@/components/common/NoOptions';
+import CustomLoader from '@/components/common/CustomLoader';
 
 const AssetsDropDown = ({
   sortedAssets = [],
   selectedAsset,
   handleAssetChange,
+  loading,
 }: {
   sortedAssets: ParsedAsset[];
   selectedAsset: ParsedAsset | null;
   handleAssetChange: (option: ParsedAsset | null) => void;
+  loading: boolean;
 }) => {
   /* eslint-disable @typescript-eslint/no-explicit-any */
   const renderOption = (props: any, option: ParsedAsset) => (
@@ -123,7 +126,22 @@ const AssetsDropDown = ({
             marginTop: '8px',
           }}
         >
-          {children}
+          {sortedAssets?.length ? (
+            children
+          ) : (
+            <>
+              {loading ? (
+                <div className="flex justify-center items-center p-4">
+                  <CustomLoader
+                    loadingText="Fetching Balances"
+                    textStyles="italic"
+                  />
+                </div>
+              ) : (
+                <div>No Assets</div>
+              )}
+            </>
+          )}
         </Paper>
       )}
       sx={{ ...customTextFieldStyles, ...customAutoCompleteStyles }}
