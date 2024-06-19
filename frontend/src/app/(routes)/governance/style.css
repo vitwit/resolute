@@ -55,7 +55,7 @@
   background: rgba(255, 255, 255, 0.02);
 }
 .vote-optn-btn {
-  @apply flex justify-center items-center gap-2  px-4 py-[10.5px] rounded-[100px] border-[1px];
+  @apply flex justify-center items-center gap-2  px-4 py-[10.5px] rounded-[100px] border-[1px] h-10;
 }
 .header {
   @apply flex flex-col justify-center items-start gap-4 px-6 py-4 top-0 sticky;

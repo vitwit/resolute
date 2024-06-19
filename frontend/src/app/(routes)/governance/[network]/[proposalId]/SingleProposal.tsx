@@ -302,11 +302,11 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
                         className="ml-2"
                       />
                     </div>
-                    <div className="blur w-full absolute bottom-0  h-32"> </div>
+                    <div className="blur w-full absolute bottom-0 h-32"> </div>
                   </div>
                 )}
               </div>
-              <div className="cast-vote-grid ">
+              <div className="cast-vote-grid">
                 {isStatusVoting ? (
                   <>
                     <div className="flex px-6 py-4 rounded-2xl bg-[#FFFFFF05] justify-between w-full">
