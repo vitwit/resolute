@@ -51,12 +51,12 @@ const ProposalOverview = ({
 
   return (
     <div className="proposal-view">
-      <div className="flex flex-col justify-between h-full">
-        <div className="flex flex-col gap-6">
-          <div className="flex flex-col gap-10 w-full">
+      <div className="flex flex-col h-full justify-between">
+        <div className='flex flex-col gap-10'>
+          <div className="flex flex-col gap-6">
             <div className="items-start">
               <button className="secondary-btn" onClick={onClose}>
-                Close
+                Go back
               </button>
             </div>
             <div className="flex flex-col gap-2">
@@ -78,12 +78,12 @@ const ProposalOverview = ({
                   />
                 </div>
                 {isActive ? (
-                  <div className="active-badge">Active</div>
+                  <div className="active-badge text-b1">Active</div>
                 ) : (
-                  <div className="deposit-badge">Deposit</div>
+                  <div className="deposit-badge text-b1">Deposit</div>
                 )}
               </div>
-              <div className="flex gap-6">
+              <div className="flex gap-4">
                 <div className="flex gap-2 items-center">
                   <p className="text-small-light ">
                     {isActive ? 'Voting' : 'Deposit'}
@@ -92,7 +92,7 @@ const ProposalOverview = ({
                 </div>
                 <div className="flex gap-2 items-center">
                   <p className="text-small-light ">on</p>
-                  <div className="flex gap-[2px] items-center">
+                  <div className="flex gap-1 items-center">
                     <Image
                       src={chainLogo}
                       width={20}
@@ -114,9 +114,8 @@ const ProposalOverview = ({
             </div>
           </div>
         </div>
-
         {isActive ? (
-          <Vote proposalId={proposalId} chainID={chainID} />
+          <Vote proposalId={proposalId} chainID={chainID} colCount={4} />
         ) : (
           <CustomButton
             btnText={

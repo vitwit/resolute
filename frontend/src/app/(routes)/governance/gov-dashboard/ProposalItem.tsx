@@ -47,6 +47,7 @@ const ProposalItem = ({
                   width={20}
                   height={20}
                   alt="Network-Logo"
+                  className="rounded-full"
                 />
               </div>
             </div>
@@ -82,7 +83,7 @@ const ProposalItem = ({
               )}
             </>
           </div>
-          <div className="flex gap-6">
+          <div className="flex gap-4 items-center">
             <div className="flex space-x-1 min-w-[180px]">
               <Image
                 src={TIMER_ICON}
@@ -96,7 +97,7 @@ const ProposalItem = ({
             </div>
             <div className="flex items-center gap-1">
               <Image
-                className="w-4 h-4"
+                className="w-4 h-4 rounded-full"
                 src={chainLogo}
                 width={16}
                 height={16}
