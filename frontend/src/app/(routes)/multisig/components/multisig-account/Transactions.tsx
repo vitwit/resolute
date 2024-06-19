@@ -8,12 +8,12 @@ import {
 import { Txn } from '@/types/multisig';
 import React, { useEffect, useState } from 'react';
 import { TxStatus } from '@/types/enums';
-import CustomLoader from '@/components/common/CustomLoader';
 import TxnsCard from '../common/TxnsCard';
 import { useRouter } from 'next/navigation';
 import useVerifyAccount from '@/custom-hooks/useVerifyAccount';
 import useFetchTxns from '@/custom-hooks/multisig/useFetchTxns';
 import NoData from '@/components/common/NoData';
+import TransactionsLoading from '../loaders/TransactionsLoading';
 
 const TXNS_TYPES = [
   { option: 'to-sign', value: 'To be Signed' },
@@ -162,9 +162,7 @@ const Transactions = ({
           handleTxnsTypeChange={handleTxnsTypeChange}
         />
         {txnsStatus === TxStatus.PENDING ? (
-          <div className="h-40 flex justify-center items-center">
-            <CustomLoader />
-          </div>
+          <TransactionsLoading />
         ) : (
           <div>
             {txnsList?.length ? (

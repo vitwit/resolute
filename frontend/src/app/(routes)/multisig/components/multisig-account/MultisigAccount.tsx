@@ -21,8 +21,8 @@ import Transactions from './Transactions';
 import Loader from '../common/Loader';
 import Link from 'next/link';
 import { TxStatus } from '@/types/enums';
-import CustomLoader from '@/components/common/CustomLoader';
 import DialogVerifyAccount from '../common/DialogVerifyAccount';
+import MultisigInfoLoading from '../loaders/MultisigInfoLoading';
 
 const MultisigAccount = ({
   chainName,
@@ -96,8 +96,8 @@ const MultisigAccount = ({
   return (
     <div>
       {multigAccountRes === TxStatus.PENDING ? (
-        <div className="my-20">
-          <CustomLoader />
+        <div>
+          <MultisigInfoLoading />
         </div>
       ) : (
         <div className="space-y-10">
@@ -266,7 +266,7 @@ const MultisigMembersList = ({ members }: { members: string[] }) => {
 const MultisigMember = ({ address }: { address: string }) => {
   return (
     <div className="flex items-center gap-2">
-      <div className="text-[20px] font-bold">{shortenAddress(address, 10)}</div>
+      <div className="text-[20px] font-bold">{shortenAddress(address, 12)}</div>
       <Copy content={address} height={24} width={24} />
     </div>
   );
