@@ -2,9 +2,9 @@ import { useAppSelector } from '@/custom-hooks/StateHooks';
 import React from 'react';
 import MultisigAccountCard from './MultisigAccountCard';
 import { TxStatus } from '@/types/enums';
-import CustomLoader from '@/components/common/CustomLoader';
 import EmptyScreen from '@/components/common/EmptyScreen';
 import { NO_DATA_ILLUSTRATION } from '@/constants/image-names';
+import MultisigAccountsLoading from '../loaders/MultisigAccountsLoading';
 
 const AllMultisigAccounts = ({
   chainName,
@@ -23,9 +23,7 @@ const AllMultisigAccounts = ({
   return (
     <>
       {status === TxStatus.PENDING ? (
-        <div className="flex my-32 items-center justify-center w-full">
-          <CustomLoader />
-        </div>
+        <MultisigAccountsLoading />
       ) : (
         <div>
           {accounts?.length ? (

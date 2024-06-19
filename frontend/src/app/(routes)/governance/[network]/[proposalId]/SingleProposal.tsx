@@ -18,6 +18,7 @@ import ProposalProjection from '../../ProposalProjection';
 import { Tooltip } from '@mui/material';
 import DialogDeposit from '../../popups/DialogDeposit';
 import CustomButton from '@/components/common/CustomButton';
+import SingleProposalLoading from '../../loaders/SingleProposalLoading';
 
 const emptyTallyResult = {
   yes: '',
@@ -63,6 +64,9 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
   const tallyResult = useAppSelector(
     (state: RootState) =>
       state.gov.chains[chainID]?.tally?.proposalTally?.[proposalID]
+  );
+  const proposalStatus = useAppSelector(
+    (state) => state.gov.proposalInfo.status
   );
 
   const totalVotes = ['yes', 'no', 'abstain', 'no_with_veto'].reduce(
@@ -187,368 +191,413 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
 
   return (
     <>
-      {/* Banner */}
-      {isProposal2daysgo() ? (
-        <div className="fixed w-full bg-[#ffc13c] gap-2 px-6 py-3 flex items-center">
-          <Image src="/infoblack.svg" width={24} height={24} alt="info-icon" />
-          <p className="text-[#1C1C1D] text-sm font-semibold leading-[normal]">
-            Important
-          </p>
-          <p className="text-[#1C1C1D] text-sm font-normal leading-[normal]">
-            Voting ends in{' '}
-            {getTimeDifferenceToFutureDate(
-              get(proposalInfo, 'voting_end_time')
-            )}
-          </p>
-        </div>
-      ) : null}
-
-      <div className="flex items-start gap-10 pt-20 pb-0 px-10 w-full h-full">
-        <div className="flex items-start gap-20 w-full h-full">
-          <div className="flex flex-col flex-1 justify-between h-full">
-            <div className="flex flex-col gap-6">
-              <div className="secondary-btn">Go back</div>
-              <div className="flex flex-col gap-4">
-                <div className="flex justify-between w-full">
-                  <p className="text-white text-[28px] font-bold leading-[normal]">
-                    {/* Aave v3.1 Cantina competitione */}
-                    {get(proposalInfo, 'proposal_id', get(proposalInfo, 'id'))}.
-                    &nbsp;&nbsp;&nbsp;
-                    {get(
-                      proposalInfo,
-                      'content.title',
-                      get(proposalInfo, 'title', '-')
-                    ) || get(proposalInfo, 'content.@type', '')}
-                  </p>
-                  <div className="active-badge text-white text-sm font-normal leading-[normal]">
-                    Active
-                  </div>
-                </div>
-                <div className="flex gap-6 w-full">
-                  {/* <div className="flex gap-2">
-                                        <p className="text-[rgba(255,255,255,0.50)] text-xs font-extralight leading-[normal]">
-                                            By
-                                        </p>
-                                        <p className="text-white text-sm font-normal leading-[normal]">
-                                            0x2cc1...c54Df1
-                                        </p>
-                                    </div> */}
-                  <div className="flex gap-2">
-                    {isStatusVoting ? (
-                      <>
-                        <p className="text-[rgba(255,255,255,0.50)] text-xs font-extralight leading-[normal]">
-                          Voting
-                        </p>
-                        <p className="text-white text-sm font-normal leading-[normal]">
-                          Ends in{' '}
-                          {getTimeDifferenceToFutureDate(
-                            get(proposalInfo, 'voting_end_time')
-                          )}
-                        </p>
-                      </>
-                    ) : null}
-                  </div>
-                  <div className="flex gap-2">
-                    <p className="text-[rgba(255,255,255,0.50)] text-xs font-extralight leading-[normal]">
-                      on
-                    </p>
-                    <Image
-                      src={networkLogo}
-                      width={20}
-                      height={20}
-                      alt="Network-logo"
-                    />
-                    <p className="text-white text-sm font-normal leading-[normal]">
-                      {chainID}
-                    </p>
-                  </div>
-                </div>
-                <div className="divider-line"></div>
-              </div>
-
-              <div className="text-white h-[40vh]  flex flex-col justify-between relative">
-                <p
-                  className={`h-[40vh] ${showFullText ? 'overflow-scroll' : 'overflow-hidden'}`}
-                >
-                  {/* {ProposalSummary} */}
-                  {proposalMarkdown}
-                </p>
-
-                {showFullText ? (
-                  <p
-                    onClick={handleToggleText}
-                    className="cursor-pointer text-white justify-center text-sm font-normal leading-[normal] underline flex space-x-1 items-center"
-                  >
-                    Show Less
-                    <Image
-                      src="/up.svg"
-                      width={24}
-                      height={24}
-                      alt="Less-icon"
-                    />
-                  </p>
-                ) : (
-                  <div className="h-32 w-full relative flex">
-                    <div
-                      onClick={handleToggleText}
-                      className="cursor-pointer justify-center w-full bottom-14 absolute flex z-10 text-lg font-normal leading-[normal] underline  space-x-1  "
-                    >
-                      Continue Reading{' '}
-                      <Image
-                        src="/down.svg"
-                        width={24}
-                        height={24}
-                        alt="more-icon"
-                        className="ml-2"
-                      />
-                    </div>
-                    <div className="blur w-full absolute bottom-0  h-32"> </div>
-                  </div>
+      {proposalStatus === 'pending' ? (
+        <SingleProposalLoading />
+      ) : (
+        <>
+          {/* Banner */}
+          {isProposal2daysgo() ? (
+            <div className="fixed w-full bg-[#ffc13c] gap-2 px-6 py-3 flex items-center">
+              <Image
+                src="/infoblack.svg"
+                width={24}
+                height={24}
+                alt="info-icon"
+              />
+              <p className="text-[#1C1C1D] text-sm font-semibold leading-[normal]">
+                Important
+              </p>
+              <p className="text-[#1C1C1D] text-sm font-normal leading-[normal]">
+                Voting ends in{' '}
+                {getTimeDifferenceToFutureDate(
+                  get(proposalInfo, 'voting_end_time')
                 )}
-              </div>
-              <div className="cast-vote-grid ">
-                {isStatusVoting ? (
-                  <>
-                    <div className="flex px-6 py-4 rounded-2xl bg-[#FFFFFF05] justify-between w-full">
-                      <p className="text-white text-xs not-italic font-normal leading-[18px]">
-                        Caste your vote
-                      </p>
-                      <p className="text-white text-xs font-extralight leading-[18px]">
-                        Voting ends in{' '}
-                        {getTimeDifferenceToFutureDate(
-                          get(proposalInfo, 'voting_end_time')
-                        )}
-                      </p>
-                    </div>
+              </p>
+            </div>
+          ) : null}
 
-                    <Vote proposalId={proposalID} chainID={chainID} />
-                  </>
-                ) : (
-                  <>
-                    <CustomButton
-                      btnText={true ? 'Deposit' : 'Connect Wallet to Deposit'}
-                      btnOnClick={() => {
-                        setDepositDialogOpen(true);
-                      }}
-                      btnStyles="items-center"
-                    />
-                    <DialogDeposit
-                      chainID={chainID}
-                      endTime={get(proposalInfo, 'deposit_end_time', '-')}
-                      onClose={() => setDepositDialogOpen(false)}
-                      open={depositDialogOpen}
-                      proposalId={proposalID}
-                      proposalTitle={
-                        get(
+          <div className="flex items-start gap-10 pt-20 pb-0 px-10 w-full h-full">
+            <div className="flex items-start gap-20 w-full h-full">
+              <div className="flex flex-col flex-1 justify-between h-full">
+                <div className="flex flex-col gap-6">
+                  <div className="secondary-btn">Go back</div>
+                  <div className="flex flex-col gap-4">
+                    <div className="flex justify-between w-full items-center">
+                      <p className="text-white text-[28px] font-bold leading-[normal]">
+                        {/* Aave v3.1 Cantina competitione */}
+                        {get(
+                          proposalInfo,
+                          'proposal_id',
+                          get(proposalInfo, 'id')
+                        )}
+                        . &nbsp;&nbsp;&nbsp;
+                        {get(
                           proposalInfo,
                           'content.title',
                           get(proposalInfo, 'title', '-')
-                        ) || get(proposalInfo, 'content.@type', '')
-                      }
-                    />
-                  </>
-                )}
-              </div>
-            </div>
-          </div>
-
-          {/* RightSide View */}
-          <div className="flex flex-col justify-between h-full gap-5">
-            <div className="flex flex-col gap-6 p-6 rounded-2xl bg-[#FFFFFF05]">
-              <div className="flex flex-col gap-2">
-                <p className="text-white">Proposal Timeline</p>
-                <div className="divider-line"></div>
-              </div>
-              <div className="flex space-x-2 justify-center">
-                <ProposalProjection
-                  quorumReached={
-                    parseFloat(quorumPercent) >= parseFloat(quorumRequired)
-                  }
-                  quorumPercent={quorumPercent}
-                  quorumRequired={quorumRequired}
-                  totalVotes={totalVotes}
-                  tallyResult={tallyResult || emptyTallyResult}
-                />
-              </div>
-              <div className="flex gap-4 w-full">
-                <div className="flex justify-center items-center gap-2 px-4 py-2 rounded-[100px] bg-[#FFFFFF05] w-[158px]">
-                  <p className="text-white text-xs font-bold leading-[normal]">
-                    {quorumPercent} %
-                  </p>
-                  <p className="text-[rgba(255,255,255,0.50)] text-[10px] font-extralight leading-[normal]">
-                    Turnout
-                  </p>
-                </div>
-                <div className="flex justify-center items-center gap-2 px-4 py-2 rounded-[100px] bg-[#FFFFFF05] w-[158px]">
-                  <p className="text-white text-xs font-bold leading-[normal]">
-                    {quorumRequired}%
-                  </p>
-                  <p className="text-[rgba(255,255,255,0.50)] text-[10px] font-extralight leading-[normal]">
-                    Quorum
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex flex-col gap-6 p-6 rounded-2xl bg-[#FFFFFF05]">
-              <div className="flex flex-col gap-2">
-                <p className="text-white">Proposal Timeline</p>
-                <div className="divider-line"></div>
-              </div>
-              <div className="">
-                <div className="flex gap-4">
-                  <div className="flex flex-col justify-center items-center">
-                    <Image
-                      src="/radio-plain.svg"
-                      width={12}
-                      height={12}
-                      alt="Proposal-Created"
-                    />
-                    <div className="vertical-line "></div>
-                  </div>
-                  <div className="flex flex-col gap-2">
-                    <Tooltip
-                      title={getLocalTime(get(proposalInfo, 'submit_time'))}
-                      placement="top"
-                    >
-                      <p className="text-[#FFFFFF80]">
-                        {getTimeDifferenceToFutureDate(
-                          get(proposalInfo, 'submit_time'),
-                          true
-                        )}{' '}
-                        ago
+                        ) || get(proposalInfo, 'content.@type', '')}
                       </p>
-                    </Tooltip>
-                    <p className="text-white text-xs font-normal leading-[normal]">
-                      Proposal Created
-                    </p>
-                  </div>
-                </div>
-                <div className="flex gap-4">
-                  <div className="flex flex-col justify-center items-center">
-                    <Image
-                      src="/radio-clr.svg"
-                      width={12}
-                      height={12}
-                      alt="Proposal-Created"
-                    />
-                    <div className="vertical-line"></div>
-                  </div>
-                  <div className="flex flex-col gap-2">
-                    <Tooltip
-                      title={
-                        isStatusVoting
-                          ? getLocalTime(
-                              get(proposalInfo, 'voting_start_time', '-')
-                            )
-                          : getLocalTime(get(proposalInfo, 'submit_time', '-'))
-                      }
-                      placement="top"
-                    >
-                      <p className="text-[#FFFFFF80]">
-                        {isStatusVoting
-                          ? getTimeDifferenceToFutureDate(
-                              get(proposalInfo, 'voting_start_time', '-'),
-                              true
-                            )
-                          : getTimeDifferenceToFutureDate(
-                              get(proposalInfo, 'submit_time', '-'),
-                              true
-                            )}{' '}
-                        ago
-                      </p>
-                    </Tooltip>
-                    <p className="text-white text-xs font-normal leading-[normal]">
-                      {isStatusVoting ? 'Voting ' : 'Deposit Time '}
-                      started
-                    </p>
-                  </div>
-                </div>
-                <div className="flex gap-4">
-                  <div className="flex flex-col">
-                    <Image
-                      src="/radio-plain.svg"
-                      width={12}
-                      height={12}
-                      alt="Proposal-Created"
-                    />
-                  </div>
-                  <div className="flex flex-col gap-2">
-                    <Tooltip
-                      title={
-                        isStatusVoting
-                          ? getLocalTime(
-                              get(proposalInfo, 'voting_end_time', '-')
-                            )
-                          : getLocalTime(
-                              get(proposalInfo, 'deposit_end_time', '-')
-                            )
-                      }
-                      placement="top"
-                    >
-                      <p className="text-[#FFFFFF80]">
-                        in{' '}
-                        {isStatusVoting
-                          ? getTimeDifferenceToFutureDate(
-                              get(proposalInfo, 'voting_end_time', '-')
-                            )
-                          : getTimeDifferenceToFutureDate(
-                              get(proposalInfo, 'deposit_end_time', '-')
-                            )}
-                      </p>
-                    </Tooltip>
-                    <p className="text-white text-xs font-normal leading-[normal]">
-                      {isStatusVoting ? 'Voting' : 'Deposit Time '} ends
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex flex-col gap-6 p-6 rounded-2xl bg-[#FFFFFF05]">
-              <div className="flex flex-col gap-2">
-                <p className="text-white text-sm font-normal leading-[normal]">
-                  Current Status
-                </p>
-                <div className="divider-line"></div>
-              </div>
-              {data.map((v) => (
-                <div key={v.label} className="flex flex-col gap-2">
-                  <div className="flex gap-1 items-center">
-                    <p className="text-white text-xs font-normal leading-[normal]">
-                      {v.count}
-                    </p>
-                    <p className="secondary-text">Voted {v.label}</p>
-                  </div>
-                  <div className="flex space-x-2 items-center">
-                    <div className="bg-[#FFFFFF0D] w-full h-[10px] rounded-full relative">
-                      <div
-                        style={{
-                          width: `${v.value}%`,
-                          background: v.color,
-                        }}
-                        className="h-2 rounded-l-full"
-                      ></div>
+                      <div className="active-badge text-white text-sm font-normal leading-[normal]">
+                        Active
+                      </div>
                     </div>
-                    {v.label === 'Yes' ? (
-                      <Image
-                        src="/tick.png"
-                        width={12}
-                        height={12}
-                        alt="tick-icon"
-                      />
-                    ) : (
-                      <p className="text-white text-xs font-normal leading-[normal]">
-                        {v.value}%
+                    <div className="flex gap-6 w-full">
+                      {/* <div className="flex gap-2">
+                                    <p className="text-[rgba(255,255,255,0.50)] text-xs font-extralight leading-[normal]">
+                                        By
+                                    </p>
+                                    <p className="text-white text-sm font-normal leading-[normal]">
+                                        0x2cc1...c54Df1
+                                    </p>
+                                </div> */}
+                      <div className="flex gap-2 items-center">
+                        {isStatusVoting ? (
+                          <>
+                            <p className="text-[rgba(255,255,255,0.50)] text-xs font-extralight leading-[normal]">
+                              Voting
+                            </p>
+                            <p className="text-white text-sm font-normal leading-[normal]">
+                              Ends in{' '}
+                              {getTimeDifferenceToFutureDate(
+                                get(proposalInfo, 'voting_end_time')
+                              )}
+                            </p>
+                          </>
+                        ) : null}
+                      </div>
+                      <div className="flex gap-2 items-center">
+                        <p className="text-[rgba(255,255,255,0.50)] text-xs font-extralight leading-[normal]">
+                          on
+                        </p>
+                        <Image
+                          src={networkLogo}
+                          width={20}
+                          height={20}
+                          alt="Network-logo"
+                        />
+                        <p className="text-white text-sm font-normal leading-[normal]">
+                          {chainID}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="divider-line"></div>
+                  </div>
+
+                  <div className="text-white h-[40vh] flex flex-col justify-between relative">
+                    <p
+                      className={`h-[40vh] secondary-text ${showFullText ? 'overflow-scroll' : 'overflow-hidden'}`}
+                    >
+                      {/* {ProposalSummary} */}
+                      {proposalMarkdown}
+                    </p>
+
+                    {showFullText ? (
+                      <p
+                        onClick={handleToggleText}
+                        className="cursor-pointer text-white justify-center text-sm font-normal leading-[normal] underline flex space-x-1 items-center"
+                      >
+                        Show Less
+                        <Image
+                          src="/up.svg"
+                          width={24}
+                          height={24}
+                          alt="Less-icon"
+                        />
                       </p>
+                    ) : (
+                      <div className="h-40 w-full relative flex">
+                        <div
+                          onClick={handleToggleText}
+                          className="cursor-pointer justify-center w-full bottom-14 absolute flex z-10 text-lg font-normal leading-[normal] underline  space-x-1  "
+                        >
+                          Continue Reading{' '}
+                          <Image
+                            src="/down.svg"
+                            width={24}
+                            height={24}
+                            alt="more-icon"
+                            className="ml-2"
+                          />
+                        </div>
+                        <div className="blur w-full absolute bottom-0 h-32">
+                          {' '}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                  <div className="cast-vote-grid">
+                    {isStatusVoting ? (
+                      <>
+                        <div className="flex px-6 py-4 rounded-2xl bg-[#FFFFFF05] justify-between w-full">
+                          <p className="text-b1">Caste your vote</p>
+                          <p className="text-xs font-extralight leading-[18px]">
+                            Voting ends in{' '}
+                            {getTimeDifferenceToFutureDate(
+                              get(proposalInfo, 'voting_end_time')
+                            )}
+                          </p>
+                        </div>
+
+                        <Vote
+                          proposalId={proposalID}
+                          chainID={chainID}
+                          colCount={2}
+                        />
+                      </>
+                    ) : (
+                      <>
+                        <div className="flex px-6 py-4 rounded-2xl bg-[#FFFFFF05] justify-between w-full">
+                          <p className="text-b1">Deposit</p>
+                          <p className="text-xs font-extralight leading-[18px]">
+                            Deposit Period ends in{' '}
+                            {getTimeDifferenceToFutureDate(
+                              get(proposalInfo, 'voting_end_time')
+                            )}
+                          </p>
+                        </div>
+                        <div className="space-y-2 w-full">
+                          <div className="form-label-text">
+                            Enter Amount here
+                          </div>
+                          <input
+                            type="number"
+                            className="search-network-field w-full"
+                            placeholder=""
+                          />
+                        </div>
+
+                        <CustomButton
+                          btnText={
+                            true ? 'Deposit' : 'Connect Wallet to Deposit'
+                          }
+                          btnOnClick={() => {
+                            setDepositDialogOpen(true);
+                          }}
+                          btnStyles="items-center w-full"
+                        />
+                        <DialogDeposit
+                          chainID={chainID}
+                          endTime={get(proposalInfo, 'deposit_end_time', '-')}
+                          onClose={() => setDepositDialogOpen(false)}
+                          open={depositDialogOpen}
+                          proposalId={proposalID}
+                          proposalTitle={
+                            get(
+                              proposalInfo,
+                              'content.title',
+                              get(proposalInfo, 'title', '-')
+                            ) || get(proposalInfo, 'content.@type', '')
+                          }
+                        />
+                      </>
                     )}
                   </div>
                 </div>
-              ))}
+              </div>
+
+              {/* RightSide View */}
+              <div className="flex flex-col justify-between h-full gap-5">
+                <div className="flex flex-col gap-6 p-6 rounded-2xl bg-[#FFFFFF05]">
+                  <div className="flex flex-col gap-2">
+                    <p className="text-b1">Proposal Prediction</p>
+                    <div className="divider-line"></div>
+                  </div>
+                  <div className="flex space-x-2 justify-center">
+                    <ProposalProjection
+                      quorumReached={
+                        parseFloat(quorumPercent) >= parseFloat(quorumRequired)
+                      }
+                      quorumPercent={quorumPercent}
+                      quorumRequired={quorumRequired}
+                      totalVotes={totalVotes}
+                      tallyResult={tallyResult || emptyTallyResult}
+                    />
+                  </div>
+                  <div className="flex gap-4 w-full">
+                    <div className="flex justify-center items-center gap-2 px-4 py-2 rounded-[100px] bg-[#FFFFFF05] w-[158px]">
+                      <p className="text-white text-xs font-bold leading-[normal]">
+                        {quorumPercent} %
+                      </p>
+                      <p className="text-[rgba(255,255,255,0.50)] text-[10px] font-extralight leading-[normal]">
+                        Turnout
+                      </p>
+                    </div>
+                    <div className="flex justify-center items-center gap-2 px-4 py-2 rounded-[100px] bg-[#FFFFFF05] w-[158px]">
+                      <p className="text-white text-xs font-bold leading-[normal]">
+                        {quorumRequired}%
+                      </p>
+                      <p className="text-[rgba(255,255,255,0.50)] text-[10px] font-extralight leading-[normal]">
+                        Quorum
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-6 p-6 rounded-2xl bg-[#FFFFFF05]">
+                  <div className="flex flex-col gap-2">
+                    <p className="text-b1">Proposal Timeline</p>
+                    <div className="divider-line"></div>
+                  </div>
+                  <div className="">
+                    <div className="flex gap-4">
+                      <div className="flex flex-col justify-center items-center">
+                        <Image
+                          src="/radio-plain.svg"
+                          width={12}
+                          height={12}
+                          alt="Proposal-Created"
+                        />
+                        <div className="vertical-line "></div>
+                      </div>
+                      <div className="flex flex-col gap-2">
+                        <Tooltip
+                          title={getLocalTime(get(proposalInfo, 'submit_time'))}
+                          placement="top"
+                        >
+                          <p className="text-[#FFFFFF80] text-[10px]">
+                            {getTimeDifferenceToFutureDate(
+                              get(proposalInfo, 'submit_time'),
+                              true
+                            )}{' '}
+                            ago
+                          </p>
+                        </Tooltip>
+                        <p className="text-xs font-normal leading-[normal]">
+                          Proposal Created
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex gap-4">
+                      <div className="flex flex-col justify-center items-center">
+                        <Image
+                          src="/radio-clr.svg"
+                          width={12}
+                          height={12}
+                          alt="Proposal-Created"
+                        />
+                        <div className="vertical-line"></div>
+                      </div>
+                      <div className="flex flex-col gap-2">
+                        <Tooltip
+                          title={
+                            isStatusVoting
+                              ? getLocalTime(
+                                  get(proposalInfo, 'voting_start_time', '-')
+                                )
+                              : getLocalTime(
+                                  get(proposalInfo, 'submit_time', '-')
+                                )
+                          }
+                          placement="top"
+                        >
+                          <p className="text-[#FFFFFF80] text-[10px]">
+                            {isStatusVoting
+                              ? getTimeDifferenceToFutureDate(
+                                  get(proposalInfo, 'voting_start_time', '-'),
+                                  true
+                                )
+                              : getTimeDifferenceToFutureDate(
+                                  get(proposalInfo, 'submit_time', '-'),
+                                  true
+                                )}{' '}
+                            ago
+                          </p>
+                        </Tooltip>
+                        <p className="text-white text-xs font-normal leading-[normal]">
+                          {isStatusVoting ? 'Voting ' : 'Deposit Time '}
+                          started
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex gap-4">
+                      <div className="flex flex-col">
+                        <Image
+                          src="/radio-plain.svg"
+                          width={12}
+                          height={12}
+                          alt="Proposal-Created"
+                        />
+                      </div>
+                      <div className="flex flex-col gap-2">
+                        <Tooltip
+                          title={
+                            isStatusVoting
+                              ? getLocalTime(
+                                  get(proposalInfo, 'voting_end_time', '-')
+                                )
+                              : getLocalTime(
+                                  get(proposalInfo, 'deposit_end_time', '-')
+                                )
+                          }
+                          placement="top"
+                        >
+                          <p className="text-[#FFFFFF80] text-[10px]">
+                            in{' '}
+                            {isStatusVoting
+                              ? getTimeDifferenceToFutureDate(
+                                  get(proposalInfo, 'voting_end_time', '-')
+                                )
+                              : getTimeDifferenceToFutureDate(
+                                  get(proposalInfo, 'deposit_end_time', '-')
+                                )}
+                          </p>
+                        </Tooltip>
+                        <p className="text-white text-xs font-normal leading-[normal]">
+                          {isStatusVoting ? 'Voting' : 'Deposit Time '} ends
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-6 p-6 rounded-2xl bg-[#FFFFFF05]">
+                  <div className="flex flex-col gap-2">
+                    <p className="text-white text-sm font-normal leading-[normal]">
+                      Current Status
+                    </p>
+                    <div className="divider-line"></div>
+                  </div>
+                  {data.map((v) => (
+                    <div key={v.label} className="flex flex-col gap-2">
+                      <div className="flex gap-1 items-center">
+                        <p className="text-white text-xs font-normal leading-[normal]">
+                          {v.count}
+                        </p>
+                        <p className="text-[#FFFFFF80] text-[10px]">
+                          Voted {v.label}
+                        </p>
+                      </div>
+                      <div className="flex space-x-2 items-center">
+                        <div className="bg-[#FFFFFF0D] w-[300px] h-[10px] rounded-full relative">
+                          <div
+                            style={{
+                              width: `${v.value}%`,
+                              background: v.color,
+                            }}
+                            className="h-2 rounded-l-full"
+                          ></div>
+                        </div>
+                        {v.label === 'Yes' ? (
+                          <Image
+                            src="/right.png"
+                            width={24}
+                            height={24}
+                            alt="tick-icon"
+                          />
+                        ) : (
+                          <p className="text-white text-xs font-normal leading-[normal]">
+                            {v.value}%
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
+        </>
+      )}
     </>
   );
 };

@@ -177,17 +177,24 @@ const Asset = ({
         </div>
       </th>
       <th>
-        <div className="text-base font-normal leading-[normal] items-start flex">
-          {asset.type === 'native'
-            ? formatCoin(asset.staked, asset.displayDenom)
-            : '-'}
+        <div className="flex flex-col items-start gap-2">
+          <div className="text-base font-normal leading-[normal] items-start flex">
+            {asset.type === 'native'
+              ? formatCoin(asset.staked, asset.displayDenom)
+              : '-'}
+          </div>
+
+          <div className="w-4 h-4" />
         </div>
       </th>
       <th>
-        <div className="text-base font-normal leading-[normal] items-start flex">
-          {asset.type === 'native'
-            ? formatCoin(asset.rewards, asset.displayDenom)
-            : '-'}
+        <div className="flex flex-col items-start gap-2">
+          <div className="text-base font-normal leading-[normal] items-start flex">
+            {asset.type === 'native'
+              ? formatCoin(asset.rewards, asset.displayDenom)
+              : '-'}
+          </div>
+          <div className="w-4 h-4" />
         </div>
       </th>
       <th>
@@ -218,8 +225,11 @@ const Asset = ({
         </div>
       </th>
       <th>
-        <div className="text-base font-normal leading-[normal] items-start flex">
-          {formatDollarAmount(asset.usdValue)}
+        <div className="flex flex-col gap-2">
+          <div className="text-base font-normal leading-[normal] items-start flex">
+            {formatDollarAmount(asset.usdValue)}
+          </div>
+          <div className="w-4 h-4" />
         </div>
       </th>
       <th>
@@ -259,7 +269,7 @@ const Asset = ({
               <div className="w-full">
                 <a
                   href="#"
-                  className="flex items-center w-full p-4 text-b1 hover:bg-[#FFFFFF10]"
+                  className="flex items-center w-full p-4 text-b1 hover:bg-[#FFFFFF10] rounded-t-2xl"
                 >
                   <Tooltip
                     title={
@@ -285,7 +295,7 @@ const Asset = ({
                 </a>
                 <a
                   href="#"
-                  className="flex items-center w-full p-4 text-b1 hover:bg-[#FFFFFF10]"
+                  className="flex items-center w-full p-4 text-b1 hover:bg-[#FFFFFF10] rounded-b-2xl"
                 >
                   <Tooltip
                     title={

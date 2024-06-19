@@ -14,6 +14,7 @@ import StakingDelegations from './StakingDelegations';
 // import { useAppSelector } from '@/custom-hooks/StateHooks';
 
 const StakingDashboard = () => {
+  const dispatch = useAppDispatch();
   const staking = useStaking();
   const {
     totalStakedAmount,
@@ -27,15 +28,21 @@ const StakingDashboard = () => {
   const isWalletConnected = useAppSelector(
     (state: RootState) => state.wallet.connected
   );
-  const dispatch = useAppDispatch();
+  const isAuthzMode = useAppSelector((state) => state.authz.authzModeEnabled);
+  const hasUnbonding = useAppSelector(
+    (state: RootState) => state.staking.hasUnbonding
+  );
+  const hasAuthzUnbonding = useAppSelector(
+    (state: RootState) => state.staking.authz.hasUnbonding
+  );
   const connectWalletOpen = () => {
     dispatch(setConnectWalletOpen(true));
   };
 
   return (
-    <div className="flex flex-col items-start gap-20 w-full px-10 py-20">
+    <div className="flex flex-col items-start  w-full px-10 py-20">
       <div
-        className={`flex flex-col w-full ${isWalletConnected ? ' gap-10' : ''}`}
+        className={`flex flex-col w-full ${isWalletConnected ? ' gap-20' : 'gap-10'}`}
       >
         <div className="space-y-2 items-start">
           <div className="text-h1">Staking</div>
@@ -44,7 +51,7 @@ const StakingDashboard = () => {
               'Connect your wallet now to access all the modules on resolute'
             ) : (
               <p>
-                Here’s an overview of your staked assets, including delegation
+                Here&apos;s an overview of your staked assets, including delegation
                 and undelegation details, and your total staked balance.
               </p>
             )}
@@ -62,7 +69,10 @@ const StakingDashboard = () => {
               rewardsAmount={rewardsAmount}
             />
             {/* Unbonding */}
-            <StakingUnDelegations undelegations={delegations} />
+            {(!isAuthzMode && hasUnbonding) ||
+            (isAuthzMode && hasAuthzUnbonding) ? (
+              <StakingUnDelegations undelegations={delegations} />
+            ) : null}
 
             {/* Delegations */}
             <StakingDelegations delegations={delegations} />

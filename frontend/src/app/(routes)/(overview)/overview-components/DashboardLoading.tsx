@@ -2,8 +2,8 @@ import React from 'react';
 
 const DashboardLoading = () => {
   return (
-    <div className="flex-col px-10 pt-20">
-      <div className="flex flex-col items-center gap-10 mb-20">
+    <div className="flex-col w-full">
+      {/* <div className="flex flex-col items-center gap-10 mb-20">
         <div className="flex flex-col items-start gap-2 w-full">
           <div className="flex space-x-2">
             <div className="text-h1 italic space-x-4">Hello</div>
@@ -15,7 +15,6 @@ const DashboardLoading = () => {
           <div className="divider-line"></div>
         </div>
 
-        {/* <BalanceSummary chainIDs={chainIDs} />  Skeleton*/}
         <div className="flex gap-6 w-full px-6 py-0">
           <div className="grid grid-cols-4 gap-4 w-full">
             {[1, 2, 3, 4].map((_, index) => (
@@ -26,13 +25,9 @@ const DashboardLoading = () => {
             ))}
           </div>
         </div>
-      </div>
+      </div> */}
 
       {/* <AssetsTable chainIDs={chainIDs} /> Skeleton*/}
-      <div className="space-y-1">
-        <div className="text-h2">Asset Information</div>
-        <div className="divider-line"></div>
-      </div>
       <div className="flex flex-col items-start gap-2 w-full p-6">
         <table className="relative w-full">
           <thead className="w-full">

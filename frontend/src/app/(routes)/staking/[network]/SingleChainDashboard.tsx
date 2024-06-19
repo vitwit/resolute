@@ -6,13 +6,27 @@ import StakingSummary from '../components/StakingSummary';
 import StakingUnDelegations from '../components/StakingUnDelegations';
 import StakingDelegations from '../components/StakingDelegations';
 import ValidatorTable from '../components/ValidatorTable';
+import { useAppSelector } from '@/custom-hooks/StateHooks';
 // import { RootState } from '@/store/store';
 // import { useAppSelector } from '@/custom-hooks/StateHooks';
 
 const SingleStakingDashboard = ({ chainID }: { chainID: string }) => {
   const staking = useSingleStaking(chainID);
-  const { totalStakedAmount, rewardsAmount, totalUnStakedAmount, availableAmount } = staking.getStakingAssets()
-  const delegations = staking.getAllDelegations(chainID)
+  const {
+    totalStakedAmount,
+    rewardsAmount,
+    totalUnStakedAmount,
+    availableAmount,
+  } = staking.getStakingAssets();
+  const delegations = staking.getAllDelegations(chainID);
+  const isAuthzMode = useAppSelector((state) => state.authz.authzModeEnabled);
+  const stakingData = useAppSelector((state) => state.staking.chains);
+  const authzStakingData = useAppSelector(
+    (state) => state.staking.authz.chains
+  );
+  const hasUnbondings = isAuthzMode
+    ? authzStakingData[chainID]?.unbonding?.hasUnbonding
+    : stakingData[chainID]?.unbonding.hasUnbonding;
 
   return (
     <div className="flex flex-col items-start gap-20 flex-[1_0_0] self-stretch px-10 py-20">
@@ -22,7 +36,8 @@ const SingleStakingDashboard = ({ chainID }: { chainID: string }) => {
             Staking
           </div>
           <div className="text-[rgba(255,255,255,0.50)] text-sm not-italic font-extralight leading-8">
-            Summary of Staked Assets: This includes the total value of staked assets, accumulated rewards, and available balance.
+            Summary of Staked Assets: This includes the total value of staked
+            assets, accumulated rewards, and available balance.
           </div>
           <div className="horizontal-line"></div>
         </div>
@@ -31,11 +46,17 @@ const SingleStakingDashboard = ({ chainID }: { chainID: string }) => {
           availableAmount={availableAmount}
           stakedAmount={totalStakedAmount}
           unstakeAmount={totalUnStakedAmount}
-          rewardsAmount={rewardsAmount} />
+          rewardsAmount={rewardsAmount}
+        />
       </div>
 
       {/* Unbonding */}
-      <StakingUnDelegations isSingleChain={true} undelegations={delegations} />
+      {hasUnbondings ? (
+        <StakingUnDelegations
+          isSingleChain={true}
+          undelegations={delegations}
+        />
+      ) : null}
 
       {/* Delegations */}
       <StakingDelegations isSingleChain={true} delegations={delegations} />

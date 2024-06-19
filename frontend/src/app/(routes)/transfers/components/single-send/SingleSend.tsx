@@ -37,6 +37,7 @@ const SingleSend = ({ sortedAssets }: { sortedAssets: ParsedAsset[] }) => {
   const allNetworks = useAppSelector((state) => state.common.allNetworksInfo);
   const nameToChainIDs = useAppSelector((state) => state.wallet.nameToChainIDs);
   const isWalletConnected = useAppSelector((state) => state.wallet.connected);
+  const balancesLoading = useAppSelector((state) => state.bank.balancesLoading);
 
   const feeAmount = selectedAsset
     ? getChainInfo(selectedAsset.chainID).feeAmount
@@ -195,6 +196,7 @@ const SingleSend = ({ sortedAssets }: { sortedAssets: ParsedAsset[] }) => {
             selectedAsset={selectedAsset}
             sortedAssets={sortedAssets}
             handleAssetChange={handleAssetChange}
+            loading={!!balancesLoading}
           />
         </div>
         <SingleSendForm

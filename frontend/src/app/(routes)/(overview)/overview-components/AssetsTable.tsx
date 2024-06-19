@@ -2,8 +2,8 @@ import { useAppSelector } from '@/custom-hooks/StateHooks';
 import useSortedAssets from '@/custom-hooks/useSortedAssets';
 import React from 'react';
 import Asset from './Asset';
-import { CircularProgress } from '@mui/material';
 import NoAssets from '@/components/illustrations/NoAssets';
+import DashboardLoading from './DashboardLoading';
 
 const AssetsTable = ({ chainIDs }: { chainIDs: string[] }) => {
   const isAuthzMode = useAppSelector((state) => state.authz.authzModeEnabled);
@@ -77,9 +77,9 @@ const AssetsTable = ({ chainIDs }: { chainIDs: string[] }) => {
           </table>
         </div>
       ) : (
-        <div className="w-full flex flex-col flex-1 items-center justify-center text-white">
+        <div className="w-full flex flex-col flex-1 items-center justify-start text-white">
           {loading || authzLoading ? (
-            <CircularProgress size={32} />
+            <DashboardLoading />
           ) : (
             <NoAssets />
           )}

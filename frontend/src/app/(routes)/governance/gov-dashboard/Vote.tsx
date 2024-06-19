@@ -15,9 +15,11 @@ import { setConnectWalletOpen } from '@/store/features/wallet/walletSlice';
 const Vote = ({
   chainID,
   proposalId,
+  colCount,
 }: {
   proposalId: string;
   chainID: string;
+  colCount: number;
 }) => {
   const { getFeegranter } = useGetFeegranter();
   const { getChainInfo, getDenomInfo } = useGetChainInfo();
@@ -96,10 +98,10 @@ const Vote = ({
 
   return (
     <div className="flex flex-col gap-10 w-full">
-      <div className="flex justify-between gap-4">
+      <div className={`grid-cols-${colCount} grid  gap-6`}>
         {GOV_VOTE_OPTIONS?.map((option) => (
           <button
-          key={option.label}
+            key={option.label}
             className={`vote-optn-btn flex-1 text-white text-base`}
             onClick={() => handleOptionClick(option.label)}
             style={{
