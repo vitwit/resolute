@@ -2,7 +2,6 @@ import { useAppSelector } from '@/custom-hooks/StateHooks';
 import useSortedAssets from '@/custom-hooks/useSortedAssets';
 import React from 'react';
 import Asset from './Asset';
-import { CircularProgress } from '@mui/material';
 import NoAssets from '@/components/illustrations/NoAssets';
 import DashboardLoading from './DashboardLoading';
 
