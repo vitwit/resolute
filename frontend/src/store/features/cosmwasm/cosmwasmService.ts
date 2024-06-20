@@ -85,7 +85,7 @@ export const connectWithSigner = async (urls: string[], offlineSigner: any) => {
 };
 
 export const getCodes = async (baseURLs: string[]) => {
-  return axiosGetRequestWrapper(baseURLs, codesURL, 10);
+  return axiosGetRequestWrapper(baseURLs, codesURL);
 };
 
 export const getContractsByCode = async (
@@ -93,7 +93,7 @@ export const getContractsByCode = async (
   codeId: string
 ) => {
   const uri = contractsByCodeURL(codeId);
-  return axiosGetRequestWrapper(baseURLs, uri, 10);
+  return axiosGetRequestWrapper(baseURLs, uri);
 };
 
 const result = {

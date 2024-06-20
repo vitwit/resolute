@@ -1,7 +1,6 @@
 import { AxiosResponse } from 'axios';
 import { convertPaginationToParams } from '@/utils/util';
 import { axiosGetRequestWrapper } from '@/utils/RequestWrapper';
-import { MAX_TRY_END_POINTS } from '@/utils/constants';
 
 const grantToMeURL = '/cosmos/feegrant/v1beta1/allowances/';
 const grantByMeURL = '/cosmos/feegrant/v1beta1/issued/';
@@ -18,7 +17,7 @@ const fetchGrantsToMe = (
     endPoint += `?${parsed}`;
   }
 
-  return axiosGetRequestWrapper(baseURLs, endPoint, MAX_TRY_END_POINTS);
+  return axiosGetRequestWrapper(baseURLs, endPoint);
 };
 
 const fetchGrantsByMe = (
@@ -33,7 +32,7 @@ const fetchGrantsByMe = (
     endPoint += `?${parsed}`;
   }
 
-  return axiosGetRequestWrapper(baseURLs, endPoint, MAX_TRY_END_POINTS);
+  return axiosGetRequestWrapper(baseURLs, endPoint);
 };
 
 const result = {

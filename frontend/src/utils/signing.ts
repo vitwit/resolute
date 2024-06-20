@@ -6,7 +6,7 @@ import {
 } from 'cosmjs-types/cosmos/tx/v1beta1/tx.js';
 import { Buffer } from 'buffer';
 import axios, { AxiosError, AxiosResponse } from 'axios';
-import {  PubKey as comsjsPubKey } from 'cosmjs-types/cosmos/crypto/secp256k1/keys.js';
+import { PubKey as comsjsPubKey } from 'cosmjs-types/cosmos/crypto/secp256k1/keys.js';
 import { toBase64, fromBase64 } from '@cosmjs/encoding';
 import Long from 'long';
 import {
@@ -33,7 +33,7 @@ import {
 } from '@cosmjs/proto-signing';
 import { ERR_NO_OFFLINE_AMINO_SIGNER, ERR_UNKNOWN } from './errors';
 import { Coin } from 'cosmjs-types/cosmos/base/v1beta1/coin';
-import { GAS_FEE, MAX_TRY_END_POINTS } from './constants';
+import { GAS_FEE } from './constants';
 import { MsgCancelUnbondingDelegation } from 'cosmjs-types/cosmos/staking/v1beta1/tx';
 import { CosmjsOfflineSigner } from '@leapwallet/cosmos-snap-provider';
 import { SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate';
@@ -42,7 +42,7 @@ import { get } from 'lodash';
 import { axiosGetRequestWrapper } from './RequestWrapper';
 
 const ETH_BASE_ACCOUNT_TYPE = '/ethermint.types.v1.EthAccount';
-const ETH_CHAIN_ACCOUNT_PREFIXES = 'dym'
+const ETH_CHAIN_ACCOUNT_PREFIXES = 'dym';
 
 declare const window: WalletWindow;
 
@@ -62,7 +62,9 @@ const canUseAmino = (aminoConfig: AminoConfig, messages: Msg[]): boolean => {
     ) {
       return false;
     } else if (
-      message.typeUrl.includes('/cosmos.distribution.v1beta1.MsgWithdrawValidatorCommission') 
+      message.typeUrl.includes(
+        '/cosmos.distribution.v1beta1.MsgWithdrawValidatorCommission'
+      )
     ) {
       return false;
     }
@@ -181,6 +183,7 @@ export const signAndBroadcast = async (
       memo,
       1.2,
       gasPrice,
+      chainId,
       granter
     );
   }
@@ -244,7 +247,7 @@ export const signAndBroadcast = async (
       registry
     );
 
-    return await broadcast(txBody, restUrl, restURLs);
+    return await broadcast(txBody, restUrl, chainId, restURLs);
   }
 
   // return Promise.resolve(parseTxResult({
@@ -303,10 +306,14 @@ function getFee(gas: number, gasPrice: string, granter?: string): StdFee {
   return calculateFee(gas, gasPrice, granter);
 }
 
-async function getAccount(restUrl: string, address: string): Promise<Account> {
+async function getAccount(
+  restUrl: string,
+  address: string,
+  chainId: string
+): Promise<Account> {
   try {
     const res: AxiosResponse<GetAccountResponse> = await axios.get(
-      restUrl + '/cosmos/auth/v1beta1/accounts/' + address
+      restUrl + '/cosmos/auth/v1beta1/accounts/' + address + `?chain=${chainId}`
     );
 
     return res.data.account;
@@ -329,9 +336,10 @@ async function simulate(
   memo: string,
   modifier: number,
   gasPrice: string,
+  chainId: string,
   granter?: string
 ): Promise<number> {
-  const account = await getAccount(restUrl, address);
+  const account = await getAccount(restUrl, address, chainId);
   const fee = getFee(50_000, gasPrice, granter);
   const amount: Coin[] = fee.amount.map((coin) => {
     return { amount: coin.amount, denom: coin.denom };
@@ -352,7 +360,7 @@ async function simulate(
 
   try {
     const estimate = await axios
-      .post(restUrl + '/cosmos/tx/v1beta1/simulate', {
+      .post(restUrl + `/cosmos/tx/v1beta1/simulate?chain=${chainId}`, {
         tx_bytes: toBase64(TxRaw.encode(txBody).finish()),
       })
       .then((el) => el.data.gas_info.gas_used);
@@ -368,6 +376,7 @@ async function simulate(
 async function broadcast(
   txBody: TxRaw,
   restUrl: string,
+  chainId: string,
   restURLs?: Array<string>
 ): Promise<ParsedTxResponse> {
   const timeoutMs = 60_000;
@@ -390,12 +399,15 @@ async function broadcast(
     await sleep(pollIntervalMs);
     try {
       if (restURLs?.length) {
-        const response = await axiosGetRequestWrapper(restURLs, `/cosmos/tx/v1beta1/txs/${txId}`, MAX_TRY_END_POINTS)
+        const response = await axiosGetRequestWrapper(
+          restURLs,
+          `/cosmos/tx/v1beta1/txs/${txId}?chain=${chainId}`
+        );
         const result = parseTxResult(response.data.tx_response);
         return result;
       } else {
         const response = await axios.get(
-          restUrl + '/cosmos/tx/v1beta1/txs/' + txId
+          restUrl + '/cosmos/tx/v1beta1/txs/' + txId + `?chain=${chainId}`
         );
         const result = parseTxResult(response.data.tx_response);
         return result;
@@ -417,13 +429,18 @@ async function broadcast(
     }
   };
 
-  const response = await axios.post(restUrl + '/cosmos/tx/v1beta1/txs', {
-    tx_bytes: toBase64(TxRaw.encode(txBody).finish()),
-    mode: 'BROADCAST_MODE_SYNC',
-  });
+  const response = await axios.post(
+    restUrl + '/cosmos/tx/v1beta1/txs' + `?chain=${chainId}`,
+    {
+      tx_bytes: toBase64(TxRaw.encode(txBody).finish()),
+      mode: 'BROADCAST_MODE_SYNC',
+    }
+  );
   console.log('response of the post txn ', response);
-  const result = parseTxResult(response.data.tx_response);
+  const parsedData = JSON.parse(response.data);
+  const result = parseTxResult(parsedData.tx_response);
   if (result.code !== 0) return result;
+  console.log('result....', result);
   // have ambiguous issues, todo...
   //assertIsDeliverTxSuccess(result);
   return pollForTx(result.transactionHash).then(
@@ -493,16 +510,16 @@ async function sign(
   authInfoBytes: Uint8Array;
   signatures: [Uint8Array] | [Buffer];
 }> {
-  let account = await getAccount(restUrl, address);
+  let account = await getAccount(restUrl, address, chainId);
 
   if (get(account, '@type') === ETH_BASE_ACCOUNT_TYPE)
     account = {
       '@type': get(account, '@type') || '',
-      'address': get(account, 'base_account.address') || '',
-      'account_number': get(account, 'base_account.account_number') || '',
+      address: get(account, 'base_account.address') || '',
+      account_number: get(account, 'base_account.account_number') || '',
       pub_key: get(account, 'base_account.pub_key'),
-      sequence: get(account, 'base_account.sequence') || ''
-    }
+      sequence: get(account, 'base_account.sequence') || '',
+    };
 
   const { account_number, sequence } = account;
   const txBodyBytes = makeBodyBytes(registry, messages, memo);
@@ -549,10 +566,9 @@ async function sign(
         signatures: [Buffer.from(signature.signature, 'base64')],
       };
     } catch (error) {
-      console.log('error while make auth info bytes', error)
+      console.log('error while make auth info bytes', error);
       throw new Error('Request rejected');
     }
-
   }
 
   // if the signer is direct signer
@@ -628,8 +644,12 @@ async function makeAuthInfoBytes(
     signerInfos: [
       {
         publicKey: {
-          typeUrl: pubkeyTypeUrl(account?.pub_key,
-            account.address.includes(ETH_CHAIN_ACCOUNT_PREFIXES) ? 60 : undefined),
+          typeUrl: pubkeyTypeUrl(
+            account?.pub_key,
+            account.address.includes(ETH_CHAIN_ACCOUNT_PREFIXES)
+              ? 60
+              : undefined
+          ),
           value: comsjsPubKey
             .encode({
               key: signerPubkey,
@@ -644,7 +664,10 @@ async function makeAuthInfoBytes(
   }).finish();
 }
 
-const pubkeyTypeUrl = (pub_key?: globalThis.PubKey, coinType?: number): string => {
+const pubkeyTypeUrl = (
+  pub_key?: globalThis.PubKey,
+  coinType?: number
+): string => {
   if (pub_key && pub_key['@type']) return pub_key['@type'];
 
   if (coinType === 60) {

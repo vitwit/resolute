@@ -1,7 +1,10 @@
 'use client';
 
 import { AxiosResponse } from 'axios';
-import { convertPaginationToParams } from '../../../utils/util';
+import {
+  addChainIDParam,
+  convertPaginationToParams,
+} from '../../../utils/util';
 import {
   GetDelegationsResponse,
   GetParamsResponse,
@@ -10,7 +13,6 @@ import {
   Validator,
 } from '../../../types/staking';
 import { axiosGetRequestWrapper } from '@/utils/RequestWrapper';
-import { MAX_TRY_END_POINTS } from '@/utils/constants';
 const validatorsURL = '/cosmos/staking/v1beta1/validators';
 const delegationsURL = '/cosmos/staking/v1beta1/delegations/';
 const unbondingDelegationsURL = (address: string) =>
@@ -29,6 +31,7 @@ const oasisDelegationsURL = (operatorAddress: string) =>
 
 const fetchValidators = (
   baseURLs: string[],
+  chainID: string,
   status?: string,
   pagination?: KeyLimitPagination
 ): Promise<AxiosResponse<GetValidatorsResponse>> => {
@@ -41,58 +44,74 @@ const fetchValidators = (
   } else {
     if (pageParams) endPoint += `?${pageParams}`;
   }
+  endPoint = addChainIDParam(endPoint, chainID);
 
-  return axiosGetRequestWrapper(baseURLs, endPoint, MAX_TRY_END_POINTS);
+  return axiosGetRequestWrapper(baseURLs, endPoint);
 };
 
 const fetchdelegations = (
   baseURLs: string[],
   address: string,
+  chainID: string,
   pagination: KeyLimitPagination
 ): Promise<AxiosResponse<GetDelegationsResponse>> => {
   let endPoint = `${delegationsURL}${address}`;
   const pageParams = convertPaginationToParams(pagination);
-  if (pageParams !== '') endPoint += `?${pageParams}`;
+  if (pageParams !== '') {
+    endPoint += `?${pageParams}`;
+  }
+  endPoint = addChainIDParam(endPoint, chainID);
 
-  return axiosGetRequestWrapper(baseURLs, endPoint, MAX_TRY_END_POINTS);
+  return axiosGetRequestWrapper(baseURLs, endPoint);
 };
 
 const fetchUnbonding = async (
   baseURLs: string[],
-  address: string
+  address: string,
+  chainID: string
 ): Promise<AxiosResponse<GetUnbondingResponse>> => {
-  const endPoint = `${unbondingDelegationsURL(address)}`;
+  let endPoint = `${unbondingDelegationsURL(address)}`;
+  endPoint = addChainIDParam(endPoint, chainID);
 
-  return axiosGetRequestWrapper(baseURLs, endPoint, MAX_TRY_END_POINTS);
+  return axiosGetRequestWrapper(baseURLs, endPoint);
 };
 
 const fetchParams = (
-  baseURLs: string[]
-): Promise<AxiosResponse<GetParamsResponse>> =>
-  axiosGetRequestWrapper(baseURLs, paramsURL, MAX_TRY_END_POINTS);
+  baseURLs: string[],
+  chainID: string
+): Promise<AxiosResponse<GetParamsResponse>> => {
+  const endPoint = addChainIDParam(paramsURL, chainID);
+  return axiosGetRequestWrapper(baseURLs, endPoint);
+};
 
-const fetchPoolInfo = (baseURLs: string[]): Promise<AxiosResponse> =>
-  axiosGetRequestWrapper(baseURLs, poolURL, MAX_TRY_END_POINTS);
+const fetchPoolInfo = (
+  baseURLs: string[],
+  chainID: string
+): Promise<AxiosResponse> => {
+  const endPoint = addChainIDParam(poolURL, chainID);
+  return axiosGetRequestWrapper(baseURLs, endPoint);
+};
 
 const fetchValidator = (
   baseURLs: string[],
-  address: string
+  address: string,
+  chainID: string
 ): Promise<AxiosResponse<{ validator: Validator }>> => {
-  return axiosGetRequestWrapper(
-    baseURLs,
-    validatorURL(address),
-    MAX_TRY_END_POINTS
-  );
+  let endPoint = validatorURL(address);
+  endPoint = addChainIDParam(endPoint, chainID);
+  return axiosGetRequestWrapper(baseURLs, endPoint);
 };
 
 const fetchValidatorDelegations = async (
   baseURLs: string[],
-  operatorAddress: string
+  operatorAddress: string,
+  chainID: string
   /* eslint-disable @typescript-eslint/no-explicit-any */
 ): Promise<AxiosResponse<any>> => {
-  const endPoint = `${validatorDelegationsURL(operatorAddress)}`;
+  let endPoint = `${validatorDelegationsURL(operatorAddress)}`;
+  endPoint = addChainIDParam(endPoint, chainID);
 
-  return axiosGetRequestWrapper(baseURLs, endPoint, MAX_TRY_END_POINTS);
+  return axiosGetRequestWrapper(baseURLs, endPoint);
 };
 
 const fetchPolygonValidator = async (
@@ -102,7 +121,7 @@ const fetchPolygonValidator = async (
 ): Promise<AxiosResponse<any>> => {
   const endPoint = `${polygonValidatorURL(id)}`;
 
-  return axiosGetRequestWrapper([baseURL], endPoint, MAX_TRY_END_POINTS);
+  return axiosGetRequestWrapper([baseURL], endPoint);
 };
 
 const fetchPolygonDelegators = async (
@@ -112,7 +131,7 @@ const fetchPolygonDelegators = async (
 ): Promise<AxiosResponse<any>> => {
   const endPoint = `${polygonDelegatorsURL(id)}`;
 
-  return axiosGetRequestWrapper([baseURL], endPoint, MAX_TRY_END_POINTS);
+  return axiosGetRequestWrapper([baseURL], endPoint);
 };
 
 const fetchOasisDelegations = async (
@@ -122,7 +141,7 @@ const fetchOasisDelegations = async (
 ): Promise<AxiosResponse<any>> => {
   const endPoint = `${oasisDelegationsURL(operatorAddress)}`;
 
-  return axiosGetRequestWrapper([baseURL], endPoint, MAX_TRY_END_POINTS);
+  return axiosGetRequestWrapper([baseURL], endPoint);
 };
 
 const result = {
