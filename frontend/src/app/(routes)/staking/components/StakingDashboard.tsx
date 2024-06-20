@@ -15,7 +15,7 @@ import StakingDelegations from './StakingDelegations';
 
 const StakingDashboard = () => {
   const dispatch = useAppDispatch();
-  const staking = useStaking();
+  const staking = useStaking({ isSingleChain: false });
   const {
     totalStakedAmount,
     rewardsAmount,
@@ -51,8 +51,9 @@ const StakingDashboard = () => {
               'Connect your wallet now to access all the modules on resolute'
             ) : (
               <p>
-                Here&apos;s an overview of your staked assets, including delegation
-                and undelegation details, and your total staked balance.
+                Here&apos;s an overview of your staked assets, including
+                delegation and undelegation details, and your total staked
+                balance.
               </p>
             )}
           </div>
@@ -75,7 +76,7 @@ const StakingDashboard = () => {
             ) : null}
 
             {/* Delegations */}
-            <StakingDelegations delegations={delegations} />
+            <StakingDelegations delegations={delegations} isSingleChain={false} />
           </>
         ) : (
           <EmptyScreen

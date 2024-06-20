@@ -15,7 +15,7 @@ function StakingUnDelegations({
   undelegations: Chains;
   isSingleChain?: boolean;
 }) {
-  const staking = useStaking();
+  const staking = useStaking({isSingleChain: true});
 
   const cancelUnbonding = (
     chainID: string,
