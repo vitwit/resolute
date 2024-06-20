@@ -1,5 +1,8 @@
-import  { AxiosResponse } from 'axios';
-import { convertPaginationToParams } from '../../../utils/util';
+import { AxiosResponse } from 'axios';
+import {
+  addChainIDParam,
+  convertPaginationToParams,
+} from '../../../utils/util';
 import {
   GetProposalsInVotingResponse,
   GovProposal,
@@ -29,7 +32,8 @@ const fetchProposals = (
   key: string | undefined,
   limit: number | undefined,
   status: number,
-  govV1: boolean
+  govV1: boolean,
+  chainID: string
 ): Promise<AxiosResponse<GetProposalsInVotingResponse>> => {
   let endPoint = `${proposalsURL(govV1)}`;
 
@@ -41,15 +45,18 @@ const fetchProposals = (
   });
 
   if (params !== '') endPoint += `&${params}`;
+  endPoint = addChainIDParam(endPoint, chainID);
   return axiosGetRequestWrapper(baseURLs, endPoint, MAX_TRY_END_POINTS);
 };
 
 const fetchProposalTally = (
   baseURLs: string[],
   proposalId: number,
-  govV1: boolean
+  govV1: boolean,
+  chainID: string
 ): Promise<AxiosResponse> => {
-  const endPoint = `${proposalTallyURL(proposalId, govV1)}`;
+  let endPoint = `${proposalTallyURL(proposalId, govV1)}`;
+  endPoint = addChainIDParam(endPoint, chainID);
   return axiosGetRequestWrapper(baseURLs, endPoint, MAX_TRY_END_POINTS);
 };
 
@@ -59,7 +66,8 @@ const fetchVoterVote = (
   voter: string,
   key: string | undefined,
   limit: number | undefined,
-  govV1: boolean
+  govV1: boolean,
+  chainID: string
 ): Promise<AxiosResponse<ProposalVote>> => {
   let endPoint = `${voterVoteURL(proposalId, voter, govV1)}`;
   const params = convertPaginationToParams({
@@ -67,25 +75,36 @@ const fetchVoterVote = (
     limit: limit,
   });
   if (params !== '') endPoint += `?${params}`;
+  endPoint = addChainIDParam(endPoint, chainID);
   return axiosGetRequestWrapper(baseURLs, endPoint, MAX_TRY_END_POINTS);
 };
 
 const fetchProposal = (
   baseURLs: string[],
   proposalId: number,
-  govV1: boolean
+  govV1: boolean,
+  chainID: string
 ): Promise<AxiosResponse<{ proposal: GovProposal }>> => {
-  const endPoint = `${proposalsURL(govV1)}/${proposalId}`;
+  let endPoint = `${proposalsURL(govV1)}/${proposalId}`;
+  endPoint = addChainIDParam(endPoint, chainID);
   return axiosGetRequestWrapper(baseURLs, endPoint, MAX_TRY_END_POINTS);
 };
 
-const fetchDepositParams = (baseURLs: string[]): Promise<AxiosResponse> => {
-  const endPoint = `${depositParamsURL}`;
+const fetchDepositParams = (
+  baseURLs: string[],
+  chainID: string
+): Promise<AxiosResponse> => {
+  let endPoint = `${depositParamsURL}`;
+  endPoint = addChainIDParam(endPoint, chainID);
   return axiosGetRequestWrapper(baseURLs, endPoint, MAX_TRY_END_POINTS);
 };
 
-const fetchGovTallyParams = (baseURLs: string[]): Promise<AxiosResponse> => {
-  const endPoint = `${govTallyParamsURL}`;
+const fetchGovTallyParams = (
+  baseURLs: string[],
+  chainID: string
+): Promise<AxiosResponse> => {
+  let endPoint = `${govTallyParamsURL}`;
+  endPoint = addChainIDParam(endPoint, chainID);
   return axiosGetRequestWrapper(baseURLs, endPoint, MAX_TRY_END_POINTS);
 };
 

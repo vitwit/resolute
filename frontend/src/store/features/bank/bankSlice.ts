@@ -67,6 +67,7 @@ export const getBalances = createAsyncThunk(
     const response = await bankService.balances(
       data.baseURLs,
       data.address,
+      data.chainID,
       data.pagination
     );
     return {
@@ -88,6 +89,7 @@ export const getAuthzBalances = createAsyncThunk(
     const response = await bankService.balances(
       data.baseURLs,
       data.address,
+      data.chainID,
       data.pagination
     );
     return {
@@ -123,7 +125,12 @@ export const multiTxns = createAsyncThunk(
       dispatch(setTxAndHash({ tx, hash: tx.transactionHash }));
       if (result?.code === 0) {
         dispatch(
-          getBalances({ baseURL: rest, chainID, address, baseURLs: restURLs })
+          getBalances({
+            baseURL: rest,
+            chainID,
+            address,
+            baseURLs: restURLs,
+          })
         );
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
