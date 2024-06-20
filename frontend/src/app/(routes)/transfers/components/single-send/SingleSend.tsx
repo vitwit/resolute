@@ -178,7 +178,7 @@ const SingleSend = ({ sortedAssets }: { sortedAssets: ParsedAsset[] }) => {
   }, [selectedNetwork]);
 
   return (
-    <div className="single-send-box w-[550px]">
+    <div className="single-send-box w-[600px]">
       <Box
         sx={{
           background:

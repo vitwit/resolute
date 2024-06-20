@@ -107,7 +107,7 @@ const MultiSend = ({ chainID }: { chainID: string }) => {
 
   return (
     <div>
-      <div className="single-send-box w-[550px]">
+      <div className="single-send-box w-[600px]">
         <Box
           sx={{
             background:
