@@ -1,9 +1,11 @@
 'use client';
 
 import { AxiosResponse } from 'axios';
-import { convertPaginationToParams } from '../../../utils/util';
+import {
+  addChainIDParam,
+  convertPaginationToParams,
+} from '../../../utils/util';
 import { axiosGetRequestWrapper } from '@/utils/RequestWrapper';
-import { MAX_TRY_END_POINTS } from '@/utils/constants';
 
 const balancesURL = '/cosmos/bank/v1beta1/balances/';
 const balanceURL = (address: string, denom: string) =>
@@ -12,6 +14,7 @@ const balanceURL = (address: string, denom: string) =>
 const fetchBalances = (
   baseURLs: string[],
   address: string,
+  chainID: string,
   pagination?: KeyLimitPagination
 ): Promise<AxiosResponse> => {
   let resourceEndPoint = `${balancesURL}${address}`;
@@ -19,18 +22,21 @@ const fetchBalances = (
   if (parsed !== '') {
     resourceEndPoint += `?${parsed}`;
   }
+  resourceEndPoint = addChainIDParam(resourceEndPoint, chainID);
 
-  return axiosGetRequestWrapper(baseURLs, resourceEndPoint, MAX_TRY_END_POINTS);
+  return axiosGetRequestWrapper(baseURLs, resourceEndPoint);
 };
 
 const fetchBalance = (
   baseURLs: string[],
   address: string,
-  denom: string
+  denom: string,
+  chainID: string
 ): Promise<AxiosResponse> => {
-  const resourceEndPoint = `${balanceURL(address, denom)}`;
+  let resourceEndPoint = `${balanceURL(address, denom)}`;
+  resourceEndPoint = addChainIDParam(resourceEndPoint, chainID);
 
-  return axiosGetRequestWrapper(baseURLs, resourceEndPoint, MAX_TRY_END_POINTS);
+  return axiosGetRequestWrapper(baseURLs, resourceEndPoint);
 };
 
 const result = {
