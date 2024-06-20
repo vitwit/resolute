@@ -4,7 +4,13 @@ import { Controller } from 'react-hook-form';
 import { customTextFieldStyles } from '../../styles';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-const AddressField = ({ control }: { control: any }) => {
+const AddressField = ({
+  control,
+  checkIfIBCTransaction,
+}: {
+  control: any;
+  checkIfIBCTransaction: (asset?: ParsedAsset | null) => void;
+}) => {
   return (
     <Controller
       name="address"
@@ -19,6 +25,9 @@ const AddressField = ({ control }: { control: any }) => {
           type="text"
           autoFocus={true}
           sx={customTextFieldStyles}
+          onBlur={() => {
+            checkIfIBCTransaction?.();
+          }}
         />
       )}
     />
