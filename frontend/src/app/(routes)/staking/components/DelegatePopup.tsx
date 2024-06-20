@@ -34,7 +34,7 @@ const DelegatePopup: React.FC<PopupProps> = ({
   const denom = singleStake.getDenomWithChainID(chainID);
 
   // Custom hook to get staking information
-  const staking = useStaking();
+  const staking = useStaking({ isSingleChain: true });
 
   // Get the current validator's information from the staking module
   const stakeModule = staking.getAllDelegations();
@@ -75,7 +75,11 @@ const DelegatePopup: React.FC<PopupProps> = ({
         {/* Validator details */}
         <div className="flex flex-col gap-2 w-full">
           <div className="flex gap-2 items-center">
-            <ValidatorName valoperAddress={validator} chainID={chainID} smallFont/>
+            <ValidatorName
+              valoperAddress={validator}
+              chainID={chainID}
+              smallFont
+            />
           </div>
           <div className="flex justify-between w-full items-center gap-10">
             <p className="truncate flex-1 secondary-text">

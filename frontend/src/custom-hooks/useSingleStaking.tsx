@@ -8,6 +8,7 @@ import { getBalances } from "@/store/features/bank/bankSlice";
 // import useGetAssets from "./useGetAssets";
 // import { Interface } from "readline";
 import useGetAssetsAmount from "./useGetAssetsAmount";
+import { getAllTokensPrice } from "@/store/features/common/commonSlice";
 
 const useSingleStaking = (chainID: string) => {
     const dispatch = useAppDispatch();
@@ -60,7 +61,7 @@ const useSingleStaking = (chainID: string) => {
 
         // Fetch all validators
         dispatch(getAllValidators({ baseURLs: restURLs, chainID }));
-
+        dispatch(getAllTokensPrice());
     }, [isWalletConnected, chainID]);
 
     const fetchValidatorDetails = (valoperAddress: string, chainID: string) => {
@@ -78,8 +79,6 @@ const useSingleStaking = (chainID: string) => {
 
 
     const getStakingAssets = () => {
-
-        console.log({totalStakedAmount, totalUnStakedAmount, rewardsAmount, availableAmount})
 
         return {
             totalStakedAmount,

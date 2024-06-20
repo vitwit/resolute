@@ -7,18 +7,18 @@ import { Chains } from '@/store/features/staking/stakeSlice';
 import DelegatePopup from '../components/DelegatePopup';
 import UndelegatePopup from '../components/UndelegatePopup';
 import ReDelegatePopup from '../components/ReDelegatePopup';
-import CustomLoader from '@/components/common/CustomLoader';
 import WithConnectionIllustration from '@/components/illustrations/withConnectionIllustration';
 import ValidatorName from './ValidatorName';
+import DelegationsLoading from './loaders/DelegationsLoading';
 
 function StakingDelegations({
   delegations,
   isSingleChain,
 }: {
   delegations: Chains;
-  isSingleChain?: boolean;
+  isSingleChain: boolean;
 }) {
-  const staking = useStaking();
+  const staking = useStaking({ isSingleChain: isSingleChain });
   const validator = useValidator();
 
   // Function to get the commission rate of a validator
@@ -71,9 +71,6 @@ function StakingDelegations({
         </div>
         <div className="horizontal-line"></div>
       </div>
-      {!isSingleChain && staking.delegationsLoading !== 0 ? (
-        <CustomLoader loadingText="Loading..." />
-      ) : null}
 
       {staking.delegationsLoading === 0 && !bondingCount ? (
         <WithConnectionIllustration message="No Delegations" />
@@ -96,8 +93,8 @@ function StakingDelegations({
                     className="h-8 w-8 rounded-full"
                     alt="chain-logo"
                   />
-                  <p className="text-base font-normal leading-8 flex justify-center items-center">
-                    {key}
+                  <p className="text-base font-normal leading-8 flex justify-center items-center capitalize">
+                    {staking.chainName(key)}
                   </p>
                 </div>
                 <div className="staked-amount-red-badge text-white text-[10px] font-light leading-6">
@@ -198,6 +195,10 @@ function StakingDelegations({
           </div>
         ) : null
       )}
+
+      {!isSingleChain && staking.delegationsLoading !== 0 ? (
+        <DelegationsLoading />
+      ) : null}
     </div>
   );
 }
@@ -214,14 +215,10 @@ const StakingActionsPopup: React.FC<PopupProps> = ({
   withClaimRewards,
 }) => {
   const [showPopup, setShowPopup] = useState<boolean>(false);
-  const [popupPosition, setPopupPosition] = useState<{
-    top: number;
-    left: number;
-  }>({ top: 0, left: 0 });
+
   const [openDelegate, setOpenDelegate] = useState<boolean>(false);
   const [openUnDelegate, setOpenUnDelegate] = useState<boolean>(false);
   const [openReDelegate, setOpenReDelegate] = useState<boolean>(false);
-  console.log({ popupPosition });
   const popupRef = useRef<HTMLDivElement>(null);
   const buttonRef: RefObject<HTMLImageElement> = useRef<HTMLImageElement>(null);
 
@@ -244,14 +241,8 @@ const StakingActionsPopup: React.FC<PopupProps> = ({
   }, []);
 
   // Handle click on the image to toggle the popup
-  const handleImageClick = (e: React.MouseEvent<HTMLImageElement>): void => {
+  const handleImageClick = (): void => {
     setShowPopup(!showPopup);
-    const rect = e.currentTarget.getBoundingClientRect();
-    setPopupPosition({
-      top: rect.top + window.scrollY,
-      left: rect.right + window.scrollX + 10,
-    });
-    setPopupPosition({ top: 0, left: 0 });
   };
 
   // Toggle the visibility of Delegate Popup

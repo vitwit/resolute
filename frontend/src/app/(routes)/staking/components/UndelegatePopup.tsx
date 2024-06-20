@@ -34,7 +34,7 @@ const UndelegatePopup: React.FC<PopupProps> = ({
   const denom = singleStake.getDenomWithChainID(chainID);
 
   // Custom hook to get staking information
-  const staking = useStaking();
+  const staking = useStaking({isSingleChain: true});
 
   // Get the current validator's information from the staking module
   const stakeModule = staking.getAllDelegations();

@@ -362,8 +362,6 @@ export const txVote = createAsyncThunk(
     data: TxVoteInputs | TxAuthzExecInputs,
     { rejectWithValue, fulfillWithValue, dispatch }
   ) => {
-    console.log("hererererer....")
-    console.log(data)
     try {
       let msgs: Msg[];
       if (data.isAuthzMode) msgs = data.msgs;
