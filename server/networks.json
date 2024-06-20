@@ -1,6 +1,6 @@
 [
   {
-    "chainId": "cosmos",
+    "chainId": "cosmoshub-4",
     "restURI": "https://apis.mintscan.io/cosmos/lcd",
     "checkStatus": false,
     "rpcURI": "",
@@ -9,16 +9,16 @@
     ]
   },
   {
-    "chainId": "akash",
-    "restURI": "https://akash-api.polkachu.com",
+    "chainId": "akashnet-2",
+    "restURI": "https://apis.mintscan.io/akash/lcd",
     "checkStatus": false,
     "rpcURI": "",
     "restURIs": [
-      "https://akash-api.polkachu.com"
+      "https://apis.mintscan.io/akash/lcd"
     ]
   },
   {
-    "chainId": "archway",
+    "chainId": "archway-1",
     "restURI": "https://apis.mintscan.io/archway/lcd",
     "checkStatus": false,
     "rpcURI": "",
@@ -45,7 +45,7 @@
     ]
   },
   {
-    "chainId": "dydx",
+    "chainId": "dydx-mainnet-1",
     "restURI": "https://apis.mintscan.io/dydx/lcd",
     "checkStatus": false,
     "rpcURI": "",
@@ -54,7 +54,7 @@
     ]
   },
   {
-    "chainId": "osmosis",
+    "chainId": "osmosis-1",
     "restURI": "https://apis.mintscan.io/osmosis/lcd",
     "checkStatus": false,
     "rpcURI": "",

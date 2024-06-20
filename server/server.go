@@ -230,11 +230,11 @@ func proxyHandler(c echo.Context) error {
 	defer resp.Body.Close()
 
 	// Copy the response headers and status code to the original response
-	for name, values := range resp.Header {
-		for _, value := range values {
-			c.Response().Header().Add(name, value)
-		}
-	}
+	// for name, values := range resp.Header {
+	// 	for _, value := range values {
+	// 		c.Response().Header().Add(name, value)
+	// 	}
+	// }
 	c.Response().WriteHeader(resp.StatusCode)
 
 	// Copy the response body to the original response
