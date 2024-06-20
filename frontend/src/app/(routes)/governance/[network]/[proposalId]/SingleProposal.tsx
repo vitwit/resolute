@@ -19,6 +19,7 @@ import { Tooltip } from '@mui/material';
 import DialogDeposit from '../../popups/DialogDeposit';
 import CustomButton from '@/components/common/CustomButton';
 import SingleProposalLoading from '../../loaders/SingleProposalLoading';
+import { useRouter } from 'next/navigation';
 
 const emptyTallyResult = {
   yes: '',
@@ -43,6 +44,7 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
   const [depositDialogOpen, setDepositDialogOpen] = useState(false);
 
   const dispatch = useAppDispatch();
+  const router = useRouter()
 
   const proposalInfo = useAppSelector(
     (state: RootState) => state.gov.proposalDetails
@@ -220,7 +222,7 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
             <div className="flex items-start gap-20 w-full h-full">
               <div className="flex flex-col flex-1 justify-between h-full">
                 <div className="flex flex-col gap-6">
-                  <div className="secondary-btn">Go back</div>
+                  <div className="secondary-btn" onClick={() => router.back()}>Go back</div>
                   <div className="flex flex-col gap-4">
                     <div className="flex justify-between w-full items-center">
                       <p className="text-white text-[28px] font-bold leading-[normal]">
