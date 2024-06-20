@@ -269,7 +269,8 @@ export const getMultisigBalance = createAsyncThunk(
       const response = await bankService.balance(
         data.baseURLs,
         data.address,
-        data.denom
+        data.denom,
+        data.chainID
       );
       return response.data;
     } catch (error) {
