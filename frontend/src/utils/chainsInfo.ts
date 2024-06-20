@@ -324,159 +324,159 @@ export const networks: Network[] = [
   //     },
   //   },
   // },
-  {
-    enableModules: {
-      authz: true,
-      feegrant: true,
-      group: false,
-    },
-    aminoConfig: {
-      authz: false,
-      feegrant: false,
-      group: false,
-    },
-    showAirdrop: false,
-    logos: {
-      menu: 'https://raw.githubusercontent.com/vitwit/aneka-resources/d234799b2da3dc0b148829259866d07618b9773b/assets/evmos/evmos.png',
-      toolbar:
-        'https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/evmos/images/evmos-logo.png',
-    },
-    keplrExperimental: false,
-    leapExperimental: false,
-    isTestnet: false,
-    explorerTxHashEndpoint: 'https://www.mintscan.io/evmos/txs/',
-    govV1: false,
-    config: {
-      chainId: 'evmos_9001-2',
-      chainName: 'Evmos',
-      rest: 'https://api.beta.resolute.vitwit.com',
-      rpc: 'https://rpc-evmos.ecostake.com',
-      restURIs: ['https://api.beta.resolute.vitwit.com'],
-      rpcURIs: [
-        'https://rpc-evmos-ia.cosmosia.notional.ventures:443',
-        'https://evmos-rpc.polkachu.com',
-        'https://evmos-rpc.publicnode.com:443',
-      ],
-      currencies: [
-        {
-          coinDenom: 'EVMOS',
-          coinMinimalDenom: 'aevmos',
-          coinDecimals: 18,
-        },
-      ],
-      bech32Config: {
-        bech32PrefixAccAddr: 'evmos',
-        bech32PrefixAccPub: 'evmospub',
-        bech32PrefixValAddr: 'evmosvaloper',
-        bech32PrefixValPub: 'evmosvaloperpub',
-        bech32PrefixConsAddr: 'evmosgvalcons',
-        bech32PrefixConsPub: 'evmosvalconspub',
-      },
-      feeCurrencies: [
-        {
-          coinDenom: 'EVMOS',
-          coinMinimalDenom: 'aevmos',
-          coinDecimals: 18,
-          gasPriceStep: {
-            low: 0.01,
-            average: 0.025,
-            high: 0.03,
-          },
-        },
-      ],
-      bip44: {
-        coinType: 60,
-      },
-      stakeCurrency: {
-        coinDenom: 'EVMOS',
-        coinMinimalDenom: 'aevmos',
-        coinDecimals: 18,
-      },
-      image:
-        'https://raw.githubusercontent.com/leapwallet/assets/2289486990e1eaf9395270fffd1c41ba344ef602/images/logo.svg',
-      theme: {
-        primaryColor: '#fff',
-        gradient: 'linear-gradient(180deg, #F2453560 0%, #12131C80 100%)',
-      },
-    },
-  },
-  {
-    enableModules: {
-      authz: true,
-      feegrant: true,
-      group: false,
-    },
-    aminoConfig: {
-      authz: false,
-      feegrant: false,
-      group: false,
-    },
-    showAirdrop: false,
-    logos: {
-      menu: 'https://raw.githubusercontent.com/vitwit/aneka-resources/d234799b2da3dc0b148829259866d07618b9773b/assets/juno/juno.png',
-      toolbar:
-        'https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/juno/images/juno-logo.png',
-    },
-    keplrExperimental: false,
-    leapExperimental: false,
-    isTestnet: false,
-    govV1: true,
-    explorerTxHashEndpoint: 'https://www.mintscan.io/juno/txs/',
-    config: {
-      chainId: 'juno-1',
-      chainName: 'Juno',
-      rest: 'https://api.beta.resolute.vitwit.com',
-      rpc: 'https://juno-rpc.lavenderfive.com:443',
-      restURIs: ['https://api.beta.resolute.vitwit.com'],
-      rpcURIs: [
-        'https://juno-rpc.lavenderfive.com:443',
-        'https://juno-rpc.polkachu.com',
-        'https://rpc-juno.ecostake.com',
-        'https://api.resolute.vitwit.com/juno_rpc',
-      ],
-      currencies: [
-        {
-          coinDenom: 'JUNO',
-          coinMinimalDenom: 'ujuno',
-          coinDecimals: 6,
-        },
-      ],
-      bech32Config: {
-        bech32PrefixAccAddr: 'juno',
-        bech32PrefixAccPub: 'junopub',
-        bech32PrefixValAddr: 'junovaloper',
-        bech32PrefixValPub: 'junovaloperpub',
-        bech32PrefixConsAddr: 'junogvalcons',
-        bech32PrefixConsPub: 'junovalconspub',
-      },
-      feeCurrencies: [
-        {
-          coinDenom: 'JUNO',
-          coinMinimalDenom: 'ujuno',
-          coinDecimals: 6,
-          gasPriceStep: {
-            low: 0.01,
-            average: 0.025,
-            high: 0.03,
-          },
-        },
-      ],
-      bip44: {
-        coinType: 118,
-      },
-      stakeCurrency: {
-        coinDenom: 'JUNO',
-        coinMinimalDenom: 'ujuno',
-        coinDecimals: 6,
-      },
-      image:
-        'https://raw.githubusercontent.com/leapwallet/assets/2289486990e1eaf9395270fffd1c41ba344ef602/images/logo.svg',
-      theme: {
-        primaryColor: '#fff',
-        gradient: 'linear-gradient(180deg, #F2798360 0%, #12131C80 100%)',
-      },
-    },
-  },
+  // {
+  //   enableModules: {
+  //     authz: true,
+  //     feegrant: true,
+  //     group: false,
+  //   },
+  //   aminoConfig: {
+  //     authz: false,
+  //     feegrant: false,
+  //     group: false,
+  //   },
+  //   showAirdrop: false,
+  //   logos: {
+  //     menu: 'https://raw.githubusercontent.com/vitwit/aneka-resources/d234799b2da3dc0b148829259866d07618b9773b/assets/evmos/evmos.png',
+  //     toolbar:
+  //       'https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/evmos/images/evmos-logo.png',
+  //   },
+  //   keplrExperimental: false,
+  //   leapExperimental: false,
+  //   isTestnet: false,
+  //   explorerTxHashEndpoint: 'https://www.mintscan.io/evmos/txs/',
+  //   govV1: false,
+  //   config: {
+  //     chainId: 'evmos_9001-2',
+  //     chainName: 'Evmos',
+  //     rest: 'https://api.beta.resolute.vitwit.com',
+  //     rpc: 'https://rpc-evmos.ecostake.com',
+  //     restURIs: ['https://api.beta.resolute.vitwit.com'],
+  //     rpcURIs: [
+  //       'https://rpc-evmos-ia.cosmosia.notional.ventures:443',
+  //       'https://evmos-rpc.polkachu.com',
+  //       'https://evmos-rpc.publicnode.com:443',
+  //     ],
+  //     currencies: [
+  //       {
+  //         coinDenom: 'EVMOS',
+  //         coinMinimalDenom: 'aevmos',
+  //         coinDecimals: 18,
+  //       },
+  //     ],
+  //     bech32Config: {
+  //       bech32PrefixAccAddr: 'evmos',
+  //       bech32PrefixAccPub: 'evmospub',
+  //       bech32PrefixValAddr: 'evmosvaloper',
+  //       bech32PrefixValPub: 'evmosvaloperpub',
+  //       bech32PrefixConsAddr: 'evmosgvalcons',
+  //       bech32PrefixConsPub: 'evmosvalconspub',
+  //     },
+  //     feeCurrencies: [
+  //       {
+  //         coinDenom: 'EVMOS',
+  //         coinMinimalDenom: 'aevmos',
+  //         coinDecimals: 18,
+  //         gasPriceStep: {
+  //           low: 0.01,
+  //           average: 0.025,
+  //           high: 0.03,
+  //         },
+  //       },
+  //     ],
+  //     bip44: {
+  //       coinType: 60,
+  //     },
+  //     stakeCurrency: {
+  //       coinDenom: 'EVMOS',
+  //       coinMinimalDenom: 'aevmos',
+  //       coinDecimals: 18,
+  //     },
+  //     image:
+  //       'https://raw.githubusercontent.com/leapwallet/assets/2289486990e1eaf9395270fffd1c41ba344ef602/images/logo.svg',
+  //     theme: {
+  //       primaryColor: '#fff',
+  //       gradient: 'linear-gradient(180deg, #F2453560 0%, #12131C80 100%)',
+  //     },
+  //   },
+  // },
+  // {
+  //   enableModules: {
+  //     authz: true,
+  //     feegrant: true,
+  //     group: false,
+  //   },
+  //   aminoConfig: {
+  //     authz: false,
+  //     feegrant: false,
+  //     group: false,
+  //   },
+  //   showAirdrop: false,
+  //   logos: {
+  //     menu: 'https://raw.githubusercontent.com/vitwit/aneka-resources/d234799b2da3dc0b148829259866d07618b9773b/assets/juno/juno.png',
+  //     toolbar:
+  //       'https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/juno/images/juno-logo.png',
+  //   },
+  //   keplrExperimental: false,
+  //   leapExperimental: false,
+  //   isTestnet: false,
+  //   govV1: true,
+  //   explorerTxHashEndpoint: 'https://www.mintscan.io/juno/txs/',
+  //   config: {
+  //     chainId: 'juno-1',
+  //     chainName: 'Juno',
+  //     rest: 'https://api.beta.resolute.vitwit.com',
+  //     rpc: 'https://juno-rpc.lavenderfive.com:443',
+  //     restURIs: ['https://api.beta.resolute.vitwit.com'],
+  //     rpcURIs: [
+  //       'https://juno-rpc.lavenderfive.com:443',
+  //       'https://juno-rpc.polkachu.com',
+  //       'https://rpc-juno.ecostake.com',
+  //       'https://api.resolute.vitwit.com/juno_rpc',
+  //     ],
+  //     currencies: [
+  //       {
+  //         coinDenom: 'JUNO',
+  //         coinMinimalDenom: 'ujuno',
+  //         coinDecimals: 6,
+  //       },
+  //     ],
+  //     bech32Config: {
+  //       bech32PrefixAccAddr: 'juno',
+  //       bech32PrefixAccPub: 'junopub',
+  //       bech32PrefixValAddr: 'junovaloper',
+  //       bech32PrefixValPub: 'junovaloperpub',
+  //       bech32PrefixConsAddr: 'junogvalcons',
+  //       bech32PrefixConsPub: 'junovalconspub',
+  //     },
+  //     feeCurrencies: [
+  //       {
+  //         coinDenom: 'JUNO',
+  //         coinMinimalDenom: 'ujuno',
+  //         coinDecimals: 6,
+  //         gasPriceStep: {
+  //           low: 0.01,
+  //           average: 0.025,
+  //           high: 0.03,
+  //         },
+  //       },
+  //     ],
+  //     bip44: {
+  //       coinType: 118,
+  //     },
+  //     stakeCurrency: {
+  //       coinDenom: 'JUNO',
+  //       coinMinimalDenom: 'ujuno',
+  //       coinDecimals: 6,
+  //     },
+  //     image:
+  //       'https://raw.githubusercontent.com/leapwallet/assets/2289486990e1eaf9395270fffd1c41ba344ef602/images/logo.svg',
+  //     theme: {
+  //       primaryColor: '#fff',
+  //       gradient: 'linear-gradient(180deg, #F2798360 0%, #12131C80 100%)',
+  //     },
+  //   },
+  // },
   // {
   //   enableModules: {
   //     authz: true,
