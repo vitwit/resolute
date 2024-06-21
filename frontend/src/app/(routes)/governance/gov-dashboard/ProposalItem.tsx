@@ -105,6 +105,7 @@ const ProposalItem = ({
                 width={16}
                 height={16}
                 alt=""
+                draggable={false}
               />
               <p className="secondary-text capitalize">{chainName} Network</p>
             </div>
