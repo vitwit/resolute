@@ -289,7 +289,7 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
                     <div className="divider-line"></div>
                   </div>
 
-                  <div className="text-white h-[40vh] flex flex-col justify-between relative">
+                  <div className="text-white h-[40vh] flex flex-col justify-between relative z-0">
                     <p
                       className={`h-[40vh] secondary-text ${showFullText ? 'overflow-scroll' : 'overflow-hidden'}`}
                     >
@@ -311,10 +311,10 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
                         />
                       </p>
                     ) : (
-                      <div className="h-40 w-full relative flex">
+                      <div className="h-40 w-full absolute bottom-0  bg-transparent z-10">
                         <div
                           onClick={handleToggleText}
-                          className="cursor-pointer justify-center w-full bottom-14 absolute flex z-10 text-lg font-normal leading-[normal] underline  space-x-1  "
+                          className="cursor-pointer justify-center w-full bottom-14 absolute flex z-10 text-lg font-normal leading-[normal] underline space-x-1"
                         >
                           Continue Reading{' '}
                           <Image
@@ -325,12 +325,13 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
                             className="ml-2"
                           />
                         </div>
-                        <div className="blur w-full absolute bottom-0 h-32">
+                        <div className="backdrop-blur-sm w-full absolute bottom-0 h-32 bg-transparent">
                           {' '}
                         </div>
                       </div>
                     )}
                   </div>
+
                   <div className="cast-vote-grid">
                     {isStatusVoting ? (
                       <>
