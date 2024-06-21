@@ -87,7 +87,7 @@ const GovDashboard = ({ chainIDs }: { chainIDs: string[] }) => {
 
         const daysNo = proposal.proposalInfo.endTime.match(/\d+/) || 0;
         if (daysNo && daysNo.length) {
-          if (Number(daysNo[0]) <= days) {
+          if (Number(daysNo[0]) <= days || !proposal.proposalInfo.endTime.includes('days')) {
             return true;
           }
         }

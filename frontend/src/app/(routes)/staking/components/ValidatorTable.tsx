@@ -41,7 +41,7 @@ const ValidatorTable: React.FC<{ chainID: string }> = ({ chainID }) => {
       const inactiveValidators = get(validators, 'inactive', {});
       dispatch(setValidators({ ...activeValidators, ...inactiveValidators }));
     }
-  }, []);
+  }, [validators?.status]);
 
   const handleSearch = useCallback(
     (query: string) => {

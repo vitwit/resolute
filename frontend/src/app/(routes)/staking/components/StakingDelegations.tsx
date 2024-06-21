@@ -67,12 +67,12 @@ function StakingDelegations({
       <div className="space-y-2 items-start">
         <div className="text-h2">Delegations</div>
         <div className="secondary-text">
-          Connect your wallet now to access all the modules on resolute
+          Summary of staked assets.
         </div>
         <div className="horizontal-line"></div>
       </div>
 
-      {staking.delegationsLoading === 0 && !bondingCount ? (
+      {!isSingleChain && staking.delegationsLoading === 0 && !bondingCount ? (
         <WithConnectionIllustration message="No Delegations" />
       ) : null}
 
