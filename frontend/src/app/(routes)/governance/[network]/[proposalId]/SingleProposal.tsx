@@ -44,7 +44,7 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
   const [depositDialogOpen, setDepositDialogOpen] = useState(false);
 
   const dispatch = useAppDispatch();
-  const router = useRouter()
+  const router = useRouter();
 
   const proposalInfo = useAppSelector(
     (state: RootState) => state.gov.proposalDetails
@@ -205,6 +205,7 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
                 width={24}
                 height={24}
                 alt="info-icon"
+                draggable={false}
               />
               <p className="text-[#1C1C1D] text-sm font-semibold leading-[normal]">
                 Important
@@ -222,7 +223,9 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
             <div className="flex items-start gap-20 w-full h-full">
               <div className="flex flex-col flex-1 justify-between h-full">
                 <div className="flex flex-col gap-6">
-                  <div className="secondary-btn" onClick={() => router.back()}>Go back</div>
+                  <div className="secondary-btn" onClick={() => router.back()}>
+                    Go back
+                  </div>
                   <div className="flex flex-col gap-4">
                     <div className="flex justify-between w-full items-center">
                       <p className="text-white text-[28px] font-bold leading-[normal]">
@@ -276,6 +279,7 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
                           width={20}
                           height={20}
                           alt="Network-logo"
+                          draggable={false}
                         />
                         <p className="text-white text-sm font-normal leading-[normal]">
                           {chainID}
@@ -348,26 +352,6 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
                       </>
                     ) : (
                       <>
-                        <div className="flex px-6 py-4 rounded-2xl bg-[#FFFFFF05] justify-between w-full">
-                          <p className="text-b1">Deposit</p>
-                          <p className="text-xs font-extralight leading-[18px]">
-                            Deposit Period ends in{' '}
-                            {getTimeDifferenceToFutureDate(
-                              get(proposalInfo, 'voting_end_time')
-                            )}
-                          </p>
-                        </div>
-                        <div className="space-y-2 w-full">
-                          <div className="form-label-text">
-                            Enter Amount here
-                          </div>
-                          <input
-                            type="number"
-                            className="search-network-field w-full"
-                            placeholder=""
-                          />
-                        </div>
-
                         <CustomButton
                           btnText={
                             true ? 'Deposit' : 'Connect Wallet to Deposit'
@@ -448,6 +432,7 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
                           width={12}
                           height={12}
                           alt="Proposal-Created"
+                          draggable={false}
                         />
                         <div className="vertical-line "></div>
                       </div>
@@ -476,6 +461,7 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
                           width={12}
                           height={12}
                           alt="Proposal-Created"
+                          draggable={false}
                         />
                         <div className="vertical-line"></div>
                       </div>
@@ -518,6 +504,7 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
                           width={12}
                           height={12}
                           alt="Proposal-Created"
+                          draggable={false}
                         />
                       </div>
                       <div className="flex flex-col gap-2">
@@ -585,6 +572,7 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
                             width={24}
                             height={24}
                             alt="tick-icon"
+                            draggable={false}
                           />
                         ) : (
                           <p className="text-white text-xs font-normal leading-[normal]">

@@ -166,6 +166,7 @@ const Asset = ({
               alt="chain-Logo"
               loading="lazy"
               className="w-4 h-4"
+              draggable={false}
             />
             <p className="text-b1-light">
               on{' '}
@@ -214,8 +215,9 @@ const Asset = ({
               </p>
             </div>
             <Image
-              src={`/${asset.inflation >= 0 ? 'up' : 'down'
-                }-arrow-filled-icon.svg`}
+              src={`/${
+                asset.inflation >= 0 ? 'up' : 'down'
+              }-arrow-filled-icon.svg`}
               width={18}
               height={5}
               alt="down-arrow-filled-icon"
@@ -283,8 +285,11 @@ const Asset = ({
                   >
                     <div>
                       {asset.type !== 'ibc' &&
-                        txClaimStatus === TxStatus.PENDING ? (
-                        <> Claiming.... <CircularProgress size={16} /></>
+                      txClaimStatus === TxStatus.PENDING ? (
+                        <>
+                          {' '}
+                          Claiming.... <CircularProgress size={16} />
+                        </>
                       ) : (
                         'Claim'
                       )}
@@ -295,8 +300,7 @@ const Asset = ({
                   href="#"
                   className="flex items-center w-full p-4 text-b1 hover:bg-[#FFFFFF10] rounded-b-2xl"
                   onClick={() => {
-                    if (asset.type === 'native')
-                      claimAndStake(asset.chainID);
+                    if (asset.type === 'native') claimAndStake(asset.chainID);
                   }}
                 >
                   <Tooltip
@@ -309,8 +313,11 @@ const Asset = ({
                   >
                     <div>
                       {txRestakeStatus === TxStatus.PENDING &&
-                        asset.type !== 'ibc' ? (
-                        <>Claiming and staking...<CircularProgress size={16} /></>
+                      asset.type !== 'ibc' ? (
+                        <>
+                          Claiming and staking...
+                          <CircularProgress size={16} />
+                        </>
                       ) : (
                         'Claim And Stake'
                       )}

@@ -52,7 +52,7 @@ const ProposalOverview = ({
   return (
     <div className="proposal-view">
       <div className="flex flex-col h-full justify-between">
-        <div className='flex flex-col gap-10'>
+        <div className="flex flex-col gap-10">
           <div className="flex flex-col gap-6">
             <div className="items-start">
               <button className="secondary-btn" onClick={onClose}>
@@ -75,6 +75,7 @@ const ProposalOverview = ({
                     alt="View Proposal"
                     onClick={navigateToProposal}
                     className="cursor-pointer"
+                    draggable={false}
                   />
                 </div>
                 {isActive ? (
@@ -98,6 +99,7 @@ const ProposalOverview = ({
                       width={20}
                       height={20}
                       alt="Network-logo"
+                      draggable={false}
                     />
                     <p className="text-b1 capitalize">{chainName}</p>
                   </div>
