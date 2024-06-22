@@ -1,16 +1,14 @@
 import React from 'react';
 import PageHeader from '@/components/common/PageHeader';
 import SectionHeader from '@/components/common/SectionHeader';
+import { MULTISIG_DESCRIPTION } from '@/utils/constants';
 
 const MultisigLoading = () => {
   return (
     <div className="py-20 px-10 h-full flex flex-col">
       <div className="flex items-center gap-10 w-full">
         <div className="flex-1">
-          <PageHeader
-            title="MultiSig"
-            description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga, fugit."
-          />
+          <PageHeader title="MultiSig" description={MULTISIG_DESCRIPTION} />
         </div>
 
         <div className="w-[145px] h-[40px] animate-pulse bg-[#252525] rounded-full"></div>

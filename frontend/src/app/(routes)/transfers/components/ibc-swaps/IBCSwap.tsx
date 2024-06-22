@@ -250,7 +250,7 @@ const IBCSwap = () => {
         sourceDenom: selectedSourceAsset?.denom || '',
         fromAddress: fromAddress,
         toAddress: toAddress,
-        slippage: slippage,
+        slippage: Number(slippage),
       });
       setSwapRoute(route);
       const resultDecimals = selectedDestAsset?.decimals;
@@ -267,7 +267,7 @@ const IBCSwap = () => {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const input = e.target.value;
-    if (/^-?\d*\.?\d*$/.test(input)) {
+    if (/^\d*\.?\d*$/.test(input)) {
       if ((input.match(/\./g) || []).length <= 1) {
         dispatch(setAmountIn(input));
         setUserInputChange(true);
@@ -288,9 +288,9 @@ const IBCSwap = () => {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const input = e.target.value;
-    if (/^-?\d*\.?\d*$/.test(input)) {
+    if (/^\d*\.?\d*$/.test(input)) {
       if ((input.match(/\./g) || []).length <= 1) {
-        dispatch(setSlippage(Number(input)));
+        dispatch(setSlippage(input));
         setUserInputChange(true);
       }
     }
@@ -320,7 +320,7 @@ const IBCSwap = () => {
   }, [amountIn]);
 
   useEffect(() => {
-    if (slippage > 0) {
+    if (slippage) {
       fetchSwapRoute();
     }
   }, [slippage]);
@@ -698,7 +698,7 @@ const IBCSwap = () => {
                 <div className="flex justify-between items-center w-full">
                   <div>
                     {routeLoading ? (
-                      <div>
+                      <div className='text-b1'>
                         Fetching Route<span className="dots-flashing"></span>{' '}
                       </div>
                     ) : (

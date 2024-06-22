@@ -22,6 +22,7 @@ const SingleSendForm = ({
   setValue,
   selectedAsset,
   isIBC,
+  checkIfIBCTransaction,
 }: {
   control: any;
   handleSubmit: any;
@@ -34,6 +35,7 @@ const SingleSendForm = ({
   }>;
   selectedAsset: ParsedAsset | null;
   isIBC: boolean;
+  checkIfIBCTransaction: (asset?: ParsedAsset | null) => void;
 }) => {
   const sendTxStatus = useAppSelector((state) => state.bank.tx.status);
   const ibcTxStatus = useAppSelector((state) => state.ibc.txStatus);
@@ -56,7 +58,10 @@ const SingleSendForm = ({
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-10">
       <div className="space-y-2">
         <div className="form-label-text">Enter recipient address</div>
-        <AddressField control={control} />
+        <AddressField
+          control={control}
+          checkIfIBCTransaction={checkIfIBCTransaction}
+        />
       </div>
       <div>
         <AmountInputWrapper
