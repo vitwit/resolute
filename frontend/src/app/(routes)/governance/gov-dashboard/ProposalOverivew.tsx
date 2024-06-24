@@ -108,7 +108,7 @@ const ProposalOverview = ({
             </div>
           </div>
           <div className="flex gap-4 flex-col">
-            <div className="text-white text-base">Proposal Summary</div>
+            <div className="text-white text-base">Summary</div>
             <div className="divider-line"></div>
             <div className="secondary-text">
               {truncatedDescription || proposalTitle}
