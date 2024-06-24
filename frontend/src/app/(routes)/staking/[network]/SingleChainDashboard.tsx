@@ -56,7 +56,7 @@ const SingleStakingDashboard = ({ chainID }: { chainID: string }) => {
           isSingleChain={true}
           undelegations={delegations}
         />
-      ) : null}
+       ) : null} 
 
       {/* Delegations */}
       <StakingDelegations isSingleChain={true} delegations={delegations} />
