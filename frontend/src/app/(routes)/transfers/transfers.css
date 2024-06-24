@@ -85,11 +85,11 @@
 }
 
 .single-send-box {
-  @apply bg-[#FFFFFF05] rounded-2xl;
+  @apply bg-[#FFFFFF05] rounded-2xl w-[600px];
 }
 
 .amount-input-field {
-  @apply bg-transparent w-full border-none focus:outline-none text-[40px] font-bold placeholder:text-[#FFFFFF33];
+  @apply bg-transparent w-full border-none focus:outline-none text-[28px] font-bold placeholder:text-[#FFFFFF33];
 }
 
 .select-network {
