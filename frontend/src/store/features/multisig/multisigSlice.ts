@@ -528,13 +528,15 @@ export const importMultisigAccount = createAsyncThunk(
       accountAddress: string;
       multisigAddress: string;
       addressPrefix: string;
+      chainID: string;
     },
     { rejectWithValue }
   ) => {
     try {
       const response = await authService.accountInfo(
         data.baseURLs,
-        data.multisigAddress
+        data.multisigAddress,
+        data.chainID
       );
       if (response?.status === 200) {
         if (
