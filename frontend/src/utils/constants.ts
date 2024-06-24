@@ -352,3 +352,5 @@ export const IBC_SWAP_DESCRIPTION =
   'Swap tokens across various interchain networks';
 export const MULTISIG_DESCRIPTION =
   'A multisig account is an account that requires multiple signatures to sign transactions';
+export const IBC_SWAP_GRADIENT =
+  'linear-gradient(180deg, #5A0DA660 0%, #12131C80 100%)';

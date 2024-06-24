@@ -1,7 +1,8 @@
+import { formatDollarAmount } from '@/utils/util';
 import Image from 'next/image';
 import React from 'react';
 
-type AssetSummary = { icon: string; alt: string; type: string; amount: number };
+type AssetSummary = { icon: string; alt: string; type: string; amount: string };
 
 function StakingSummary({
   stakedAmount,
@@ -19,26 +20,26 @@ function StakingSummary({
       icon: '/staked-bal.png',
       alt: 'stake',
       type: 'Total Staking',
-      amount: stakedAmount,
+      amount: formatDollarAmount(stakedAmount),
     },
     {
       icon: '/total-bal.png',
       alt: 'available',
       type: 'Staked Amount',
-      amount: availableAmount,
+      amount: formatDollarAmount(availableAmount),
     },
     {
       icon: '/rewards.png',
       alt: 'rewards',
       type: 'Rewards',
-      amount: rewardsAmount,
+      amount: formatDollarAmount(rewardsAmount),
     },
 
     {
       icon: '/avail-bal.png',
       alt: 'Avail-bal-icon',
       type: 'Available Balance',
-      amount: unstakeAmount,
+      amount: formatDollarAmount(unstakeAmount),
       // amount: parseInt(stakedBal)+rewardsBal+availableBal,
     },
   ];
@@ -61,7 +62,7 @@ function StakingSummary({
 
               <div className="flex flex-col items-center space-y-1">
                 <div className="text-white text-xl font-bold leading-[18px]">
-                  $ {data?.amount?.toFixed(3)}
+                   {data?.amount}
                 </div>
                 <div className="text-small-light">{data.type}</div>
               </div>

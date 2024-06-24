@@ -37,7 +37,7 @@ import { shortenAddress } from '@/utils/util';
 import { setError } from '@/store/features/common/commonSlice';
 import RoutePreview from './RoutePreview';
 import { FLIP_ICON, ROUTE_ICON, SETTINGS_ICON } from '@/constants/image-names';
-import { SWAP_ROUTE_ERROR } from '@/utils/constants';
+import { IBC_SWAP_GRADIENT, SWAP_ROUTE_ERROR } from '@/utils/constants';
 import { customTextFieldStyles } from '../../styles';
 import Settings from './Settings';
 
@@ -88,7 +88,7 @@ const IBCSwap = () => {
   const txStatus = useAppSelector((state) => state.swaps.txStatus.status);
   const sourceTxHash = useAppSelector((state) => state.swaps.txSuccess.txHash);
   const slippage = useAppSelector((state) => state.swaps.slippage);
-
+  const allNetworks = useAppSelector((state) => state.common.allNetworksInfo);
   const balanceStatus = useAppSelector(
     (state) => state.bank.balances?.[selectedSourceChain?.chainID || '']?.status
   );
@@ -530,8 +530,10 @@ const IBCSwap = () => {
               <div className="bg-[#FFFFFF05] rounded-2xl w-full">
                 <Box
                   sx={{
-                    background:
-                      'linear-gradient(180deg, #5A0DA660 0%, #12131C80 100%)',
+                    background: selectedSourceChain
+                      ? allNetworks?.[selectedSourceChain?.chainID]?.config
+                          .theme.gradient || IBC_SWAP_GRADIENT
+                      : IBC_SWAP_GRADIENT,
                     paddingY: '8px',
                     paddingX: '16px',
                     height: '72px',
@@ -581,7 +583,7 @@ const IBCSwap = () => {
                       amount={amountIn}
                       quickSelectAmount={quickSelectAmount}
                     />
-                    <div className="secondary-text !font-light flex gap-1">
+                    <div className="secondary-text !text-[12px] !font-light flex gap-1">
                       <div>Available Balance</div>
                       {balanceStatus === TxStatus.PENDING &&
                       !availableBalance.parsedAmount &&
@@ -607,8 +609,10 @@ const IBCSwap = () => {
             <div className="bg-[#FFFFFF05] rounded-2xl w-full">
               <Box
                 sx={{
-                  background:
-                    'linear-gradient(180deg, #5A0DA660 0%, #12131C80 100%)',
+                  background: selectedDestChain
+                    ? allNetworks?.[selectedDestChain?.chainID]?.config.theme
+                        .gradient || IBC_SWAP_GRADIENT
+                    : IBC_SWAP_GRADIENT,
                   paddingY: '8px',
                   paddingX: '16px',
                   height: '72px',
@@ -698,7 +702,7 @@ const IBCSwap = () => {
                 <div className="flex justify-between items-center w-full">
                   <div>
                     {routeLoading ? (
-                      <div className='text-b1'>
+                      <div className="text-b1">
                         Fetching Route<span className="dots-flashing"></span>{' '}
                       </div>
                     ) : (
