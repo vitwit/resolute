@@ -1,8 +1,23 @@
-import { Autocomplete, Avatar, Paper, TextField, InputAdornment } from '@mui/material';
+/** @jsxImportSource @emotion/react */
+
+import {
+  Autocomplete,
+  Avatar,
+  Paper,
+  TextField,
+  InputAdornment,
+} from '@mui/material';
 import React from 'react';
 import { customAutoCompleteStyles, customTextFieldStyles } from '../../styles';
 import NoOptions from '@/components/common/NoOptions';
 import CustomLoader from '@/components/common/CustomLoader';
+import { css } from '@emotion/react';
+
+const listItemStyle = css`
+  &:hover {
+    background-color: #ffffff09 !important;
+  }
+`;
 
 interface AssetsDropDownProps {
   sortedAssets: ParsedAsset[];
@@ -17,8 +32,11 @@ const AssetsDropDown: React.FC<AssetsDropDownProps> = ({
   handleAssetChange,
   loading,
 }) => {
-  const renderOption = (props: React.HTMLAttributes<HTMLLIElement>, option: ParsedAsset) => (
-    <li {...props} key={option.chainID + option.denom}>
+  const renderOption = (
+    props: React.HTMLAttributes<HTMLLIElement>,
+    option: ParsedAsset
+  ) => (
+    <li {...props} key={option.chainID + option.denom} css={listItemStyle}>
       <div className="flex justify-between items-center px-1 py-2">
         <div className="flex gap-2">
           <div>
@@ -81,7 +99,8 @@ const AssetsDropDown: React.FC<AssetsDropDownProps> = ({
             <div className="flex items-center gap-2">
               {selectedAsset && (
                 <div className="secondary-text !text-[12px] text-white mr-2">
-                  on <span className="capitalize">{selectedAsset.chainName}</span>
+                  on{' '}
+                  <span className="capitalize">{selectedAsset.chainName}</span>
                 </div>
               )}
               {params.InputProps.endAdornment}
@@ -134,10 +153,15 @@ const AssetsDropDown: React.FC<AssetsDropDownProps> = ({
             <>
               {loading ? (
                 <div className="flex justify-center items-center p-4">
-                  <CustomLoader loadingText="Fetching Balances" textStyles="italic" />
+                  <CustomLoader
+                    loadingText="Fetching Balances"
+                    textStyles="italic"
+                  />
                 </div>
               ) : (
-                <div>No Assets</div>
+                <div className="flex justify-center items-center p-4">
+                  No Assets
+                </div>
               )}
             </>
           )}
