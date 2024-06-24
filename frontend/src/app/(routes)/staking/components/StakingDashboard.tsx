@@ -40,9 +40,9 @@ const StakingDashboard = () => {
   };
 
   return (
-    <div className="flex flex-col items-start  w-full px-10 py-20">
+    <div className="flex flex-col items-start w-full px-10 py-20">
       <div
-        className={`flex flex-col w-full ${isWalletConnected ? ' gap-20' : 'gap-10'}`}
+        className={`flex flex-col w-full ${isWalletConnected ? 'gap-10' : 'gap-10'}`}
       >
         <div className="space-y-2 items-start">
           <div className="text-h1">Staking</div>

@@ -63,12 +63,12 @@ function StakingDelegations({
   });
 
   return (
-    <div className="flex flex-col w-full gap-10 pb-28">
+    <div
+      className={`flex flex-col w-full pb-28 mt-10 ${!isSingleChain && staking.delegationsLoading === 0 && !bondingCount ? '' : 'gap-10'}`}
+    >
       <div className="space-y-2 items-start">
         <div className="text-h2">Delegations</div>
-        <div className="secondary-text">
-          Summary of staked assets.
-        </div>
+        <div className="secondary-text">Summary of staked assets.</div>
         <div className="horizontal-line"></div>
       </div>
 
@@ -92,6 +92,7 @@ function StakingDelegations({
                     height={32}
                     className="h-8 w-8 rounded-full"
                     alt="chain-logo"
+                    draggable={false}
                   />
                   <p className="text-base font-normal leading-8 flex justify-center items-center capitalize">
                     {staking.chainName(key)}

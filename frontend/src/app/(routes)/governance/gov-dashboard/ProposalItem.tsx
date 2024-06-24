@@ -48,6 +48,7 @@ const ProposalItem = ({
                   height={20}
                   alt="Network-Logo"
                   className="rounded-full"
+                  draggable={false}
                 />
               </div>
             </div>
@@ -72,6 +73,7 @@ const ProposalItem = ({
                   width={24}
                   height={24}
                   alt="View-full-icon"
+                  draggable={false}
                 />
               </button>
             </div>
@@ -89,7 +91,8 @@ const ProposalItem = ({
                 src={TIMER_ICON}
                 width={16}
                 height={16}
-                alt="Address-icon"
+                alt="timer-icon"
+                draggable={false}
               />
               <p className="secondary-text">
                 {isActive ? 'Voting ends in' : 'Deposit ends in'} {endTime}
@@ -102,6 +105,7 @@ const ProposalItem = ({
                 width={16}
                 height={16}
                 alt=""
+                draggable={false}
               />
               <p className="secondary-text capitalize">{chainName} Network</p>
             </div>
