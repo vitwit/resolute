@@ -42,7 +42,7 @@ const SelectNetwork = () => {
 
   return (
     <div className="fixed-top w-full">
-      <div className="flex gap-2 items-center">
+      <div className="flex gap-2 items-center h-11">
         <Box
           sx={{
             background:
