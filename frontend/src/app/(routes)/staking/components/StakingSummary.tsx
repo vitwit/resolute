@@ -50,7 +50,13 @@ function StakingSummary({
           <div key={index} className="dashboard-card">
             <div className="flex flex-col gap-4">
               <div className="flex items-center justify-center">
-                <Image src={data.icon} width={40} height={40} alt={data.alt} />
+                <Image
+                  src={data.icon}
+                  width={40}
+                  height={40}
+                  alt={data.alt}
+                  draggable={false}
+                />
               </div>
 
               <div className="flex flex-col items-center space-y-1">
