@@ -463,8 +463,8 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
                       <div className="flex flex-col justify-center items-center">
                         <Image
                           src="/radio-clr.svg"
-                          width={12}
-                          height={12}
+                          width={16}
+                          height={16}
                           alt="Proposal-Created"
                           draggable={false}
                         />
@@ -557,33 +557,25 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
                         <p className="text-white text-xs font-normal leading-[normal]">
                           {v.count}
                         </p>
-                        <p className="text-[#FFFFFF80] text-[10px]">
+                        <p className="text-[#FFFFFF80] italic text-[10px]">
                           Voted {v.label}
                         </p>
                       </div>
                       <div className="flex space-x-2 items-center">
-                        <div className="bg-[#FFFFFF0D] w-[300px] h-[10px] rounded-full relative">
+                        <div className="bg-[#FFFFFF0D] w-full rounded-full relative">
                           <div
                             style={{
                               width: `${v.value}%`,
                               background: v.color,
                             }}
-                            className="h-2 rounded-l-full"
+                            className="h-2 rounded-full"
                           ></div>
                         </div>
-                        {v.label === 'Yes' ? (
-                          <Image
-                            src="/right.png"
-                            width={24}
-                            height={24}
-                            alt="tick-icon"
-                            draggable={false}
-                          />
-                        ) : (
+                       
                           <p className="text-white text-xs font-normal leading-[normal]">
                             {v.value}%
                           </p>
-                        )}
+                       
                       </div>
                     </div>
                   ))}
