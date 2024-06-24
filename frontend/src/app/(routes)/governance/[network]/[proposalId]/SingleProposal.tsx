@@ -262,7 +262,7 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
                               Voting
                             </p>
                             <p className="text-white text-sm font-normal leading-[normal]">
-                              Ends in{' '}
+                              ends in{' '}
                               {getTimeDifferenceToFutureDate(
                                 get(proposalInfo, 'voting_end_time')
                               )}

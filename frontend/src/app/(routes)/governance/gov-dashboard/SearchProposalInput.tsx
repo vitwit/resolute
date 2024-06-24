@@ -1,7 +1,7 @@
 import { SEARCH_ICON } from '@/constants/image-names';
 import { HandleInputChangeEvent } from '@/types/gov';
 import Image from 'next/image';
-import React from 'react';
+import React, { useState } from 'react';
 
 const SearchProposalInput = ({
   searchQuery,
@@ -12,6 +12,7 @@ const SearchProposalInput = ({
   handleSearchQueryChange: HandleInputChangeEvent;
   handleShowAllProposals: HandleInputChangeEvent;
 }) => {
+  const [check, SetCheck] = useState(false);
   return (
     <div className="search-proposal-field">
       <div className="flex items-center gap-1 justify-between flex-1">
@@ -22,22 +23,37 @@ const SearchProposalInput = ({
             placeholder="Search Proposal by Name, ID, and Network"
             value={searchQuery}
             onChange={handleSearchQueryChange}
-            className="search-proposal-input flex-1"
+            className="search-proposal-input flex-1 text-[14px]"
             autoFocus={true}
           />
         </div>
-        <div className="flex items-center gap-1 cursor-pointer">
-          <input
-            className="cursor-pointer"
-            type="checkbox"
-            id="showAllProps"
-            onChange={(e) => handleShowAllProposals(e)}
-          />
+        <div
+          className="flex items-center gap-1 cursor-pointer"
+          onClick={() => {
+            SetCheck(!check);
+          }}
+        >
+          {check ? (
+            <Image
+              src="/after-check.svg"
+              width={20}
+              height={20}
+              alt="after-check-icon"
+            />
+          ) : (
+            <Image
+              src="/before-check.svg"
+              width={20}
+              height={20}
+              alt="before-check-icon"
+            />
+          )}
+
           <label
             htmlFor="showAllProps"
-            className="text-b1 text-[#FFFFFF80] cursor-pointer"
+            className="text-[14px] text-[#FFFFFF50] cursor-pointer"
           >
-            Show all proposals
+            Show deposit proposals
           </label>
         </div>
       </div>

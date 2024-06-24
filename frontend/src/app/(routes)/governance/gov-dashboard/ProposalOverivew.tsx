@@ -89,7 +89,7 @@ const ProposalOverview = ({
                   <p className="text-small-light ">
                     {isActive ? 'Voting' : 'Deposit'}
                   </p>
-                  <p className="text-b1">Ends in {endTime}</p>
+                  <p className="text-b1">ends in {endTime}</p>
                 </div>
                 <div className="flex gap-2 items-center">
                   <p className="text-small-light ">on</p>
