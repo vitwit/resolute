@@ -348,3 +348,7 @@ export const DUMMY_WALLET_MNEMONIC =
   process.env.NEXT_PUBLIC_DUMMY_WALLET_MNEMONIC || '';
 export const INCREASE = 'increase';
 export const DECREASE = 'decrease';
+export const IBC_SWAP_DESCRIPTION =
+  'Swap tokens across various interchain networks';
+export const MULTISIG_DESCRIPTION =
+  'A multisig account is an account that requires multiple signatures to sign transactions';

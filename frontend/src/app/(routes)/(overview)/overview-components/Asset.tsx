@@ -170,7 +170,7 @@ const Asset = ({
             />
             <p className="text-b1-light">
               on{' '}
-              <Link href={`/overview/${asset.chainName}`}>
+              <Link className='capitalize' href={`/overview/${asset.chainName}`}>
                 {asset.chainName}
               </Link>
             </p>

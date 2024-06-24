@@ -1,6 +1,6 @@
 'use client';
 
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { SendMsg } from '../../../txns/bank';
 import bankService from './bankService';
 import { signAndBroadcast } from '../../../utils/signing';
@@ -36,6 +36,7 @@ interface BankState {
       status: TxStatus;
     };
   };
+  showIBCSendAlert: boolean;
 }
 
 const initialState: BankState = {
@@ -53,6 +54,7 @@ const initialState: BankState = {
     },
     multiSendTx: { status: TxStatus.INIT },
   },
+  showIBCSendAlert: false,
 };
 
 export const getBalances = createAsyncThunk(
@@ -252,6 +254,9 @@ export const bankSlice = createSlice({
         multiSendTx: { status: TxStatus.INIT },
       };
     },
+    setIBCSendAlert: (state, action: PayloadAction<boolean>) => {
+      state.showIBCSendAlert = action.payload;
+    },
   },
 
   extraReducers: (builder) => {
@@ -356,5 +361,6 @@ export const {
   resetMultiSendTxRes,
   resetState,
   resetAuthz,
+  setIBCSendAlert,
 } = bankSlice.actions;
 export default bankSlice.reducer;
