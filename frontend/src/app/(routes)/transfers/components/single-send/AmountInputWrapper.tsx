@@ -58,7 +58,7 @@ const QuickSetAmountButton = ({
     <button
       onClick={() => quickSelectAmount(value)}
       type="button"
-      className="primary-btn w-20 capitalize"
+      className="primary-btn w-20 capitalize !h-[25px]"
     >
       {value}
     </button>
