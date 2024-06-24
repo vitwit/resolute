@@ -97,8 +97,8 @@ const GovDashboard = ({ chainIDs }: { chainIDs: string[] }) => {
     }, 100);
   };
 
-  const handleShowAllProposals = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setShowAll(e.target.checked);
+  const handleShowAllProposals = (e: boolean) => {
+    setShowAll(e);
     setSelectedProposal(null);
   };
 
@@ -114,7 +114,7 @@ const GovDashboard = ({ chainIDs }: { chainIDs: string[] }) => {
           filterDays={filterDays}
         />
       </div>
-      <div className="flex gap-6 w-full flex-1 h-full overflow-y-scroll py-6">
+      <div className="flex gap-6 w-full flex-1 h-full overflow-y-scroll">
         <div className="flex flex-col w-full gap-6 py-0 pb-6 flex-1 overflow-y-scroll">
           {proposalsLoading ? (
             <GovDashboardLoading />
@@ -160,7 +160,7 @@ const QuickFilters = ({
 }: {
   searchQuery: string;
   handleSearchQueryChange: HandleInputChangeEvent;
-  handleShowAllProposals: HandleInputChangeEvent;
+  handleShowAllProposals: (arg: boolean) => void;
   handleFiltersChange: (n: number) => void;
   filterDays: number;
 }) => {

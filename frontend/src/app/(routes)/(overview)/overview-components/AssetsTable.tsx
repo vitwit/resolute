@@ -33,19 +33,19 @@ const AssetsTable = ({ chainIDs }: { chainIDs: string[] }) => {
     isAuthzMode && (authzBalanceLoading || authzDelegationsLoading);
 
   return (
-    <div className="flex flex-col gap-10 w-full overflow-scroll h-[50vh]">
-      <div className="space-y-1">
+    <div className="flex flex-col gap-10 w-full">
+      <div className="space-y-2">
         <div className="text-h2">Asset Information</div>
-        {/* <div className="secondary-text">
+        <div className="secondary-text">
           Connect your wallet now to access all the modules on resolute
-        </div> */}
+        </div>
         <div className="divider-line"></div>
       </div>
 
       {/* table */}
 
       {assets.length ? (
-        <div className="flex flex-col items-start gap-2 w-full p-6">
+        <div className="flex flex-col items-start gap-2 w-full overflow-scroll h-[40vh]">
           <table className="relative w-full">
             <thead className="w-full">
               <tr>
@@ -78,11 +78,7 @@ const AssetsTable = ({ chainIDs }: { chainIDs: string[] }) => {
         </div>
       ) : (
         <div className="w-full flex flex-col flex-1 items-center justify-start text-white">
-          {loading || authzLoading ? (
-            <DashboardLoading />
-          ) : (
-            <NoAssets />
-          )}
+          {loading || authzLoading ? <DashboardLoading /> : <NoAssets />}
         </div>
       )}
     </div>

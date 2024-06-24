@@ -129,7 +129,7 @@ body {
 }
 
 .empty-screen-title {
-  @apply text-[32px] font-bold;
+  @apply text-[18px] font-bold;
   background: linear-gradient(270deg, #fff -67.89%, #999 99.95%);
   background-clip: text;
   -webkit-background-clip: text;
