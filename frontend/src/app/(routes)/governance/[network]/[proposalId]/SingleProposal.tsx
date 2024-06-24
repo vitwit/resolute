@@ -303,7 +303,7 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
                       showFullText ? (
                         <p
                           onClick={handleToggleText}
-                          className="cursor-pointer text-white justify-center text-sm font-normal leading-[normal] underline flex space-x-1 items-center"
+                          className="cursor-pointer justify-center text-b1 underline flex space-x-1 items-center"
                         >
                           Show Less
                           <Image
@@ -317,7 +317,7 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
                         <div className="h-30 w-full absolute bottom-0  bg-transparent z-10">
                           <div
                             onClick={handleToggleText}
-                            className="cursor-pointer justify-center w-full bottom-14 absolute flex z-10 text-lg font-normal leading-[normal] underline space-x-1"
+                            className="cursor-pointer justify-center w-full bottom-14 absolute flex z-10 text-b1 underline space-x-1"
                           >
                             Continue Reading{' '}
                             <Image
