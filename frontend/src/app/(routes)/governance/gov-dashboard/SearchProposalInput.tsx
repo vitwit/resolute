@@ -10,7 +10,7 @@ const SearchProposalInput = ({
 }: {
   searchQuery: string;
   handleSearchQueryChange: HandleInputChangeEvent;
-  handleShowAllProposals: HandleInputChangeEvent;
+  handleShowAllProposals: (arg: boolean)=> void;
 }) => {
   const [check, SetCheck] = useState(false);
   return (
@@ -30,6 +30,7 @@ const SearchProposalInput = ({
         <div
           className="flex items-center gap-1 cursor-pointer"
           onClick={() => {
+            handleShowAllProposals(!check)
             SetCheck(!check);
           }}
         >

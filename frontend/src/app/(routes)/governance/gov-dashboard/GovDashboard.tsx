@@ -97,8 +97,8 @@ const GovDashboard = ({ chainIDs }: { chainIDs: string[] }) => {
     }, 100);
   };
 
-  const handleShowAllProposals = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setShowAll(e.target.checked);
+  const handleShowAllProposals = (e: boolean) => {
+    setShowAll(e);
     setSelectedProposal(null);
   };
 
@@ -160,7 +160,7 @@ const QuickFilters = ({
 }: {
   searchQuery: string;
   handleSearchQueryChange: HandleInputChangeEvent;
-  handleShowAllProposals: HandleInputChangeEvent;
+  handleShowAllProposals: (arg: boolean) => void;
   handleFiltersChange: (n: number) => void;
   filterDays: number;
 }) => {
