@@ -98,7 +98,7 @@ const Vote = ({
 
   return (
     <div className="flex flex-col gap-10 w-full">
-      <div className={`grid-cols-${colCount} grid  gap-6`}>
+      <div className={`grid-cols-${colCount} grid gap-6`}>
         {GOV_VOTE_OPTIONS?.map((option) => (
           <button
             key={option.label}
@@ -111,6 +111,15 @@ const Vote = ({
                   : 'transparent',
               borderColor: option.color,
             }}
+            onMouseEnter={(e) =>
+              (e.currentTarget.style.backgroundColor = option.selectedColor)
+            }
+            onMouseLeave={(e) =>
+              (e.currentTarget.style.backgroundColor =
+                voteOption === option.label
+                  ? option.selectedColor
+                  : 'transparent')
+            }
             disabled={
               loading === TxStatus.PENDING ||
               (isAuthzMode && authzLoading === TxStatus.PENDING)

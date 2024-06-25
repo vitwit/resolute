@@ -55,7 +55,10 @@ const SingleSendForm = ({
     }
   };
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-10">
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="h-full flex flex-col gap-10 justify-between"
+    >
       <div className="space-y-2">
         <div className="form-label-text">Enter recipient address</div>
         <AddressField

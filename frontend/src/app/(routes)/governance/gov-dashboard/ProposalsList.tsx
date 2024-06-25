@@ -45,8 +45,8 @@ const ProposalsList = ({
           title="No Proposals"
           description=""
           bgImage={NO_DATA_ILLUSTRATION}
-          width={400}
-          height={400}
+          width={246}
+          height={264}
         />
       )}
     </>

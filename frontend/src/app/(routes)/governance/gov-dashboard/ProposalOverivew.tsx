@@ -89,7 +89,7 @@ const ProposalOverview = ({
                   <p className="text-small-light ">
                     {isActive ? 'Voting' : 'Deposit'}
                   </p>
-                  <p className="text-b1">Ends in {endTime}</p>
+                  <p className="text-b1">ends in {endTime}</p>
                 </div>
                 <div className="flex gap-2 items-center">
                   <p className="text-small-light ">on</p>
@@ -108,7 +108,7 @@ const ProposalOverview = ({
             </div>
           </div>
           <div className="flex gap-4 flex-col">
-            <div className="text-white text-base">Proposal Summary</div>
+            <div className="text-white text-base">Summary</div>
             <div className="divider-line"></div>
             <div className="secondary-text">
               {truncatedDescription || proposalTitle}

@@ -33,12 +33,14 @@ const ProposalItem = ({
   const [voteDialogOpen, setVoteDialogOpen] = useState(false);
   const isWalletConnected = useAppSelector((state) => state.wallet.connected);
   return (
-    <div className="flex flex-col gap-4 w-full">
+    <div className="flex flex-col w-full">
       <div
-        className={`flex justify-between w-full px-6 py-2 ${selectedProposal && selectedProposal.proposalId === proposalId && selectedProposal.chainID === chainID ? 'bg-[#ffffff14] rounded-2xl' : ''} `}
+        className={`flex justify-between w-full px-6 py-8 hover:bg-[#ffffff14] rounded-2xl ${selectedProposal && selectedProposal.proposalId === proposalId && selectedProposal.chainID === chainID ? 'bg-[#ffffff14] rounded-2xl' : ''} `}
       >
-        <div className="flex flex-col gap-4">
-          <div className="flex items-center gap-6">
+        <div className="flex flex-col gap-4 w-full">
+          <div
+            className={`flex items-center gap-6 ${selectedProposal ? 'justify-between w-full' : ''}`}
+          >
             <div className="proposal-id">
               <span>{proposalId}</span>
               <div className="bottom-network-logo">
@@ -77,13 +79,13 @@ const ProposalItem = ({
                 />
               </button>
             </div>
-            <>
+            <div>
               {isActive ? (
                 <div className="active-badge">Active</div>
               ) : (
                 <div className="deposit-badge">Deposit</div>
               )}
-            </>
+            </div>
           </div>
           <div className="flex gap-4 items-center">
             <div className="flex space-x-1 min-w-[180px]">
