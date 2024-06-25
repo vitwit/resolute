@@ -14,6 +14,7 @@ import useVerifyAccount from '@/custom-hooks/useVerifyAccount';
 import useFetchTxns from '@/custom-hooks/multisig/useFetchTxns';
 import NoData from '@/components/common/NoData';
 import TransactionsLoading from '../loaders/TransactionsLoading';
+import DialogTxnFailed from './DialogTxnFailed';
 
 const TXNS_TYPES = [
   { option: 'to-sign', value: 'To be Signed' },
@@ -242,6 +243,13 @@ const TransactionsList = ({
   txnsType: string;
 }) => {
   const isHistory = ['completed', 'failed'].includes(txnsType);
+  const [viewErrorDialogOpen, setViewErrorDialogOpen] =
+    useState<boolean>(false);
+  const [errMsg, setErrMsg] = useState<string>('');
+  const onViewError = (errMsg: string) => {
+    setErrMsg(errMsg);
+    setViewErrorDialogOpen(true);
+  };
   return (
     <div className="space-y-4">
       {txns.map((txn, index) => (
@@ -253,8 +261,14 @@ const TransactionsList = ({
           multisigAddress={multisigAddress}
           chainID={chainID}
           isHistory={isHistory}
+          onViewError={onViewError}
         />
       ))}
+      <DialogTxnFailed
+        errMsg={errMsg}
+        onClose={() => setViewErrorDialogOpen(false)}
+        open={viewErrorDialogOpen}
+      />
     </div>
   );
 };

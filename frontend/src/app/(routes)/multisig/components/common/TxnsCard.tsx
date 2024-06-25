@@ -34,6 +34,7 @@ export const TxnsCard = ({
   multisigAddress,
   chainID,
   isHistory,
+  onViewError,
 }: {
   txn: Txn;
   currency: Currency;
@@ -41,6 +42,7 @@ export const TxnsCard = ({
   multisigAddress: string;
   chainID: string;
   isHistory: boolean;
+  onViewError?: (errMsg: string) => void;
 }) => {
   const dispatch = useAppDispatch();
   const { getChainInfo } = useGetChainInfo();
@@ -168,7 +170,10 @@ export const TxnsCard = ({
               </Link>
             ) : (
               <div className="flex gap-[2px] cursor-pointer">
-                <div className="text-[#F15757] underline underline-offset-[3px]">
+                <div
+                  onClick={() => onViewError?.(txn?.err_msg || '')}
+                  className="text-[#F15757] underline underline-offset-[3px]"
+                >
                   Failed
                 </div>
                 <Image src={REDIRECT_ICON_RED} height={16} width={16} alt="" />
