@@ -59,10 +59,15 @@ const useSingleStaking = (chainID: string) => {
         // Fetch unbonding delegations
         dispatch(getUnbonding({ baseURLs: restURLs, address, chainID }));
 
-        // Fetch all validators
-        dispatch(getAllValidators({ baseURLs: restURLs, chainID }));
+
         dispatch(getAllTokensPrice());
     }, [isWalletConnected, chainID]);
+
+    useEffect(() => {
+        const { restURLs } = getChainInfo(chainID);
+        // Fetch all validators
+        dispatch(getAllValidators({ baseURLs: restURLs, chainID }));
+      }, [chainID]);
 
     const fetchValidatorDetails = (valoperAddress: string, chainID: string) => {
         const { restURLs } = getChainInfo(chainID);
