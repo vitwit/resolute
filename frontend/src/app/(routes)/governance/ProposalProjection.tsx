@@ -1,3 +1,5 @@
+import { useAppSelector } from '@/custom-hooks/StateHooks';
+import { TxStatus } from '@/types/enums';
 import { get, sum } from 'lodash';
 import React from 'react';
 
@@ -15,6 +17,7 @@ interface ProposalProjectionProps {
   tallyResult: TallyResult;
   quorumRequired: string;
   quorumPercent: string;
+  chainID: string;
 }
 
 const REJECTED = 'Will Be Rejected';
@@ -26,20 +29,32 @@ const ProposalProjection = ({
   tallyResult,
   quorumRequired,
   quorumPercent,
+  chainID,
 }: ProposalProjectionProps) => {
   const getVotesProportion = (votesCount: number, totalVotes: number) => {
     return (
       (votesCount && totalVotes && (votesCount / totalVotes).toFixed(2)) || 0
     );
   };
-  const yes = Number(get(tallyResult, 'yes'));
-  const no = Number(get(tallyResult, 'no'));
-  const abstian = Number(get(tallyResult, 'abstain'));
-  const no_with_veto = Number(get(tallyResult, 'no_with_veto'));
+  const yes = Number(get(tallyResult, 'yes', get(tallyResult, 'yes_count')));
+  const no = Number(get(tallyResult, 'no', get(tallyResult, 'no_count')));
+  const abstian = Number(
+    get(tallyResult, 'abstain', get(tallyResult, 'abstain_count'))
+  );
+  const no_with_veto = Number(
+    get(tallyResult, 'no_with_veto', get(tallyResult, 'no_with_veto_count'))
+  );
   const abstain_proportion = Number(getVotesProportion(abstian, totalVotes));
   const veto_proportion = Number(getVotesProportion(no_with_veto, totalVotes));
   const yes_proportion_without_abstain = Number(
     getVotesProportion(yes, sum([yes, no, no_with_veto]))
+  );
+
+  const tallyParamsStatus = useAppSelector(
+    (state) => state.gov.chains?.[chainID]?.tallyParams?.status
+  );
+  const proposalTallyStatus = useAppSelector(
+    (state) => state.gov.chains?.[chainID]?.tally.status
   );
 
   const getProposalStatus = (): { status: string; reason: string } => {
@@ -76,18 +91,59 @@ const ProposalProjection = ({
   const { reason, status } = getProposalStatus();
 
   return (
-    <div>
-      {status === PASSED ? (
-        <div className="text-[#71DD9E] text-[20px] font-bold">{PASSED}</div>
-      ) : null}
-      {status === REJECTED ? (
-        <div className="text-[#E57575] flex flex-col justify-center items-center gap-4">
-          <div className="text-[20px] font-bold">{status}</div>
-          <div>
-            <li>{reason}</li>
+    <div className="flex flex-col gap-6 p-6 rounded-2xl bg-[#FFFFFF05] min-w-[380px]">
+      <div className="flex flex-col gap-2">
+        <p className="text-b1">Proposal Projection</p>
+        <div className="divider-line"></div>
+      </div>
+      {proposalTallyStatus === TxStatus.PENDING ||
+      tallyParamsStatus === TxStatus.PENDING ? (
+        <>
+          <div className="w-full bg-[#252525] animate-pulse h-[30px] rounded"></div>
+          <div className="flex items-center gap-4 w-full">
+            <div className="bg-[#252525] animate-pulse h-[30px] flex-1 rounded"></div>
+            <div className="bg-[#252525] animate-pulse h-[30px] flex-1 rounded"></div>
           </div>
-        </div>
-      ) : null}
+        </>
+      ) : (
+        <>
+          <div className="flex space-x-2 justify-center">
+            <div>
+              {status === PASSED ? (
+                <div className="text-[#71DD9E] text-[20px] font-bold text-center">
+                  {PASSED}
+                </div>
+              ) : null}
+              {status === REJECTED ? (
+                <div className="text-[#E57575] flex flex-col justify-center items-center gap-4">
+                  <div className="text-[20px] font-bold">{status}</div>
+                  <div>
+                    <li>{reason}</li>
+                  </div>
+                </div>
+              ) : null}
+            </div>
+          </div>
+          <div className="flex gap-4 w-full">
+            <div className="flex justify-center items-center gap-2 px-4 py-2 rounded-[100px] bg-[#FFFFFF05] w-[158px]">
+              <p className="text-white text-xs font-bold leading-[normal]">
+                {quorumPercent} %
+              </p>
+              <p className="text-[rgba(255,255,255,0.50)] text-[10px] font-extralight leading-[normal]">
+                Turnout
+              </p>
+            </div>
+            <div className="flex justify-center items-center gap-2 px-4 py-2 rounded-[100px] bg-[#FFFFFF05] w-[158px]">
+              <p className="text-white text-xs font-bold leading-[normal]">
+                {quorumRequired}%
+              </p>
+              <p className="text-[rgba(255,255,255,0.50)] text-[10px] font-extralight leading-[normal]">
+                Quorum
+              </p>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 };
