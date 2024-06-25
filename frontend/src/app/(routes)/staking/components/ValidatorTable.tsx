@@ -14,6 +14,7 @@ import {
   filterValidators,
   setSearchQuery,
   setValidators,
+  sortValidatorsByVotingPower,
 } from '@/store/features/staking/stakeSlice';
 import { Validator } from '@/types/staking';
 import SearchValidator from '../components/SearchValidator';
@@ -23,8 +24,9 @@ interface ValStatusObj {
 }
 
 const valStatusObj: ValStatusObj = {
-  BOND_STATUS_BONDED: 'Bonded',
+  BOND_STATUS_BONDED: 'Active',
   BOND_STATUS_UNBONDED: 'Unbonded',
+  BOND_STATUS_UNBONDING: 'Unbonding',
 };
 
 const ValidatorTable: React.FC<{ chainID: string }> = ({ chainID }) => {
@@ -37,9 +39,40 @@ const ValidatorTable: React.FC<{ chainID: string }> = ({ chainID }) => {
 
   useEffect(() => {
     if (validators?.status === 'idle') {
-      const activeValidators = get(validators, 'active', {});
-      const inactiveValidators = get(validators, 'inactive', {});
-      dispatch(setValidators({ ...activeValidators, ...inactiveValidators }));
+
+
+      /* eslint-disable @typescript-eslint/no-explicit-any */
+      const activeValidators: any = get(validators, 'active', {});
+
+      /* eslint-disable @typescript-eslint/no-explicit-any */
+      const inactiveValidators: any = get(validators, 'inactive', {});
+
+      /* eslint-disable @typescript-eslint/no-explicit-any */
+      const activeSsortedObj: any = {};
+      let rank = 1;
+      get(validators, 'activeSorted', []).forEach(key => {
+        if (activeValidators.hasOwnProperty(key)) {
+          activeSsortedObj[key] = {
+            rank: rank++,
+            ...activeValidators[key]
+          }
+        }
+      });
+
+      /* eslint-disable @typescript-eslint/no-explicit-any */
+      const inactiveSsortedObj: any = {};
+
+      get(validators, 'inactiveSorted', []).forEach(key => {
+        if (inactiveValidators.hasOwnProperty(key)) {
+          inactiveSsortedObj[key] = {
+            rank: rank++,
+            ...inactiveValidators[key]
+          }
+        }
+      });
+
+
+      dispatch(setValidators({ ...activeSsortedObj, ...inactiveSsortedObj }));
     }
   }, [validators?.status]);
 
@@ -47,6 +80,7 @@ const ValidatorTable: React.FC<{ chainID: string }> = ({ chainID }) => {
     (query: string) => {
       dispatch(setSearchQuery(query));
       dispatch(filterValidators());
+      dispatch(sortValidatorsByVotingPower({ chainID }))
     },
     [dispatch]
   );
@@ -62,13 +96,13 @@ const ValidatorTable: React.FC<{ chainID: string }> = ({ chainID }) => {
 
   const validatorRows = useMemo(() => {
     return Object.entries(filteredValidators || {}).map(
-      ([key, value], index) => (
+      ([key, value]) => (
         <React.Fragment key={key}>
           <tr className="table-border-line">
             <td className="px-0 py-8">
               <div className="mr-auto flex">
                 <div className="text-white text-base font-normal leading-[normal]">
-                  #{index + 1}
+                  # {get(value, 'rank', '-')}
                 </div>
               </div>
             </td>
@@ -92,7 +126,7 @@ const ValidatorTable: React.FC<{ chainID: string }> = ({ chainID }) => {
             </td>
             <td className="">
               <div className="text-white text-left text-base font-normal leading-[normal]">
-                {Number(get(value, 'commission.commission_rates.rate')) * 100}%
+                {parseInt(((get(value, 'commission.commission_rates.rate')) * 100).toString())}%
               </div>
             </td>
             <td className="">
@@ -102,19 +136,21 @@ const ValidatorTable: React.FC<{ chainID: string }> = ({ chainID }) => {
             </td>
             <td className="">
               <div className="text-left text-base font-normal leading-[normal]">
-                {valStatusObj[get(value, 'status')]}
+                {get(value, 'jailed') ? 'Jailed' : valStatusObj[get(value, 'status')]}
               </div>
             </td>
             <td className="">
-              <button
-                onClick={() => {
-                  setOpenDelegate(true);
-                  setSelectedValidator(value);
-                }}
-                className="primary-btn"
-              >
-                Delegate
-              </button>
+              {
+                !get(value, 'jailed') ? <button
+                  onClick={() => {
+                    setOpenDelegate(true);
+                    setSelectedValidator(value);
+                  }}
+                  className="primary-btn"
+                >
+                  Delegate
+                </button> : null
+              }
             </td>
           </tr>
         </React.Fragment>
@@ -136,7 +172,7 @@ const ValidatorTable: React.FC<{ chainID: string }> = ({ chainID }) => {
       <div className="space-y-1">
         <div className="text-h2">Validators</div>
         <div className="secondary-text">
-          Connect your wallet now to access all the modules on resolute
+          List of the validators in the network.
         </div>
         <div className="horizontal-line"></div>
       </div>

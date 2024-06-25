@@ -30,7 +30,7 @@ const DelegatePopup: React.FC<PopupProps> = ({
   const singleStake = useSingleStaking(chainID);
 
   // Get the available staking assets and denomination
-  const { availableAmount } = singleStake.getStakingAssets();
+  // const { availableAmount } = singleStake.getStakingAssets();
   const denom = singleStake.getDenomWithChainID(chainID);
 
   // Custom hook to get staking information
@@ -39,6 +39,8 @@ const DelegatePopup: React.FC<PopupProps> = ({
   // Get the current validator's information from the staking module
   const stakeModule = staking.getAllDelegations();
   const val = stakeModule[chainID]?.validators?.active?.[validator];
+
+  const availableAmount = singleStake.getAvaiailableAmount(chainID)
 
   // Calculate the commission rate for the validator
   const getCommisionRate = () => {

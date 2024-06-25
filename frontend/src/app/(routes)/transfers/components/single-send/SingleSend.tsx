@@ -178,7 +178,7 @@ const SingleSend = ({ sortedAssets }: { sortedAssets: ParsedAsset[] }) => {
   }, [selectedNetwork]);
 
   return (
-    <div className="single-send-box w-[600px]">
+    <div className="single-send-box">
       <Box
         sx={{
           background:
@@ -198,7 +198,7 @@ const SingleSend = ({ sortedAssets }: { sortedAssets: ParsedAsset[] }) => {
           <Image src="/drop-down-icon.svg" height={24} width={24} alt="" />
         </div>
       </Box>
-      <div className="py-10 px-6 space-y-10">
+      <div className="py-10 pt-12 px-6 flex gap-10 flex-col justify-between h-[630px]">
         <div>
           <AssetsDropDown
             selectedAsset={selectedAsset}

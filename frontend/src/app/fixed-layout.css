@@ -93,3 +93,8 @@
 .network-item .network-name {
   @apply text-[14px] leading-normal opacity-100 font-light;
 }
+
+.logout-btn {
+  border-image: none !important;
+  background: #d921011a !important;
+}

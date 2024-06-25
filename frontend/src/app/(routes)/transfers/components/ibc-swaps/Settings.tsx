@@ -28,7 +28,7 @@ const Settings = ({
   };
   
   return (
-    <div className="w-full h-[700px] flex flex-col justify-between">
+    <div className="w-full h-[676px] flex flex-col justify-between">
       <div className="w-full space-y-4">
         <div className="flex items-center justify-between w-full">
           <div className="text-b1 text-[#ffffff80]">Settings</div>

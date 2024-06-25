@@ -37,6 +37,32 @@ const useSingleStaking = (chainID: string) => {
         (state: RootState) => state.staking.chains
     );
 
+    const bankData = useAppSelector(
+        (state: RootState) => state.bank.balances
+    );
+
+    const getAvaiailableAmount = (chainID: string) => {
+        let amount = 0;
+        bankData[chainID]?.list?.forEach(element => {
+            amount += Number(element?.amount)
+        });
+
+        const { decimals } = getDenomInfo(chainID);
+        return Number((amount / 10 ** decimals))
+    }
+
+    const totalValStakedAssets = (chainID: string, valAddr: string) => {
+        let amount = 0;
+         stakeData[chainID]?.delegations?.delegations?.delegation_responses?.forEach((d)=>{
+            if (d?.delegation?.validator_address === valAddr) {
+                amount = Number(d?.balance?.amount)
+            }
+        })
+
+        const { decimals } = getDenomInfo(chainID);
+        return Number((amount / 10 ** decimals))
+    }
+
     useEffect(() => {
         const { address, baseURL, restURLs } = getChainInfo(chainID);
         const { minimalDenom } = getDenomInfo(chainID);
@@ -59,10 +85,15 @@ const useSingleStaking = (chainID: string) => {
         // Fetch unbonding delegations
         dispatch(getUnbonding({ baseURLs: restURLs, address, chainID }));
 
-        // Fetch all validators
-        dispatch(getAllValidators({ baseURLs: restURLs, chainID }));
+
         dispatch(getAllTokensPrice());
     }, [isWalletConnected, chainID]);
+
+    useEffect(() => {
+        const { restURLs } = getChainInfo(chainID);
+        // Fetch all validators
+        dispatch(getAllValidators({ baseURLs: restURLs, chainID }));
+      }, [chainID]);
 
     const fetchValidatorDetails = (valoperAddress: string, chainID: string) => {
         const { restURLs } = getChainInfo(chainID);
@@ -89,20 +120,20 @@ const useSingleStaking = (chainID: string) => {
     }
 
     const getAllDelegations = (chainID: string) => {
-        return  {[chainID]: stakeData[chainID]}
+        return { [chainID]: stakeData[chainID] }
     }
 
     // Get total staked amount of chain
 
     const getAmountWithDecimal = (amount: number, chainID: string) => {
         const { decimals, displayDenom } = getDenomInfo(chainID);
-        return (amount / 10 ** decimals).toFixed(4) + ' ' + displayDenom;
+        return parseInt((amount / 10 ** decimals).toString()) + ' ' + displayDenom;
     }
 
     const getDenomWithChainID = (chainID: string) => {
-        const {  displayDenom } = getDenomInfo(chainID);
+        const { displayDenom } = getDenomInfo(chainID);
 
-        return  displayDenom;
+        return displayDenom;
     }
 
     const chainTotalRewards = (chainID: string) => {
@@ -122,7 +153,7 @@ const useSingleStaking = (chainID: string) => {
         return totalRewardsAmount.toFixed(4) + ' ' + displayDenomName;
     }
 
-    
+
     const getValidators = () => {
         return stakeData[chainID]?.validators || {}
     }
@@ -135,7 +166,9 @@ const useSingleStaking = (chainID: string) => {
         chainTotalRewards,
         chainLogo,
         getValidators,
-        getDenomWithChainID
+        getDenomWithChainID,
+        getAvaiailableAmount,
+        totalValStakedAssets
     }
 };
 

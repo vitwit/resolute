@@ -89,7 +89,6 @@ export const getTxns = (
   address: string,
   status: string
 ): Promise<AxiosResponse> => {
-  console.log('address', address);
   const uri = `${BASE_URL}/multisig/${address}/txs?status=${status}`;
   return Axios.get(uri);
 };
