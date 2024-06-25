@@ -199,7 +199,7 @@ const ValidatorTable: React.FC<{ chainID: string }> = ({ chainID }) => {
                           .fill(null)
                           .map((_, colIndex) => (
                             <td key={colIndex}>
-                              <div className="h-10 bg-[#252525]  rounded my-6 mx-1"></div>
+                              <div className="h-10 bg-[#252525] rounded my-6 mx-1"></div>
                             </td>
                           ))}
                       </tr>
