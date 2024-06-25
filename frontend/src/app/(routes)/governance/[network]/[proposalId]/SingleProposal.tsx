@@ -42,7 +42,6 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
   const [showFullText, setShowFullText] = useState(false);
   const [proposalMarkdown, setProposalMarkdown] = useRemark();
   const [contentLength, setContentLength] = useState(0);
-  const [contentLength, setContentLength] = useState(0);
   const [quorumPercent, setQuorumPercent] = useState<string>('0');
   const [depositDialogOpen, setDepositDialogOpen] = useState(false);
 
@@ -289,7 +288,6 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
                     <div className="divider-line"></div>
                   </div>
 
-                  <div className="text-white h-[22vh] flex flex-col justify-between relative z-0">
                   <div className="text-white h-[22vh] flex flex-col justify-between relative z-0">
                     <p
                       style={{
