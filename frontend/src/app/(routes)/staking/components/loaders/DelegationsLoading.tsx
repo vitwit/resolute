@@ -14,7 +14,7 @@ const DelegationsLoading = () => {
               </div>
             </div>
           </div>
-          {[1, 2].map((_, id) => (
+          {[1].map((_, id) => (
             <div
               key={id}
               className="h-20 my-4 w-full rounded bg-[#252525] animate-pulse"
