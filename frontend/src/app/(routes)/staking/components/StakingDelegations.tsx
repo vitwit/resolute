@@ -64,7 +64,7 @@ function StakingDelegations({
 
   return (
     <div
-      className={`flex flex-col w-full pb-28 mt-10 ${!isSingleChain && staking.delegationsLoading === 0 && !bondingCount ? '' : 'gap-10'}`}
+      className={`flex flex-col w-full ${!isSingleChain ? 'mb-28' : ''} mt-10 ${!isSingleChain && staking.delegationsLoading === 0 && !bondingCount ? '' : 'gap-10'}`}
     >
       <div className="space-y-2 items-start">
         <div className="text-h2">Delegations</div>
