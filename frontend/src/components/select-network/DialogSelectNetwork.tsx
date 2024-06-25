@@ -123,6 +123,7 @@ const DialogSelectNetwork = () => {
               onClose();
             }}
             className={`network-item justify-center ${selectedNetwork.chainName?.length ? '' : 'bg-[#FFFFFF14] !border-transparent'}`}
+            prefetch={false}
           >
             <div className="p-1">
               <Image
