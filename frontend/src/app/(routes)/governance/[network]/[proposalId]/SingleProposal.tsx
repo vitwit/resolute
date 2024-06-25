@@ -20,6 +20,7 @@ import DialogDeposit from '../../popups/DialogDeposit';
 import CustomButton from '@/components/common/CustomButton';
 import SingleProposalLoading from '../../loaders/SingleProposalLoading';
 import { useRouter } from 'next/navigation';
+import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 
 const emptyTallyResult = {
   yes: '',
@@ -47,6 +48,8 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
   const dispatch = useAppDispatch();
   const router = useRouter();
 
+  const { getChainInfo } = useGetChainInfo();
+
   const proposalInfo = useAppSelector(
     (state: RootState) => state.gov.proposalDetails
   );
@@ -55,7 +58,6 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
   );
   const isStatusVoting =
     get(proposalInfo, 'status') === 'PROPOSAL_STATUS_VOTING_PERIOD';
-  const networks = useAppSelector((state: RootState) => state.wallet.networks);
   const poolInfo = useAppSelector(
     (state: RootState) => state.staking.chains[chainID]?.pool
   );
@@ -80,12 +82,7 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
   );
 
   const fetchProposalData = () => {
-    const chainInfo = networks[chainID]?.network;
-    if (!chainInfo) return;
-
-    const baseURLs = chainInfo.config.restURIs;
-    const baseURL = chainInfo.config.rest;
-    const govV1 = chainInfo.govV1;
+    const { restURLs: baseURLs, baseURL, govV1 } = getChainInfo(chainID);
 
     dispatch(
       getProposal({
@@ -293,7 +290,11 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
 
                   <div className="text-white h-[22vh] flex flex-col justify-between relative z-0">
                     <p
-                      className={`h-[22vh] secondary-text ${contentLength > 900 ? (showFullText ? 'overflow-scroll' : 'overflow-hidden') : 'overflow-scroll'}`}
+                      style={{
+                        padding: 8,
+                        whiteSpace: 'pre-line',
+                      }}
+                      className={`proposal-description-markdown h-[22vh] secondary-text ${contentLength > 900 ? (showFullText ? 'overflow-scroll' : 'overflow-hidden') : 'overflow-scroll'}`}
                     >
                       {/* {ProposalSummary} */}
                       {proposalMarkdown}

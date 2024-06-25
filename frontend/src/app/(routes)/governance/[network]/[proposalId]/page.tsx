@@ -15,7 +15,7 @@ const SingleProposalComponent = () => {
   const chainName = typeof network === 'string' ? network : '';
   const proposalId = typeof id === 'string' ? id : '';
   const nameToChainIDs = useAppSelector(
-    (state: RootState) => state.wallet.nameToChainIDs
+    (state: RootState) => state.common.nameToChainIDs
   );
   const validChain = Object.keys(nameToChainIDs).some(
     (chain) => chainName.toLowerCase() === chain.toLowerCase()
