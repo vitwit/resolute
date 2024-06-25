@@ -184,7 +184,7 @@ body {
   background: rgba(255, 255, 255, 0.02);
 }
 input[type='checkbox'] {
-  accent-color: #2BA472;;
+  accent-color: #2ba472;
   display: block;
 }
 .dashboard-card {
@@ -195,4 +195,6 @@ input[type='checkbox'] {
   @apply backdrop-blur-[15px] flex w-[200px] flex-col items-start rounded-2xl;
   background: rgba(255, 255, 255, 0.08);
 }
-
+.search-text {
+  @apply w-full border-none cursor-text focus:outline-none bg-transparent placeholder:text-[#FFFFFF30] placeholder:font-normal text-[#ffffff];
+}
