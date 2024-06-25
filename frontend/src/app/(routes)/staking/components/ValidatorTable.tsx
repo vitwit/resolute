@@ -18,6 +18,7 @@ import {
 } from '@/store/features/staking/stakeSlice';
 import { Validator } from '@/types/staking';
 import SearchValidator from '../components/SearchValidator';
+import { shortenName } from '@/utils/util';
 
 interface ValStatusObj {
   [key: string]: string;
@@ -39,8 +40,6 @@ const ValidatorTable: React.FC<{ chainID: string }> = ({ chainID }) => {
 
   useEffect(() => {
     if (validators?.status === 'idle') {
-
-
       /* eslint-disable @typescript-eslint/no-explicit-any */
       const activeValidators: any = get(validators, 'active', {});
 
@@ -50,27 +49,26 @@ const ValidatorTable: React.FC<{ chainID: string }> = ({ chainID }) => {
       /* eslint-disable @typescript-eslint/no-explicit-any */
       const activeSsortedObj: any = {};
       let rank = 1;
-      get(validators, 'activeSorted', []).forEach(key => {
+      get(validators, 'activeSorted', []).forEach((key) => {
         if (activeValidators.hasOwnProperty(key)) {
           activeSsortedObj[key] = {
             rank: rank++,
-            ...activeValidators[key]
-          }
+            ...activeValidators[key],
+          };
         }
       });
 
       /* eslint-disable @typescript-eslint/no-explicit-any */
       const inactiveSsortedObj: any = {};
 
-      get(validators, 'inactiveSorted', []).forEach(key => {
+      get(validators, 'inactiveSorted', []).forEach((key) => {
         if (inactiveValidators.hasOwnProperty(key)) {
           inactiveSsortedObj[key] = {
             rank: rank++,
-            ...inactiveValidators[key]
-          }
+            ...inactiveValidators[key],
+          };
         }
       });
-
 
       dispatch(setValidators({ ...activeSsortedObj, ...inactiveSsortedObj }));
     }
@@ -80,7 +78,7 @@ const ValidatorTable: React.FC<{ chainID: string }> = ({ chainID }) => {
     (query: string) => {
       dispatch(setSearchQuery(query));
       dispatch(filterValidators());
-      dispatch(sortValidatorsByVotingPower({ chainID }))
+      dispatch(sortValidatorsByVotingPower({ chainID }));
     },
     [dispatch]
   );
@@ -95,67 +93,73 @@ const ValidatorTable: React.FC<{ chainID: string }> = ({ chainID }) => {
   }, []);
 
   const validatorRows = useMemo(() => {
-    return Object.entries(filteredValidators || {}).map(
-      ([key, value]) => (
-        <React.Fragment key={key}>
-          <tr className="table-border-line">
-            <td className="px-0 py-8">
-              <div className="mr-auto flex">
-                <div className="text-white text-base font-normal leading-[normal]">
-                  # {get(value, 'rank', '-')}
-                </div>
+    return Object.entries(filteredValidators || {}).map(([key, value]) => (
+      <React.Fragment key={key}>
+        <tr className="table-border-line">
+          <td className="px-0 py-8">
+            <div className="mr-auto flex">
+              <div className="text-white text-base font-normal leading-[normal]">
+                # {get(value, 'rank', '-')}
               </div>
-            </td>
-            <td className="">
-              <div className="flex space-x-2 items-center">
-                <ValidatorLogo
-                  width={20}
-                  height={20}
-                  identity={get(value, 'description.identity', '')}
-                />{' '}
-                &nbsp;
-                <p className="text-white text-sm font-normal leading-[normal]">
-                  {get(value, 'description.moniker')}
-                </p>{' '}
-                &nbsp;
-                <WalletAddress
-                  address={get(value, 'operator_address')}
-                  displayAddress={false}
-                />
-              </div>
-            </td>
-            <td className="">
-              <div className="text-white text-left text-base font-normal leading-[normal]">
-                {parseInt(((get(value, 'commission.commission_rates.rate')) * 100).toString())}%
-              </div>
-            </td>
-            <td className="">
-              <div className="text-left text-base font-normal leading-[normal]">
-                {getAmountWithDecimal(Number(get(value, 'tokens')), chainID)}
-              </div>
-            </td>
-            <td className="">
-              <div className="text-left text-base font-normal leading-[normal]">
-                {get(value, 'jailed') ? 'Jailed' : valStatusObj[get(value, 'status')]}
-              </div>
-            </td>
-            <td className="">
-              {
-                !get(value, 'jailed') ? <button
-                  onClick={() => {
-                    setOpenDelegate(true);
-                    setSelectedValidator(value);
-                  }}
-                  className="primary-btn"
-                >
-                  Delegate
-                </button> : null
-              }
-            </td>
-          </tr>
-        </React.Fragment>
-      )
-    );
+            </div>
+          </td>
+          <td className="">
+            <div className="flex space-x-2 items-center">
+              <ValidatorLogo
+                width={20}
+                height={20}
+                identity={get(value, 'description.identity', '')}
+              />{' '}
+              &nbsp;
+              <p className="text-white text-sm font-normal leading-[normal]">
+                {/* {get(value, 'description.moniker')} */}
+                {shortenName(get(value, 'description.moniker', ''), 12)}
+              </p>{' '}
+              &nbsp;
+              <WalletAddress
+                address={get(value, 'operator_address')}
+                displayAddress={false}
+              />
+            </div>
+          </td>
+          <td className="">
+            <div className="text-white text-left text-base font-normal leading-[normal]">
+              {parseInt(
+                (
+                  get(value, 'commission.commission_rates.rate') * 100
+                ).toString()
+              )}
+              %
+            </div>
+          </td>
+          <td className="">
+            <div className="text-left text-base font-normal leading-[normal]">
+              {getAmountWithDecimal(Number(get(value, 'tokens')), chainID)}
+            </div>
+          </td>
+          <td className="">
+            <div className="text-left text-base font-normal leading-[normal]">
+              {get(value, 'jailed')
+                ? 'Jailed'
+                : valStatusObj[get(value, 'status')]}
+            </div>
+          </td>
+          <td className="">
+            {!get(value, 'jailed') ? (
+              <button
+                onClick={() => {
+                  setOpenDelegate(true);
+                  setSelectedValidator(value);
+                }}
+                className="primary-btn"
+              >
+                Delegate
+              </button>
+            ) : null}
+          </td>
+        </tr>
+      </React.Fragment>
+    ));
   }, [filteredValidators, chainID]);
 
   return (
