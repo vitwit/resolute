@@ -2394,13 +2394,6 @@ axe-core@=4.7.0:
   resolved "https://registry.yarnpkg.com/axe-core/-/axe-core-4.7.0.tgz#34ba5a48a8b564f67e103f0aa5768d76e15bbbbf"
   integrity sha512-M0JtH+hlOL5pLQwHOLNYZaXuhqmvS8oExsqB1SBYgA4Dk7u/xx+YdGHXaK5pyUfed5mYXdlYiphWq3G8cRi5JQ==
 
-axios-retry@^4.0.0:
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/axios-retry/-/axios-retry-4.0.0.tgz#d5cb8ea1db18e05ce6f08aa5fe8b2663bba48e60"
-  integrity sha512-F6P4HVGITD/v4z9Lw2mIA24IabTajvpDZmKa6zq/gGwn57wN5j1P3uWrAV0+diqnW6kTM2fTqmWNfgYWGmMuiA==
-  dependencies:
-    is-retry-allowed "^2.2.0"
-
 axios@1.x:
   version "1.6.7"
   resolved "https://registry.yarnpkg.com/axios/-/axios-1.6.7.tgz#7b48c2e27c96f9c68a2f8f31e2ab19f59b06b0a7"
@@ -4170,11 +4163,6 @@ is-regex@^1.1.4:
   dependencies:
     call-bind "^1.0.2"
     has-tostringtag "^1.0.0"
-
-is-retry-allowed@^2.2.0:
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/is-retry-allowed/-/is-retry-allowed-2.2.0.tgz#88f34cbd236e043e71b6932d09b0c65fb7b4d71d"
-  integrity sha512-XVm7LOeLpTW4jV19QSH38vkswxoLud8sQ57YwJVTPWdiaI9I8keEhGFpBlslyVsgdQy4Opg8QOLb8YRgsyZiQg==
 
 is-set@^2.0.1:
   version "2.0.2"

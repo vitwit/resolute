@@ -30,7 +30,6 @@ const DialogSelectNetwork = () => {
   const selectedNetwork = useAppSelector(
     (state) => state.common.selectedNetwork
   );
-  const walletConnected = useAppSelector((state) => state.wallet.connected);
 
   const filteredChains = chains.filter((chain) =>
     chain.chainName.toLowerCase().includes(searchQuery.toLowerCase())
@@ -111,9 +110,10 @@ const DialogSelectNetwork = () => {
                   searchQuery={searchQuery}
                 />
               </div>
-              {walletConnected ? (
+              {/* TODO: Implement add network after implementing settings page  */}
+              {/* {walletConnected ? (
                 <button className="primary-btn w-fit">Add Network</button>
-              ) : null}
+              ) : null} */}
             </div>
           </div>
           <Link
@@ -123,6 +123,7 @@ const DialogSelectNetwork = () => {
               onClose();
             }}
             className={`network-item justify-center ${selectedNetwork.chainName?.length ? '' : 'bg-[#FFFFFF14] !border-transparent'}`}
+            prefetch={false}
           >
             <div className="p-1">
               <Image

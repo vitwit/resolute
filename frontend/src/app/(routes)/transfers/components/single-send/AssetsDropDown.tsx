@@ -1,23 +1,42 @@
-import { Autocomplete, Avatar, Paper, TextField } from '@mui/material';
+/** @jsxImportSource @emotion/react */
+
+import {
+  Autocomplete,
+  Avatar,
+  Paper,
+  TextField,
+  InputAdornment,
+} from '@mui/material';
 import React from 'react';
 import { customAutoCompleteStyles, customTextFieldStyles } from '../../styles';
 import NoOptions from '@/components/common/NoOptions';
 import CustomLoader from '@/components/common/CustomLoader';
+import { css } from '@emotion/react';
 
-const AssetsDropDown = ({
-  sortedAssets = [],
-  selectedAsset,
-  handleAssetChange,
-  loading,
-}: {
+const listItemStyle = css`
+  &:hover {
+    background-color: #ffffff09 !important;
+  }
+`;
+
+interface AssetsDropDownProps {
   sortedAssets: ParsedAsset[];
   selectedAsset: ParsedAsset | null;
   handleAssetChange: (option: ParsedAsset | null) => void;
   loading: boolean;
+}
+
+const AssetsDropDown: React.FC<AssetsDropDownProps> = ({
+  sortedAssets = [],
+  selectedAsset,
+  handleAssetChange,
+  loading,
 }) => {
-  /* eslint-disable @typescript-eslint/no-explicit-any */
-  const renderOption = (props: any, option: ParsedAsset) => (
-    <li {...props} key={option.chainID + option.denom}>
+  const renderOption = (
+    props: React.HTMLAttributes<HTMLLIElement>,
+    option: ParsedAsset
+  ) => (
+    <li {...props} key={option.chainID + option.denom} css={listItemStyle}>
       <div className="flex justify-between items-center px-1 py-2">
         <div className="flex gap-2">
           <div>
@@ -46,45 +65,47 @@ const AssetsDropDown = ({
     </li>
   );
 
+  /* eslint-disable @typescript-eslint/no-explicit-any */
   const renderInput = (params: any) => (
     <TextField
       placeholder="Select Asset"
       {...params}
       InputProps={{
         ...params.InputProps,
-        startAdornment: (
-          <React.Fragment>
-            {selectedAsset && (
-              <div className="flex justify-between items-center">
-                <div className="flex gap-2">
-                  <div>
-                    <Avatar
-                      src={selectedAsset.chainLogoURL}
-                      alt={selectedAsset.displayDenom}
-                      sx={{
-                        width: '24px',
-                        height: '24px',
-                        boxShadow: '0px 4px 4px 0px rgba(0, 0, 0, 0.25)',
-                      }}
-                    />
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="flex gap-1 items-center text-[14px] leading-[24px] text-white">
-                      <div>{selectedAsset.balance}</div>
-                      <div>{selectedAsset.displayDenom}</div>
-                    </div>
-                    <div className="secondary-text !text-[12px]">
-                      on{' '}
-                      <span className="capitalize">
-                        {selectedAsset.chainName}
-                      </span>
-                    </div>
+        startAdornment: selectedAsset && (
+          <InputAdornment position="start">
+            <div className="flex justify-between items-center">
+              <div className="flex gap-2">
+                <Avatar
+                  src={selectedAsset.chainLogoURL}
+                  alt={selectedAsset.displayDenom}
+                  sx={{
+                    width: '24px',
+                    height: '24px',
+                    boxShadow: '0px 4px 4px 0px rgba(0, 0, 0, 0.25)',
+                  }}
+                />
+                <div className="flex items-center gap-2">
+                  <div className="flex gap-1 items-center text-[14px] leading-[24px] text-white">
+                    <div>{selectedAsset.balance}</div>
                   </div>
                 </div>
-                <div></div>
               </div>
-            )}
-          </React.Fragment>
+            </div>
+          </InputAdornment>
+        ),
+        endAdornment: (
+          <InputAdornment position="end">
+            <div className="flex items-center gap-2">
+              {selectedAsset && (
+                <div className="secondary-text !text-[12px] text-white mr-2">
+                  on{' '}
+                  <span className="capitalize">{selectedAsset.chainName}</span>
+                </div>
+              )}
+              {params.InputProps.endAdornment}
+            </div>
+          </InputAdornment>
         ),
       }}
       sx={{
@@ -138,7 +159,9 @@ const AssetsDropDown = ({
                   />
                 </div>
               ) : (
-                <div>No Assets</div>
+                <div className="flex justify-center items-center p-4">
+                  No Assets
+                </div>
               )}
             </>
           )}

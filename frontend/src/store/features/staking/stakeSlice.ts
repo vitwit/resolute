@@ -642,8 +642,9 @@ export const getValidators = createAsyncThunk(
     try {
       const response = await stakingService.validators(
         data.baseURLs,
+        data.chainID,
         data?.status,
-        data?.pagination
+        data?.pagination,
       );
       return {
         chainID: data.chainID,
@@ -674,6 +675,7 @@ export const getAllValidators = createAsyncThunk(
       while (true) {
         const response = await stakingService.validators(
           data.baseURLs,
+          data.chainID,
           data?.status,
           nextKey
             ? {
@@ -703,7 +705,7 @@ export const getAllValidators = createAsyncThunk(
 export const getPoolInfo = createAsyncThunk(
   'staking/poolInfo',
   async (data: { baseURLs: string[]; chainID: string }) => {
-    const response = await stakingService.poolInfo(data.baseURLs);
+    const response = await stakingService.poolInfo(data.baseURLs, data.chainID);
     return {
       chainID: data.chainID,
       data: response.data,
@@ -714,7 +716,7 @@ export const getPoolInfo = createAsyncThunk(
 export const getParams = createAsyncThunk(
   'staking/params',
   async (data: { baseURLs: string[]; chainID: string }) => {
-    const response = await stakingService.params(data.baseURLs);
+    const response = await stakingService.params(data.baseURLs, data.chainID);
     return {
       data: response.data,
       chainID: data.chainID,
@@ -731,7 +733,8 @@ export const getTotalDelegationsCount = createAsyncThunk(
   }) => {
     const response = await stakingService.validatorDelegations(
       data.baseURLs,
-      data.operatorAddress
+      data.operatorAddress,
+      data.chainID
     );
     return {
       data: response.data,
@@ -758,6 +761,7 @@ export const getDelegations = createAsyncThunk(
         const response = await stakingService.delegations(
           data.baseURLs,
           data.address,
+          data.chainID,
           nextKey
             ? {
               key: nextKey,
@@ -801,6 +805,7 @@ export const getAuthzDelegations = createAsyncThunk(
         const response = await stakingService.delegations(
           data.baseURLs,
           data.address,
+          data.chainID,
           nextKey
             ? {
               key: nextKey,
@@ -835,7 +840,8 @@ export const getUnbonding = createAsyncThunk(
     try {
       const response = await stakingService.unbonding(
         data.baseURLs,
-        data.address
+        data.address,
+        data.chainID
       );
       return {
         data: response.data,
@@ -857,7 +863,8 @@ export const getAuthzUnbonding = createAsyncThunk(
     try {
       const response = await stakingService.unbonding(
         data.baseURLs,
-        data.address
+        data.address,
+        data.chainID
       );
       return {
         data: response.data,
@@ -883,7 +890,8 @@ export const getValidator = createAsyncThunk(
     try {
       const response = await stakingService.validatorInfo(
         data.baseURLs,
-        data.valoperAddress
+        data.valoperAddress,
+        data.chainID
       );
       return {
         data: response.data,
@@ -909,7 +917,8 @@ export const getAuthzValidator = createAsyncThunk(
     try {
       const response = await stakingService.validatorInfo(
         data.baseURLs,
-        data.valoperAddress
+        data.valoperAddress,
+        data.chainID
       );
       return {
         data: response.data,

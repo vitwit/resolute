@@ -31,7 +31,7 @@ const initialState: SwapState = {
   amountOut: '',
   fromAddress: '',
   toAddress: '',
-  slippage: 1,
+  slippage: '1',
   txStatus: {
     status: TxStatus.INIT,
     error: '',
@@ -164,7 +164,7 @@ export const swapsSlice = createSlice({
     setFromAddress: (state, action: PayloadAction<string>) => {
       state.fromAddress = action.payload;
     },
-    setSlippage: (state, action: PayloadAction<number>) => {
+    setSlippage: (state, action: PayloadAction<string>) => {
       state.slippage = action.payload;
     },
     setExplorerEndpoint: (state, action: PayloadAction<string>) => {

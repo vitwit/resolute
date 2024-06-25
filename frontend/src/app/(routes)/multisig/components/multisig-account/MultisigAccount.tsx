@@ -72,6 +72,7 @@ const MultisigAccount = ({
           address: multisigAddress,
           denom: coinMinimalDenom,
           baseURLs: restURLs,
+          chainID,
         })
       );
       dispatch(

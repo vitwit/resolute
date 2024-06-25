@@ -79,6 +79,7 @@ interface GetMultisigBalanceInputs {
   baseURLs: string[];
   address: string;
   denom: string;
+  chainID: string;
 }
 
 interface Account {

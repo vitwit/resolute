@@ -10,18 +10,25 @@ import { resetCompleteState as stakingReset } from '@/store/features/staking/sta
 import { resetState as authzReset } from '@/store/features/authz/authzSlice';
 import { resetState as feegrantReset } from '@/store/features/feegrant/feegrantSlice';
 import Image from 'next/image';
-import React from 'react';
+import React, { useState } from 'react';
 import useAuthzGrants from '@/custom-hooks/useAuthzGrants';
 import useFeeGrants from '@/custom-hooks/useFeeGrants';
 import { logout } from '@/utils/localStorage';
+import DialogConfirmExitSession from './DialogConfirmExitSession';
 
 const ExitSession = () => {
   const dispatch = useAppDispatch();
   const { disableAuthzMode } = useAuthzGrants();
   const { disableFeegrantMode } = useFeeGrants();
+
+  const [confirmExitOpen, setConfirmExitOpen] = useState(false);
   const isWalletConnected = useAppSelector((state) => state.wallet.connected);
 
   const onExitSession = () => {
+    setConfirmExitOpen(true);
+  };
+
+  const exitSession = () => {
     dispatch(resetWallet());
     dispatch(resetError());
     dispatch(resetTxAndHash());
@@ -34,6 +41,12 @@ const ExitSession = () => {
     disableFeegrantMode();
     logout();
   };
+
+  const onConfirmExitSession = () => {
+    exitSession();
+    setConfirmExitOpen(false);
+  };
+
   return (
     <>
       {isWalletConnected ? (
@@ -48,12 +61,17 @@ const ExitSession = () => {
               width={20}
               alt="Dashboard"
             />
-            <div className="text-white text-[16px] leading-[19px]">
+            <div className="text-white text-[14px] leading-[19px]">
               Exit Session
             </div>
           </button>
         </div>
       ) : null}
+      <DialogConfirmExitSession
+        open={confirmExitOpen}
+        onClose={() => setConfirmExitOpen(false)}
+        onConfirm={onConfirmExitSession}
+      />
     </>
   );
 };

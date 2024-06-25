@@ -258,7 +258,7 @@ export const MULTISIG_PUBKEY_OBJECT = {
   error: '',
 };
 export const AXIOS_RETRIES_COUNT = 2;
-export const MAX_TRY_END_POINTS = 20;
+export const MAX_TRY_END_POINTS = 1;
 export const NO_FEEGRANTS_BY_ME_TEXT = "You haven't granted any allowance yet";
 export const NO_FEEGRANTS_TO_ME_TEXT = "You don't have any feegrants";
 export const SQUID_ID = process.env.NEXT_PUBLIC_SQUID_ID || '';
@@ -348,3 +348,9 @@ export const DUMMY_WALLET_MNEMONIC =
   process.env.NEXT_PUBLIC_DUMMY_WALLET_MNEMONIC || '';
 export const INCREASE = 'increase';
 export const DECREASE = 'decrease';
+export const IBC_SWAP_DESCRIPTION =
+  'Swap tokens across various interchain networks';
+export const MULTISIG_DESCRIPTION =
+  'A multisig account is an account that requires multiple signatures to sign transactions';
+export const IBC_SWAP_GRADIENT =
+  'linear-gradient(180deg, #5A0DA660 0%, #12131C80 100%)';

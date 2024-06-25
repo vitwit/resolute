@@ -4,7 +4,10 @@ import { parseSendMsgsFromContent } from '@/utils/parseMsgs';
 import { TextField } from '@mui/material';
 import React, { useState } from 'react';
 import { multiSendInputFieldStyles } from '../../styles';
-import { MULTIOPS_SAMPLE_FILES, MULTISEND_PLACEHOLDER } from '@/utils/constants';
+import {
+  MULTIOPS_SAMPLE_FILES,
+  MULTISEND_PLACEHOLDER,
+} from '@/utils/constants';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -86,7 +89,7 @@ const AddMessages = ({
             rows={msgs.length ? 2 : 11}
             sx={{
               ...multiSendInputFieldStyles,
-              ...{ height: msgs.length ? '90px' : '300px' },
+              ...{ height: msgs.length ? '90px' : '290px' },
             }}
             placeholder={MULTISEND_PLACEHOLDER}
             autoFocus={true}

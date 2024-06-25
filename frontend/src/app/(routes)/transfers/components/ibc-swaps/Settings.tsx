@@ -1,7 +1,7 @@
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { setSlippage } from '@/store/features/swaps/swapsSlice';
 import { TextField } from '@mui/material';
-import React from 'react';
+import React, { useState } from 'react';
 import { customTextFieldStyles } from '../../styles';
 import CustomButton from '@/components/common/CustomButton';
 
@@ -14,15 +14,25 @@ const Settings = ({
 }) => {
   const dispatch = useAppDispatch();
   const slippage = useAppSelector((state) => state.swaps.slippage);
-  const quickSelectSlippage = (value: number) => {
+  const quickSelectSlippage = (value: string) => {
     dispatch(setSlippage(value));
   };
+  const [slippageError, setSlippageError] = useState('');
+  const handleClose = () => {
+    if (!slippage?.length) {
+      setSlippageError('Slippage is required');
+      return;
+    }
+    setSlippageError('')
+    onClose();
+  };
+  
   return (
-    <div className="w-full h-[700px] flex flex-col justify-between">
+    <div className="w-full h-[676px] flex flex-col justify-between">
       <div className="w-full space-y-4">
         <div className="flex items-center justify-between w-full">
           <div className="text-b1 text-[#ffffff80]">Settings</div>
-          <button onClick={onClose} className="secondary-btn">
+          <button onClick={handleClose} className="secondary-btn">
             close
           </button>
         </div>
@@ -37,20 +47,20 @@ const Settings = ({
           </div>
           <div className="flex items-center gap-6">
             <button
-              onClick={() => quickSelectSlippage(1)}
-              className={`rounded-full flex-1 px-4 py-[10.5px] text-center border-[0.25px] ${slippage === 1 ? 'bg-[#FFFFFF14] border-transparent' : 'bg-transparent border-[#ffffff10]'}`}
+              onClick={() => quickSelectSlippage('1')}
+              className={`rounded-full flex-1 px-4 py-[10.5px] text-center border-[0.25px] ${slippage === '1' ? 'bg-[#FFFFFF14] border-transparent' : 'bg-transparent border-[#ffffff10]'}`}
             >
               1%
             </button>
             <button
-              onClick={() => quickSelectSlippage(2)}
-              className={`rounded-full flex-1 px-4 py-[10.5px] text-center border-[0.25px] ${slippage === 2 ? 'bg-[#FFFFFF14] border-transparent' : 'bg-transparent border-[#ffffff10]'}`}
+              onClick={() => quickSelectSlippage('2')}
+              className={`rounded-full flex-1 px-4 py-[10.5px] text-center border-[0.25px] ${slippage === '2' ? 'bg-[#FFFFFF14] border-transparent' : 'bg-transparent border-[#ffffff10]'}`}
             >
               2%
             </button>
             <button
-              onClick={() => quickSelectSlippage(3)}
-              className={`rounded-full flex-1 px-4 py-[10.5px] text-center border-[0.25px] ${slippage === 3 ? 'bg-[#FFFFFF14] border-transparent' : 'bg-transparent border-[#ffffff10]'}`}
+              onClick={() => quickSelectSlippage('3')}
+              className={`rounded-full flex-1 px-4 py-[10.5px] text-center border-[0.25px] ${slippage === '3' ? 'bg-[#FFFFFF14] border-transparent' : 'bg-transparent border-[#ffffff10]'}`}
             >
               3%
             </button>
@@ -78,10 +88,13 @@ const Settings = ({
               }}
               onChange={handleSlippageChange}
             />
+            <div className="text-red-400 text-b1 text-right">
+              {slippageError}
+            </div>
           </div>
         </div>
       </div>
-      <CustomButton btnText="Continue" btnOnClick={onClose} />
+      <CustomButton btnText="Continue" btnOnClick={handleClose} />
     </div>
   );
 };

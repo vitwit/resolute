@@ -152,8 +152,8 @@ const Asset = ({
   }, []);
 
   return (
-    <tr className="table-border-line">
-      <th className="px-0 py-8">
+    <tr className="table-border-line hover:bg-[#FFFFFF14]">
+      <th className="rounded-l-2xl px-6 py-8">
         <div className="flex flex-col items-start gap-2">
           <div className="text-base font-normal leading-[normal]">
             {formatCoin(asset.balance, asset.displayDenom)}
@@ -166,10 +166,14 @@ const Asset = ({
               alt="chain-Logo"
               loading="lazy"
               className="w-4 h-4"
+              draggable={false}
             />
             <p className="text-b1-light">
               on{' '}
-              <Link href={`/overview/${asset.chainName}`}>
+              <Link
+                className="capitalize"
+                href={`/overview/${asset.chainName}`}
+              >
                 {asset.chainName}
               </Link>
             </p>
@@ -232,7 +236,7 @@ const Asset = ({
           <div className="w-4 h-4" />
         </div>
       </th>
-      <th>
+      <th className="rounded-r-2xl">
         <div className="items-center justify-center relative inline-block">
           <Image
             src="/more.svg"
@@ -270,6 +274,9 @@ const Asset = ({
                 <a
                   href="#"
                   className="flex items-center w-full p-4 text-b1 hover:bg-[#FFFFFF10] rounded-t-2xl"
+                  onClick={() => {
+                    if (asset.type === 'native') claim(asset.chainID);
+                  }}
                 >
                   <Tooltip
                     title={
@@ -279,14 +286,13 @@ const Asset = ({
                     }
                     placement="top-end"
                   >
-                    <div
-                      onClick={() => {
-                        if (asset.type === 'native') claim(asset.chainID);
-                      }}
-                    >
+                    <div>
                       {asset.type !== 'ibc' &&
                       txClaimStatus === TxStatus.PENDING ? (
-                        <CircularProgress size={16} />
+                        <>
+                          {' '}
+                          Claiming.... <CircularProgress size={16} />
+                        </>
                       ) : (
                         'Claim'
                       )}
@@ -296,6 +302,9 @@ const Asset = ({
                 <a
                   href="#"
                   className="flex items-center w-full p-4 text-b1 hover:bg-[#FFFFFF10] rounded-b-2xl"
+                  onClick={() => {
+                    if (asset.type === 'native') claimAndStake(asset.chainID);
+                  }}
                 >
                   <Tooltip
                     title={
@@ -305,15 +314,13 @@ const Asset = ({
                     }
                     placement="top-start"
                   >
-                    <div
-                      onClick={() => {
-                        if (asset.type === 'native')
-                          claimAndStake(asset.chainID);
-                      }}
-                    >
+                    <div>
                       {txRestakeStatus === TxStatus.PENDING &&
                       asset.type !== 'ibc' ? (
-                        <CircularProgress size={16} />
+                        <>
+                          Claiming and staking...
+                          <CircularProgress size={16} />
+                        </>
                       ) : (
                         'Claim And Stake'
                       )}

@@ -20,7 +20,7 @@ const MenuItem = (props: MenuItemProps) => {
   const pageLink = tabLink(path, selectedNetwork);
 
   return (
-    <Link href={pageLink}>
+    <Link href={pageLink} prefetch={false}>
       <div
         className={`menu-item ${routePath === path ? 'menu-item-selected' : 'font-medium'}`}
       >

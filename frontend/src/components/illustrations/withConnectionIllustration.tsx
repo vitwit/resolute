@@ -18,6 +18,7 @@ const WithConnectionIllustration = ({ message }: { message: string }) => {
             width={232}
             height={200}
             alt="Illustration"
+            draggable={false}
           />
           <div className="flex flex-col justify-center items-center w-full">
             <p className="empty-screen-title"> {message} </p>

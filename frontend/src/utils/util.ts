@@ -645,3 +645,13 @@ export const formatMsgs = (
   });
   return messages;
 };
+
+export const addChainIDParam = (uri: string, chainID: string) => {
+  let updatedURI: string;
+  if (uri.includes('?')) {
+    updatedURI = `${uri}&chain=${chainID.toLowerCase()}`;
+  } else {
+    updatedURI = `${uri}?chain=${chainID.toLowerCase()}`;
+  }
+  return updatedURI;
+};
