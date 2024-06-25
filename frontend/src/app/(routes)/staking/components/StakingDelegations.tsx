@@ -64,7 +64,7 @@ function StakingDelegations({
 
   return (
     <div
-      className={`flex flex-col w-full ${!isSingleChain ? 'mb-28' : ''} mt-10 ${!isSingleChain && staking.delegationsLoading === 0 && !bondingCount ? '' : 'gap-10'}`}
+      className={`flex flex-col w-full ${!isSingleChain ? 'mb-28' : ''} mt-10 ${!isSingleChain && staking.delegationsLoading === 0 && !bondingCount ? '' : 'gap-12'}`}
     >
       <div className="space-y-2 items-start">
         <div className="text-h2">Delegations</div>
@@ -83,59 +83,78 @@ function StakingDelegations({
       {Object.entries(delegations).map(([key, value], index) =>
         get(value, 'delegations.delegations.delegation_responses.length') ? (
           <div key={index} className="px-6 py-0">
-            <div className="flex justify-between w-full mb-4">
-              <div className="flex space-x-4 items-center">
-                <div className="space-x-2 flex justify-center items-center">
-                  <Image
-                    src={staking.chainLogo(key)}
-                    width={32}
-                    height={32}
-                    className="h-8 w-8 rounded-full"
-                    alt="chain-logo"
-                    draggable={false}
-                  />
-                  <p className="text-base font-normal leading-8 flex justify-center items-center capitalize">
-                    {staking.chainName(key)}
-                  </p>
+            <div className="flex flex-col">
+              <div className="flex justify-between w-full mb-4">
+                <div className="flex space-x-4 items-center">
+                  <div className="flex flex-col gap-2">
+                    <div className="space-x-2 flex items-center">
+                      <Image
+                        src={staking.chainLogo(key)}
+                        width={24}
+                        height={24}
+                        className="h-6 w-6 rounded-full"
+                        alt="chain-logo"
+                        draggable={false}
+                      />
+                      <p className="text-base font-normal leading-8 flex justify-center items-center capitalize">
+                        {staking.chainName(key)}
+                      </p>
+                    </div>
+                    <div className="flex gap-4">
+                      <div className="flex gap-2 items-center">
+                        <p className="text-white text-xs font-bold leading-[normal]">
+                          {staking.getAmountWithDecimal(
+                            Number(get(value, 'delegations.totalStaked', 0)),
+                            key
+                          )}
+                        </p>
+                        <p className="text-[rgba(255,255,255,0.50)] text-[10px] font-extralight leading-[normal]">
+                          Total Staked
+                        </p>
+                      </div>
+                      <div className="flex gap-2 items-center">
+                        <p className="text-white text-xs font-bold leading-[normal]">
+                          {getChainTotalRewards(key)}
+                        </p>
+                        <p className="text-[rgba(255,255,255,0.50)] text-[10px] font-extralight leading-[normal]">
+                          Total Rewards
+                        </p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <div className="staked-amount-red-badge text-white text-[10px] font-light leading-6">
-                  Total staked:{' '}
-                  {staking.getAmountWithDecimal(
-                    Number(get(value, 'delegations.totalStaked', 0)),
-                    key
-                  )}
+                <div className="flex justify-end gap-4">
+                  <button
+                    onClick={() => withClaimRewards(key)}
+                    className="primary-btn h-[25px]"
+                  >
+                    {claimTxStatus[key]?.tx?.status === 'pending' ? (
+                      'pending....'
+                    ) : (
+                      <>
+                        Claim All
+                        {/* <p className="ml-2 text-small-light">Rewards</p> */}
+                      </>
+                    )}
+                  </button>
+                  <button
+                    onClick={() => restakeRewards(key)}
+                    className="primary-btn h-[25px]"
+                  >
+                    {restakeStatus[key]?.reStakeTxStatus === 'pending' ? (
+                      'pending....'
+                    ) : (
+                      <>
+                        Claim & Stake
+                        {/* <p className="ml-2 text-small-light">Rewards</p> */}
+                      </>
+                    )}
+                  </button>
                 </div>
               </div>
-              <div className="flex justify-end gap-4">
-                <button
-                  onClick={() => withClaimRewards(key)}
-                  className="primary-btn"
-                >
-                  {claimTxStatus[key]?.tx?.status === 'pending' ? (
-                    'pending....'
-                  ) : (
-                    <>
-                      Claim {getChainTotalRewards(key)}
-                      <p className="ml-2 text-small-light">Rewards</p>
-                    </>
-                  )}
-                </button>
-                <button
-                  onClick={() => restakeRewards(key)}
-                  className="primary-btn"
-                >
-                  {restakeStatus[key]?.reStakeTxStatus === 'pending' ? (
-                    'pending....'
-                  ) : (
-                    <>
-                      Claim & Stake
-                      {/* <p className="ml-2 text-small-light">Rewards</p> */}
-                    </>
-                  )}
-                </button>
-              </div>
+              <div className="divider-line mb-4"></div>
             </div>
-            <div className="grid grid-cols-1 w-full gap-4">
+            <div className="grid grid-cols-1 w-full gap-6">
               {get(
                 value,
                 'delegations.delegations.delegation_responses',
