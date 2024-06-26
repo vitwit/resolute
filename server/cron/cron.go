@@ -41,6 +41,12 @@ func (c *Cron) Start() error {
 		log.Println("successfully saved price information list")
 	})
 
+	// Every 15 minute
+	cron.AddFunc("1/5 * * * * *", func() {
+		c.StartCheckUris()
+		log.Println("successfully saved chain information list")
+	})
+
 	go cron.Start()
 
 	return nil
