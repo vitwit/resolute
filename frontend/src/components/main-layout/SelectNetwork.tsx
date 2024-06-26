@@ -18,7 +18,7 @@ const SelectNetwork = () => {
   );
   const allNetworks = useAppSelector((state) => state.common.allNetworksInfo);
   const networks = useAppSelector((state) => state.wallet.networks);
-  const nameToChainIDs = useAppSelector((state) => state.wallet.nameToChainIDs);
+  const nameToChainIDs = useAppSelector((state) => state.common.nameToChainIDs);
   const isWalletConnected = useAppSelector((state) => state.wallet.connected);
 
   const openChangeNetwork = () => {
@@ -34,9 +34,11 @@ const SelectNetwork = () => {
     if (selectedNetwork.chainName && isWalletConnected) {
       const chainID = nameToChainIDs[selectedNetwork.chainName];
       setWalletAddress(networks[chainID]?.walletInfo.bech32Address);
+      setChainLogo(allNetworks?.[chainID]?.logos?.menu || ALL_NETWORKS_ICON);
     } else if (!selectedNetwork.chainName) {
       setWalletAddress('');
       setChainLogo(ALL_NETWORKS_ICON);
+      setChainGradient('');
     }
   }, [selectedNetwork, isWalletConnected, allNetworks]);
 
