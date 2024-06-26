@@ -1,40 +1,41 @@
 package utils
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 	"net/url"
-	"os"
-	"path/filepath"
+
+	"github.com/vitwit/resolute/server/config"
 )
 
-type ChainConfig struct {
-	ChainId  string   `json:"chainId"`
-	RestURIs []string `json:"restURIs"`
-}
+// type ChainConfig struct {
+// 	ChainId  string   `json:"chainId"`
+// 	RestURIs []string `json:"restURIs"`
+// }
 
 func GetChainAPIs(chainId string) ([]string, error) {
-	wd, _ := os.Getwd()
-	filePath := filepath.Join(wd, "/", "networks.json")
-	jsonData, err := os.ReadFile(filePath)
-	if err != nil {
-		fmt.Println("Error reading JSON file:", err)
-		return nil, err
-	}
 
-	var data []ChainConfig
+	data := config.GetChainAPIs()
+	// wd, _ := os.Getwd()
+	// filePath := filepath.Join(wd, "/", "networks.json")
+	// jsonData, err := os.ReadFile(filePath)
+	// if err != nil {
+	// 	fmt.Println("Error reading JSON file:", err)
+	// 	return nil, err
+	// }
 
-	err = json.Unmarshal([]byte(jsonData), &data)
-	if err != nil {
-		fmt.Println("Error unmarshaling JSON data:", err)
-		return nil, err
-	}
+	// var data []ChainConfig
 
-	var result *ChainConfig
+	// err = json.Unmarshal([]byte(jsonData), &data)
+	// if err != nil {
+	// 	fmt.Println("Error unmarshaling JSON data:", err)
+	// 	return nil, err
+	// }
+
+	var result *config.ChainConfig
 	for _, config := range data {
 		if config.ChainId == chainId {
-			result = &config
+			result = config
 			break
 		}
 	}

@@ -7,6 +7,7 @@ import { useAppSelector } from '@/custom-hooks/StateHooks';
 import { RootState } from '@/store/store';
 import { useParams } from 'next/navigation';
 import OverviewTable from '../../overview-components/OverviewTable';
+import WithoutConnectionIllustration from '@/components/illustrations/WithoutConnectionIllustration';
 
 const Overview = () => {
   const params = useParams();
@@ -16,22 +17,29 @@ const Overview = () => {
   const nameToChainIDs = useAppSelector(
     (state: RootState) => state.wallet.nameToChainIDs
   );
+  const isWalletConnected = useAppSelector((state) => state.wallet.connected);
   const chainIDs: string[] = [];
   Object.keys(nameToChainIDs).forEach((chain) => {
     chainNames.forEach((paramChain) => {
       if (chain === paramChain) chainIDs.push(nameToChainIDs[chain]);
     });
   });
-  
+
   return (
     <>
-      {chainIDs.length ? (
-        <OverviewTable chainIDs={chainIDs} />
-        // <OverviewPage chainIDs={chainIDs} />
+      {isWalletConnected ? (
+        <>
+          {chainIDs.length ? (
+            <OverviewTable chainIDs={chainIDs} />
+          ) : (
+            // <OverviewPage chainIDs={chainIDs} />
+            <div className="w-full h-full text-white flex justify-center items-center">
+              - Chain Not found -
+            </div>
+          )}
+        </>
       ) : (
-        <div className="w-full h-full text-white flex justify-center items-center">
-          - Chain Not found -
-        </div>
+        <WithoutConnectionIllustration />
       )}
     </>
   );
