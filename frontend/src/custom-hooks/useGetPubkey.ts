@@ -8,8 +8,7 @@ const useGetPubkey = () => {
       setPubkeyLoading(true);
       const { status, data } = await axiosGetRequestWrapper(
         baseURLs,
-        `/cosmos/auth/v1beta1/accounts/${address}`,
-        2
+        `/cosmos/auth/v1beta1/accounts/${address}`
       );
 
       if (status === 200) {

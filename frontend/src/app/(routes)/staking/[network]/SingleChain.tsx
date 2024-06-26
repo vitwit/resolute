@@ -10,9 +10,13 @@ function SingleChain({
     paramChain: string;
     // queryParams?: { [key: string]: string | undefined };
 }) {
-    const nameToChainIDs = useAppSelector(
-        (state: RootState) => state.wallet.nameToChainIDs
-    );
+    const isWalletConnected = useAppSelector((state) => state.wallet.connected);
+    const allNameToChainIDs = useAppSelector((state: RootState) => state.common.nameToChainIDs);
+    const connectedNameToChainIDs = useAppSelector((state: RootState) => state.wallet.nameToChainIDs);
+    const nameToChainIDs = isWalletConnected
+      ? connectedNameToChainIDs
+      : allNameToChainIDs;
+  
 
     const validChain = Object.keys(nameToChainIDs).some(
         (chain) => paramChain.toLowerCase() === chain.toLowerCase()

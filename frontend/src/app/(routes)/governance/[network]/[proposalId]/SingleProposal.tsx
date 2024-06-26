@@ -19,6 +19,12 @@ import { Tooltip } from '@mui/material';
 import DialogDeposit from '../../popups/DialogDeposit';
 import CustomButton from '@/components/common/CustomButton';
 import SingleProposalLoading from '../../loaders/SingleProposalLoading';
+import { useRouter } from 'next/navigation';
+import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
+import { formatAmount } from '@/utils/util';
+import DepositCollected from '../../utils-components/DepositCollected';
+import { PROPOSAL_STATUS_VOTING_PERIOD } from '@/utils/constants';
+import { TxStatus } from '@/types/enums';
 
 const emptyTallyResult = {
   yes: '',
@@ -39,20 +45,27 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
 }) => {
   const [showFullText, setShowFullText] = useState(false);
   const [proposalMarkdown, setProposalMarkdown] = useRemark();
+  const [contentLength, setContentLength] = useState(0);
   const [quorumPercent, setQuorumPercent] = useState<string>('0');
   const [depositDialogOpen, setDepositDialogOpen] = useState(false);
 
   const dispatch = useAppDispatch();
+  const router = useRouter();
+
+  const { getChainInfo, getDenomInfo } = useGetChainInfo();
+  const {
+    restURLs: baseURLs,
+    baseURL,
+    govV1,
+    chainName,
+    chainLogo,
+  } = getChainInfo(chainID);
 
   const proposalInfo = useAppSelector(
     (state: RootState) => state.gov.proposalDetails
   );
-  const networkLogo = useAppSelector(
-    (state: RootState) => state.wallet.networks[chainID]?.network.logos.menu
-  );
   const isStatusVoting =
-    get(proposalInfo, 'status') === 'PROPOSAL_STATUS_VOTING_PERIOD';
-  const networks = useAppSelector((state: RootState) => state.wallet.networks);
+    get(proposalInfo, 'status') === PROPOSAL_STATUS_VOTING_PERIOD;
   const poolInfo = useAppSelector(
     (state: RootState) => state.staking.chains[chainID]?.pool
   );
@@ -75,15 +88,9 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
       Number(get(tallyResult, key, get(tallyResult, `${key}_count`)) || 0),
     0
   );
+  const { decimals, displayDenom } = getDenomInfo(chainID);
 
   const fetchProposalData = () => {
-    const chainInfo = networks[chainID]?.network;
-    if (!chainInfo) return;
-
-    const baseURLs = chainInfo.config.restURIs;
-    const baseURL = chainInfo.config.rest;
-    const govV1 = chainInfo.govV1;
-
     dispatch(
       getProposal({
         chainID,
@@ -115,6 +122,7 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
       'content.description',
       get(proposalInfo, 'summary', '')
     );
+    setContentLength(proposalDescription.length);
     setProposalMarkdown(proposalDescription.replace(/\\n/g, '\n'));
   }, [proposalInfo]);
 
@@ -189,6 +197,10 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
     return timeDifference <= twoDaysInMilliseconds && timeDifference > 0;
   };
 
+  const proposalTallyStatus = useAppSelector(
+    (state) => state.gov.chains?.[chainID]?.tally.status
+  );
+
   return (
     <>
       {proposalStatus === 'pending' ? (
@@ -197,12 +209,13 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
         <>
           {/* Banner */}
           {isProposal2daysgo() ? (
-            <div className="fixed w-full bg-[#ffc13c] gap-2 px-6 py-3 flex items-center">
+            <div className="fixed w-full bg-[#ffc13c] gap-2 px-6 py-3 ml-[-40px] flex items-center">
               <Image
                 src="/infoblack.svg"
                 width={24}
                 height={24}
                 alt="info-icon"
+                draggable={false}
               />
               <p className="text-[#1C1C1D] text-sm font-semibold leading-[normal]">
                 Important
@@ -220,9 +233,11 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
             <div className="flex items-start gap-20 w-full h-full">
               <div className="flex flex-col flex-1 justify-between h-full">
                 <div className="flex flex-col gap-6">
-                  <div className="secondary-btn">Go back</div>
+                  <div className="secondary-btn" onClick={() => router.back()}>
+                    Go back
+                  </div>
                   <div className="flex flex-col gap-4">
-                    <div className="flex justify-between w-full items-center">
+                    <div className="flex justify-between w-full">
                       <p className="text-white text-[28px] font-bold leading-[normal]">
                         {/* Aave v3.1 Cantina competitione */}
                         {get(
@@ -237,20 +252,18 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
                           get(proposalInfo, 'title', '-')
                         ) || get(proposalInfo, 'content.@type', '')}
                       </p>
-                      <div className="active-badge text-white text-sm font-normal leading-[normal]">
-                        Active
-                      </div>
+                      {isStatusVoting ? (
+                        <div className="active-badge text-white text-sm font-normal leading-[normal]">
+                          Active
+                        </div>
+                      ) : (
+                        <div className="deposit-badge text-white text-sm font-normal leading-[normal]">
+                          Deposit
+                        </div>
+                      )}
                     </div>
                     <div className="flex gap-6 w-full">
-                      {/* <div className="flex gap-2">
-                                    <p className="text-[rgba(255,255,255,0.50)] text-xs font-extralight leading-[normal]">
-                                        By
-                                    </p>
-                                    <p className="text-white text-sm font-normal leading-[normal]">
-                                        0x2cc1...c54Df1
-                                    </p>
-                                </div> */}
-                      <div className="flex gap-2 items-center">
+                      <div className="flex gap-1 items-center">
                         {isStatusVoting ? (
                           <>
                             <p className="text-[rgba(255,255,255,0.50)] text-xs font-extralight leading-[normal]">
@@ -263,73 +276,92 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
                               )}
                             </p>
                           </>
-                        ) : null}
+                        ) : (
+                          <>
+                            <p className="text-[rgba(255,255,255,0.50)] text-xs font-extralight leading-[normal]">
+                              Deposit
+                            </p>
+                            <p className="text-white text-sm font-normal leading-[normal]">
+                              Ends in{' '}
+                              {getTimeDifferenceToFutureDate(
+                                get(proposalInfo, 'deposit_end_time')
+                              )}
+                            </p>
+                          </>
+                        )}
                       </div>
-                      <div className="flex gap-2 items-center">
+                      <div className="flex gap-1 items-center">
                         <p className="text-[rgba(255,255,255,0.50)] text-xs font-extralight leading-[normal]">
                           on
                         </p>
                         <Image
-                          src={networkLogo}
+                          src={chainLogo}
                           width={20}
                           height={20}
                           alt="Network-logo"
+                          draggable={false}
                         />
-                        <p className="text-white text-sm font-normal leading-[normal]">
-                          {chainID}
+                        <p className="text-white text-sm font-normal leading-[normal] capitalize">
+                          {chainName}
                         </p>
                       </div>
                     </div>
                     <div className="divider-line"></div>
                   </div>
 
-                  <div className="text-white h-[40vh] flex flex-col justify-between relative">
+                  <div className="text-white h-[22vh] flex flex-col justify-between relative z-0">
                     <p
-                      className={`h-[40vh] secondary-text ${showFullText ? 'overflow-scroll' : 'overflow-hidden'}`}
+                      style={{
+                        padding: 8,
+                        whiteSpace: 'pre-line',
+                      }}
+                      className={`proposal-description-markdown h-[22vh] secondary-text ${contentLength > 900 ? (showFullText ? 'overflow-scroll' : 'overflow-hidden') : 'overflow-scroll'}`}
                     >
-                      {/* {ProposalSummary} */}
                       {proposalMarkdown}
                     </p>
 
-                    {showFullText ? (
-                      <p
-                        onClick={handleToggleText}
-                        className="cursor-pointer text-white justify-center text-sm font-normal leading-[normal] underline flex space-x-1 items-center"
-                      >
-                        Show Less
-                        <Image
-                          src="/up.svg"
-                          width={24}
-                          height={24}
-                          alt="Less-icon"
-                        />
-                      </p>
-                    ) : (
-                      <div className="h-40 w-full relative flex">
-                        <div
+                    {contentLength > 900 ? (
+                      showFullText ? (
+                        <p
                           onClick={handleToggleText}
-                          className="cursor-pointer justify-center w-full bottom-14 absolute flex z-10 text-lg font-normal leading-[normal] underline  space-x-1  "
+                          className="cursor-pointer justify-center text-b1 underline flex space-x-1 items-center"
                         >
-                          Continue Reading{' '}
+                          Show Less
                           <Image
-                            src="/down.svg"
+                            src="/up.svg"
                             width={24}
                             height={24}
-                            alt="more-icon"
-                            className="ml-2"
+                            alt="Less-icon"
                           />
+                        </p>
+                      ) : (
+                        <div className="h-30 w-full absolute bottom-0  bg-transparent z-10">
+                          <div
+                            onClick={handleToggleText}
+                            className="cursor-pointer justify-center w-full bottom-14 absolute flex z-10 text-b1 underline space-x-1"
+                          >
+                            Continue Reading{' '}
+                            <Image
+                              src="/down.svg"
+                              width={24}
+                              height={24}
+                              alt="more-icon"
+                              className="ml-2"
+                            />
+                          </div>
+                          <div className="backdrop-blur-sm w-full absolute bottom-0 h-32 bg-transparent">
+                            {' '}
+                          </div>
                         </div>
-                        <div className="blur w-full absolute bottom-0 h-32">
-                          {' '}
-                        </div>
-                      </div>
-                    )}
+                      )
+                    ) : null}
                   </div>
-                  <div className="cast-vote-grid">
+
+                  <div className="cast-vote-grid mt-10">
                     {isStatusVoting ? (
                       <>
                         <div className="flex px-6 py-4 rounded-2xl bg-[#FFFFFF05] justify-between w-full">
-                          <p className="text-b1">Caste your vote</p>
+                          <p className="text-b1">Cast your vote</p>
                           <p className="text-xs font-extralight leading-[18px]">
                             Voting ends in{' '}
                             {getTimeDifferenceToFutureDate(
@@ -346,26 +378,6 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
                       </>
                     ) : (
                       <>
-                        <div className="flex px-6 py-4 rounded-2xl bg-[#FFFFFF05] justify-between w-full">
-                          <p className="text-b1">Deposit</p>
-                          <p className="text-xs font-extralight leading-[18px]">
-                            Deposit Period ends in{' '}
-                            {getTimeDifferenceToFutureDate(
-                              get(proposalInfo, 'voting_end_time')
-                            )}
-                          </p>
-                        </div>
-                        <div className="space-y-2 w-full">
-                          <div className="form-label-text">
-                            Enter Amount here
-                          </div>
-                          <input
-                            type="number"
-                            className="search-network-field w-full"
-                            placeholder=""
-                          />
-                        </div>
-
                         <CustomButton
                           btnText={
                             true ? 'Deposit' : 'Connect Wallet to Deposit'
@@ -396,42 +408,26 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
               </div>
 
               {/* RightSide View */}
-              <div className="flex flex-col justify-between h-full gap-5">
-                <div className="flex flex-col gap-6 p-6 rounded-2xl bg-[#FFFFFF05]">
-                  <div className="flex flex-col gap-2">
-                    <p className="text-b1">Proposal Prediction</p>
-                    <div className="divider-line"></div>
-                  </div>
-                  <div className="flex space-x-2 justify-center">
-                    <ProposalProjection
-                      quorumReached={
-                        parseFloat(quorumPercent) >= parseFloat(quorumRequired)
-                      }
-                      quorumPercent={quorumPercent}
-                      quorumRequired={quorumRequired}
-                      totalVotes={totalVotes}
-                      tallyResult={tallyResult || emptyTallyResult}
-                    />
-                  </div>
-                  <div className="flex gap-4 w-full">
-                    <div className="flex justify-center items-center gap-2 px-4 py-2 rounded-[100px] bg-[#FFFFFF05] w-[158px]">
-                      <p className="text-white text-xs font-bold leading-[normal]">
-                        {quorumPercent} %
-                      </p>
-                      <p className="text-[rgba(255,255,255,0.50)] text-[10px] font-extralight leading-[normal]">
-                        Turnout
-                      </p>
-                    </div>
-                    <div className="flex justify-center items-center gap-2 px-4 py-2 rounded-[100px] bg-[#FFFFFF05] w-[158px]">
-                      <p className="text-white text-xs font-bold leading-[normal]">
-                        {quorumRequired}%
-                      </p>
-                      <p className="text-[rgba(255,255,255,0.50)] text-[10px] font-extralight leading-[normal]">
-                        Quorum
-                      </p>
-                    </div>
-                  </div>
-                </div>
+              <div
+                className={`flex flex-col h-[calc(100vh-144px)] overflow-y-scroll gap-6 ${isStatusVoting ? 'justify-between' : ''}`}
+              >
+                {isStatusVoting ? (
+                  <ProposalProjection
+                    quorumReached={
+                      parseFloat(quorumPercent) >= parseFloat(quorumRequired)
+                    }
+                    quorumPercent={quorumPercent}
+                    quorumRequired={quorumRequired}
+                    totalVotes={totalVotes}
+                    tallyResult={tallyResult || emptyTallyResult}
+                    chainID={chainID}
+                  />
+                ) : (
+                  <DepositCollected
+                    proposalInfo={proposalInfo}
+                    chainID={chainID}
+                  />
+                )}
 
                 <div className="flex flex-col gap-6 p-6 rounded-2xl bg-[#FFFFFF05]">
                   <div className="flex flex-col gap-2">
@@ -446,6 +442,7 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
                           width={12}
                           height={12}
                           alt="Proposal-Created"
+                          draggable={false}
                         />
                         <div className="vertical-line "></div>
                       </div>
@@ -471,9 +468,10 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
                       <div className="flex flex-col justify-center items-center">
                         <Image
                           src="/radio-clr.svg"
-                          width={12}
-                          height={12}
+                          width={16}
+                          height={16}
                           alt="Proposal-Created"
+                          draggable={false}
                         />
                         <div className="vertical-line"></div>
                       </div>
@@ -516,6 +514,7 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
                           width={12}
                           height={12}
                           alt="Proposal-Created"
+                          draggable={false}
                         />
                       </div>
                       <div className="flex flex-col gap-2">
@@ -550,49 +549,50 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
                   </div>
                 </div>
 
-                <div className="flex flex-col gap-6 p-6 rounded-2xl bg-[#FFFFFF05]">
-                  <div className="flex flex-col gap-2">
-                    <p className="text-white text-sm font-normal leading-[normal]">
-                      Current Status
-                    </p>
-                    <div className="divider-line"></div>
-                  </div>
-                  {data.map((v) => (
-                    <div key={v.label} className="flex flex-col gap-2">
-                      <div className="flex gap-1 items-center">
-                        <p className="text-white text-xs font-normal leading-[normal]">
-                          {v.count}
+                {isStatusVoting ? (
+                  proposalTallyStatus === TxStatus.PENDING ? (
+                    <div className="w-[380px] h-[342px] animate-pulse bg-[#252525] rounded-2xl"></div>
+                  ) : (
+                    <div className="flex flex-col gap-6 p-6 rounded-2xl bg-[#FFFFFF05]">
+                      <div className="flex flex-col gap-2">
+                        <p className="text-white text-sm font-normal leading-[normal]">
+                          Current Status
                         </p>
-                        <p className="text-[#FFFFFF80] text-[10px]">
-                          Voted {v.label}
-                        </p>
+                        <div className="divider-line"></div>
                       </div>
-                      <div className="flex space-x-2 items-center">
-                        <div className="bg-[#FFFFFF0D] w-[300px] h-[10px] rounded-full relative">
-                          <div
-                            style={{
-                              width: `${v.value}%`,
-                              background: v.color,
-                            }}
-                            className="h-2 rounded-l-full"
-                          ></div>
+                      {data.map((v) => (
+                        <div key={v.label} className="flex flex-col gap-2">
+                          <div className="flex gap-1 items-center">
+                            <p className="text-white text-xs font-normal leading-[normal]">
+                              {formatAmount(
+                                Number((v.count / 10 ** decimals).toFixed(0))
+                              )}{' '}
+                              {displayDenom}
+                            </p>
+                            <p className="text-[#FFFFFF80] italic text-[10px]">
+                              Voted {v.label}
+                            </p>
+                          </div>
+                          <div className="flex space-x-2 items-center">
+                            <div className="bg-[#FFFFFF0D] w-full rounded-full relative">
+                              <div
+                                style={{
+                                  width: `${v.value}%`,
+                                  background: v.color,
+                                }}
+                                className="h-2 rounded-full"
+                              ></div>
+                            </div>
+
+                            <p className="text-white text-xs font-normal leading-[normal]">
+                              {v.value}%
+                            </p>
+                          </div>
                         </div>
-                        {v.label === 'Yes' ? (
-                          <Image
-                            src="/right.png"
-                            width={24}
-                            height={24}
-                            alt="tick-icon"
-                          />
-                        ) : (
-                          <p className="text-white text-xs font-normal leading-[normal]">
-                            {v.value}%
-                          </p>
-                        )}
-                      </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
+                  )
+                ) : null}
               </div>
             </div>
           </div>

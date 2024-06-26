@@ -13,10 +13,6 @@ export const SUPPORTED_WALLETS = [
     name: 'Cosmostation',
     logo: '/cosmostation-wallet-logo.png',
   },
-  {
-    name: 'MetaMask',
-    logo: '/metamask.png',
-  },
 ];
 
 export const USD_CURRENCY = 'usd';
@@ -207,11 +203,8 @@ export const SIDENAV_MENU_ITEMS = {
   ],
 };
 export const ALL_NETWORKS_ICON = '/icons/all-networks-icon.png';
-export const CHANGE_NETWORK_ICON = '/switch-icon.svg';
 export const TXN_SUCCESS_ICON = '/transaction-success-icon.svg';
 export const TXN_FAILED_ICON = '/transaction-failed-icon.svg';
-export const HELP_ICON = '/help-icon.svg';
-export const REPORT_ICON = '/report-icon.svg';
 export const GITHUB_ISSUES_PAGE_LINK =
   'https://github.com/vitwit/resolute/issues/new';
 export const TELEGRAM_LINK = 'https://web.telegram.org/k/#-1982236507';
@@ -258,7 +251,7 @@ export const MULTISIG_PUBKEY_OBJECT = {
   error: '',
 };
 export const AXIOS_RETRIES_COUNT = 2;
-export const MAX_TRY_END_POINTS = 20;
+export const MAX_TRY_END_POINTS = 1;
 export const NO_FEEGRANTS_BY_ME_TEXT = "You haven't granted any allowance yet";
 export const NO_FEEGRANTS_TO_ME_TEXT = "You don't have any feegrants";
 export const SQUID_ID = process.env.NEXT_PUBLIC_SQUID_ID || '';
@@ -348,3 +341,11 @@ export const DUMMY_WALLET_MNEMONIC =
   process.env.NEXT_PUBLIC_DUMMY_WALLET_MNEMONIC || '';
 export const INCREASE = 'increase';
 export const DECREASE = 'decrease';
+export const IBC_SWAP_DESCRIPTION =
+  'Swap tokens across various interchain networks';
+export const MULTISIG_DESCRIPTION =
+  'A multisig account is an account that requires multiple signatures to sign transactions';
+export const IBC_SWAP_GRADIENT =
+  'linear-gradient(180deg, #5A0DA660 0%, #12131C80 100%)';
+export const IBC_SEND_ALERT =
+  'This looks like a IBC transaction. Avoid IBC transfers to centralized exchanges. Your assets may be lost.';

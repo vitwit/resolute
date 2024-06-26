@@ -107,7 +107,7 @@ const MultiSend = ({ chainID }: { chainID: string }) => {
 
   return (
     <div>
-      <div className="single-send-box w-[550px]">
+      <div className="single-send-box w-[600px]">
         <Box
           sx={{
             background:
@@ -127,8 +127,11 @@ const MultiSend = ({ chainID }: { chainID: string }) => {
             <Image src="/drop-down-icon.svg" height={24} width={24} alt="" />
           </div>
         </Box>
-        <div className="py-10 px-6 space-y-10">
-          <form className={`${'space-y-6'}`} onSubmit={handleSubmit(onSubmit)}>
+        <div className="py-10 px-6 flex flex-col justify-between gap-6 min-h-[630px]">
+          <form
+            className={`flex flex-col justify-between ${msgs?.length ? 'gap-6' : 'gap-10'}`}
+            onSubmit={handleSubmit(onSubmit)}
+          >
             <AddMessages addMsgs={addMsgs} chainID={chainID} msgs={msgs} />
             <div className="space-y-2">
               <div className="secondary-text">Enter Memo</div>

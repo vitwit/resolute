@@ -31,7 +31,7 @@ export const getAccountInfo = createAsyncThunk(
     address: string;
     baseURLs: string[];
   }) => {
-    const response = await authService.accountInfo(data.baseURLs, data.address);
+    const response = await authService.accountInfo(data.baseURLs, data.address, data.chainID);
     return response.data;
   }
 );

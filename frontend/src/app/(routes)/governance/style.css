@@ -1,5 +1,5 @@
 .gov-main {
-  @apply pt-20 px-10 relative space-y-20 flex flex-col;
+  @apply pt-20 px-10 relative space-y-16 flex flex-col;
   height: calc(100vh - 60px) !important;
 }
 
@@ -28,7 +28,7 @@
 }
 
 .search-proposal-input {
-  @apply w-full border-none cursor-text focus:outline-none bg-transparent placeholder:text-[16px] placeholder:text-[#FFFFFF80] placeholder:font-normal text-[#ffffff];
+  @apply w-full border-none cursor-text focus:outline-none bg-transparent placeholder:text-[#FFFFFF30] placeholder:font-normal text-[#ffffff];
 }
 
 .search-proposal-field {
@@ -99,3 +99,39 @@
   @apply flex justify-center items-center gap-2 px-4 py-2 rounded-[100px] bg-[#FFFFFF05] w-[158px];
 }
 
+.proposal-description-markdown {
+  @apply opacity-80;
+}
+
+.proposal-description-markdown p,
+.proposal-description-markdown h1,
+.proposal-description-markdown h2,
+.proposal-description-markdown ul,
+.proposal-description-markdown ol {
+  margin: 0;
+}
+
+.proposal-description-markdown h1 {
+  @apply text-2xl font-bold;
+}
+.proposal-description-markdown h2 {
+  @apply text-xl font-bold;
+}
+.proposal-description-markdown h3 {
+  @apply text-lg font-bold;
+}
+.proposal-description-markdown a {
+  @apply text-blue-600 underline;
+}
+
+.proposal-description-markdown ol {
+  list-style: decimal;
+  list-style-position: inside;
+  margin-left: 1em;
+}
+
+.proposal-description-markdown ul {
+  list-style-type: disc;
+  list-style-position: inside;
+  margin-left: 1em;
+}

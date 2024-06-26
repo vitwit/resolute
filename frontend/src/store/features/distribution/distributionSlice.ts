@@ -451,7 +451,8 @@ export const getDelegatorTotalRewards = createAsyncThunk(
     const response = await distService.delegatorRewards(
       data.baseURLs,
       data.address,
-      data.pagination
+      data.pagination,
+      data.chainID
     );
     return {
       data: response.data,
@@ -466,7 +467,8 @@ export const getAuthzDelegatorTotalRewards = createAsyncThunk(
     const response = await distService.delegatorRewards(
       data.baseURLs,
       data.address,
-      data.pagination
+      data.pagination,
+      data.chainID
     );
     return {
       data: response.data,
@@ -480,7 +482,8 @@ export const getWithdrawAddress = createAsyncThunk(
   async (data: { baseURLs: string[]; chainID: string; delegator: string }) => {
     const response = await distService.withdrawAddress(
       data.baseURLs,
-      data.delegator
+      data.delegator,
+      data.chainID
     );
     return {
       data: response.data,
@@ -494,7 +497,8 @@ export const getAuthzWithdrawAddress = createAsyncThunk(
   async (data: { baseURLs: string[]; chainID: string; delegator: string }) => {
     const response = await distService.withdrawAddress(
       data.baseURLs,
-      data.delegator
+      data.delegator,
+      data.chainID
     );
     return {
       data: response.data,

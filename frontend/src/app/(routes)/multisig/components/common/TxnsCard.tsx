@@ -7,7 +7,10 @@ import {
 } from '@/constants/image-names';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
-import { deleteTxn } from '@/store/features/multisig/multisigSlice';
+import {
+  deleteTxn,
+  setVerifyDialogOpen,
+} from '@/store/features/multisig/multisigSlice';
 import { TxStatus } from '@/types/enums';
 import { Txn } from '@/types/multisig';
 import { COSMOS_CHAIN_ID } from '@/utils/constants';
@@ -22,6 +25,7 @@ import DialogConfirmDelete from '../multisig-account/DialogConfirmDelete';
 import CustomDialog from '@/components/common/CustomDialog';
 import BroadCastTxn from './BroadCastTxn';
 import SignTxn from './SignTxn';
+import useVerifyAccount from '@/custom-hooks/useVerifyAccount';
 
 export const TxnsCard = ({
   txn,
@@ -30,6 +34,7 @@ export const TxnsCard = ({
   multisigAddress,
   chainID,
   isHistory,
+  onViewError,
 }: {
   txn: Txn;
   currency: Currency;
@@ -37,11 +42,16 @@ export const TxnsCard = ({
   multisigAddress: string;
   chainID: string;
   isHistory: boolean;
+  onViewError?: (errMsg: string) => void;
 }) => {
   const dispatch = useAppDispatch();
   const { getChainInfo } = useGetChainInfo();
   const { address: walletAddress, explorerTxHashEndpoint } =
     getChainInfo(chainID);
+  const { isAccountVerified } = useVerifyAccount({
+    address: walletAddress,
+  });
+
   const [showAll, setShowAll] = useState(false);
   const [viewRawOpen, setViewRawOpen] = useState(false);
   const { messages } = txn;
@@ -61,7 +71,11 @@ export const TxnsCard = ({
   const loading = useAppSelector((state) => state.multisig.deleteTxnRes.status);
 
   const hanldeDeleteTxn = () => {
-    setDeleteDialogOpen(true);
+    if (isAccountVerified()) {
+      setDeleteDialogOpen(true);
+    } else {
+      dispatch(setVerifyDialogOpen(true));
+    }
   };
 
   const onDeleteTxn = () => {
@@ -156,7 +170,10 @@ export const TxnsCard = ({
               </Link>
             ) : (
               <div className="flex gap-[2px] cursor-pointer">
-                <div className="text-[#F15757] underline underline-offset-[3px]">
+                <div
+                  onClick={() => onViewError?.(txn?.err_msg || '')}
+                  className="text-[#F15757] underline underline-offset-[3px]"
+                >
                   Failed
                 </div>
                 <Image src={REDIRECT_ICON_RED} height={16} width={16} alt="" />

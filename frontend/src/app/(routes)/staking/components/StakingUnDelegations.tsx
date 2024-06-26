@@ -7,6 +7,8 @@ import { Chains } from '@/store/features/staking/stakeSlice';
 import '../staking.css';
 import WithConnectionIllustration from '@/components/illustrations/withConnectionIllustration';
 import ValidatorName from './ValidatorName';
+import { useAppSelector } from '@/custom-hooks/StateHooks';
+import { RootState } from '@/store/store';
 
 function StakingUnDelegations({
   undelegations,
@@ -15,7 +17,15 @@ function StakingUnDelegations({
   undelegations: Chains;
   isSingleChain?: boolean;
 }) {
-  const staking = useStaking();
+  const staking = useStaking({ isSingleChain: true });
+
+  const nameToChainIDs = useAppSelector(
+    (state: RootState) => state.wallet.nameToChainIDs
+  );
+
+  const getChainName = (chainID: string) => {
+    return Object.keys(nameToChainIDs).find(key => nameToChainIDs[key] === chainID) || '-';
+  }
 
   const cancelUnbonding = (
     chainID: string,
@@ -36,7 +46,7 @@ function StakingUnDelegations({
   });
 
   return (
-    <div className={`flex flex-col w-full ${unbondingCount ? ' gap-10' : ''}`}>
+    <div className={`flex flex-col w-full mt-10 ${unbondingCount ? 'gap-10' : ''}`}>
       <div className="space-y-2 items-start">
         <div className="text-h2">Unbonding</div>
         <div className="secondary-text">
@@ -47,7 +57,7 @@ function StakingUnDelegations({
       </div>
 
       {(staking.undelegationsLoading === 0 && !unbondingCount) ||
-      (isSingleChain && !unbondingCount) ? (
+        (isSingleChain && !unbondingCount) ? (
         <WithConnectionIllustration message="No Un Delegations" />
       ) : null}
 
@@ -85,7 +95,7 @@ function StakingUnDelegations({
                     <div className="flex justify-between w-full">
                       <div className="flex flex-col items-start gap-2">
                         <p className="text-small">Network</p>
-                        <p className="text-b1">{key}</p>
+                        <p className="text-b1">{getChainName(key)}</p>
                       </div>
                       <div className="flex flex-col items-start gap-2">
                         <p className="text-small">Avail Days</p>

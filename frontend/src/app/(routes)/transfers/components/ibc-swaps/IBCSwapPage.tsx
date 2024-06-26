@@ -1,5 +1,6 @@
 import React from 'react';
 import IBCSwap from './IBCSwap';
+import { IBC_SWAP_DESCRIPTION } from '@/utils/constants';
 
 const IBCSwapPage = () => {
   return (
@@ -7,10 +8,7 @@ const IBCSwapPage = () => {
       <div className="space-y-4 w-[600px] md:w-[400px]">
         <div className="text-[20px] font-bold">IBC Swap</div>
         <div className="divider-line"></div>
-        <div className="secondary-text">
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Et obcaecati
-          dicta cumque ex pariatur nulla ipsa rem qui sunt aspernatur
-        </div>
+        <div className="secondary-text">{IBC_SWAP_DESCRIPTION}</div>
       </div>
       <div className="max-w-[600px] my-20">
         <IBCSwap />

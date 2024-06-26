@@ -9,7 +9,7 @@ import {
 } from '@/store/features/common/commonSlice';
 import useGetTxInputs from '@/custom-hooks/useGetTxInputs';
 import useAuthzExecHelper from '@/custom-hooks/useAuthzExecHelper';
-import { txBankSend } from '@/store/features/bank/bankSlice';
+import { setIBCSendAlert, txBankSend } from '@/store/features/bank/bankSlice';
 import { txTransfer } from '@/store/features/ibc/ibcSlice';
 import Image from 'next/image';
 import { shortenName } from '@/utils/util';
@@ -60,9 +60,17 @@ const SingleSend = ({ sortedAssets }: { sortedAssets: ParsedAsset[] }) => {
     const address = getValues('address');
 
     const destinationChainID = getChainIDFromAddress(address);
-    if (!!asset && !!destinationChainID && destinationChainID != asset?.chainID)
+    if (
+      !!asset &&
+      !!destinationChainID &&
+      destinationChainID != asset?.chainID
+    ) {
       setIsIBC(true);
-    else setIsIBC(false);
+      dispatch(setIBCSendAlert(true));
+    } else {
+      setIsIBC(false);
+      dispatch(setIBCSendAlert(false));
+    }
   };
 
   const clearForm = () => {
@@ -170,7 +178,7 @@ const SingleSend = ({ sortedAssets }: { sortedAssets: ParsedAsset[] }) => {
   }, [selectedNetwork]);
 
   return (
-    <div className="single-send-box w-[550px]">
+    <div className="single-send-box">
       <Box
         sx={{
           background:
@@ -190,7 +198,7 @@ const SingleSend = ({ sortedAssets }: { sortedAssets: ParsedAsset[] }) => {
           <Image src="/drop-down-icon.svg" height={24} width={24} alt="" />
         </div>
       </Box>
-      <div className="py-10 px-6 space-y-10">
+      <div className="py-10 pt-12 px-6 flex gap-10 flex-col justify-between h-[630px]">
         <div>
           <AssetsDropDown
             selectedAsset={selectedAsset}
@@ -207,6 +215,7 @@ const SingleSend = ({ sortedAssets }: { sortedAssets: ParsedAsset[] }) => {
           setValue={setValue}
           selectedAsset={selectedAsset}
           isIBC={isIBC}
+          checkIfIBCTransaction={checkIfIBCTransaction}
         />
       </div>
     </div>

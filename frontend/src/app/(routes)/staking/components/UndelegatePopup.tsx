@@ -27,14 +27,16 @@ const UndelegatePopup: React.FC<PopupProps> = ({
   const [open, setOpen] = useState(openPopup);
 
   // Custom hook to get single staking information based on chainID
-  const singleStake = useSingleStaking(chainID);
+  /* eslint-disable @typescript-eslint/no-explicit-any */
+  const singleStake:any = useSingleStaking(chainID);
 
   // Get the total staked amount and denomination
-  const { totalStakedAmount } = singleStake.getStakingAssets();
+  // const { totalStakedAmount } = singleStake.getStakingAssets();
+  const totalStakedAmount = singleStake.totalValStakedAssets(chainID, validator)
   const denom = singleStake.getDenomWithChainID(chainID);
 
   // Custom hook to get staking information
-  const staking = useStaking();
+  const staking = useStaking({isSingleChain: true});
 
   // Get the current validator's information from the staking module
   const stakeModule = staking.getAllDelegations();

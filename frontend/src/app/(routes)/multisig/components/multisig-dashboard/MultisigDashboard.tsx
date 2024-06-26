@@ -39,6 +39,7 @@ const MultisigDashboard: React.FC<MultisigDashboardI> = (props) => {
     (state) => state.multisig.broadcastTxnRes
   );
   const updateTxStatus = useAppSelector((state) => state.multisig.updateTxnRes);
+  const deleteTxnRes = useAppSelector((state) => state.multisig.deleteTxnRes);
 
   useEffect(() => {
     if (walletAddress) {
@@ -116,6 +117,12 @@ const MultisigDashboard: React.FC<MultisigDashboardI> = (props) => {
       fetchAllTransactions();
     }
   }, [updateTxStatus]);
+
+  useEffect(() => {
+    if (deleteTxnRes.status === TxStatus.IDLE) {
+      fetchAllTransactions();
+    }
+  }, [deleteTxnRes]);
 
   useEffect(() => {
     dispatch(resetCreateTxnState());

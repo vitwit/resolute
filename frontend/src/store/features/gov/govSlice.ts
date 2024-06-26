@@ -2,7 +2,7 @@
 
 import { PayloadAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import govService from './govService';
-import { cloneDeep } from 'lodash';
+import { cloneDeep, get } from 'lodash';
 import { AxiosError } from 'axios';
 import { ERR_UNKNOWN } from '@/utils/errors';
 import { TxStatus } from '@/types/enums';
@@ -171,7 +171,8 @@ export const getProposal = createAsyncThunk(
       const response = await govService.proposal(
         data.baseURLs,
         data.proposalId,
-        data.govV1
+        data.govV1,
+        data.chainID
       );
       return {
         chainID: data.chainID,
@@ -189,7 +190,10 @@ export const getGovTallyParams = createAsyncThunk(
   'gov/tally-params',
   async (data: GetDepositParamsInputs, { rejectWithValue }) => {
     try {
-      const response = await govService.govTallyParams(data.baseURLs);
+      const response = await govService.govTallyParams(
+        data.baseURLs,
+        data.chainID
+      );
       return {
         chainID: data.chainID,
         data: response.data,
@@ -211,7 +215,8 @@ export const getProposalsInDeposit = createAsyncThunk(
         data?.key,
         data?.limit,
         PROPSAL_STATUS_DEPOSIT,
-        data.govV1
+        data.govV1,
+        data.chainID
       );
 
       if (response?.data?.proposals?.length && data?.chainID?.length) {
@@ -240,7 +245,10 @@ export const getDepositParams = createAsyncThunk(
   'gov/deposit-params',
   async (data: GetDepositParamsInputs, { rejectWithValue }) => {
     try {
-      const response = await govService.depositParams(data.baseURLs);
+      const response = await govService.depositParams(
+        data.baseURLs,
+        data.chainID
+      );
 
       return {
         chainID: data.chainID,
@@ -263,22 +271,27 @@ export const getProposalsInVoting = createAsyncThunk(
         data.key,
         data.limit,
         PROPOSAL_STATUS_ACTIVE,
-        data.govV1
+        data.govV1,
+        data.chainID
       );
 
       const { data: responseData } = response || {};
       const proposals = responseData?.proposals || [];
       proposals.forEach((proposal) => {
-        const proposalId = Number(proposal.proposal_id);
-        dispatch(
-          getProposalTally({
-            baseURL: data?.baseURL,
-            baseURLs: data?.baseURLs,
-            proposalId,
-            chainID: data?.chainID,
-            govV1: data.govV1,
-          })
+        const proposalId = Number(
+          get(proposal, 'proposal_id', get(proposal, 'id', ''))
         );
+        if (!isNaN(proposalId) && proposalId) {
+          dispatch(
+            getProposalTally({
+              baseURL: data?.baseURL,
+              baseURLs: data?.baseURLs,
+              proposalId,
+              chainID: data?.chainID,
+              govV1: data.govV1,
+            })
+          );
+        }
         if (data?.voter?.length) {
           dispatch(
             getVotes({
@@ -315,7 +328,8 @@ export const getVotes = createAsyncThunk(
         data.voter,
         data.key,
         data.limit,
-        data.govV1
+        data.govV1,
+        data.chainID
       );
 
       response.data.vote.proposal_id = data.proposalId;
@@ -339,7 +353,8 @@ export const getProposalTally = createAsyncThunk(
       const response = await govService.tally(
         data.baseURLs,
         data.proposalId,
-        data.govV1
+        data.govV1,
+        data.chainID
       );
 
       response.data.tally.proposal_id = data.proposalId;
@@ -362,8 +377,6 @@ export const txVote = createAsyncThunk(
     data: TxVoteInputs | TxAuthzExecInputs,
     { rejectWithValue, fulfillWithValue, dispatch }
   ) => {
-    console.log("hererererer....")
-    console.log(data)
     try {
       let msgs: Msg[];
       if (data.isAuthzMode) msgs = data.msgs;
