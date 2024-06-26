@@ -64,7 +64,7 @@ function StakingDelegations({
 
   return (
     <div
-      className={`flex flex-col w-full ${!isSingleChain && staking.delegationsLoading === 0 && !bondingCount ? '' : 'gap-6'}`}
+      className={`flex flex-col w-full ${isSingleChain ? 'mt-0' : 'mt-4'} ${!isSingleChain && staking.delegationsLoading === 0 && !bondingCount ? '' : 'gap-6'}`}
     >
       <div className="space-y-2">
         <div className="flex justify-between">
@@ -72,7 +72,7 @@ function StakingDelegations({
             <div className="text-h2">Delegations</div>
             <div className="secondary-text">Summary of staked assets.</div>
           </div>
-          <div className="flex gap-4">
+          <div className="flex gap-4 items-end">
             <div className="flex items-center gap-1">
               <p className="status-active"></p>
               <p className="text-[rgba(255,255,255,0.50)] text-[10px] font-extralight leading-[normal]">
@@ -147,10 +147,10 @@ function StakingDelegations({
                     </div>
                   </div>
                 </div>
-                <div className="flex justify-end gap-4 mt-5">
+                <div className="flex justify-end gap-4 items-end">
                   <button
                     onClick={() => withClaimRewards(key)}
-                    className="primary-btn h-[25px]"
+                    className="primary-btn"
                   >
                     {claimTxStatus[key]?.tx?.status === 'pending' ? (
                       'pending....'
@@ -358,13 +358,13 @@ const StakingActionsPopup: React.FC<PopupProps> = ({
             className="flex items-center w-full p-4 text-b1 hover:bg-[#FFFFFF10]"
             onClick={openUnDelegatePopup}
           >
-            Un Delegate
+            Undelegate
           </button>
           <button
             className="flex items-center w-full p-4 text-b1 hover:bg-[#FFFFFF10] rounded-b-2xl"
             onClick={openReDelegatePopup}
           >
-            Re Delegate
+            Redelegate
           </button>
         </div>
       ) : null}

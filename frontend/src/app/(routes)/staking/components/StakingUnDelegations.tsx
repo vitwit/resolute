@@ -50,7 +50,7 @@ function StakingUnDelegations({
   });
 
   return (
-    <div className={`flex flex-col w-full ${unbondingCount ? 'gap-10' : ''}`}>
+    <div className={`flex flex-col w-full pt-4 ${unbondingCount ? 'gap-6' : ''}`}>
       <div className="items-start">
         <div className="text-h2">Unbonding</div>
         <div className="secondary-text pb-2">

@@ -37,13 +37,8 @@ body {
 .horizontal-line {
   @apply h-[1px] self-stretch bg-[#1C1C20];
 }
-.search-bar {
-  @apply flex h-14 items-center gap-2 self-stretch px-6 py-4 rounded-[100px];
-  background: rgba(255, 255, 255, 0.02);
-}
-
 .primary-btn {
-  @apply border-[1px] text-white text-[16px] rounded-full px-4 py-[10.5px] leading-[19px] !h-8 flex justify-center items-center;
+  @apply border-[1px] text-white text-[14px] rounded-full px-4 py-[10.5px] leading-[19px] !h-8 flex justify-center items-center;
   background: linear-gradient(
     180deg,
     rgba(68, 83, 223, 0.1) 12.5%,
@@ -180,7 +175,7 @@ body {
   @apply bg-[#FFFFFF14] flex justify-center items-center text-[12px] h-6 min-w-6 rounded-2xl p-2;
 }
 .search-bar {
-  @apply flex h-14 justify-between items-center  px-6 py-4 rounded-[100px];
+  @apply flex h-14 justify-between items-center gap-2 w-full px-6 py-2 rounded-[100px];
   background: rgba(255, 255, 255, 0.02);
 }
 input[type='checkbox'] {
