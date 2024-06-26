@@ -2,7 +2,7 @@
 
 import { PayloadAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import govService from './govService';
-import { cloneDeep } from 'lodash';
+import { cloneDeep, get } from 'lodash';
 import { AxiosError } from 'axios';
 import { ERR_UNKNOWN } from '@/utils/errors';
 import { TxStatus } from '@/types/enums';
@@ -278,16 +278,20 @@ export const getProposalsInVoting = createAsyncThunk(
       const { data: responseData } = response || {};
       const proposals = responseData?.proposals || [];
       proposals.forEach((proposal) => {
-        const proposalId = Number(proposal.proposal_id);
-        dispatch(
-          getProposalTally({
-            baseURL: data?.baseURL,
-            baseURLs: data?.baseURLs,
-            proposalId,
-            chainID: data?.chainID,
-            govV1: data.govV1,
-          })
+        const proposalId = Number(
+          get(proposal, 'proposal_id', get(proposal, 'id', ''))
         );
+        if (!isNaN(proposalId) && proposalId) {
+          dispatch(
+            getProposalTally({
+              baseURL: data?.baseURL,
+              baseURLs: data?.baseURLs,
+              proposalId,
+              chainID: data?.chainID,
+              govV1: data.govV1,
+            })
+          );
+        }
         if (data?.voter?.length) {
           dispatch(
             getVotes({

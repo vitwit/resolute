@@ -4,6 +4,7 @@ import useValidator from '@/custom-hooks/useValidator';
 import ValidatorLogo from '../components/ValidatorLogo';
 import { WalletAddress } from '@/components/main-layout/SelectNetwork';
 import { Tooltip } from '@mui/material';
+import { shortenName } from '@/utils/util';
 
 interface ValidatorNameProps {
   valoperAddress: string;
@@ -57,7 +58,10 @@ const ValidatorName: React.FC<ValidatorNameProps> = ({
             <p
               className={` ${smallFont ? 'text-[18px]' : 'text-b1'} flex items-center truncate`}
             >
-              {get(validatorDetails, 'description.moniker')}
+              {shortenName(
+                get(validatorDetails, 'description.moniker', ''),
+                12
+              )}
             </p>
           </Tooltip>
           &nbsp;

@@ -16,7 +16,7 @@ const SearchValidator = ({
         placeholder="Search Validator"
         value={searchQuery}
         onChange={handleSearchQueryChange}
-        className="search-network-input"
+        className="search-text text-[14px]"
       />
     </div>
   );

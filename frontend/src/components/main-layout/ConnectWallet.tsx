@@ -99,7 +99,7 @@ const ConnectWallet = () => {
               Connect your wallet now to access all the modules on Resolute
             </div>
           </div>
-          <div className="grid grid-cols-4 gap-10 px-10">
+          <div className="grid grid-cols-3 gap-10 px-10">
             {SUPPORTED_WALLETS.map((wallet, index) => (
               <div
                 className="w-[200px] border-[0.25px] border-[#ffffff2f] py-6 flex flex-col gap-4 items-center justify-center rounded-2xl cursor-pointer hover:scale-[1.1] transition-all delay-75"
