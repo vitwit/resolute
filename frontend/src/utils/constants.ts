@@ -203,11 +203,8 @@ export const SIDENAV_MENU_ITEMS = {
   ],
 };
 export const ALL_NETWORKS_ICON = '/icons/all-networks-icon.png';
-export const CHANGE_NETWORK_ICON = '/switch-icon.svg';
 export const TXN_SUCCESS_ICON = '/transaction-success-icon.svg';
 export const TXN_FAILED_ICON = '/transaction-failed-icon.svg';
-export const HELP_ICON = '/help-icon.svg';
-export const REPORT_ICON = '/report-icon.svg';
 export const GITHUB_ISSUES_PAGE_LINK =
   'https://github.com/vitwit/resolute/issues/new';
 export const TELEGRAM_LINK = 'https://web.telegram.org/k/#-1982236507';

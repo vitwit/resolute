@@ -22,6 +22,9 @@ import SingleProposalLoading from '../../loaders/SingleProposalLoading';
 import { useRouter } from 'next/navigation';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import { formatAmount } from '@/utils/util';
+import DepositCollected from '../../utils-components/DepositCollected';
+import { PROPOSAL_STATUS_VOTING_PERIOD } from '@/utils/constants';
+import { TxStatus } from '@/types/enums';
 
 const emptyTallyResult = {
   yes: '',
@@ -50,15 +53,19 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
   const router = useRouter();
 
   const { getChainInfo, getDenomInfo } = useGetChainInfo();
+  const {
+    restURLs: baseURLs,
+    baseURL,
+    govV1,
+    chainName,
+    chainLogo,
+  } = getChainInfo(chainID);
 
   const proposalInfo = useAppSelector(
     (state: RootState) => state.gov.proposalDetails
   );
-  const networkLogo = useAppSelector(
-    (state: RootState) => state.wallet.networks[chainID]?.network.logos.menu
-  );
   const isStatusVoting =
-    get(proposalInfo, 'status') === 'PROPOSAL_STATUS_VOTING_PERIOD';
+    get(proposalInfo, 'status') === PROPOSAL_STATUS_VOTING_PERIOD;
   const poolInfo = useAppSelector(
     (state: RootState) => state.staking.chains[chainID]?.pool
   );
@@ -84,8 +91,6 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
   const { decimals, displayDenom } = getDenomInfo(chainID);
 
   const fetchProposalData = () => {
-    const { restURLs: baseURLs, baseURL, govV1 } = getChainInfo(chainID);
-
     dispatch(
       getProposal({
         chainID,
@@ -192,6 +197,10 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
     return timeDifference <= twoDaysInMilliseconds && timeDifference > 0;
   };
 
+  const proposalTallyStatus = useAppSelector(
+    (state) => state.gov.chains?.[chainID]?.tally.status
+  );
+
   return (
     <>
       {proposalStatus === 'pending' ? (
@@ -200,7 +209,7 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
         <>
           {/* Banner */}
           {isProposal2daysgo() ? (
-            <div className="fixed w-full bg-[#ffc13c] gap-2 px-6 py-3 flex items-center">
+            <div className="fixed w-full bg-[#ffc13c] gap-2 px-6 py-3 ml-[-40px] flex items-center">
               <Image
                 src="/infoblack.svg"
                 width={24}
@@ -243,19 +252,17 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
                           get(proposalInfo, 'title', '-')
                         ) || get(proposalInfo, 'content.@type', '')}
                       </p>
-                      <div className="active-badge text-white text-sm font-normal leading-[normal]">
-                        Active
-                      </div>
+                      {isStatusVoting ? (
+                        <div className="active-badge text-white text-sm font-normal leading-[normal]">
+                          Active
+                        </div>
+                      ) : (
+                        <div className="deposit-badge text-white text-sm font-normal leading-[normal]">
+                          Deposit
+                        </div>
+                      )}
                     </div>
                     <div className="flex gap-6 w-full">
-                      {/* <div className="flex gap-2">
-                                    <p className="text-[rgba(255,255,255,0.50)] text-xs font-extralight leading-[normal]">
-                                        By
-                                    </p>
-                                    <p className="text-white text-sm font-normal leading-[normal]">
-                                        0x2cc1...c54Df1
-                                    </p>
-                                </div> */}
                       <div className="flex gap-1 items-center">
                         {isStatusVoting ? (
                           <>
@@ -263,27 +270,39 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
                               Voting
                             </p>
                             <p className="text-white text-sm font-normal leading-[normal]">
-                              ends in{' '}
+                              Ends in{' '}
                               {getTimeDifferenceToFutureDate(
                                 get(proposalInfo, 'voting_end_time')
                               )}
                             </p>
                           </>
-                        ) : null}
+                        ) : (
+                          <>
+                            <p className="text-[rgba(255,255,255,0.50)] text-xs font-extralight leading-[normal]">
+                              Deposit
+                            </p>
+                            <p className="text-white text-sm font-normal leading-[normal]">
+                              Ends in{' '}
+                              {getTimeDifferenceToFutureDate(
+                                get(proposalInfo, 'deposit_end_time')
+                              )}
+                            </p>
+                          </>
+                        )}
                       </div>
                       <div className="flex gap-1 items-center">
                         <p className="text-[rgba(255,255,255,0.50)] text-xs font-extralight leading-[normal]">
                           on
                         </p>
                         <Image
-                          src={networkLogo}
+                          src={chainLogo}
                           width={20}
                           height={20}
                           alt="Network-logo"
                           draggable={false}
                         />
-                        <p className="text-white text-sm font-normal leading-[normal]">
-                          {chainID}
+                        <p className="text-white text-sm font-normal leading-[normal] capitalize">
+                          {chainName}
                         </p>
                       </div>
                     </div>
@@ -298,7 +317,6 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
                       }}
                       className={`proposal-description-markdown h-[22vh] secondary-text ${contentLength > 900 ? (showFullText ? 'overflow-scroll' : 'overflow-hidden') : 'overflow-scroll'}`}
                     >
-                      {/* {ProposalSummary} */}
                       {proposalMarkdown}
                     </p>
 
@@ -343,7 +361,7 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
                     {isStatusVoting ? (
                       <>
                         <div className="flex px-6 py-4 rounded-2xl bg-[#FFFFFF05] justify-between w-full">
-                          <p className="text-b1">Caste your vote</p>
+                          <p className="text-b1">Cast your vote</p>
                           <p className="text-xs font-extralight leading-[18px]">
                             Voting ends in{' '}
                             {getTimeDifferenceToFutureDate(
@@ -390,42 +408,26 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
               </div>
 
               {/* RightSide View */}
-              <div className="flex flex-col justify-between h-[calc(100vh-144px)] overflow-y-scroll gap-10">
-                <div className="flex flex-col gap-6 p-6 rounded-2xl bg-[#FFFFFF05]">
-                  <div className="flex flex-col gap-2">
-                    <p className="text-b1">Proposal Prediction</p>
-                    <div className="divider-line"></div>
-                  </div>
-                  <div className="flex space-x-2 justify-center">
-                    <ProposalProjection
-                      quorumReached={
-                        parseFloat(quorumPercent) >= parseFloat(quorumRequired)
-                      }
-                      quorumPercent={quorumPercent}
-                      quorumRequired={quorumRequired}
-                      totalVotes={totalVotes}
-                      tallyResult={tallyResult || emptyTallyResult}
-                    />
-                  </div>
-                  <div className="flex gap-4 w-full">
-                    <div className="flex justify-center items-center gap-2 px-4 py-2 rounded-[100px] bg-[#FFFFFF05] w-[158px]">
-                      <p className="text-white text-xs font-bold leading-[normal]">
-                        {quorumPercent} %
-                      </p>
-                      <p className="text-[rgba(255,255,255,0.50)] text-[10px] font-extralight leading-[normal]">
-                        Turnout
-                      </p>
-                    </div>
-                    <div className="flex justify-center items-center gap-2 px-4 py-2 rounded-[100px] bg-[#FFFFFF05] w-[158px]">
-                      <p className="text-white text-xs font-bold leading-[normal]">
-                        {quorumRequired}%
-                      </p>
-                      <p className="text-[rgba(255,255,255,0.50)] text-[10px] font-extralight leading-[normal]">
-                        Quorum
-                      </p>
-                    </div>
-                  </div>
-                </div>
+              <div
+                className={`flex flex-col h-[calc(100vh-144px)] overflow-y-scroll gap-6 ${isStatusVoting ? 'justify-between' : ''}`}
+              >
+                {isStatusVoting ? (
+                  <ProposalProjection
+                    quorumReached={
+                      parseFloat(quorumPercent) >= parseFloat(quorumRequired)
+                    }
+                    quorumPercent={quorumPercent}
+                    quorumRequired={quorumRequired}
+                    totalVotes={totalVotes}
+                    tallyResult={tallyResult || emptyTallyResult}
+                    chainID={chainID}
+                  />
+                ) : (
+                  <DepositCollected
+                    proposalInfo={proposalInfo}
+                    chainID={chainID}
+                  />
+                )}
 
                 <div className="flex flex-col gap-6 p-6 rounded-2xl bg-[#FFFFFF05]">
                   <div className="flex flex-col gap-2">
@@ -547,44 +549,50 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
                   </div>
                 </div>
 
-                <div className="flex flex-col gap-6 p-6 rounded-2xl bg-[#FFFFFF05]">
-                  <div className="flex flex-col gap-2">
-                    <p className="text-white text-sm font-normal leading-[normal]">
-                      Current Status
-                    </p>
-                    <div className="divider-line"></div>
-                  </div>
-                  {data.map((v) => (
-                    <div key={v.label} className="flex flex-col gap-2">
-                      <div className="flex gap-1 items-center">
-                        <p className="text-white text-xs font-normal leading-[normal]">
-                          {formatAmount(
-                            Number((v.count / 10 ** decimals).toFixed(0))
-                          )}{' '}
-                          {displayDenom}
+                {isStatusVoting ? (
+                  proposalTallyStatus === TxStatus.PENDING ? (
+                    <div className="w-[380px] h-[342px] animate-pulse bg-[#252525] rounded-2xl"></div>
+                  ) : (
+                    <div className="flex flex-col gap-6 p-6 rounded-2xl bg-[#FFFFFF05]">
+                      <div className="flex flex-col gap-2">
+                        <p className="text-white text-sm font-normal leading-[normal]">
+                          Current Status
                         </p>
-                        <p className="text-[#FFFFFF80] italic text-[10px]">
-                          Voted {v.label}
-                        </p>
+                        <div className="divider-line"></div>
                       </div>
-                      <div className="flex space-x-2 items-center">
-                        <div className="bg-[#FFFFFF0D] w-full rounded-full relative">
-                          <div
-                            style={{
-                              width: `${v.value}%`,
-                              background: v.color,
-                            }}
-                            className="h-2 rounded-full"
-                          ></div>
-                        </div>
+                      {data.map((v) => (
+                        <div key={v.label} className="flex flex-col gap-2">
+                          <div className="flex gap-1 items-center">
+                            <p className="text-white text-xs font-normal leading-[normal]">
+                              {formatAmount(
+                                Number((v.count / 10 ** decimals).toFixed(0))
+                              )}{' '}
+                              {displayDenom}
+                            </p>
+                            <p className="text-[#FFFFFF80] italic text-[10px]">
+                              Voted {v.label}
+                            </p>
+                          </div>
+                          <div className="flex space-x-2 items-center">
+                            <div className="bg-[#FFFFFF0D] w-full rounded-full relative">
+                              <div
+                                style={{
+                                  width: `${v.value}%`,
+                                  background: v.color,
+                                }}
+                                className="h-2 rounded-full"
+                              ></div>
+                            </div>
 
-                        <p className="text-white text-xs font-normal leading-[normal]">
-                          {v.value}%
-                        </p>
-                      </div>
+                            <p className="text-white text-xs font-normal leading-[normal]">
+                              {v.value}%
+                            </p>
+                          </div>
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
+                  )
+                ) : null}
               </div>
             </div>
           </div>

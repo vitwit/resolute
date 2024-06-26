@@ -19,7 +19,9 @@ const useGetChainInfo = () => {
     (state: RootState) => state.bank.balances
   );
 
-  const tokensPriceInfo = useAppSelector(state => state.common.allTokensInfoState.info)
+  const tokensPriceInfo = useAppSelector(
+    (state) => state.common.allTokensInfoState.info
+  );
 
   const getCosmosAddress = () => {
     const chainID = Object.keys(networks)[0];
@@ -29,7 +31,7 @@ const useGetChainInfo = () => {
 
   const getDenomInfo = useCallback(
     (chainID: string): DenomInfo => {
-      const config = networks?.[chainID]?.network?.config;
+      const config = allNetworks?.[chainID]?.config;
       const currency = config?.currencies?.[0];
       const chainName = config?.chainName.toLowerCase();
 
@@ -69,7 +71,7 @@ const useGetChainInfo = () => {
     const rpc = config?.rpc;
     const chainName = config?.chainName.toLowerCase();
 
-    const aminoCfg = network &&  network?.aminoConfig;
+    const aminoCfg = network && network?.aminoConfig;
     const cosmosAddress = getCosmosAddress();
     const prefix = config && config?.bech32Config.bech32PrefixAccAddr;
     const valPrefix = config && config?.bech32Config.bech32PrefixValAddr;
@@ -187,34 +189,37 @@ const useGetChainInfo = () => {
     }
   };
 
-  // will return actual value of token with denomination and 
+  // will return actual value of token with denomination and
   // usd value based on  amount and minimal denom
 
-  const getValueFromToken = (chainId: string, amount: number, denom: string)  => {
-  
-    const denomInfo = getOriginDenomInfo(denom)
+  const getValueFromToken = (
+    chainId: string,
+    amount: number,
+    denom: string
+  ) => {
+    const denomInfo = getOriginDenomInfo(denom);
 
-    const tokenPrice = tokensPriceInfo[denom]?.info?.[USD_CURRENCY]
+    const tokenPrice = tokensPriceInfo[denom]?.info?.[USD_CURRENCY];
 
     return {
       amount: amount * 10 ** -denomInfo.decimals,
       displayDenom: denomInfo.originDenom,
-      usdValue: amount * tokenPrice
-    }
-  }
+      usdValue: amount * tokenPrice,
+    };
+  };
 
+  const getTokenValueByChainId = (chainID: string, amount: number) => {
+    const denomInfo = getDenomInfo(chainID);
 
-  const getTokenValueByChainId = (chainID: string, amount: number)  => {
-    const denomInfo = getDenomInfo(chainID)
-
-    const tokenPrice = tokensPriceInfo[denomInfo.minimalDenom]?.info?.[USD_CURRENCY]
+    const tokenPrice =
+      tokensPriceInfo[denomInfo.minimalDenom]?.info?.[USD_CURRENCY];
 
     return {
       amount: amount * 10 ** -denomInfo.decimals,
       displayDenom: denomInfo.displayDenom,
-      usdValue: amount * tokenPrice
-    }
-  }
+      usdValue: amount * tokenPrice,
+    };
+  };
 
   return {
     getDenomInfo,
