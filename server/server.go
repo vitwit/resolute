@@ -27,8 +27,12 @@ import (
 )
 
 func init() {
+	config, err := config.ParseConfig()
+	if err != nil {
+		log.Fatal(err)
+	}
 	// Initialize the Redis client
-	clients.InitializeRedis("localhost:6379", "", 0)
+	clients.InitializeRedis(config.REDIS_URI, "", 0)
 }
 
 func main() {
@@ -176,9 +180,6 @@ func proxyHandler1(c echo.Context) error {
 	if err != nil {
 		return c.String(http.StatusInternalServerError, "Error reading response")
 	}
-
-	// Print the response body
-	fmt.Println(string(body))
 
 	// Respond back to the original request
 	return c.JSON(http.StatusOK, string(body))

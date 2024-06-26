@@ -17,6 +17,7 @@ type Config struct {
 	COINGECKO          CoingeckoConfig  `mapstructure:"coingecko"`
 	NUMIA_BEARER_TOKEN NumiaBearerToken `mapstructure:"numiaBearerToken"`
 	MINTSCAN_TOKEN     MintscanToken    `mapstructure:"mintscanToken"`
+	REDIS_URI          string           `mapstructure:"redisUri"`
 }
 
 type DBConfig struct {
@@ -81,6 +82,7 @@ func ParseConfig() (Config, error) {
 			cfg.MINTSCAN_TOKEN = MintscanToken{
 				Token: viper.GetString("production.mintscanToken"),
 			}
+			cfg.REDIS_URI = viper.GetString("production.redisUri")
 		}
 
 	case "dev":
@@ -104,6 +106,7 @@ func ParseConfig() (Config, error) {
 			cfg.MINTSCAN_TOKEN = MintscanToken{
 				Token: viper.GetString("production.mintscanToken"),
 			}
+			cfg.REDIS_URI = viper.GetString("production.redisUri")
 		}
 
 	default:

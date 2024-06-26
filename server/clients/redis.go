@@ -54,15 +54,13 @@ func GetChain(chainId string) *config.ChainConfig {
 
 	e := json.Unmarshal([]byte(data), &chains)
 	if e != nil {
-		fmt.Println("e1111111111111", e.Error())
+		fmt.Println("Error while unmarshal chain info ", e.Error())
 	}
 
 	var chain *config.ChainConfig
 
 	for _, c := range chains {
-		fmt.Println("dddddddddddddddddddddd", c.ChainId, chainId)
 		if c.ChainId == chainId {
-			fmt.Println("cccccccccccccccccccccccccccccccc", c)
 			chain = &c
 			break
 		}

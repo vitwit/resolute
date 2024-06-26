@@ -4,10 +4,20 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
+
+	"github.com/vitwit/resolute/server/config"
 )
 
 func GetStatus(url string) (bool, error) {
+	config, err := config.ParseConfig()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	authorizationToken := fmt.Sprintf("Bearer %s", config.MINTSCAN_TOKEN.Token)
+
 	urlString := fmt.Sprintf("%s/cosmos/auth/v1beta1/params", url)
 
 	// Create a new request to the new URL
@@ -18,7 +28,7 @@ func GetStatus(url string) (bool, error) {
 	}
 
 	// Copy the Authorization header from the original request
-	req.Header.Set("Authorization", "Bearer token")
+	req.Header.Set("Authorization", authorizationToken)
 
 	// Perform the request
 	client := &http.Client{}
@@ -44,8 +54,6 @@ func GetStatus(url string) (bool, error) {
 	if resp.StatusCode == 200 {
 		return true, nil
 	}
-
-	fmt.Println("result ============= ", result, resp.StatusCode)
 
 	return false, nil
 }
