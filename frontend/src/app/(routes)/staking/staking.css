@@ -190,7 +190,7 @@
   background: rgba(255, 255, 255, 0.02);
 }
 .delegations-card {
-  @apply flex flex-col justify-center items-start gap-6 p-6 rounded-2xl;
+  @apply flex flex-col justify-center items-start gap-6 p-4 rounded-2xl;
   background: rgba(255, 255, 255, 0.02);
 }
 .staked-amount-red-badge {
@@ -198,15 +198,15 @@
   background: rgba(241, 87, 87, 0.5);
 }
 .status-active {
-  @apply flex h-[18px] justify-center items-center gap-2 border px-2 py-1 rounded-[100px] border-solid border-[#2BA472];
+  @apply flex h-2 w-2 justify-center items-center gap-2 border rounded-full border-solid border-[#2BA472];
   background: rgba(43, 164, 114, 0.5);
 }
 .status-jailed {
-  @apply flex h-[18px] justify-center items-center gap-2 border px-2 py-1 rounded-[100px] border-solid border-[#D92101];
+  @apply flex h-2 w-2 justify-center items-center gap-2 border rounded-full border-solid border-[#D92101];
   background: rgba(217, 33, 1, 0.5);
 }
 .status-unbonded {
-  @apply border h-[18px] flex justify-center items-center gap-2 px-2 py-1 rounded-[100px] border-solid border-[#FFC13C];
+  @apply border h-2 w-2 flex justify-center items-center rounded-full border-solid border-[#FFC13C];
   background: rgba(255, 193, 60, 0.5);
 }
 .reDelegate-dropdown {

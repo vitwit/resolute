@@ -24,8 +24,12 @@ function StakingUnDelegations({
   );
 
   const getChainName = (chainID: string) => {
-    return Object.keys(nameToChainIDs).find(key => nameToChainIDs[key] === chainID) || '-';
-  }
+    return (
+      Object.keys(nameToChainIDs).find(
+        (key) => nameToChainIDs[key] === chainID
+      ) || '-'
+    );
+  };
 
   const cancelUnbonding = (
     chainID: string,
@@ -46,10 +50,10 @@ function StakingUnDelegations({
   });
 
   return (
-    <div className={`flex flex-col w-full mt-10 ${unbondingCount ? 'gap-10' : ''}`}>
-      <div className="space-y-2 items-start">
+    <div className={`flex flex-col w-full ${unbondingCount ? 'gap-10' : ''}`}>
+      <div className="items-start">
         <div className="text-h2">Unbonding</div>
-        <div className="secondary-text">
+        <div className="secondary-text pb-2">
           Unbonding delegations will be locked until their locked time, after
           which they will be available in your balance.
         </div>
@@ -57,7 +61,7 @@ function StakingUnDelegations({
       </div>
 
       {(staking.undelegationsLoading === 0 && !unbondingCount) ||
-        (isSingleChain && !unbondingCount) ? (
+      (isSingleChain && !unbondingCount) ? (
         <WithConnectionIllustration message="No Un Delegations" />
       ) : null}
 
