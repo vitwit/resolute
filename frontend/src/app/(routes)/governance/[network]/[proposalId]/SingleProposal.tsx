@@ -21,6 +21,7 @@ import CustomButton from '@/components/common/CustomButton';
 import SingleProposalLoading from '../../loaders/SingleProposalLoading';
 import { useRouter } from 'next/navigation';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
+import { formatAmount } from '@/utils/util';
 import DepositCollected from '../../utils-components/DepositCollected';
 import { PROPOSAL_STATUS_VOTING_PERIOD } from '@/utils/constants';
 import { TxStatus } from '@/types/enums';
@@ -51,7 +52,7 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
   const dispatch = useAppDispatch();
   const router = useRouter();
 
-  const { getChainInfo } = useGetChainInfo();
+  const { getChainInfo, getDenomInfo } = useGetChainInfo();
   const {
     restURLs: baseURLs,
     baseURL,
@@ -87,6 +88,7 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
       Number(get(tallyResult, key, get(tallyResult, `${key}_count`)) || 0),
     0
   );
+  const { decimals, displayDenom } = getDenomInfo(chainID);
 
   const fetchProposalData = () => {
     dispatch(
@@ -562,7 +564,10 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
                         <div key={v.label} className="flex flex-col gap-2">
                           <div className="flex gap-1 items-center">
                             <p className="text-white text-xs font-normal leading-[normal]">
-                              {v.count}
+                              {formatAmount(
+                                Number((v.count / 10 ** decimals).toFixed(0))
+                              )}{' '}
+                              {displayDenom}
                             </p>
                             <p className="text-[#FFFFFF80] italic text-[10px]">
                               Voted {v.label}

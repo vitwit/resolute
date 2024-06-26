@@ -7,6 +7,7 @@
 :root {
   --primary-text-color: #ffffff;
   --secondary-text-color: #ffffff80;
+  --main-bg: #09090a;
 }
 
 ::-webkit-scrollbar {
@@ -24,6 +25,7 @@ body {
   color: var(--primary-text-color);
   font-family: 'Libre Franklin', sans-serif !important;
   font-optical-sizing: auto !important;
+  background: var(--main-bg);
 }
 .text-bg {
   background: linear-gradient(270deg, #fff -67.89%, #999 99.95%);
