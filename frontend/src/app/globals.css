@@ -43,7 +43,7 @@ body {
 }
 
 .primary-btn {
-  @apply border-[1px] text-white text-[16px] rounded-full px-4 py-[10.5px] leading-[19px] h-10 flex justify-center items-center;
+  @apply border-[1px] text-white text-[16px] rounded-full px-4 py-[10.5px] leading-[19px] !h-8 flex justify-center items-center;
   background: linear-gradient(
     180deg,
     rgba(68, 83, 223, 0.1) 12.5%,
