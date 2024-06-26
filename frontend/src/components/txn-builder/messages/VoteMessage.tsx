@@ -67,7 +67,7 @@ const VoteMessage = ({
           />
         </div>
         <div className="flex-1 space-y-2">
-          <div className="text-b1-light">Enter Amount</div>
+          <div className="text-b1-light">Select Vote Option</div>
           <VoteOptionsList
             handleChange={handleVoteChange}
             selectedOption={selectedVoteOption}
