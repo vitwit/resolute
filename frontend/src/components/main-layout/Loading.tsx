@@ -48,7 +48,7 @@ const SelectNetworkLoading = () => {
   return (
     <div className="fixed-top w-full">
       <div className="flex gap-2 items-center">
-        <div className="w-10 h-10 rounded-full bg-[#252525]" />
+        <div className="w-10 !h-8 rounded-full bg-[#252525]" />
         <div className="flex-1">
           <div className="h-8 w-full rounded bg-[#252525] animate-pulse" />
         </div>

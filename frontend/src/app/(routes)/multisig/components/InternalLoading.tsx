@@ -15,7 +15,7 @@ const InternalLoading = () => {
             </div>
             <div className="divider-line w-full"></div>
           </div>
-          <button className="w-[146px] h-10 animate-pulse bg-[#252525] rounded-full"></button>
+          <button className="w-[146px] !h-8 animate-pulse bg-[#252525] rounded-full"></button>
         </div>
       </div>
 
@@ -37,7 +37,7 @@ const InternalLoading = () => {
               description="All transactions"
             />
           </div>
-          <button className="w-[175px] h-10 animate-pulse bg-[#252525] rounded-full"></button>
+          <button className="w-[175px] !h-8 animate-pulse bg-[#252525] rounded-full"></button>
         </div>
         <div className="mt-6 flex gap-6">
           <p className="w-[130px] h-10 animate-pulse bg-[#252525] rounded"></p>

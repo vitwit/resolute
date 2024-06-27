@@ -64,11 +64,35 @@ function StakingDelegations({
 
   return (
     <div
-      className={`flex flex-col w-full ${!isSingleChain ? 'mb-28' : ''} mt-10 ${!isSingleChain && staking.delegationsLoading === 0 && !bondingCount ? '' : 'gap-12'}`}
+      className={`flex flex-col w-full ${isSingleChain ? 'mt-0' : 'mt-4'} ${!isSingleChain && staking.delegationsLoading === 0 && !bondingCount ? '' : 'gap-6'}`}
     >
-      <div className="space-y-2 items-start">
-        <div className="text-h2">Delegations</div>
-        <div className="secondary-text">Summary of staked assets.</div>
+      <div className="space-y-2">
+        <div className="flex justify-between">
+          <div className="flex flex-col">
+            <div className="text-h2">Delegations</div>
+            <div className="secondary-text">Summary of staked assets.</div>
+          </div>
+          <div className="flex gap-4 items-end">
+            <div className="flex items-center gap-1">
+              <p className="status-active"></p>
+              <p className="text-[rgba(255,255,255,0.50)] text-[10px] font-extralight leading-[normal]">
+                Status Active
+              </p>
+            </div>
+            <div className="flex items-center gap-1">
+              <p className="status-unbonded"></p>
+              <p className="text-[rgba(255,255,255,0.50)] text-[10px] font-extralight leading-[normal]">
+                Status InActive
+              </p>
+            </div>
+            <div className="flex items-center gap-1">
+              <p className="status-jailed"></p>
+              <p className="text-[rgba(255,255,255,0.50)] text-[10px] font-extralight leading-[normal]">
+                Status Jailed
+              </p>
+            </div>
+          </div>
+        </div>
         <div className="horizontal-line"></div>
       </div>
 
@@ -86,7 +110,7 @@ function StakingDelegations({
             <div className="flex flex-col">
               <div className="flex justify-between w-full mb-4">
                 <div className="flex space-x-4 items-center">
-                  <div className="flex flex-col gap-2">
+                  <div className="flex flex-col gap-1">
                     <div className="space-x-2 flex items-center">
                       <Image
                         src={staking.chainLogo(key)}
@@ -100,7 +124,7 @@ function StakingDelegations({
                         {staking.chainName(key)}
                       </p>
                     </div>
-                    <div className="flex gap-4">
+                    <div className="flex gap-4 ml-8">
                       <div className="flex gap-2 items-center">
                         <p className="text-white text-xs font-bold leading-[normal]">
                           {staking.getAmountWithDecimal(
@@ -123,10 +147,10 @@ function StakingDelegations({
                     </div>
                   </div>
                 </div>
-                <div className="flex justify-end gap-4">
+                <div className="flex justify-end gap-4 items-end">
                   <button
                     onClick={() => withClaimRewards(key)}
-                    className="primary-btn h-[25px]"
+                    className="primary-btn"
                   >
                     {claimTxStatus[key]?.tx?.status === 'pending' ? (
                       'pending....'
@@ -145,16 +169,16 @@ function StakingDelegations({
                       'pending....'
                     ) : (
                       <>
-                        Claim & Stake
+                        Restake
                         {/* <p className="ml-2 text-small-light">Rewards</p> */}
                       </>
                     )}
                   </button>
                 </div>
               </div>
-              <div className="divider-line mb-4"></div>
+              {/* <div className="divider-line mb-4"></div> */}
             </div>
-            <div className="grid grid-cols-1 w-full gap-6">
+            <div className="grid grid-cols-1 w-full gap-4">
               {get(
                 value,
                 'delegations.delegations.delegation_responses',
@@ -334,13 +358,13 @@ const StakingActionsPopup: React.FC<PopupProps> = ({
             className="flex items-center w-full p-4 text-b1 hover:bg-[#FFFFFF10]"
             onClick={openUnDelegatePopup}
           >
-            Un Delegate
+            Undelegate
           </button>
           <button
             className="flex items-center w-full p-4 text-b1 hover:bg-[#FFFFFF10] rounded-b-2xl"
             onClick={openReDelegatePopup}
           >
-            Re Delegate
+            Redelegate
           </button>
         </div>
       ) : null}

@@ -40,24 +40,26 @@ const StakingDashboard = () => {
   };
 
   return (
-    <div className="flex flex-col items-start w-full px-10 py-20">
+    <div className="flex flex-col items-start w-full py-10">
       <div
-        className={`flex flex-col w-full ${isWalletConnected ? 'gap-10' : 'gap-10'}`}
+        className={`flex flex-col w-full ${isWalletConnected ? 'gap-6' : ''}`}
       >
-        <div className="space-y-2 items-start">
+        <div className="items-start">
           <div className="text-h1">Staking</div>
-          <div className="secondary-text">
-            {isWalletConnected ? (
-              'Connect your wallet now to access all the modules on resolute'
-            ) : (
-              <p>
-                Here&apos;s an overview of your staked assets, including
-                delegation and undelegation details, and your total staked
-                balance.
-              </p>
-            )}
+          <div className="space-y-2">
+            <div className="secondary-text">
+              {isWalletConnected ? (
+                'Connect your wallet now to access all the modules on resolute'
+              ) : (
+                <p>
+                  Here&apos;s an overview of your staked assets, including
+                  delegation and undelegation details, and your total staked
+                  balance.
+                </p>
+              )}
+            </div>
+            <div className="divider-line"></div>
           </div>
-          <div className="horizontal-line"></div>
         </div>
 
         {isWalletConnected ? (
@@ -69,14 +71,18 @@ const StakingDashboard = () => {
               unstakeAmount={totalUnStakedAmount}
               rewardsAmount={rewardsAmount}
             />
+
+            {/* Delegations */}
+            <StakingDelegations
+              delegations={delegations}
+              isSingleChain={false}
+            />
+
             {/* Unbonding */}
             {(!isAuthzMode && hasUnbonding) ||
             (isAuthzMode && hasAuthzUnbonding) ? (
               <StakingUnDelegations undelegations={delegations} />
             ) : null}
-
-            {/* Delegations */}
-            <StakingDelegations delegations={delegations} isSingleChain={false} />
           </>
         ) : (
           <EmptyScreen

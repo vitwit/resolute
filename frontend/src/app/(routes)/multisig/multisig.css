@@ -22,7 +22,7 @@
 }
 
 .txns-filter {
-  @apply h-10 flex justify-center items-center text-[16px] px-4 py-[10.5px]  rounded-lg;
+  @apply !h-8 flex justify-center items-center text-[16px] px-4 py-[10.5px]  rounded-lg;
 }
 
 .txns-filter-unselected {
@@ -44,7 +44,7 @@
 }
 
 .threshold {
-  @apply text-[14px] rounded-full h-10 border-[#ffffff10] border-[0.25px] px-4 py-[10.5px] w-[125px] flex justify-center items-center gap-2;
+  @apply text-[14px] rounded-full !h-8 border-[#ffffff10] border-[0.25px] px-4 py-[10.5px] w-[125px] flex justify-center items-center gap-2;
 }
 
 .address-pubkey-field-error,

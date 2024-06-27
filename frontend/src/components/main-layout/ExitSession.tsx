@@ -53,7 +53,7 @@ const ExitSession = () => {
         <div className="fixed-bottom w-full">
           <button
             onClick={() => onExitSession()}
-            className="flex gap-2 h-10 items-center pl-3 pr-6 w-full font-medium rounded-full hover:bg-[#FFFFFF0A]"
+            className="flex gap-2 !h-8 items-center pl-3 pr-6 w-full font-medium rounded-full hover:bg-[#FFFFFF0A]"
           >
             <Image
               src="/sidebar-menu-icons/logout-icon.svg"
