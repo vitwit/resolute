@@ -155,6 +155,14 @@ const useStaking = ({ isSingleChain }: { isSingleChain: boolean }) => {
     return (amount / 10 ** decimals).toFixed(4) + ' ' + displayDenom;
   };
 
+  const getAmountObjectWithDecimal = (amount: number, chainID: string) => {
+    const { decimals, displayDenom } = getDenomInfo(chainID);
+    return {
+      amount: (amount / 10 ** decimals).toFixed(4),
+      denom: displayDenom,
+    };
+  };
+
   const chainTotalRewards = (chainID: string) => {
     let totalRewardsAmount = 0;
     let displayDenomName = '';
@@ -371,6 +379,7 @@ const useStaking = ({ isSingleChain }: { isSingleChain: boolean }) => {
     totalUnbondedAmount,
     transactionRestake,
     chainName,
+    getAmountObjectWithDecimal,
   };
 };
 
