@@ -76,19 +76,19 @@ function StakingDelegations({
             <div className="flex items-center gap-1">
               <p className="status-active"></p>
               <p className="text-[rgba(255,255,255,0.50)] text-[10px] font-extralight leading-[normal]">
-                Status Active
+                Active
               </p>
             </div>
             <div className="flex items-center gap-1">
               <p className="status-unbonded"></p>
               <p className="text-[rgba(255,255,255,0.50)] text-[10px] font-extralight leading-[normal]">
-                Status InActive
+                InActive
               </p>
             </div>
             <div className="flex items-center gap-1">
               <p className="status-jailed"></p>
               <p className="text-[rgba(255,255,255,0.50)] text-[10px] font-extralight leading-[normal]">
-                Status Jailed
+                Jailed
               </p>
             </div>
           </div>
