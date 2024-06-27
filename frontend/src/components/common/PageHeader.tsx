@@ -8,10 +8,12 @@ const PageHeader = ({
   description: string;
 }) => {
   return (
-    <div className="space-y-2">
+    <div className="">
       <div className="text-h1">{title}</div>
-      <div className="text-b1-light">{description}</div>
-      <div className="divider-line"></div>
+      <div className="space-y-2">
+        <div className="text-b1-light">{description}</div>
+        <div className="divider-line"></div>
+      </div>
     </div>
   );
 };
