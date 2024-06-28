@@ -41,11 +41,24 @@ const ValidatorName: React.FC<ValidatorNameProps> = ({
   const validatorDetails = getValidatorDetails(valoperAddress, chainID);
 
   return (
-    <div className="flex space-x-1 items-center">
+    <div className="flex space-x-2 items-center">
       {!validatorDetails ? (
         'Loading....'
       ) : (
         <>
+          {hasStatus ? (
+            // If the status is Active than use this css "status-active"
+            // If the status is Jailed than we can use this "status-jailed"
+            //And the status is Unbonded  we can use this "status-unbonded"
+            <div
+              className={`${valStatusObj[get(validatorDetails, 'status', '')] === 'Active' ? 'status-active' : ''}
+              ${get(validatorDetails, 'jailed') ? 'status-jailed' : valStatusObj[get(validatorDetails, 'status', '')] === 'InActive' ? 'status-unbonded' : ''} relative`}
+            >
+              {/* {get(validatorDetails, 'jailed')
+                ? 'Jailed'
+                : valStatusObj[get(validatorDetails, 'status') || '']} */}
+            </div>
+          ) : null}
           {/* validator logo */}
           <ValidatorLogo
             width={24}
@@ -60,26 +73,13 @@ const ValidatorName: React.FC<ValidatorNameProps> = ({
             >
               {shortenName(
                 get(validatorDetails, 'description.moniker', ''),
-                12
+                20
               )}
             </p>
           </Tooltip>
           &nbsp;
           {/* Copy address icon */}
           <WalletAddress address={valoperAddress} displayAddress={false} />
-          {hasStatus ? (
-            // If the status is Active than use this css "status-active"
-            // If the status is Jailed than we can use this "status-jailed"
-            //And the status is Unbonded  we can use this "status-unbonded"
-            <div
-              className={`h-5 text-[8px] ${valStatusObj[get(validatorDetails, 'status', '')] === 'Active' ? 'status-active' : ''}
-              ${get(validatorDetails, 'jailed') ? 'status-jailed' : valStatusObj[get(validatorDetails, 'status', '')] === 'InActive' ? 'status-unbonded' : ''} relative`}
-            >
-              {get(validatorDetails, 'jailed')
-                ? 'Jailed'
-                : valStatusObj[get(validatorDetails, 'status') || '']}
-            </div>
-          ) : null}
         </>
       )}
     </div>

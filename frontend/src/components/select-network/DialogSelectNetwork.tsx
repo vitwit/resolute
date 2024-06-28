@@ -88,7 +88,7 @@ const DialogSelectNetwork = () => {
       <DialogContent sx={{ padding: 0 }}>
         <div className="select-network-popup">
           <div className="flex justify-end">
-            <button onClick={onClose} className="secondary-btn h-10">
+            <button onClick={onClose} className="secondary-btn !h-8">
               Close
             </button>
           </div>

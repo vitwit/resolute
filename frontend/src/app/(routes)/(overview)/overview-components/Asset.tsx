@@ -153,7 +153,7 @@ const Asset = ({
 
   return (
     <tr className="table-border-line hover:bg-[#FFFFFF14]">
-      <th className="rounded-l-2xl px-6 py-8">
+      <th className="rounded-l-2xl px-6 py-6">
         <div className="flex flex-col items-start gap-2">
           <div className="text-base font-normal leading-[normal]">
             {formatCoin(asset.balance, asset.displayDenom)}

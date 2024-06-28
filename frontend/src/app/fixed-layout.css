@@ -50,7 +50,7 @@
 }
 
 .menu-item {
-  @apply w-full flex gap-2 h-10 items-center pl-3 pr-6 rounded-full hover:bg-[#FFFFFF0A];
+  @apply w-full flex gap-2 !h-8 items-center pl-3 pr-6 rounded-full hover:bg-[#FFFFFF0A];
 }
 
 .menu-item-name {

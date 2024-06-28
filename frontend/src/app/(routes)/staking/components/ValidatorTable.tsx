@@ -162,7 +162,7 @@ const ValidatorTable: React.FC<{ chainID: string }> = ({ chainID }) => {
   }, [filteredValidators, chainID]);
 
   return (
-    <div className="flex flex-col gap-10 w-full overflow-scroll h-[50vh]">
+    <div className="flex flex-col gap-6 w-full">
       {openDelegate ? (
         <DelegatePopup
           validator={selectedValidator?.operator_address || ''}
@@ -179,21 +179,12 @@ const ValidatorTable: React.FC<{ chainID: string }> = ({ chainID }) => {
         </div>
         <div className="horizontal-line"></div>
       </div>
-      <div className="flex flex-col items-start gap-10 w-full px-6 py-0">
-        {/* <div className="search-bar flex items-center">
-          <Image src="/search.svg" width={24} height={24} alt="Search-Icon" />
-          <input
-            value={searchQuery}
-            onChange={(e) => handleSearch(e.target.value)}
-            className="text-[rgba(255,255,255,0.50)] w-full h-[37px] pl-1 text-base not-italic font-normal leading-[normal] bg-transparent border-none ml-2"
-            placeholder="Search Validator"
-          />
-        </div> */}
+      <div className="flex flex-col items-start gap-6 w-full px-6 py-0">
         <SearchValidator
           handleSearchQueryChange={(e) => handleSearch(e.target.value)}
           searchQuery={searchQuery}
         />
-        <div className="w-full flex flex-col items-start gap-2 overflow-y-scroll h-[30vh]">
+        <div className="w-full flex flex-col items-start gap-2">
           <table className="relative w-full">
             <thead className="w-full">
               <tr>

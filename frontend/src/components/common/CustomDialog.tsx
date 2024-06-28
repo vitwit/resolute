@@ -50,7 +50,7 @@ const CustomDialog = ({
       <DialogContent sx={{ padding: 0 }}>
         <div className={`px-4 pt-4 pb-6 space-y-10 ${styles}`}>
           <div className="flex justify-end px-6">
-            <button onClick={onClose} className="text-btn h-10">
+            <button onClick={onClose} className="text-btn !h-8">
               Close
             </button>
           </div>

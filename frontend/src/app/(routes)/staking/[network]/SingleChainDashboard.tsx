@@ -29,17 +29,17 @@ const SingleStakingDashboard = ({ chainID }: { chainID: string }) => {
     : stakingData[chainID]?.unbonding.hasUnbonding;
 
   return (
-    <div className="flex flex-col items-start gap-20 flex-[1_0_0] self-stretch px-10 py-20">
-      <div className="flex flex-col w-full gap-10">
-        <div className="space-y-2 items-start">
-          <div className="text-white text-[28px] not-italic font-bold leading-[normal]">
+    <div className="flex flex-col items-start gap-10 w-full py-10">
+      <div className="flex flex-col w-full gap-6">
+        <div className="items-start">
+          <div className="text-white text-[28px] font-bold leading-[normal]">
             Staking
           </div>
-          <div className="text-[rgba(255,255,255,0.50)] text-sm not-italic font-extralight leading-8">
+          <div className="text-[rgba(255,255,255,0.50)] text-sm font-extralight leading-8 pb-2">
             Summary of Staked Assets: This includes the total value of staked
             assets, accumulated rewards, and available balance.
           </div>
-          <div className="horizontal-line"></div>
+          <div className="divider-line"></div>
         </div>
 
         <StakingSummary
@@ -50,16 +50,16 @@ const SingleStakingDashboard = ({ chainID }: { chainID: string }) => {
         />
       </div>
 
+      {/* Delegations */}
+      <StakingDelegations isSingleChain={true} delegations={delegations} />
+
       {/* Unbonding */}
       {hasUnbondings ? (
         <StakingUnDelegations
           isSingleChain={true}
           undelegations={delegations}
         />
-       ) : null} 
-
-      {/* Delegations */}
-      <StakingDelegations isSingleChain={true} delegations={delegations} />
+      ) : null}
 
       {/* Validator */}
       <ValidatorTable chainID={chainID} />

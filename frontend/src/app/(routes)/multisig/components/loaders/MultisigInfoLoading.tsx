@@ -14,7 +14,7 @@ const MultisigInfoLoading = () => {
             </div>
             <div className="divider-line w-full"></div>
           </div>
-          <button className="w-[146px] h-10 animate-pulse bg-[#252525] rounded-full"></button>
+          <button className="w-[146px] !h-8 animate-pulse bg-[#252525] rounded-full"></button>
         </div>
       </div>
 

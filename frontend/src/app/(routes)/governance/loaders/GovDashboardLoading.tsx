@@ -17,7 +17,7 @@ const GovDashboardLoading = () => {
               <p className="w-[180px] h-[21px] animate-pulse bg-[#252525] rounded"></p>
               <p className="w-[180px] h-[21px] animate-pulse bg-[#252525] rounded"></p>
               <div className="flex justify-end items-end w-full">
-                <button className="w-20 h-10 animate-pulse bg-[#252525] rounded-full"></button>
+                <button className="w-20 !h-8 animate-pulse bg-[#252525] rounded-full"></button>
               </div>
             </div>
             <div className="divider-line"></div>
