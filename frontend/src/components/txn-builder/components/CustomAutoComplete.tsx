@@ -17,11 +17,13 @@ const CustomAutoComplete = ({
   selectedOption,
   handleChange,
   dataLoading,
+  name,
 }: {
   options: ValidatorOption[];
   selectedOption: ValidatorOption | null;
   handleChange: (option: ValidatorOption | null) => void;
   dataLoading: boolean;
+  name: string;
 }) => {
   /* eslint-disable @typescript-eslint/no-explicit-any */
   const renderOption = (props: any, option: ValidatorOption) => (
@@ -40,7 +42,7 @@ const CustomAutoComplete = ({
   /* eslint-disable @typescript-eslint/no-explicit-any */
   const renderInput = (params: any) => (
     <TextField
-      placeholder="Select Asset"
+      placeholder={name}
       {...params}
       InputProps={{
         ...params.InputProps,

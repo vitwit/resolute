@@ -95,6 +95,7 @@ const RedelegateMessage = ({
             handleChange={handleChange}
             options={delegatedValidators}
             selectedOption={selectedOption}
+            name="Select Validator"
           />
         </div>
         <div className="flex-1 space-y-2">
@@ -104,6 +105,7 @@ const RedelegateMessage = ({
             handleChange={handleDestValidatorChange}
             options={validatorsList}
             selectedOption={selectedDestValidator}
+            name="Select Validator"
           />
         </div>
       </div>

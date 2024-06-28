@@ -2,6 +2,7 @@ import {
   customMessageValueFieldStyles,
   customMUITextFieldStyles,
 } from '@/app/(routes)/multiops/styles';
+import { CUSTOM_MSG_VALUE_PLACEHOLDER } from '@/constants/txn-builder';
 import { useAppDispatch } from '@/custom-hooks/StateHooks';
 import { setError } from '@/store/features/common/commonSlice';
 import { TextField } from '@mui/material';
@@ -43,7 +44,7 @@ const CustomMessage = ({
                 sx={{
                   ...customMUITextFieldStyles,
                 }}
-                placeholder="Enter Type URL"
+                placeholder="Eg:  /cosmos.bank.v1beta1.MsgSend"
                 fullWidth
                 InputProps={{
                   sx: {
@@ -90,7 +91,7 @@ const CustomMessage = ({
                 }}
                 rows={4}
                 multiline
-                placeholder="Enter value"
+                placeholder={CUSTOM_MSG_VALUE_PLACEHOLDER}
                 fullWidth
                 InputProps={{
                   sx: {

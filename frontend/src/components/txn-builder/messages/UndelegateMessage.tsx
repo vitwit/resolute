@@ -87,10 +87,11 @@ const UndelegateMessage = ({
             handleChange={handleChange}
             options={delegatedValidators}
             selectedOption={selectedOption}
+            name="Select Validator"
           />
         </div>
         <div className="flex-1 space-y-2">
-          <div className="text-b1-light">Enter Amount</div>
+          <div className="text-b1-light">Amount</div>
           <Controller
             name={`msgs.${index}.amount`}
             control={control}

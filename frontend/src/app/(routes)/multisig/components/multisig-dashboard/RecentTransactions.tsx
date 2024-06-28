@@ -1,6 +1,5 @@
-import SectionHeader from '@/components/common/SectionHeader';
 import { useAppSelector } from '@/custom-hooks/StateHooks';
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Txn } from '@/types/multisig';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import LetterAvatar from '@/components/common/LetterAvatar';
@@ -28,11 +27,7 @@ const RecentTransactions = ({ chainID }: { chainID: string }) => {
     <>
       {txnsState?.length ? (
         <div>
-          <SectionHeader
-            title={'Recent Transactions'}
-            description="Recent transactions from all multisig accounts"
-          />
-          <div className="px-6 mt-10 space-y-10">
+          <div className="px-6 mt-10 space-y-4">
             {accounts.map((account) => {
               const txns = txnsState.filter(
                 (txn) => txn.multisig_address === account.address
@@ -80,11 +75,19 @@ const MultisigAccountRecentTxns = ({
   multisigAddress: string;
   chainID: string;
 }) => {
+  const [showAllTxns, setShowAllTxns] = useState(false);
+
+  const handleToggleView = () => {
+    setShowAllTxns(!showAllTxns);
+  };
+
+  const displayedTxns = showAllTxns ? txns : txns.slice(0, 1);
+
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-2">
-          <LetterAvatar name={multisigName} height="40px" width="40px" />
+          <LetterAvatar name={multisigName} height="24px" width="24px" />
           <div className="text-b1">{multisigName}</div>
         </div>
         <div className="actions-required-badge">
@@ -92,7 +95,7 @@ const MultisigAccountRecentTxns = ({
         </div>
       </div>
       <div className="space-y-4">
-        {txns.map((txn, index) => (
+        {displayedTxns.map((txn, index) => (
           <TxnsCard
             key={index}
             txn={txn}
@@ -103,6 +106,11 @@ const MultisigAccountRecentTxns = ({
             isHistory={false}
           />
         ))}
+      </div>
+      <div className="flex justify-end">
+        <button onClick={handleToggleView} className="secondary-btn">
+          {showAllTxns ? 'View Less' : 'View More'}
+        </button>
       </div>
     </div>
   );

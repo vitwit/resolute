@@ -61,6 +61,7 @@ const DelegateMessage = ({
             handleChange={handleChange}
             options={validatorsList}
             selectedOption={selectedOption}
+            name="Select Validator"
           />
         </div>
         <div className="flex-1 space-y-2">
@@ -75,7 +76,7 @@ const DelegateMessage = ({
                 sx={{
                   ...customMUITextFieldStyles,
                 }}
-                placeholder="Enter amount"
+                placeholder="Amount"
                 fullWidth
                 InputProps={{
                   sx: {
