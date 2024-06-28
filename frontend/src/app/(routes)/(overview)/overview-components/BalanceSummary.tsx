@@ -68,7 +68,12 @@ export default function BalanceSummary({ chainIDs }: { chainIDs: string[] }) {
 
               <div className="flex flex-col items-center space-y-1">
                 <div className="text-white text-xl font-bold leading-[18px]">
-                  {data.amount}
+                  {data.amount?.split('.')[0]}
+                  {Number(data.amount) > 0 ? (
+                    <span className="text-[16px]">
+                      .{data.amount?.split('.')[1]}
+                    </span>
+                  ) : null}
                 </div>
                 <div className="text-small-light">{data.type}</div>
               </div>
