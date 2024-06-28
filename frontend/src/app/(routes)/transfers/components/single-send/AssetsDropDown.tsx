@@ -52,7 +52,14 @@ const AssetsDropDown: React.FC<AssetsDropDownProps> = ({
           </div>
           <div className="flex items-center gap-2">
             <div className="flex gap-1 items-center text-[14px] leading-[24px]">
-              <div>{option.balance}</div>
+              <div>
+                {String(option.balance).split('.')[0]}
+                {option.balance > 0 ? (
+                  <span className="text-[10px]">
+                    .{String(option.balance).split('.')[1]}
+                  </span>
+                ) : null}
+              </div>
               <div>{option.displayDenom}</div>
             </div>
             <div className="secondary-text !text-[12px]">
