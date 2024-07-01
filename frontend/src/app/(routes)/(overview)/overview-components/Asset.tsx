@@ -196,7 +196,7 @@ const Asset = ({
           <div className="text-base font-normal leading-[normal] items-start flex">
             {asset.type === 'native' ? (
               <span>
-                {formatCoin(asset.staked, asset.displayDenom).split('.')[0]}.
+                {formatCoin(asset.staked, asset.displayDenom).split('.')[0]}
                 <span className="text-[12px]">
                   {
                     formatCoin(asset.staked, asset.displayDenom)
@@ -204,10 +204,6 @@ const Asset = ({
                       ?.split(' ')[0]
                   }{' '}
                 </span>
-                {' ' +
-                  formatCoin(asset.staked, asset.displayDenom)
-                    ?.split('.')[1]
-                    ?.split(' ')[1]}
               </span>
             ) : (
               '-'
@@ -222,7 +218,7 @@ const Asset = ({
           <div className="text-base font-normal leading-[normal] items-start flex">
             {asset.type === 'native' ? (
               <span>
-                {formatCoin(asset.rewards, asset.displayDenom).split('.')[0]}.
+                {formatCoin(asset.rewards, asset.displayDenom).split('.')[0]}
                 <span className="text-[12px]">
                   {
                     formatCoin(asset.rewards, asset.displayDenom)
@@ -230,10 +226,6 @@ const Asset = ({
                       ?.split(' ')[0]
                   }
                 </span>
-                {' ' +
-                  formatCoin(asset.rewards, asset.displayDenom)
-                    ?.split('.')[1]
-                    ?.split(' ')[1]}
               </span>
             ) : (
               '-'
@@ -273,7 +265,7 @@ const Asset = ({
         <div className="flex flex-col items-start gap-2">
           <div className="text-base font-normal flex">
             {formatDollarAmount(asset.usdValue).split('.')[0]}.
-            <span className="text-[12px]">
+            <span >
               {formatDollarAmount(asset.usdValue).split('.')[1]}
             </span>
           </div>
@@ -291,23 +283,6 @@ const Asset = ({
             ref={buttonRef}
             onClick={togglePopup}
           />
-
-          {/* <button
-            ref={buttonRef}
-            onClick={togglePopup}
-            className="w-8 h-8 border-2 border-transparent rounded-full text-white flex items-center justify-center bg-gradient-to-r from-blue-500 to-purple-500 p-[0.5px]"
-          >
-            <div className="flex items-center justify-center w-full h-full bg-black rounded-full">
-              <p className='mt-[-7px]'> ...</p>
-            </div>
-          </button> */}
-          {/* <button
-            ref={buttonRef}
-            onClick={togglePopup}
-            className="w-10 h-10 border border-white rounded-full text-white flex items-center justify-center"
-          >
-            . . .
-          </button> */}
 
           {showPopup && (
             <div
