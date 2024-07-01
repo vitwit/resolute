@@ -50,7 +50,9 @@ function StakingUnDelegations({
   });
 
   return (
-    <div className={`flex flex-col w-full pt-4 ${unbondingCount ? 'gap-6' : ''}`}>
+    <div
+      className={`flex flex-col w-full pt-4 ${unbondingCount ? 'gap-6' : ''}`}
+    >
       <div className="items-start">
         <div className="text-h2">Unbonding</div>
         <div className="secondary-text pb-2">
@@ -112,10 +114,30 @@ function StakingUnDelegations({
                       <div className="flex flex-col items-start gap-2">
                         <p className="text-small">Amount</p>
                         <p className="text-b1">
-                          {staking.getAmountWithDecimal(
-                            Number(get(e, 'balance')),
-                            key
-                          )}
+                          {
+                            staking
+                              .getAmountObjectWithDecimal(
+                                Number(get(e, 'balance')),
+                                key
+                              )
+                              .amount?.split('.')[0]
+                          }
+                          .
+                          <span className="text-[10px]">
+                            {
+                              staking
+                                .getAmountObjectWithDecimal(
+                                  Number(get(e, 'balance')),
+                                  key
+                                )
+                                .amount?.split('.')[1]
+                            }
+                          </span>
+                          {' ' +
+                            staking.getAmountObjectWithDecimal(
+                              Number(get(e, 'balance')),
+                              key
+                            ).denom}
                         </p>
                       </div>
                     </div>

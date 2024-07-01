@@ -585,7 +585,13 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
                             </div>
 
                             <p className="text-white text-xs font-normal leading-[normal]">
-                              {v.value}%
+                              {v.value?.split('.')[0]}
+                              {Number(v.value) > 0 ? (
+                                <span className="text-[10px]">
+                                  .{v.value?.split('.')[1]}
+                                </span>
+                              ) : null}
+                              %
                             </p>
                           </div>
                         </div>

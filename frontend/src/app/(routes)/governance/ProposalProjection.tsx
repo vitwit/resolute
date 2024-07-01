@@ -127,7 +127,13 @@ const ProposalProjection = ({
           <div className="flex gap-4 w-full">
             <div className="flex justify-center items-center gap-2 px-4 py-2 rounded-[100px] bg-[#FFFFFF05] w-[158px]">
               <p className="text-white text-xs font-bold leading-[normal]">
-                {quorumPercent} %
+                {quorumPercent.split('.')[0]}
+                {Number(quorumPercent) > 0 ? (
+                  <span className="text-[10px]">
+                    .{quorumPercent.split('.')[1]}
+                  </span>
+                ) : null}
+                %
               </p>
               <p className="text-[rgba(255,255,255,0.50)] text-[10px] font-extralight leading-[normal]">
                 Turnout
@@ -135,7 +141,13 @@ const ProposalProjection = ({
             </div>
             <div className="flex justify-center items-center gap-2 px-4 py-2 rounded-[100px] bg-[#FFFFFF05] w-[158px]">
               <p className="text-white text-xs font-bold leading-[normal]">
-                {quorumRequired}%
+                {quorumRequired.split('.')[0]}
+                {Number(quorumRequired) > 0 ? (
+                  <span className="text-[10px]">
+                    .{quorumRequired.split('.')[1]}
+                  </span>
+                ) : null}
+                %
               </p>
               <p className="text-[rgba(255,255,255,0.50)] text-[10px] font-extralight leading-[normal]">
                 Quorum

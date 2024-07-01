@@ -591,7 +591,24 @@ const IBCSwap = () => {
                         <CircularProgress size={14} sx={{ color: 'white' }} />
                       ) : (
                         <>
-                          <div>{availableBalance.parsedAmount || 0}</div>
+                          {/* <div>{availableBalance.parsedAmount || 0}</div> */}
+                          <div className="">
+                            {
+                              String(availableBalance.parsedAmount).split(
+                                '.'
+                              )[0]
+                            }
+                            {availableBalance.parsedAmount > 0 ? (
+                              <span className="text-[10px]">
+                                .
+                                {
+                                  String(availableBalance.parsedAmount).split(
+                                    '.'
+                                  )[1]
+                                }
+                              </span>
+                            ) : null}
+                          </div>
                           <div>{availableBalance.displayDenom || null}</div>
                         </>
                       )}
