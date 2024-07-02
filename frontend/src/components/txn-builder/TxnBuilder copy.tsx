@@ -20,7 +20,6 @@ import RedelegateMessage from './messages/RedelegateMessage';
 import VoteMessage from './messages/VoteMessage';
 import CustomMessage from './messages/CustomMessage';
 import { TXN_BUILDER_MSGS } from '@/constants/txn-builder';
-import SectionHeader from '../common/SectionHeader';
 
 type MsgType =
   | 'Send'
@@ -131,28 +130,81 @@ const SelectMessage = ({
   handleAddMessage: (type: MsgType) => void;
 }) => {
   return (
-    <div className="w-[40%] flex flex-col justify-between">
-      <div className="space-y-6">
-        <SectionHeader
-          title="Transaction Messages"
-          description="Select and add the transaction messages"
-        />
-        <div className="flex gap-2 flex-wrap">
-          {TXN_BUILDER_MSGS.map((msg) => (
-            <button
-              key={msg}
-              className="msg-btn"
-              type="button"
-              onClick={() => handleAddMessage(msg as MsgType)}
-            >
-              {msg}
-            </button>
-          ))}
+    <div className="w-[40%]">
+      <div className="text-b1">Add Messages</div>
+      <div className="space-y-10">
+        <div className="space-y-6 mt-6">
+          <div className="flex gap-2">
+            <div className="text-b1-light">Select Message</div>
+            <Image src={I_ICON} height={20} width={20} alt="" />
+          </div>
+          <div className="flex gap-2 flex-wrap">
+            {TXN_BUILDER_MSGS.map((msg) => (
+              <button
+                key={msg}
+                className="msg-btn"
+                type="button"
+                onClick={() => handleAddMessage(msg as MsgType)}
+              >
+                {msg}
+              </button>
+            ))}
+          </div>
         </div>
-        <div></div>
-      </div>
-      <div>
-        <button className="primary-btn w-full">Add</button>
+        <div className="flex-1 space-y-2">
+          <div className="text-b1-light">Enter Gas</div>
+          <Controller
+            name="gas"
+            control={control}
+            render={({ field }) => (
+              <TextField
+                className="bg-transparent rounded-full border-[1px] border-[#ffffff80] h-10"
+                {...field}
+                sx={{
+                  ...customMUITextFieldStyles,
+                }}
+                placeholder="Enter gas"
+                fullWidth
+                InputProps={{
+                  sx: {
+                    input: {
+                      color: 'white',
+                      fontSize: '14px',
+                      padding: 2,
+                    },
+                  },
+                }}
+              />
+            )}
+          />
+        </div>
+        <div className="flex-1 space-y-2">
+          <div className="text-b1-light">Enter Memo (optional)</div>
+          <Controller
+            name="memo"
+            control={control}
+            render={({ field }) => (
+              <TextField
+                className="bg-transparent rounded-full border-[1px] border-[#ffffff80] h-10"
+                {...field}
+                sx={{
+                  ...customMUITextFieldStyles,
+                }}
+                placeholder="Enter memo"
+                fullWidth
+                InputProps={{
+                  sx: {
+                    input: {
+                      color: 'white',
+                      fontSize: '14px',
+                      padding: 2,
+                    },
+                  },
+                }}
+              />
+            )}
+          />
+        </div>
       </div>
     </div>
   );

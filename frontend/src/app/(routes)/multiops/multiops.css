@@ -1,3 +1,7 @@
 .msg-btn {
-  @apply border-[0.25px] rounded-lg px-4 py-2 text-[14px] border-[#FFFFFF30] hover:bg-[#ffffff10];
+  @apply border-[0.25px] h-8 flex items-center justify-center rounded-lg px-4 py-2 text-[14px] border-[#FFFFFF30] hover:bg-[#ffffff10];
+}
+
+.msg-btn-selected {
+  @apply bg-[#FFFFFF10] border-transparent;
 }
