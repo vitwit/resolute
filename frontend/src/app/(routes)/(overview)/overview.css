@@ -1,4 +1,4 @@
-.summary-card {
+/* .summary-card {
   @apply px-6 py-4 w-full space-y-2 rounded-2xl backdrop-blur-[2px] bg-[#0e0b26];
   backdrop-filter: blur(2px);
 }
@@ -62,10 +62,28 @@
     rgba(139, 61, 167, 0.5) 94.28%
   );
   opacity: 50%;
-}
+} */
 
 /* New ui css */
 
 .table-border-line {
   @apply h-[1px] self-stretch border-b border-[#1C1C20];
 }
+.portfolio-bg {
+  @apply flex flex-col w-full p-6 rounded-2xl;
+  background: rgba(255, 255, 255, 0.02);
+}
+.portfolio-card {
+  @apply flex flex-col justify-center items-center gap-2 px-6 py-4 rounded-2xl;
+  background: rgba(255, 255, 255, 0.02);
+}
+.proposal-id {
+  @apply relative flex items-center justify-center font-bold rounded-lg w-16 text-white text-[14px] tracking-[1.96px] h-[35px];
+  background: linear-gradient(
+    180deg,
+    rgba(122, 126, 156, 0.2) 0.5%,
+    rgba(9, 9, 10, 0.2) 100%
+  );
+}
+
+
