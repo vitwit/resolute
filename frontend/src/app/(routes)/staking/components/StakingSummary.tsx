@@ -52,7 +52,15 @@ function StakingSummary({
             <div className="flex flex-col items-center space-y-2">
               <div className="text-small-light">{data.type}</div>
               <div className="text-white text-xl font-bold leading-[18px]">
-                {data?.amount}
+                {data?.amount?.split('.')[0]}
+                {Number(data.amount) > 0
+                  ? '.' +
+                    (
+                      <span className="text-[16px] font-bold">
+                        {data?.amount.split('.')[1]}
+                      </span>
+                    )
+                  : ''}
               </div>
             </div>
           </div>

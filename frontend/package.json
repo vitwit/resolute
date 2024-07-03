@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "yarn lint && next dev",
+    "dev": "yarn lint && next dev --turbo",
     "build": "next build",
     "start": "yarn lint && next start",
     "lint": "next lint --no-cache",

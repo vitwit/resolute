@@ -35,7 +35,13 @@ const AmountInputWrapper = ({
           <div>Available Balance</div>
           {selectedAsset ? (
             <div>
-              {selectedAsset.balance} {selectedAsset.displayDenom}
+              {String(selectedAsset.balance).split('.')[0]}
+              {selectedAsset.balance > 0 ? (
+                <span className="text-[10px]">
+                  .{String(selectedAsset.balance).split('.')[1]}
+                </span>
+              ) : null}{' '}
+              {selectedAsset.displayDenom}
             </div>
           ) : (
             '-'

@@ -27,50 +27,59 @@ export default function BalanceSummary({ chainIDs }: { chainIDs: string[] }) {
     {
       icon: '/total-bal.png',
       alt: 'total-balance',
-      type: 'Total Balance',
+      type: 'TotalBalance',
       amount: total,
     },
     {
       icon: '/staked-bal.png',
       alt: 'stake',
-      type: 'Staked Amount',
+      type: 'StakedAmt',
       amount: staked,
     },
     {
       icon: '/rewards.png',
       alt: 'rewards',
-      type: 'Rewards Received',
+      type: 'Rewards',
       amount: rewards,
     },
     {
       icon: '/avail-bal.png',
       alt: 'available',
-      type: 'Available Balance',
+      type: 'Balance',
       amount: available,
     },
   ];
 
   return (
-    <div className="flex gap-6 w-full px-6 py-0">
-      <div className="grid grid-cols-4 gap-4 w-full">
+    <div className="portfolio-bg gap-4">
+      <div className="gap-2 flex flex-col">
+        <div className="text-h2">Portfolio</div>
+        <div className="secondary-text">
+          Connect your wallet now to access all the modules on resolute{' '}
+        </div>
+        <div className="divider-line"></div>
+      </div>
+      <div className="grid grid-cols-4 gap-6 w-full">
         {assetsSummaryData.map((data, index) => (
-          <div key={index} className="dashboard-card">
+          <div key={index} className="portfolio-card">
             <div className="flex flex-col gap-4">
-              <div className="flex items-center justify-center">
+              <div className="text-white text-xl font-bold leading-[18px]">
+                {data.amount?.split('.')[0]}
+                {Number(data.amount) > 0 ? (
+                  <span className="text-[16px]">
+                    .{data.amount?.split('.')[1]}
+                  </span>
+                ) : null}
+              </div>
+              <div className="flex gap-1 items-center">
                 <Image
                   src={data.icon}
-                  width={40}
-                  height={40}
+                  width={24}
+                  height={24}
                   alt={data.alt}
                   draggable={false}
                 />
-              </div>
-
-              <div className="flex flex-col items-center space-y-1">
-                <div className="text-white text-xl font-bold leading-[18px]">
-                  {data.amount}
-                </div>
-                <div className="text-small-light">{data.type}</div>
+                <div className="secondary-text">{data.type}</div>
               </div>
             </div>
           </div>

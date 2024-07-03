@@ -153,10 +153,21 @@ const Asset = ({
 
   return (
     <tr className="table-border-line hover:bg-[#FFFFFF14]">
-      <th className="rounded-l-2xl px-6 py-6">
+      <th className="rounded-l-2xl px-6 py-6 w-1/4">
         <div className="flex flex-col items-start gap-2">
-          <div className="text-base font-normal leading-[normal]">
-            {formatCoin(asset.balance, asset.displayDenom)}
+          <div className="text-[14px] font-normal leading-[normal]">
+            {formatCoin(asset.balance, asset.displayDenom).split('.')[0]}.
+            <span className="text-[10px]">
+              {
+                formatCoin(asset.balance, asset.displayDenom)
+                  ?.split('.')[1]
+                  ?.split(' ')[0]
+              }
+            </span>
+            {' ' +
+              formatCoin(asset.balance, asset.displayDenom)
+                ?.split('.')[1]
+                ?.split(' ')[1]}
           </div>
           <div className="flex space-x-1 justify-center items-center">
             <Image
@@ -168,7 +179,7 @@ const Asset = ({
               className="w-4 h-4"
               draggable={false}
             />
-            <p className="text-b1-light">
+            <p className="text-small">
               on{' '}
               <Link
                 className="capitalize"
@@ -182,10 +193,21 @@ const Asset = ({
       </th>
       <th>
         <div className="flex flex-col items-start gap-2">
-          <div className="text-base font-normal leading-[normal] items-start flex">
-            {asset.type === 'native'
-              ? formatCoin(asset.staked, asset.displayDenom)
-              : '-'}
+          <div className="text-[14px] font-normal leading-[normal] items-start flex">
+            {asset.type === 'native' ? (
+              <span>
+                {formatCoin(asset.staked, asset.displayDenom).split('.')[0]}
+                <span className="text-[10px]">
+                  .{
+                    formatCoin(asset.staked, asset.displayDenom)
+                      ?.split('.')[1]
+                      ?.split(' ')[0]
+                  }{' '}
+                </span>
+              </span>
+            ) : (
+              '-'
+            )}
           </div>
 
           <div className="w-4 h-4" />
@@ -193,17 +215,28 @@ const Asset = ({
       </th>
       <th>
         <div className="flex flex-col items-start gap-2">
-          <div className="text-base font-normal leading-[normal] items-start flex">
-            {asset.type === 'native'
-              ? formatCoin(asset.rewards, asset.displayDenom)
-              : '-'}
+          <div className="text-[14px] font-normal leading-[normal] items-start flex">
+            {asset.type === 'native' ? (
+              <span>
+                {formatCoin(asset.rewards, asset.displayDenom).split('.')[0]}
+                <span className="text-[10px]">
+                  .{
+                    formatCoin(asset.rewards, asset.displayDenom)
+                      ?.split('.')[1]
+                      ?.split(' ')[0]
+                  }
+                </span>
+              </span>
+            ) : (
+              '-'
+            )}
           </div>
           <div className="w-4 h-4" />
         </div>
       </th>
       <th>
         <div className="flex flex-col gap-2">
-          <div className="text-base font-normal leading-[normal] items-start flex">
+          <div className="text-[14px] font-normal leading-[normal] items-start flex">
             {formatDollarAmount(asset.usdPrice)}
           </div>
           <div className="flex">
@@ -228,14 +261,17 @@ const Asset = ({
           </div>
         </div>
       </th>
-      <th>
-        <div className="flex flex-col gap-2">
-          <div className="text-base font-normal leading-[normal] items-start flex">
-            {formatDollarAmount(asset.usdValue)}
+      {/* <th>
+        <div className="flex flex-col items-start gap-2">
+          <div className="text-base font-normal flex">
+            {formatDollarAmount(asset.usdValue).split('.')[0]}.
+            <span >
+              {formatDollarAmount(asset.usdValue).split('.')[1]}
+            </span>
           </div>
           <div className="w-4 h-4" />
         </div>
-      </th>
+      </th> */}
       <th className="rounded-r-2xl">
         <div className="items-center justify-center relative inline-block">
           <Image
@@ -247,23 +283,6 @@ const Asset = ({
             ref={buttonRef}
             onClick={togglePopup}
           />
-
-          {/* <button
-            ref={buttonRef}
-            onClick={togglePopup}
-            className="w-8 h-8 border-2 border-transparent rounded-full text-white flex items-center justify-center bg-gradient-to-r from-blue-500 to-purple-500 p-[0.5px]"
-          >
-            <div className="flex items-center justify-center w-full h-full bg-black rounded-full">
-              <p className='mt-[-7px]'> ...</p>
-            </div>
-          </button> */}
-          {/* <button
-            ref={buttonRef}
-            onClick={togglePopup}
-            className="w-10 h-10 border border-white rounded-full text-white flex items-center justify-center"
-          >
-            . . .
-          </button> */}
 
           {showPopup && (
             <div
