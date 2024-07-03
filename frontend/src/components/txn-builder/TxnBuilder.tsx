@@ -27,6 +27,7 @@ import { TXN_BUILDER_MSGS } from '@/constants/txn-builder';
 import SectionHeader from '../common/SectionHeader';
 import MessagesList from './components/MessagesList';
 import SendForm from './messages/SendForm';
+import DelegateForm from './messages/DelegateForm';
 
 type MsgType =
   | 'Send'
@@ -102,8 +103,9 @@ const TxnBuilder = ({
         address={address}
         handleAddMessage={handleAddMessage}
         currency={currency}
+        chainID={chainID}
       />
-      <div className="flex-1 space-y-6 h-full flex flex-col bg-[#FFFFFF05] rounded-2xl p-6">
+      <div className="flex-1 space-y-6 h-full flex flex-col bg-[#FFFFFF05] rounded-2xl p-6 overflow-y-scroll">
         <div className="flex items-center justify-between">
           <div>Transaction Summary</div>
           <div className="secondary-btn cursor-pointer">Clear All</div>
@@ -190,7 +192,13 @@ const TxnBuilder = ({
                   />
                 </div>
               </div>
-              <button className="primary-btn w-full">Create Transaction</button>
+              <CustomButton
+                btnText="Create Transaction"
+                btnDisabled={loading}
+                btnLoading={loading}
+                btnType="submit"
+                btnStyles="w-full"
+              />
             </form>
           </div>
         </div>
@@ -207,12 +215,14 @@ const SelectMessage = ({
   address,
   handleAddMessage,
   currency,
+  chainID,
 }: {
   handleSelectMessage: (type: MsgType) => void;
   txType: string;
   address: string;
   handleAddMessage: (msg: Msg) => void;
   currency: Currency;
+  chainID: string;
 }) => {
   return (
     <div className="w-[40%] space-y-6 flex flex-col">
@@ -244,16 +254,15 @@ const SelectMessage = ({
             currency={currency}
           />
         )}
-        {/* {txType === 'Delegate' && (
-            <DelegateMessage
-              control={control}
-              index={index}
-              remove={remove}
-              setValue={setValue}
-              chainID={chainID}
-            />
-          )}
-          {txType === 'Undelegate' && (
+        {txType === 'Delegate' && (
+          <DelegateForm
+            address={address}
+            chainID={chainID}
+            currency={currency}
+            onDelegate={handleAddMessage}
+          />
+        )}
+        {/* {txType === 'Undelegate' && (
             <UndelegateMessage
               control={control}
               index={index}
