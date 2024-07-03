@@ -1,10 +1,10 @@
 .gov-main {
-  @apply pt-10 relative space-y-16 flex flex-col;
+  @apply pt-10 relative flex flex-col;
   height: calc(100vh - 60px) !important;
 }
 
 .proposal-id {
-  @apply relative flex items-center justify-center font-bold rounded-lg w-16 text-white text-[14px] tracking-[1.96px] h-[35px];
+  @apply relative flex items-center justify-center font-bold rounded-lg w-16 text-white text-[14px] tracking-[1.96px] h-[52px];
   background: linear-gradient(
     180deg,
     rgba(122, 126, 156, 0.2) 0.5%,
@@ -51,11 +51,11 @@
 }
 
 .proposal-view {
-  @apply shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] flex flex-col w-[50%]  gap-4 p-6 rounded-2xl;
+  @apply shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] flex flex-col w-[60%] gap-4 p-10 rounded-2xl;
   background: rgba(255, 255, 255, 0.02);
 }
 .vote-optn-btn {
-  @apply flex justify-center items-center gap-2  px-4 py-[10.5px] rounded-[100px] border-[1px] !h-8;
+  @apply border flex h-8 justify-center items-center gap-2 px-4 py-[10.5px] rounded-[100px] border-solid border-[rgba(255,255,255,0.20)];
 }
 .header {
   @apply flex flex-col justify-center items-start gap-4 px-6 py-4 top-0 sticky;

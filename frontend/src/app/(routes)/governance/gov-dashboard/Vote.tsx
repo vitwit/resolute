@@ -109,7 +109,7 @@ const Vote = ({
                 voteOption === option.label
                   ? option.selectedColor
                   : 'transparent',
-              borderColor: option.color,
+              borderColor: '',
             }}
             onMouseEnter={(e) =>
               (e.currentTarget.style.backgroundColor = option.selectedColor)

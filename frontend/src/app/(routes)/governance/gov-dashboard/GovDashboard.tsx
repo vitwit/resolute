@@ -39,16 +39,21 @@ const GovDashboard = ({ chainIDs }: { chainIDs: string[] }) => {
     proposalId,
     isActive,
   }: SelectedProposal) => {
-    setSelectedProposal({
+    setSelectedProposal((proposal) => {
+    
+      if(!!proposal) return null
+      return {
       chainID,
       proposalId,
       isActive,
-    });
+    }});
+   
+
   };
 
-  const onCloseOverview = () => {
-    setSelectedProposal(null);
-  };
+  // const onCloseOverview = () => {
+  //   setSelectedProposal(null);
+  // };
 
   const handleSearchQueryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value;
@@ -87,7 +92,10 @@ const GovDashboard = ({ chainIDs }: { chainIDs: string[] }) => {
 
         const daysNo = proposal.proposalInfo.endTime.match(/\d+/) || 0;
         if (daysNo && daysNo.length) {
-          if (Number(daysNo[0]) <= days || !proposal.proposalInfo.endTime.includes('days')) {
+          if (
+            Number(daysNo[0]) <= days ||
+            !proposal.proposalInfo.endTime.includes('days')
+          ) {
             return true;
           }
         }
@@ -104,7 +112,7 @@ const GovDashboard = ({ chainIDs }: { chainIDs: string[] }) => {
 
   return (
     <div className="gov-main">
-      <div className="space-y-10 sticky top-0">
+      <div className="space-y-6 sticky top-0">
         <GovHeader />
         <QuickFilters
           handleSearchQueryChange={handleSearchQueryChange}
@@ -112,10 +120,11 @@ const GovDashboard = ({ chainIDs }: { chainIDs: string[] }) => {
           handleShowAllProposals={handleShowAllProposals}
           handleFiltersChange={handleFiltersChange}
           filterDays={filterDays}
+          selectedProposal={selectedProposal}
         />
       </div>
-      <div className="flex gap-6 w-full flex-1 h-full overflow-y-scroll">
-        <div className="flex flex-col w-full gap-6 py-0 pb-6 flex-1 overflow-y-scroll">
+      <div className="flex gap-10 w-full flex-1 h-full overflow-y-scroll">
+        <div className="flex flex-col w-full flex-1 overflow-y-scroll gap-2">
           {proposalsLoading ? (
             <GovDashboardLoading />
           ) : (
@@ -141,7 +150,7 @@ const GovDashboard = ({ chainIDs }: { chainIDs: string[] }) => {
             proposalId={selectedProposal?.proposalId}
             chainID={selectedProposal?.chainID}
             isActive={selectedProposal?.isActive}
-            onClose={onCloseOverview}
+            onClose={handleViewProposal}
           />
         ) : null}
       </div>
@@ -157,15 +166,18 @@ const QuickFilters = ({
   handleShowAllProposals,
   handleFiltersChange,
   filterDays,
+  selectedProposal
 }: {
   searchQuery: string;
   handleSearchQueryChange: HandleInputChangeEvent;
   handleShowAllProposals: (arg: boolean) => void;
   handleFiltersChange: (n: number) => void;
   filterDays: number;
+  selectedProposal: SelectedProposal | null;
+
 }) => {
   return (
-    <div className="flex gap-20">
+    <div className="flex justify-between w-full space-x-40 pb-4">
       <div className="flex py-2 gap-4">
         <button
           onClick={() => handleFiltersChange(0)}
@@ -187,12 +199,14 @@ const QuickFilters = ({
         </button>
       </div>
 
-      <div className="flex items-end flex-1">
-        <SearchProposalInput
+      <div className="flex flex-1 items-end">
+        {
+          !selectedProposal && <SearchProposalInput
           handleSearchQueryChange={handleSearchQueryChange}
           searchQuery={searchQuery}
           handleShowAllProposals={handleShowAllProposals}
         />
+        }
       </div>
     </div>
   );
