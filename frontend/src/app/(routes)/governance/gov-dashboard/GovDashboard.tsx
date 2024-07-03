@@ -40,15 +40,13 @@ const GovDashboard = ({ chainIDs }: { chainIDs: string[] }) => {
     isActive,
   }: SelectedProposal) => {
     setSelectedProposal((proposal) => {
-    
-      if(!!proposal) return null
+      if (!!proposal) return null;
       return {
-      chainID,
-      proposalId,
-      isActive,
-    }});
-   
-
+        chainID,
+        proposalId,
+        isActive,
+      };
+    });
   };
 
   // const onCloseOverview = () => {
@@ -145,6 +143,7 @@ const GovDashboard = ({ chainIDs }: { chainIDs: string[] }) => {
             </>
           )}
         </div>
+
         {selectedProposal ? (
           <ProposalOverivew
             proposalId={selectedProposal?.proposalId}
@@ -166,7 +165,7 @@ const QuickFilters = ({
   handleShowAllProposals,
   handleFiltersChange,
   filterDays,
-  selectedProposal
+  selectedProposal,
 }: {
   searchQuery: string;
   handleSearchQueryChange: HandleInputChangeEvent;
@@ -174,7 +173,6 @@ const QuickFilters = ({
   handleFiltersChange: (n: number) => void;
   filterDays: number;
   selectedProposal: SelectedProposal | null;
-
 }) => {
   return (
     <div className="flex justify-between w-full space-x-40 pb-4">
@@ -200,13 +198,13 @@ const QuickFilters = ({
       </div>
 
       <div className="flex flex-1 items-end">
-        {
-          !selectedProposal && <SearchProposalInput
-          handleSearchQueryChange={handleSearchQueryChange}
-          searchQuery={searchQuery}
-          handleShowAllProposals={handleShowAllProposals}
-        />
-        }
+        {!selectedProposal && (
+          <SearchProposalInput
+            handleSearchQueryChange={handleSearchQueryChange}
+            searchQuery={searchQuery}
+            handleShowAllProposals={handleShowAllProposals}
+          />
+        )}
       </div>
     </div>
   );
