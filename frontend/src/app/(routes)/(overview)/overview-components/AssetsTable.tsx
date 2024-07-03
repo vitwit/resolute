@@ -43,7 +43,7 @@ const AssetsTable = ({ chainIDs }: { chainIDs: string[] }) => {
       {/* table */}
 
       {assets.length ? (
-        <div className="flex flex-col items-start gap-2 w-full">
+        <div className="flex flex-col items-start gap-2 w-full overflow-y-scroll flex-1">
           <table className="relative w-full">
             <thead className="w-full">
               <tr>

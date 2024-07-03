@@ -34,18 +34,6 @@ const proposals: Proposal[] = [
     creator: 'Akash',
     votingEnds: '14 hours',
   },
-  {
-    id: 125,
-    title: 'Aave v3.3 Cantina competition',
-    creator: 'Dymension',
-    votingEnds: '10 hours',
-  },
-  {
-    id: 126,
-    title: 'Aave v3.4 Cantina competition',
-    creator: 'Celestia',
-    votingEnds: '14 hours',
-  },
 ];
 
 const ProposalCard: React.FC<{ proposal: Proposal }> = ({ proposal }) => (
