@@ -153,11 +153,11 @@ const Asset = ({
 
   return (
     <tr className="table-border-line hover:bg-[#FFFFFF14]">
-      <th className="rounded-l-2xl px-6 py-6">
+      <th className="rounded-l-2xl px-6 py-6 w-1/4">
         <div className="flex flex-col items-start gap-2">
-          <div className="text-base font-normal leading-[normal]">
+          <div className="text-[14px] font-normal leading-[normal]">
             {formatCoin(asset.balance, asset.displayDenom).split('.')[0]}.
-            <span className="text-[12px]">
+            <span className="text-[10px]">
               {
                 formatCoin(asset.balance, asset.displayDenom)
                   ?.split('.')[1]
@@ -179,7 +179,7 @@ const Asset = ({
               className="w-4 h-4"
               draggable={false}
             />
-            <p className="text-b1-light">
+            <p className="text-small">
               on{' '}
               <Link
                 className="capitalize"
@@ -193,12 +193,12 @@ const Asset = ({
       </th>
       <th>
         <div className="flex flex-col items-start gap-2">
-          <div className="text-base font-normal leading-[normal] items-start flex">
+          <div className="text-[14px] font-normal leading-[normal] items-start flex">
             {asset.type === 'native' ? (
               <span>
                 {formatCoin(asset.staked, asset.displayDenom).split('.')[0]}
-                <span className="text-[12px]">
-                  {
+                <span className="text-[10px]">
+                  .{
                     formatCoin(asset.staked, asset.displayDenom)
                       ?.split('.')[1]
                       ?.split(' ')[0]
@@ -215,12 +215,12 @@ const Asset = ({
       </th>
       <th>
         <div className="flex flex-col items-start gap-2">
-          <div className="text-base font-normal leading-[normal] items-start flex">
+          <div className="text-[14px] font-normal leading-[normal] items-start flex">
             {asset.type === 'native' ? (
               <span>
                 {formatCoin(asset.rewards, asset.displayDenom).split('.')[0]}
-                <span className="text-[12px]">
-                  {
+                <span className="text-[10px]">
+                  .{
                     formatCoin(asset.rewards, asset.displayDenom)
                       ?.split('.')[1]
                       ?.split(' ')[0]
@@ -236,7 +236,7 @@ const Asset = ({
       </th>
       <th>
         <div className="flex flex-col gap-2">
-          <div className="text-base font-normal leading-[normal] items-start flex">
+          <div className="text-[14px] font-normal leading-[normal] items-start flex">
             {formatDollarAmount(asset.usdPrice)}
           </div>
           <div className="flex">
@@ -261,7 +261,7 @@ const Asset = ({
           </div>
         </div>
       </th>
-      <th>
+      {/* <th>
         <div className="flex flex-col items-start gap-2">
           <div className="text-base font-normal flex">
             {formatDollarAmount(asset.usdValue).split('.')[0]}.
@@ -271,7 +271,7 @@ const Asset = ({
           </div>
           <div className="w-4 h-4" />
         </div>
-      </th>
+      </th> */}
       <th className="rounded-r-2xl">
         <div className="items-center justify-center relative inline-block">
           <Image
