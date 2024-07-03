@@ -1,3 +1,4 @@
+import { REMOVE_ICON } from '@/constants/image-names';
 import { TxnMsgProps } from '@/types/multisig';
 import { parseBalance } from '@/utils/denom';
 import Image from 'next/image';
@@ -8,14 +9,6 @@ const UndelegateMessage: React.FC<TxnMsgProps> = (props) => {
   return (
     <div className="flex justify-between items-center text-[14px]">
       <div className="flex gap-2">
-        <Image
-          className="bg-[#FFFFFF1A] rounded-lg"
-          src="/solid-arrow-icon.svg"
-          height={24}
-          width={24}
-          alt="arrow-icon"
-          draggable={false}
-        />
         <div className="truncate">
           <span>UnDelegate&nbsp;</span>
           <span className="msg-amount">
@@ -34,9 +27,9 @@ const UndelegateMessage: React.FC<TxnMsgProps> = (props) => {
       {onDelete ? (
         <span className="cursor-pointer" onClick={() => onDelete(index)}>
           <Image
-            src="/delete-cross-icon.svg"
-            height={16}
-            width={16}
+            src={REMOVE_ICON}
+            height={24}
+            width={24}
             alt="Remove"
             draggable={false}
           />

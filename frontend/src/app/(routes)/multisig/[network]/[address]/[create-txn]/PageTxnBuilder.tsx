@@ -116,18 +116,12 @@ const PageTxnBuilderEntry = ({
       data.gas
     );
     const authToken = getAuthToken(COSMOS_CHAIN_ID);
-    const formattedMsgs = formatMsgs(
-      data.msgs,
-      multisigAddress,
-      minimalDenom,
-      decimals
-    );
     dispatch(
       createTxn({
         data: {
           address: multisigAddress,
           chain_id: chainID,
-          messages: formattedMsgs,
+          messages: data.msgs,
           fee: feeObj,
           memo: data.memo,
           gas: data.gas,
@@ -170,6 +164,7 @@ const PageTxnBuilderEntry = ({
           chainID={chainID}
           onSubmit={onSubmit}
           loading={createRes.status === 'pending'}
+          address={multisigAddress}
         />
       ) : (
         <EmptyScreen

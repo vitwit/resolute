@@ -76,7 +76,7 @@ type TxnBuilderForm = {
   gas: number;
   memo: string;
   fees: number;
-  msgs: Message[];
+  msgs: Msg[];
 };
 
 interface ProposalOption {
