@@ -9,7 +9,7 @@ import {
   setVerifyDialogOpen,
 } from '@/store/features/multisig/multisigSlice';
 import { setConnectWalletOpen } from '@/store/features/wallet/walletSlice';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import PageHeader from '@/components/common/PageHeader';
 import TxnBuilder from '@/components/txn-builder/TxnBuilder';
 import DialogVerifyAccount from '../../../components/common/DialogVerifyAccount';
@@ -19,6 +19,7 @@ import { COSMOS_CHAIN_ID } from '@/utils/constants';
 import { formatMsgs } from '@/utils/util';
 import { setError } from '@/store/features/common/commonSlice';
 import { useRouter } from 'next/navigation';
+import { parseBalance } from '@/utils/denom';
 
 const PageTxnBuilder = ({
   paramChain,
@@ -98,6 +99,8 @@ const PageTxnBuilderEntry = ({
   };
   const { isAccountVerified } = useVerifyAccount({ address });
 
+  const [availableBalance, setAvailableBalance] = useState(0);
+
   const createRes = useAppSelector((state) => state.multisig.createTxnRes);
   const handleVerifyAccount = () => {
     dispatch(setVerifyDialogOpen(true));
@@ -157,6 +160,19 @@ const PageTxnBuilderEntry = ({
     }
   }, [createRes]);
 
+  const balance = useAppSelector((state) => state.multisig.balance.balance);
+  useEffect(() => {
+    if (balance) {
+      setAvailableBalance(
+        parseBalance(
+          [balance],
+          currency.coinDecimals,
+          currency.coinMinimalDenom
+        )
+      );
+    }
+  }, [balance]);
+
   return (
     <>
       {isAccountVerified() ? (
@@ -165,6 +181,7 @@ const PageTxnBuilderEntry = ({
           onSubmit={onSubmit}
           loading={createRes.status === 'pending'}
           address={multisigAddress}
+          availableBalance={availableBalance}
         />
       ) : (
         <EmptyScreen

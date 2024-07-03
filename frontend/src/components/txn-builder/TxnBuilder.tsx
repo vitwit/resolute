@@ -1,33 +1,19 @@
-import {
-  ALERT_ICON,
-  I_ICON,
-  NO_MESSAGES_ILLUSTRATION,
-} from '@/constants/image-names';
+import { ALERT_ICON } from '@/constants/image-names';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import Image from 'next/image';
 import React, { useState } from 'react';
-import {
-  Controller,
-  FieldArrayWithId,
-  useFieldArray,
-  useForm,
-  UseFormSetValue,
-} from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import '@/app/(routes)/multiops/multiops.css';
 import { TextField } from '@mui/material';
 import { customMUITextFieldStyles } from '@/app/(routes)/multiops/styles';
-import SendMessage from './messages/SendMessage';
 import CustomButton from '../common/CustomButton';
-import DelegateMessage from './messages/DelegateMessage';
-import UndelegateMessage from './messages/UndelegateMessage';
-import RedelegateMessage from './messages/RedelegateMessage';
-import VoteMessage from './messages/VoteMessage';
-import CustomMessage from './messages/CustomMessage';
 import { TXN_BUILDER_MSGS } from '@/constants/txn-builder';
 import SectionHeader from '../common/SectionHeader';
 import MessagesList from './components/MessagesList';
 import SendForm from './messages/SendForm';
 import DelegateForm from './messages/DelegateForm';
+import { DELEGATE_TYPE_URL, SEND_TYPE_URL } from '@/utils/constants';
+import { parseBalance } from '@/utils/denom';
 
 type MsgType =
   | 'Send'
@@ -42,11 +28,13 @@ const TxnBuilder = ({
   onSubmit,
   loading,
   address,
+  availableBalance,
 }: {
   chainID: string;
   onSubmit: (data: TxnBuilderForm) => void;
   loading: boolean;
   address: string;
+  availableBalance: number;
 }) => {
   const { getChainInfo, getDenomInfo } = useGetChainInfo();
   const basicChainInfo = getChainInfo(chainID);
@@ -60,6 +48,9 @@ const TxnBuilder = ({
 
   const [txType, setTxType] = useState('Send');
   const [messages, setMessages] = useState<Msg[]>([]);
+  const [estimatedBalance, setEstimatedBalances] = useState<number>(
+    2 || availableBalance || 0
+  );
 
   const {
     handleSubmit,
@@ -79,6 +70,27 @@ const TxnBuilder = ({
 
   const handleAddMessage = (msg: Msg) => {
     setMessages([...messages, msg]);
+    if (msg.typeUrl === SEND_TYPE_URL) {
+      const amount = parseBalance(
+        msg.value?.amount,
+        currency.coinDecimals,
+        currency.coinMinimalDenom
+      );
+      setEstimatedBalances((prev) => {
+        const newBalance = prev - amount;
+        return newBalance < 0 ? 0 : newBalance;
+      });
+    } else if (msg.typeUrl === DELEGATE_TYPE_URL) {
+      const amount = parseBalance(
+        [msg.value?.amount],
+        currency.coinDecimals,
+        currency.coinMinimalDenom
+      );
+      setEstimatedBalances((prev) => {
+        const newBalance = prev - amount;
+        return newBalance < 0 ? 0 : newBalance;
+      });
+    }
   };
 
   const onDeleteMsg = (index: number) => {
@@ -129,7 +141,9 @@ const TxnBuilder = ({
                 <div className="text-b1 text-[#FFC13C]">Asset Summary</div>
               </div>
               <div className="text-[12px] flex items-center gap-2">
-                <div className="font-bold">200 AKT</div>
+                <div className="font-bold">
+                  {estimatedBalance.toFixed(3)} {currency.coinDenom}
+                </div>
                 <div className="text-[#FFFFFF80]">
                   is the estimated balance after this transaction
                 </div>
