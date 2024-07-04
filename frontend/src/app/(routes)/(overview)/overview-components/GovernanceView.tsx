@@ -59,7 +59,7 @@ const ProposalCard: React.FC<{ proposal: Proposal }> = ({ proposal }) => (
           <div className="flex items-center gap-1">
             <Image
               className="w-3 h-3 rounded-full"
-              src="/akash.png"
+              src="/akash1.png"
               width={12}
               height={12}
               alt=""

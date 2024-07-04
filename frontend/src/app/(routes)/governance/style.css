@@ -1,5 +1,5 @@
 .gov-main {
-  @apply pt-10 relative flex flex-col;
+  @apply py-10 relative flex flex-col;
   height: calc(100vh - 60px) !important;
 }
 
