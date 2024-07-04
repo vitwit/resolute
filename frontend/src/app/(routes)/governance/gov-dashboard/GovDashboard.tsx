@@ -4,7 +4,6 @@ import PageHeader from '@/components/common/PageHeader';
 import useGetProposals from '@/custom-hooks/governance/useGetProposals';
 import useInitGovernance from '@/custom-hooks/governance/useInitGovernance';
 import React, { useRef, useState } from 'react';
-import ProposalOverivew from './ProposalOverivew';
 import {
   HandleInputChangeEvent,
   ProposalsData,
