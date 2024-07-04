@@ -36,7 +36,7 @@ const ProposalItem = ({
   return (
     <div className="flex flex-col w-full justify-between">
       <div
-        className={`flex justify-between w-full px-6 py-4 hover:bg-[#ffffff14] rounded-2xl ${selectedProposal && selectedProposal.proposalId === proposalId && selectedProposal.chainID === chainID ? 'bg-[#ffffff14] rounded-2xl' : ''} `}
+        className={`flex justify-between w-full px-6 py-6 hover:bg-[#ffffff14] rounded-2xl ${selectedProposal && selectedProposal.proposalId === proposalId && selectedProposal.chainID === chainID ? 'bg-[#ffffff14] rounded-2xl' : ''} `}
         onClick={() => {
           handleViewProposal({
             proposalId,

@@ -229,7 +229,7 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
             </div>
           ) : null}
 
-          <div className="flex items-start gap-10 pt-10 w-full h-full">
+          <div className="flex items-start gap-10 pt-20 w-full h-full">
             <div className="flex items-start gap-10 w-full h-full">
               <div className="flex flex-col flex-1 justify-between h-full">
                 <div className="flex flex-col gap-6">
