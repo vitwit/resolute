@@ -113,9 +113,9 @@ const GovDashboard = ({ chainIDs }: { chainIDs: string[] }) => {
       <div className="space-y-6 sticky top-0">
         <GovHeader />
       </div>
-      <div className="flex">
+      <div className="flex w-full">
         <div
-          className={`flex flex-col ${selectedProposal ? 'w-2/5' : 'w-full'}`}
+          className={`flex flex-col w-full ${selectedProposal ? 'w-2/5' : 'w-full'}`}
         >
           <div className="sticky top-0 pt-4">
             <QuickFilters
