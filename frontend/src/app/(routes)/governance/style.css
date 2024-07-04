@@ -51,7 +51,7 @@
 }
 
 .proposal-view {
-  @apply shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] flex flex-col w-[60%] gap-4 p-10 rounded-2xl;
+  @apply shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] flex flex-col gap-4 p-10 rounded-2xl;
   background: rgba(255, 255, 255, 0.02);
 }
 .vote-optn-btn {

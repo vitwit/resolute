@@ -112,46 +112,51 @@ const GovDashboard = ({ chainIDs }: { chainIDs: string[] }) => {
     <div className="gov-main">
       <div className="space-y-6 sticky top-0">
         <GovHeader />
-        <QuickFilters
-          handleSearchQueryChange={handleSearchQueryChange}
-          searchQuery={searchQuery}
-          handleShowAllProposals={handleShowAllProposals}
-          handleFiltersChange={handleFiltersChange}
-          filterDays={filterDays}
-          selectedProposal={selectedProposal}
-        />
       </div>
-      <div className="flex gap-10 w-full flex-1 h-full overflow-y-scroll">
-        <div className="flex flex-col w-full flex-1 overflow-y-scroll gap-2">
-          {proposalsLoading ? (
-            <GovDashboardLoading />
-          ) : (
-            <>
-              {searchQuery?.length || filterDays ? (
-                <ProposalsList
-                  proposals={filteredProposals}
-                  handleViewProposal={handleViewProposal}
-                  selectedProposal={selectedProposal}
-                />
-              ) : (
-                <ProposalsList
-                  proposals={proposalsData}
-                  handleViewProposal={handleViewProposal}
-                  selectedProposal={selectedProposal}
-                />
-              )}
-            </>
-          )}
+      <div className="flex w-full">
+        <div className="flex space-y-6 flex-col w-full">
+          <div className="sticky top-0 pt-4">
+            <QuickFilters
+              handleSearchQueryChange={handleSearchQueryChange}
+              searchQuery={searchQuery}
+              handleShowAllProposals={handleShowAllProposals}
+              handleFiltersChange={handleFiltersChange}
+              filterDays={filterDays}
+              selectedProposal={selectedProposal}
+            />
+          </div>
+          <div className="flex flex-col flex-1 overflow-y-scroll gap-2 max-h-[60vh]">
+            {proposalsLoading ? (
+              <GovDashboardLoading />
+            ) : (
+              <>
+                {searchQuery?.length || filterDays ? (
+                  <ProposalsList
+                    proposals={filteredProposals}
+                    handleViewProposal={handleViewProposal}
+                    selectedProposal={selectedProposal}
+                  />
+                ) : (
+                  <ProposalsList
+                    proposals={proposalsData}
+                    handleViewProposal={handleViewProposal}
+                    selectedProposal={selectedProposal}
+                  />
+                )}
+              </>
+            )}
+          </div>
         </div>
-
-        {selectedProposal ? (
-          <ProposalOverivew
-            proposalId={selectedProposal?.proposalId}
-            chainID={selectedProposal?.chainID}
-            isActive={selectedProposal?.isActive}
-            onClose={handleViewProposal}
-          />
-        ) : null}
+        <div className="ml-10">
+          {selectedProposal ? (
+            <ProposalOverivew
+              proposalId={selectedProposal?.proposalId}
+              chainID={selectedProposal?.chainID}
+              isActive={selectedProposal?.isActive}
+              onClose={handleViewProposal}
+            />
+          ) : null}
+        </div>
       </div>
     </div>
   );
@@ -175,29 +180,29 @@ const QuickFilters = ({
   selectedProposal: SelectedProposal | null;
 }) => {
   return (
-    <div className="flex justify-between w-full space-x-40 pb-4">
-      <div className="flex py-2 gap-4">
+    <div className="flex justify-between w-full pb-4">
+      <div className="flex py-2 gap-2">
         <button
           onClick={() => handleFiltersChange(0)}
-          className={`selected-btns text-base ${filterDays === 0 ? 'bg-[#ffffff14] border-transparent' : 'border-[#ffffff26]'}`}
+          className={`selected-btns text-[12px] ${filterDays === 0 ? 'bg-[#ffffff14] border-transparent' : 'border-[#ffffff26]'}`}
         >
           All
         </button>
         <button
           onClick={() => handleFiltersChange(2)}
-          className={`selected-btns text-base ${filterDays === 2 ? 'bg-[#ffffff14] border-transparent' : 'border-[#ffffff26]'}`}
+          className={`selected-btns text-[12px] ${filterDays === 2 ? 'bg-[#ffffff14] border-transparent' : 'border-[#ffffff26]'}`}
         >
           Voting ends in 2 days
         </button>
         <button
           onClick={() => handleFiltersChange(1)}
-          className={`selected-btns text-base ${filterDays === 1 ? 'bg-[#ffffff14] border-transparent' : 'border-[#ffffff26]'}`}
+          className={`selected-btns text-[12px] ${filterDays === 1 ? 'bg-[#ffffff14] border-transparent' : 'border-[#ffffff26]'}`}
         >
           Voting ends in 1 day
         </button>
       </div>
 
-      <div className="flex flex-1 items-end">
+      <div className="flex flex-1 items-end justify-end">
         {!selectedProposal && (
           <SearchProposalInput
             handleSearchQueryChange={handleSearchQueryChange}

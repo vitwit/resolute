@@ -31,12 +31,19 @@ const ProposalItem = ({
   const dispatch = useAppDispatch();
   const [depositDialogOpen, setDepositDialogOpen] = useState(false);
   const [voteDialogOpen, setVoteDialogOpen] = useState(false);
-  
+
   const isWalletConnected = useAppSelector((state) => state.wallet.connected);
   return (
-    <div className="flex flex-col w-full">
+    <div className="flex flex-col w-full justify-between">
       <div
         className={`flex justify-between w-full px-6 py-4 hover:bg-[#ffffff14] rounded-2xl ${selectedProposal && selectedProposal.proposalId === proposalId && selectedProposal.chainID === chainID ? 'bg-[#ffffff14] rounded-2xl' : ''} `}
+        onClick={() => {
+          handleViewProposal({
+            proposalId,
+            chainID,
+            isActive,
+          });
+        }}
       >
         <div className="flex gap-2">
           <div className="proposal-id">
@@ -56,16 +63,7 @@ const ProposalItem = ({
             <div
               className={`flex items-center gap-6 ${selectedProposal ? 'justify-between w-full' : ''}`}
             >
-              <div
-                className="flex space-x-1 items-center cursor-pointer"
-                onClick={() => {
-                  handleViewProposal({
-                    proposalId,
-                    chainID,
-                    isActive,
-                  });
-                }}
-              >
+              <div className="flex space-x-1 items-center cursor-pointer">
                 <p
                   className={`text-[16px] truncate ${selectedProposal ? 'max-w-[254px]' : 'max-w-[500px]'}`}
                 >
@@ -96,8 +94,8 @@ const ProposalItem = ({
                 </div>
               )}
             </div>
-            <div className="flex items-center">
-              <div className="flex space-x-1 min-w-[180px]">
+            <div className="flex gap-4">
+              <div className="flex space-x-1 items-center">
                 <Image
                   src={TIMER_ICON}
                   width={16}
@@ -118,7 +116,9 @@ const ProposalItem = ({
                   alt=""
                   draggable={false}
                 />
-                <p className="text-[rgba(255,255,255,0.50)] text-xs capitalize">{chainName} Network</p>
+                <p className="text-[rgba(255,255,255,0.50)] text-xs capitalize">
+                  {chainName} Network
+                </p>
               </div>
             </div>
           </div>
