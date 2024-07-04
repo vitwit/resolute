@@ -4,8 +4,9 @@ import { REDIRECT_ICON, TIMER_ICON_YELLOW } from '@/constants/image-names';
 import useInitGovernance from '@/custom-hooks/governance/useInitGovernance';
 import useGetProposals from '@/custom-hooks/governance/useGetProposals';
 import { get } from 'lodash';
+import { ProposalsData } from '@/types/gov';
 
-const ProposalCard: React.FC<{ proposal: any }> = ({ proposal }) => (
+const ProposalCard: React.FC<{ proposal: ProposalsData }> = ({ proposal }) => (
   <div className="flex flex-col justify-center items-start gap-2 p-4 rounded-2xl bg-[#ffffff05]">
     <div className="flex gap-2">
       <div className="proposal-id">
