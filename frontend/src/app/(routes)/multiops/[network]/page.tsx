@@ -1,9 +1,9 @@
 import React from 'react';
-import ChainMultiops from './ChainMultiops';
 import '../multiops.css';
+import PageMultiops from './PageMultiops';
 
 const page = ({ params: { network } }: { params: { network: string } }) => {
-  return <ChainMultiops network={network} />;
+  return <PageMultiops paramChain={network} />;
 };
 
 export default page;
