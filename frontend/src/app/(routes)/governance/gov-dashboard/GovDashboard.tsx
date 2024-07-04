@@ -14,6 +14,7 @@ import ProposalsList from './ProposalsList';
 import SearchProposalInput from './SearchProposalInput';
 import { useAppSelector } from '@/custom-hooks/StateHooks';
 import GovDashboardLoading from '../loaders/GovDashboardLoading';
+import ProposalOverview from './ProposalOverivew';
 
 const GovDashboard = ({ chainIDs }: { chainIDs: string[] }) => {
   useInitGovernance({ chainIDs });
@@ -114,7 +115,9 @@ const GovDashboard = ({ chainIDs }: { chainIDs: string[] }) => {
         <GovHeader />
       </div>
       <div className="flex w-full">
-        <div className="flex space-y-6 flex-col w-full">
+        <div
+          className={`flex flex-col w-full ${selectedProposal ? 'w-2/5' : 'w-full'}`}
+        >
           <div className="sticky top-0 pt-4">
             <QuickFilters
               handleSearchQueryChange={handleSearchQueryChange}
@@ -125,7 +128,7 @@ const GovDashboard = ({ chainIDs }: { chainIDs: string[] }) => {
               selectedProposal={selectedProposal}
             />
           </div>
-          <div className="flex flex-col flex-1 overflow-y-scroll gap-2 max-h-[60vh]">
+          <div className="flex flex-col flex-1 overflow-y-scroll gap-2 max-h-[70vh]">
             {proposalsLoading ? (
               <GovDashboardLoading />
             ) : (
@@ -147,16 +150,16 @@ const GovDashboard = ({ chainIDs }: { chainIDs: string[] }) => {
             )}
           </div>
         </div>
-        <div className="ml-10">
-          {selectedProposal ? (
-            <ProposalOverivew
+        {selectedProposal && (
+          <div className="w-3/5 ml-10">
+            <ProposalOverview
               proposalId={selectedProposal?.proposalId}
               chainID={selectedProposal?.chainID}
               isActive={selectedProposal?.isActive}
               onClose={handleViewProposal}
             />
-          ) : null}
-        </div>
+          </div>
+        )}
       </div>
     </div>
   );
