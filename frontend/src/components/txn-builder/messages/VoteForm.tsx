@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useForm, UseFormSetValue } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { useAppDispatch } from '@/custom-hooks/StateHooks';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import { getProposalsInVoting } from '@/store/features/gov/govSlice';
@@ -12,10 +12,11 @@ interface VoteProps {
   fromAddress: string;
   onVote: (payload: Msg) => void;
   chainID: string;
+  cancelAddMsg: () => void;
 }
 
 const VoteForm = (props: VoteProps) => {
-  const { fromAddress, onVote, chainID } = props;
+  const { fromAddress, onVote, chainID, cancelAddMsg } = props;
   const dispatch = useAppDispatch();
   const { getChainInfo } = useGetChainInfo();
   const { baseURL, govV1, restURLs: baseURLs } = getChainInfo(chainID);
@@ -29,12 +30,7 @@ const VoteForm = (props: VoteProps) => {
   const [selectedVoteOption, setSelectedVoteOption] =
     useState<VoteOption | null>(null);
 
-  const {
-    handleSubmit,
-    control,
-    formState: { errors },
-    setValue,
-  } = useForm({
+  const { handleSubmit, setValue, reset } = useForm({
     defaultValues: {
       proposalID: '',
       voteOption: '',
@@ -42,7 +38,7 @@ const VoteForm = (props: VoteProps) => {
     },
   });
 
-  const handleChange = (option: ProposalOption | null) => {
+  const handleProposalChange = (option: ProposalOption | null) => {
     setValue('proposalID', option?.value || '');
     setSelectedOption(option);
   };
@@ -68,6 +64,9 @@ const VoteForm = (props: VoteProps) => {
     };
 
     onVote(msg);
+    reset();
+    handleProposalChange(null);
+    handleVoteChange(null);
   };
 
   useEffect(() => {
@@ -86,14 +85,20 @@ const VoteForm = (props: VoteProps) => {
       <div className="bg-[#FFFFFF05] rounded-2xl space-y-2">
         <div className="bg-[#FFFFFF05] rounded-2xl px-6 py-4 flex items-center justify-between">
           <div className="text-b1">Vote</div>
-          <div className="secondary-btn">Cancel</div>
+          <button
+            className="secondary-btn"
+            onClick={cancelAddMsg}
+            type="button"
+          >
+            Cancel
+          </button>
         </div>
         <div className="space-y-6 px-6 pb-6">
           <div className="flex-1 space-y-2">
             <div className="text-b1-light">Select Proposal</div>
             <ProposalsList
               dataLoading={proposalsLoading}
-              handleChange={handleChange}
+              handleChange={handleProposalChange}
               options={activeProposalsList}
               selectedOption={selectedOption}
             />

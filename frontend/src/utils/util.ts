@@ -17,12 +17,6 @@ import { MultisigAddressPubkey } from '@/types/multisig';
 import { fromBech32 } from '@cosmjs/encoding';
 import { SUPPORTED_WALLETS } from './constants';
 import { FAILED_TO_FETCH } from './errors';
-import { Decimal } from '@cosmjs/math';
-import { msgSendTypeUrl } from '@/txns/bank/send';
-import { msgDelegate } from '@/txns/staking/delegate';
-import { msgUnDelegate } from '@/txns/staking/undelegate';
-import { msgReDelegate } from '@/txns/staking/redelegate';
-import { msgVoteTypeUrl } from '@/txns/gov/vote';
 
 export const convertPaginationToParams = (
   pagination?: KeyLimitPagination
@@ -560,98 +554,4 @@ export const addChainIDParam = (uri: string, chainID: string) => {
     updatedURI = `${uri}?chain=${chainID.toLowerCase()}`;
   }
   return updatedURI;
-};
-
-export const formatMsgs = (
-  msgs: Message[],
-  fromAddress: string,
-  minimalDenom: string,
-  coinDecimals: number
-) => {
-  const messages: Msg[] = [];
-  msgs.forEach((msg) => {
-    if (msg.type === 'Send') {
-      const amountInAtomics = Decimal.fromUserInput(
-        msg.amount,
-        Number(coinDecimals)
-      ).atomics;
-      messages.push({
-        typeUrl: msgSendTypeUrl,
-        value: {
-          fromAddress,
-          toAddress: msg.address,
-          amount: [
-            {
-              amount: amountInAtomics,
-              denom: minimalDenom,
-            },
-          ],
-        },
-      });
-    } else if (msg.type === 'Delegate') {
-      const amountInAtomics = Decimal.fromUserInput(
-        msg.amount,
-        Number(coinDecimals)
-      ).atomics;
-      messages.push({
-        typeUrl: msgDelegate,
-        value: {
-          delegatorAddress: fromAddress,
-          validatorAddress: msg.validator,
-          amount: {
-            amount: amountInAtomics,
-            denom: minimalDenom,
-          },
-        },
-      });
-    } else if (msg.type === 'Undelegate') {
-      const amountInAtomics = Decimal.fromUserInput(
-        msg.amount,
-        Number(coinDecimals)
-      ).atomics;
-      messages.push({
-        typeUrl: msgUnDelegate,
-        value: {
-          delegatorAddress: fromAddress,
-          validatorAddress: msg.validator,
-          amount: {
-            amount: amountInAtomics,
-            denom: minimalDenom,
-          },
-        },
-      });
-    } else if (msg.type === 'Redelegate') {
-      const amountInAtomics = Decimal.fromUserInput(
-        msg.amount,
-        Number(coinDecimals)
-      ).atomics;
-      messages.push({
-        typeUrl: msgReDelegate,
-        value: {
-          delegatorAddress: fromAddress,
-          validatorDstAddress: msg.destValidator,
-          validatorSrcAddress: msg.sourceValidator,
-          amount: {
-            amount: amountInAtomics,
-            denom: minimalDenom,
-          },
-        },
-      });
-    } else if (msg.type === 'Vote') {
-      messages.push({
-        typeUrl: msgVoteTypeUrl,
-        value: {
-          voter: fromAddress,
-          option: Number(msg.option),
-          proposalId: Number(msg.proposalId),
-        },
-      });
-    } else if (msg.type === 'Custom') {
-      messages.push({
-        typeUrl: msg.typeUrl,
-        value: JSON.parse(msg.value),
-      });
-    }
-  });
-  return messages;
 };

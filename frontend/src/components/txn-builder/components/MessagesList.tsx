@@ -5,7 +5,6 @@ import SendMessage from '@/app/(routes)/multiops/components/Messages/SendMessage
 import UndelegateMessage from '@/app/(routes)/multiops/components/Messages/UndelegateMessage';
 import VoteMessage from '@/app/(routes)/multiops/components/Messages/VoteMessage';
 import { paginationComponentStyles } from '@/app/(routes)/staking/styles';
-import { ALERT_ICON } from '@/constants/image-names';
 import {
   DELEGATE_TYPE_URL,
   DEPOSIT_TYPE_URL,
@@ -15,7 +14,6 @@ import {
   VOTE_TYPE_URL,
 } from '@/utils/constants';
 import { Pagination } from '@mui/material';
-import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 
 const PER_PAGE = 7;

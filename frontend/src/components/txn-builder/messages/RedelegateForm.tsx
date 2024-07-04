@@ -1,7 +1,7 @@
 import { customMUITextFieldStyles } from '@/app/(routes)/multiops/styles';
 import { TextField, InputAdornment } from '@mui/material';
 import React, { useEffect, useState } from 'react';
-import { Controller, useForm, UseFormSetValue } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import CustomAutoComplete from '../components/CustomAutoComplete';
 import useStaking from '@/custom-hooks/txn-builder/useStaking';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
@@ -19,10 +19,11 @@ interface ReDelegateProps {
   fromAddress: string;
   onReDelegate: (payload: Msg) => void;
   currency: Currency;
+  cancelAddMsg: () => void;
 }
 
 const RedelegateForm = (props: ReDelegateProps) => {
-  const { fromAddress, chainID, currency, onReDelegate } = props;
+  const { fromAddress, chainID, currency, onReDelegate, cancelAddMsg } = props;
   const dispatch = useAppDispatch();
   const { getChainInfo, getDenomInfo } = useGetChainInfo();
   const { restURLs: baseURLs } = getChainInfo(chainID);
@@ -44,12 +45,7 @@ const RedelegateForm = (props: ReDelegateProps) => {
     (state) => state.staking.chains?.[chainID]?.validators.status
   );
 
-  const {
-    handleSubmit,
-    control,
-    formState: { errors },
-    setValue,
-  } = useForm({
+  const { handleSubmit, control, setValue, reset } = useForm({
     defaultValues: {
       amount: 0,
       validatorSrcAddress: '',
@@ -58,7 +54,7 @@ const RedelegateForm = (props: ReDelegateProps) => {
     },
   });
 
-  const handleChange = (option: ValidatorOption | null) => {
+  const handleSrcValidatorChange = (option: ValidatorOption | null) => {
     setValue('validatorSrcAddress', option?.address || '');
     setSelectedOption(option);
     updateAmount(option?.address);
@@ -108,6 +104,9 @@ const RedelegateForm = (props: ReDelegateProps) => {
         typeUrl: '/cosmos.staking.v1beta1.MsgBeginRedelegate',
         value: msgReDelegate,
       });
+      reset();
+      handleSrcValidatorChange(null);
+      handleDestValidatorChange(null);
     }
   };
 
@@ -126,7 +125,13 @@ const RedelegateForm = (props: ReDelegateProps) => {
       <div className="bg-[#FFFFFF05] rounded-2xl space-y-2">
         <div className="bg-[#FFFFFF05] rounded-2xl px-6 py-4 flex items-center justify-between">
           <div className="text-b1">Redelegate</div>
-          <div className="secondary-btn">Cancel</div>
+          <button
+            className="secondary-btn"
+            onClick={cancelAddMsg}
+            type="button"
+          >
+            Cancel
+          </button>
         </div>
         <div className="space-y-6">
           <div className="flex items-center gap-6 px-6">
@@ -134,7 +139,7 @@ const RedelegateForm = (props: ReDelegateProps) => {
               <div className="text-b1-light">Select Source Validator</div>
               <CustomAutoComplete
                 dataLoading={validatorsLoading === TxStatus.PENDING}
-                handleChange={handleChange}
+                handleChange={handleSrcValidatorChange}
                 options={delegatedValidators}
                 selectedOption={selectedOption}
                 name="Select Validator"

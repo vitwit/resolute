@@ -6,21 +6,21 @@ import { CUSTOM_MSG_VALUE_PLACEHOLDER } from '@/constants/txn-builder';
 import { useAppDispatch } from '@/custom-hooks/StateHooks';
 import { setError } from '@/store/features/common/commonSlice';
 import { TextField } from '@mui/material';
-import React, { useState } from 'react';
+import React from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
 interface CustomMessageProps {
   onAddMsg: (payload: Msg) => void;
+  cancelAddMsg: () => void;
 }
 
 const CustomMessageForm = (props: CustomMessageProps) => {
-  const { onAddMsg } = props;
+  const { onAddMsg, cancelAddMsg } = props;
   const dispatch = useAppDispatch();
   const {
     handleSubmit,
     control,
-    formState: { errors },
-    setValue,
+    reset
   } = useForm({
     defaultValues: {
       typeUrl: '',
@@ -36,8 +36,7 @@ const CustomMessageForm = (props: CustomMessageProps) => {
       };
 
       onAddMsg(msg);
-      setValue('typeUrl', '');
-      setValue('value', '');
+      reset();
     } catch (_) {
       dispatch(setError({ type: 'error', message: 'Invalid input for value' }));
     }
@@ -51,7 +50,13 @@ const CustomMessageForm = (props: CustomMessageProps) => {
       <div className="bg-[#FFFFFF05] rounded-2xl space-y-2">
         <div className="bg-[#FFFFFF05] rounded-2xl px-6 py-4 flex items-center justify-between">
           <div className="text-b1">Custom Message</div>
-          <div className="secondary-btn cursor-pointer">Cancel</div>
+          <button
+            className="secondary-btn"
+            onClick={cancelAddMsg}
+            type="button"
+          >
+            Cancel
+          </button>
         </div>
         <div className="space-y-6 px-6 pb-6">
           <div className="flex-1 space-y-2">

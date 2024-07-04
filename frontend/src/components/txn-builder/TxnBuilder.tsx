@@ -59,7 +59,6 @@ const TxnBuilder = ({
   const {
     handleSubmit,
     control,
-    reset: resetForm,
   } = useForm({
     defaultValues: {
       gas: 900000,
@@ -120,6 +119,10 @@ const TxnBuilder = ({
         handleAddMessage={handleAddMessage}
         currency={currency}
         chainID={chainID}
+        availableBalance={availableBalance}
+        cancelAddMsg={() => {
+          setTxType('');
+        }}
       />
       <div className="flex-1 space-y-6 h-full flex flex-col bg-[#FFFFFF05] rounded-2xl p-6 overflow-y-scroll">
         <div className="flex items-center justify-between">
@@ -251,6 +254,8 @@ const SelectMessage = ({
   currency,
   chainID,
   fromAddress,
+  availableBalance,
+  cancelAddMsg,
 }: {
   handleSelectMessage: (type: MsgType) => void;
   txType: string;
@@ -258,6 +263,8 @@ const SelectMessage = ({
   currency: Currency;
   chainID: string;
   fromAddress: string;
+  availableBalance: number;
+  cancelAddMsg: () => void;
 }) => {
   return (
     <div className="w-[40%] space-y-6 flex flex-col">
@@ -285,6 +292,8 @@ const SelectMessage = ({
             onSend={handleAddMessage}
             currency={currency}
             fromAddress={fromAddress}
+            availableBalance={availableBalance}
+            cancelAddMsg={cancelAddMsg}
           />
         )}
         {txType === 'Delegate' && (
@@ -293,6 +302,8 @@ const SelectMessage = ({
             currency={currency}
             onDelegate={handleAddMessage}
             fromAddress={fromAddress}
+            availableBalance={availableBalance}
+            cancelAddMsg={cancelAddMsg}
           />
         )}
         {txType === 'Undelegate' && (
@@ -301,6 +312,7 @@ const SelectMessage = ({
             currency={currency}
             fromAddress={fromAddress}
             onUndelegate={handleAddMessage}
+            cancelAddMsg={cancelAddMsg}
           />
         )}
         {txType === 'Redelegate' && (
@@ -309,6 +321,7 @@ const SelectMessage = ({
             currency={currency}
             fromAddress={fromAddress}
             onReDelegate={handleAddMessage}
+            cancelAddMsg={cancelAddMsg}
           />
         )}
         {txType === 'Vote' && (
@@ -316,10 +329,14 @@ const SelectMessage = ({
             chainID={chainID}
             fromAddress={fromAddress}
             onVote={handleAddMessage}
+            cancelAddMsg={cancelAddMsg}
           />
         )}
         {txType === 'Custom' && (
-          <CustomMessageForm onAddMsg={handleAddMessage} />
+          <CustomMessageForm
+            onAddMsg={handleAddMessage}
+            cancelAddMsg={cancelAddMsg}
+          />
         )}
       </div>
     </div>

@@ -1,7 +1,7 @@
 import { customMUITextFieldStyles } from '@/app/(routes)/multiops/styles';
 import { TextField, InputAdornment } from '@mui/material';
 import React, { useEffect, useState } from 'react';
-import { Controller, useForm, UseFormSetValue } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import CustomAutoComplete from '../components/CustomAutoComplete';
 import useStaking from '@/custom-hooks/txn-builder/useStaking';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
@@ -19,10 +19,11 @@ interface UnDelegateProps {
   fromAddress: string;
   onUndelegate: (payload: Msg) => void;
   currency: Currency;
+  cancelAddMsg: () => void;
 }
 
 const UndelegateForm = (props: UnDelegateProps) => {
-  const { fromAddress, chainID, currency, onUndelegate } = props;
+  const { fromAddress, chainID, currency, onUndelegate, cancelAddMsg } = props;
   const dispatch = useAppDispatch();
   const { getChainInfo, getDenomInfo } = useGetChainInfo();
   const { restURLs: baseURLs } = getChainInfo(chainID);
@@ -40,19 +41,14 @@ const UndelegateForm = (props: UnDelegateProps) => {
   const validatorsLoading = useAppSelector(
     (state) => state.staking.chains?.[chainID]?.validators.status
   );
-  const {
-    handleSubmit,
-    control,
-    formState: { errors },
-    setValue,
-  } = useForm({
+  const { handleSubmit, control, setValue, reset } = useForm({
     defaultValues: {
       amount: 0,
       validator: '',
       delegator: fromAddress,
     },
   });
-  const handleChange = (option: ValidatorOption | null) => {
+  const handleValidatorChange = (option: ValidatorOption | null) => {
     setValue('validator', option?.address || '');
     setSelectedOption(option);
     updateAmount(option?.address);
@@ -95,6 +91,8 @@ const UndelegateForm = (props: UnDelegateProps) => {
         typeUrl: '/cosmos.staking.v1beta1.MsgUndelegate',
         value: msgUnDelegate,
       });
+      reset();
+      handleValidatorChange(null);
     }
   };
 
@@ -113,14 +111,20 @@ const UndelegateForm = (props: UnDelegateProps) => {
       <div className="bg-[#FFFFFF05] rounded-2xl space-y-2">
         <div className="bg-[#FFFFFF05] rounded-2xl px-6 py-4 flex items-center justify-between">
           <div className="text-b1">Undelegate</div>
-          <div className="secondary-btn">Cancel</div>
+          <button
+            className="secondary-btn"
+            onClick={cancelAddMsg}
+            type="button"
+          >
+            Cancel
+          </button>
         </div>
         <div className="space-y-6 px-6 pb-6">
           <div className="flex-1 space-y-2">
             <div className="text-b1-light">Select Validator</div>
             <CustomAutoComplete
               dataLoading={validatorsLoading === TxStatus.PENDING}
-              handleChange={handleChange}
+              handleChange={handleValidatorChange}
               options={delegatedValidators}
               selectedOption={selectedOption}
               name="Select Validator"

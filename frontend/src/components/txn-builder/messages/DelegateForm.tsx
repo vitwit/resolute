@@ -1,7 +1,7 @@
 import { customMUITextFieldStyles } from '@/app/(routes)/multiops/styles';
-import { TextField } from '@mui/material';
+import { InputAdornment, TextField } from '@mui/material';
 import React, { useEffect, useState } from 'react';
-import { Controller, useForm, UseFormSetValue } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import CustomAutoComplete from '../components/CustomAutoComplete';
 import useStaking from '@/custom-hooks/txn-builder/useStaking';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
@@ -9,16 +9,26 @@ import { getAllValidators } from '@/store/features/staking/stakeSlice';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import { TxStatus } from '@/types/enums';
 import { Decimal } from '@cosmjs/math';
+import { formatCoin } from '@/utils/util';
 
 interface DelegateFormProps {
   chainID: string;
   fromAddress: string;
   onDelegate: (payload: Msg) => void;
   currency: Currency;
+  availableBalance: number;
+  cancelAddMsg: () => void;
 }
 
 const DelegateForm = (props: DelegateFormProps) => {
-  const { fromAddress, chainID, currency, onDelegate } = props;
+  const {
+    fromAddress,
+    chainID,
+    currency,
+    onDelegate,
+    availableBalance,
+    cancelAddMsg,
+  } = props;
   const dispatch = useAppDispatch();
   const { getChainInfo } = useGetChainInfo();
   const { restURLs: baseURLs } = getChainInfo(chainID);
@@ -30,19 +40,14 @@ const DelegateForm = (props: DelegateFormProps) => {
   const validatorsLoading = useAppSelector(
     (state) => state.staking.chains?.[chainID]?.validators.status
   );
-  const {
-    handleSubmit,
-    control,
-    formState: { errors },
-    setValue,
-  } = useForm({
+  const { handleSubmit, control, setValue, reset } = useForm({
     defaultValues: {
       amount: 0,
       validator: '',
       delegator: fromAddress,
     },
   });
-  const handleChange = (option: ValidatorOption | null) => {
+  const handleValidatorChange = (option: ValidatorOption | null) => {
     setValue('validator', option?.address || '');
     setSelectedOption(option);
   };
@@ -76,6 +81,8 @@ const DelegateForm = (props: DelegateFormProps) => {
         typeUrl: '/cosmos.staking.v1beta1.MsgDelegate',
         value: msgDelegate,
       });
+      reset();
+      handleValidatorChange(null);
     }
   };
 
@@ -87,14 +94,20 @@ const DelegateForm = (props: DelegateFormProps) => {
       <div className="bg-[#FFFFFF05] rounded-2xl space-y-2">
         <div className="bg-[#FFFFFF05] rounded-2xl px-6 py-4 flex items-center justify-between">
           <div className="text-b1">Delegate</div>
-          <div className="secondary-btn">Cancel</div>
+          <button
+            className="secondary-btn"
+            onClick={cancelAddMsg}
+            type="button"
+          >
+            Cancel
+          </button>
         </div>
         <div className="space-y-6 px-6 pb-6">
           <div className="flex-1 space-y-2">
             <div className="text-b1-light">Select Validator</div>
             <CustomAutoComplete
               dataLoading={validatorsLoading === TxStatus.PENDING}
-              handleChange={handleChange}
+              handleChange={handleValidatorChange}
               options={validatorsList}
               selectedOption={selectedOption}
               name="Select Validator"
@@ -123,6 +136,17 @@ const DelegateForm = (props: DelegateFormProps) => {
                         padding: 2,
                       },
                     },
+                    endAdornment: (
+                      <div className="text-small-light">
+                        <InputAdornment
+                          position="start"
+                          sx={{ color: '#ffffff80' }}
+                        >
+                          {'Available:'}{' '}
+                          {formatCoin(availableBalance, currency.coinDenom)}{' '}
+                        </InputAdornment>
+                      </div>
+                    ),
                   }}
                 />
               )}

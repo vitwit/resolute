@@ -16,7 +16,6 @@ import DialogVerifyAccount from '../../../components/common/DialogVerifyAccount'
 import { fee } from '@/txns/execute';
 import { getAuthToken } from '@/utils/localStorage';
 import { COSMOS_CHAIN_ID } from '@/utils/constants';
-import { formatMsgs } from '@/utils/util';
 import { setError } from '@/store/features/common/commonSlice';
 import { useRouter } from 'next/navigation';
 import { parseBalance } from '@/utils/denom';

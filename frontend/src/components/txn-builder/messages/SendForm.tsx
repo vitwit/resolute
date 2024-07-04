@@ -1,37 +1,40 @@
 import { customMUITextFieldStyles } from '@/app/(routes)/multiops/styles';
-import { TextField } from '@mui/material';
+import { InputAdornment, TextField } from '@mui/material';
 import React from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { Decimal } from '@cosmjs/math';
+import { formatCoin } from '@/utils/util';
 
 interface SendFormProps {
   fromAddress: string;
   onSend: (payload: Msg) => void;
   currency: Currency;
+  availableBalance: number;
+  cancelAddMsg: () => void;
 }
 
 const SendForm = (props: SendFormProps) => {
-  const { fromAddress, currency, onSend } = props;
+  const { fromAddress, currency, onSend, availableBalance, cancelAddMsg } =
+    props;
   const {
     handleSubmit,
     control,
-    formState: { errors },
-    setValue,
+    reset,
   } = useForm({
     defaultValues: {
-      amount: 0,
+      amount: '',
       recipient: '',
       from: fromAddress,
     },
   });
 
   const onSubmit = (data: {
-    amount: number;
+    amount: string;
     recipient: string;
     from: string;
   }) => {
     const amountInAtomics = Decimal.fromUserInput(
-      data.amount.toString(),
+      data.amount,
       Number(currency.coinDecimals)
     ).atomics;
 
@@ -52,6 +55,7 @@ const SendForm = (props: SendFormProps) => {
     };
 
     onSend(msg);
+    reset();
   };
   return (
     <form
@@ -61,7 +65,13 @@ const SendForm = (props: SendFormProps) => {
       <div className="bg-[#FFFFFF05] rounded-2xl space-y-2">
         <div className="bg-[#FFFFFF05] rounded-2xl px-6 py-4 flex items-center justify-between">
           <div className="text-b1">Send</div>
-          <div className="secondary-btn cursor-pointer">Cancel</div>
+          <button
+            className="secondary-btn"
+            onClick={cancelAddMsg}
+            type="button"
+          >
+            Cancel
+          </button>
         </div>
         <div className="space-y-6 px-6 pb-6">
           <div className="flex-1 space-y-2">
@@ -113,6 +123,17 @@ const SendForm = (props: SendFormProps) => {
                         padding: 2,
                       },
                     },
+                    endAdornment: (
+                      <div className="text-small-light">
+                        <InputAdornment
+                          position="start"
+                          sx={{ color: '#ffffff80' }}
+                        >
+                          {'Available:'}{' '}
+                          {formatCoin(availableBalance, currency.coinDenom)}{' '}
+                        </InputAdornment>
+                      </div>
+                    ),
                   }}
                 />
               )}
