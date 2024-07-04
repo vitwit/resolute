@@ -28,6 +28,7 @@ const PageTxnBuilder = ({
   multisigAddress: string;
 }) => {
   const dispatch = useAppDispatch();
+  const router = useRouter();
   const nameToChainIDs = useAppSelector((state) => state.common.nameToChainIDs);
   const chainName = paramChain.toLowerCase();
   const validChain = chainName in nameToChainIDs;
@@ -36,11 +37,22 @@ const PageTxnBuilder = ({
     dispatch(setConnectWalletOpen(true));
   };
 
+  const handleBackToMultisig = () => {
+    router.push(`/multisig/${chainName}/${multisigAddress}`);
+  };
+
   return (
     <div className="py-10 h-[calc(100vh-64px)] flex flex-col">
-      <div className="flex-1 sticky top-0">
+      <div className="flex-1 sticky top-0 space-y-2">
+        <button
+          type="button"
+          className="secondary-btn h-8"
+          onClick={handleBackToMultisig}
+        >
+          Back to multisig
+        </button>
         <PageHeader
-          title="Transaction Builder"
+          title="Multisig Transaction Builder"
           description="Transaction builder allows to create single transaction with multiple
           messages of same or different type."
         />
@@ -51,6 +63,7 @@ const PageTxnBuilder = ({
             <PageTxnBuilderEntry
               chainName={chainName}
               multisigAddress={multisigAddress}
+              handleBackToMultisig={handleBackToMultisig}
             />
           ) : (
             <div className="flex-1 flex items-center justify-center">
@@ -80,12 +93,13 @@ export default PageTxnBuilder;
 const PageTxnBuilderEntry = ({
   chainName,
   multisigAddress,
+  handleBackToMultisig,
 }: {
   chainName: string;
   multisigAddress: string;
+  handleBackToMultisig: () => void;
 }) => {
   const dispatch = useAppDispatch();
-  const router = useRouter();
   const nameToChainIDs = useAppSelector((state) => state.wallet.nameToChainIDs);
   const chainID = nameToChainIDs?.[chainName];
   const { getChainInfo, getDenomInfo } = useGetChainInfo();
@@ -134,10 +148,6 @@ const PageTxnBuilderEntry = ({
         },
       })
     );
-  };
-
-  const handleBackToMultisig = () => {
-    router.push(`/multisig/${chainName}/${multisigAddress}`);
   };
 
   useEffect(() => {

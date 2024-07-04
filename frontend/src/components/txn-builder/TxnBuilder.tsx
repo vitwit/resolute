@@ -56,10 +56,7 @@ const TxnBuilder = ({
     2 || availableBalance || 0
   );
 
-  const {
-    handleSubmit,
-    control,
-  } = useForm({
+  const { handleSubmit, control } = useForm({
     defaultValues: {
       gas: 900000,
       memo: '',
@@ -127,12 +124,14 @@ const TxnBuilder = ({
       <div className="flex-1 space-y-6 h-full flex flex-col bg-[#FFFFFF05] rounded-2xl p-6 overflow-y-scroll">
         <div className="flex items-center justify-between">
           <div className="text-[#FFFFFF80]">Transaction Summary</div>
-          <div
-            className="secondary-btn cursor-pointer"
-            onClick={() => setMessages([])}
-          >
-            Clear All
-          </div>
+          {messages?.length ? (
+            <div
+              className="secondary-btn cursor-pointer"
+              onClick={() => setMessages([])}
+            >
+              Clear All
+            </div>
+          ) : null}
         </div>
         {messages?.length ? (
           <div className="flex-1 flex flex-col gap-6">
