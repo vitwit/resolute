@@ -180,8 +180,8 @@ const PageTxnBuilderEntry = ({
           chainID={chainID}
           onSubmit={onSubmit}
           loading={createRes.status === 'pending'}
-          address={multisigAddress}
           availableBalance={availableBalance}
+          fromAddress={multisigAddress}
         />
       ) : (
         <EmptyScreen

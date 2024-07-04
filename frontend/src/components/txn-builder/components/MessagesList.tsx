@@ -18,7 +18,7 @@ import { Pagination } from '@mui/material';
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 
-const PER_PAGE = 6;
+const PER_PAGE = 7;
 
 const renderMessage = (
   msg: Msg,
@@ -73,7 +73,7 @@ const MessagesList = ({
 
   return (
     <div className="flex-1 flex flex-col gap-2">
-      <div className="space-y-4 py-4 border-b-[0.5px] border-[#ffffff2e] min-h-[280px]">
+      <div className="space-y-4 border-b-[0.5px] border-[#ffffff2e] min-h-[300px]">
         {slicedMsgs.map((msg, index) => {
           return (
             <div key={index + PER_PAGE * (currentPage - 1)}>

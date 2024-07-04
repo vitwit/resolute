@@ -1,32 +1,42 @@
 import { customMUITextFieldStyles } from '@/app/(routes)/multiops/styles';
-import { TextField } from '@mui/material';
+import { TextField, InputAdornment } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { Controller, useForm, UseFormSetValue } from 'react-hook-form';
 import CustomAutoComplete from '../components/CustomAutoComplete';
 import useStaking from '@/custom-hooks/txn-builder/useStaking';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
-import { getAllValidators } from '@/store/features/staking/stakeSlice';
+import {
+  getAllValidators,
+  getDelegations,
+} from '@/store/features/staking/stakeSlice';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import { TxStatus } from '@/types/enums';
+import { formatCoin } from '@/utils/util';
 import { Decimal } from '@cosmjs/math';
 
-interface DelegateFormProps {
+interface UnDelegateProps {
   chainID: string;
   fromAddress: string;
-  onDelegate: (payload: Msg) => void;
+  onUndelegate: (payload: Msg) => void;
   currency: Currency;
 }
 
-const DelegateForm = (props: DelegateFormProps) => {
-  const { fromAddress, chainID, currency, onDelegate } = props;
+const UndelegateForm = (props: UnDelegateProps) => {
+  const { fromAddress, chainID, currency, onUndelegate } = props;
   const dispatch = useAppDispatch();
-  const { getChainInfo } = useGetChainInfo();
+  const { getChainInfo, getDenomInfo } = useGetChainInfo();
   const { restURLs: baseURLs } = getChainInfo(chainID);
-  const { getValidators } = useStaking();
-  const { validatorsList } = getValidators({ chainID });
+  const { decimals: coinDecimals, displayDenom } = getDenomInfo(chainID);
+  const { getValidatorsForUndelegation } = useStaking();
+  const { delegatedValidators, delegationsData } = getValidatorsForUndelegation(
+    { chainID }
+  );
   const [selectedOption, setSelectedOption] = useState<ValidatorOption | null>(
     null
   );
+  const [amountForUndelegation, setAmountForUndelegation] = useState<
+    { amount: string; denom: string } | undefined
+  >();
   const validatorsLoading = useAppSelector(
     (state) => state.staking.chains?.[chainID]?.validators.status
   );
@@ -45,13 +55,22 @@ const DelegateForm = (props: DelegateFormProps) => {
   const handleChange = (option: ValidatorOption | null) => {
     setValue('validator', option?.address || '');
     setSelectedOption(option);
+    updateAmount(option?.address);
   };
 
-  useEffect(() => {
-    if (chainID) {
-      dispatch(getAllValidators({ chainID, baseURLs }));
+  const updateAmount = (address: string | undefined) => {
+    if (address) {
+      const item = delegationsData.find(
+        (item) => item.validatorAddress === address
+      );
+      setAmountForUndelegation({
+        amount: (Number(item?.amount) / 10 ** coinDecimals).toFixed(6) || '',
+        denom: item?.denom || '',
+      });
+    } else {
+      setAmountForUndelegation(undefined);
     }
-  }, []);
+  };
 
   const onSubmit = (data: {
     amount: number;
@@ -63,7 +82,7 @@ const DelegateForm = (props: DelegateFormProps) => {
         data.amount.toString(),
         Number(currency?.coinDecimals)
       ).atomics;
-      const msgDelegate = {
+      const msgUnDelegate = {
         delegatorAddress: data.delegator,
         validatorAddress: data.validator,
         amount: {
@@ -72,12 +91,19 @@ const DelegateForm = (props: DelegateFormProps) => {
         },
       };
 
-      onDelegate({
-        typeUrl: '/cosmos.staking.v1beta1.MsgDelegate',
-        value: msgDelegate,
+      onUndelegate({
+        typeUrl: '/cosmos.staking.v1beta1.MsgUndelegate',
+        value: msgUnDelegate,
       });
     }
   };
+
+  useEffect(() => {
+    if (chainID) {
+      dispatch(getAllValidators({ chainID, baseURLs }));
+      dispatch(getDelegations({ chainID, baseURLs, address: fromAddress }));
+    }
+  }, []);
 
   return (
     <form
@@ -86,7 +112,7 @@ const DelegateForm = (props: DelegateFormProps) => {
     >
       <div className="bg-[#FFFFFF05] rounded-2xl space-y-2">
         <div className="bg-[#FFFFFF05] rounded-2xl px-6 py-4 flex items-center justify-between">
-          <div className="text-b1">Delegate</div>
+          <div className="text-b1">Undelegate</div>
           <div className="secondary-btn">Cancel</div>
         </div>
         <div className="space-y-6 px-6 pb-6">
@@ -95,13 +121,13 @@ const DelegateForm = (props: DelegateFormProps) => {
             <CustomAutoComplete
               dataLoading={validatorsLoading === TxStatus.PENDING}
               handleChange={handleChange}
-              options={validatorsList}
+              options={delegatedValidators}
               selectedOption={selectedOption}
               name="Select Validator"
             />
           </div>
           <div className="flex-1 space-y-2">
-            <div className="text-b1-light">Enter Amount</div>
+            <div className="text-b1-light">Amount</div>
             <Controller
               name="amount"
               control={control}
@@ -112,8 +138,7 @@ const DelegateForm = (props: DelegateFormProps) => {
                   sx={{
                     ...customMUITextFieldStyles,
                   }}
-                  required
-                  placeholder="Amount"
+                  placeholder="Enter amount"
                   fullWidth
                   InputProps={{
                     sx: {
@@ -123,6 +148,22 @@ const DelegateForm = (props: DelegateFormProps) => {
                         padding: 2,
                       },
                     },
+                    endAdornment: (
+                      <div className="text-small-light">
+                        {amountForUndelegation ? (
+                          <InputAdornment
+                            position="start"
+                            sx={{ color: '#ffffff80' }}
+                          >
+                            {'Staked :'}{' '}
+                            {formatCoin(
+                              Number(amountForUndelegation?.amount),
+                              displayDenom
+                            )}{' '}
+                          </InputAdornment>
+                        ) : null}
+                      </div>
+                    ),
                   }}
                 />
               )}
@@ -137,4 +178,4 @@ const DelegateForm = (props: DelegateFormProps) => {
   );
 };
 
-export default DelegateForm;
+export default UndelegateForm;

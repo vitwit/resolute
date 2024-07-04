@@ -5,13 +5,13 @@ import { Controller, useForm } from 'react-hook-form';
 import { Decimal } from '@cosmjs/math';
 
 interface SendFormProps {
-  address: string;
+  fromAddress: string;
   onSend: (payload: Msg) => void;
   currency: Currency;
 }
 
 const SendForm = (props: SendFormProps) => {
-  const { address, currency, onSend } = props;
+  const { fromAddress, currency, onSend } = props;
   const {
     handleSubmit,
     control,
@@ -21,7 +21,7 @@ const SendForm = (props: SendFormProps) => {
     defaultValues: {
       amount: 0,
       recipient: '',
-      from: address,
+      from: fromAddress,
     },
   });
 
@@ -30,7 +30,7 @@ const SendForm = (props: SendFormProps) => {
     recipient: string;
     from: string;
   }) => {
-    console.log("herer")
+    console.log('herer');
     const amountInAtomics = Decimal.fromUserInput(
       data.amount.toString(),
       Number(currency.coinDecimals)
