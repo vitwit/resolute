@@ -1,17 +1,21 @@
-import { customMUITextFieldStyles } from '@/app/(routes)/multiops/styles';
+import {
+  customMessageValueFieldStyles,
+  customMUITextFieldStyles,
+} from '@/app/(routes)/multiops/styles';
+import { CUSTOM_MSG_VALUE_PLACEHOLDER } from '@/constants/txn-builder';
+import { useAppDispatch } from '@/custom-hooks/StateHooks';
+import { setError } from '@/store/features/common/commonSlice';
 import { TextField } from '@mui/material';
-import React from 'react';
+import React, { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { Decimal } from '@cosmjs/math';
 
-interface SendFormProps {
-  fromAddress: string;
-  onSend: (payload: Msg) => void;
-  currency: Currency;
+interface CustomMessageProps {
+  onAddMsg: (payload: Msg) => void;
 }
 
-const SendForm = (props: SendFormProps) => {
-  const { fromAddress, currency, onSend } = props;
+const CustomMessageForm = (props: CustomMessageProps) => {
+  const { onAddMsg } = props;
+  const dispatch = useAppDispatch();
   const {
     handleSubmit,
     control,
@@ -19,40 +23,26 @@ const SendForm = (props: SendFormProps) => {
     setValue,
   } = useForm({
     defaultValues: {
-      amount: 0,
-      recipient: '',
-      from: fromAddress,
+      typeUrl: '',
+      value: '',
     },
   });
 
-  const onSubmit = (data: {
-    amount: number;
-    recipient: string;
-    from: string;
-  }) => {
-    const amountInAtomics = Decimal.fromUserInput(
-      data.amount.toString(),
-      Number(currency.coinDecimals)
-    ).atomics;
+  const onSubmit = (data: { typeUrl: string; value: string }) => {
+    try {
+      const msg: Msg = {
+        typeUrl: data.typeUrl,
+        value: JSON.parse(data.value),
+      };
 
-    const msgSend = {
-      fromAddress: data.from,
-      toAddress: data.recipient,
-      amount: [
-        {
-          amount: amountInAtomics,
-          denom: currency.coinMinimalDenom,
-        },
-      ],
-    };
-
-    const msg = {
-      typeUrl: '/cosmos.bank.v1beta1.MsgSend',
-      value: msgSend,
-    };
-
-    onSend(msg);
+      onAddMsg(msg);
+      setValue('typeUrl', '');
+      setValue('value', '');
+    } catch (_) {
+      dispatch(setError({ type: 'error', message: 'Invalid input for value' }));
+    }
   };
+
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
@@ -60,14 +50,14 @@ const SendForm = (props: SendFormProps) => {
     >
       <div className="bg-[#FFFFFF05] rounded-2xl space-y-2">
         <div className="bg-[#FFFFFF05] rounded-2xl px-6 py-4 flex items-center justify-between">
-          <div className="text-b1">Send</div>
+          <div className="text-b1">Custom Message</div>
           <div className="secondary-btn cursor-pointer">Cancel</div>
         </div>
         <div className="space-y-6 px-6 pb-6">
           <div className="flex-1 space-y-2">
-            <div className="text-b1-light">Enter Address</div>
+            <div className="text-b1-light">Enter Type URL</div>
             <Controller
-              name="recipient"
+              name="typeUrl"
               control={control}
               render={({ field }) => (
                 <TextField
@@ -76,7 +66,7 @@ const SendForm = (props: SendFormProps) => {
                   sx={{
                     ...customMUITextFieldStyles,
                   }}
-                  placeholder="Address"
+                  placeholder="Eg:  /cosmos.bank.v1beta1.MsgSend"
                   fullWidth
                   InputProps={{
                     sx: {
@@ -92,18 +82,21 @@ const SendForm = (props: SendFormProps) => {
             />
           </div>
           <div className="flex-1 space-y-2">
-            <div className="text-b1-light">Enter Amount</div>
+            <div className="text-b1-light">Enter Value</div>
             <Controller
-              name="amount"
+              name="value"
               control={control}
               render={({ field }) => (
                 <TextField
                   className="bg-transparent rounded-full border-[1px] border-[#ffffff80] h-10"
                   {...field}
                   sx={{
-                    ...customMUITextFieldStyles,
+                    ...customMessageValueFieldStyles,
+                    ...{ height: '110px' },
                   }}
-                  placeholder="Enter amount"
+                  rows={4}
+                  multiline
+                  placeholder={CUSTOM_MSG_VALUE_PLACEHOLDER}
                   fullWidth
                   InputProps={{
                     sx: {
@@ -127,4 +120,4 @@ const SendForm = (props: SendFormProps) => {
   );
 };
 
-export default SendForm;
+export default CustomMessageForm;

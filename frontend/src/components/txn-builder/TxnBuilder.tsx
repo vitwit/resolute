@@ -17,6 +17,7 @@ import { parseBalance } from '@/utils/denom';
 import UndelegateForm from './messages/UndelegateForm';
 import RedelegateForm from './messages/RedelegateForm';
 import VoteForm from './messages/VoteForm';
+import CustomMessageForm from './messages/CustomMessageForm';
 
 type MsgType =
   | 'Send'
@@ -269,7 +270,7 @@ const SelectMessage = ({
           {TXN_BUILDER_MSGS.map((msg) => (
             <button
               key={msg}
-              className="msg-btn"
+              className={`msg-btn ${txType === msg ? 'msg-btn-selected' : ''} `}
               type="button"
               onClick={() => handleSelectMessage(msg as MsgType)}
             >
@@ -316,6 +317,9 @@ const SelectMessage = ({
             fromAddress={fromAddress}
             onVote={handleAddMessage}
           />
+        )}
+        {txType === 'Custom' && (
+          <CustomMessageForm onAddMsg={handleAddMessage} />
         )}
       </div>
     </div>

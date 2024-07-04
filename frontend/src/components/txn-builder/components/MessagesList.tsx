@@ -40,7 +40,13 @@ const renderMessage = (
     case DEPOSIT_TYPE_URL:
       return DepositMessage({ msg, index, currency, onDelete });
     default:
-      return '';
+      return (
+        <>
+          {msg?.typeUrl ? (
+            <div className="text-[14px]">{msg?.typeUrl}</div>
+          ) : null}
+        </>
+      );
   }
 };
 
