@@ -4,7 +4,6 @@ import PageHeader from '@/components/common/PageHeader';
 import useGetProposals from '@/custom-hooks/governance/useGetProposals';
 import useInitGovernance from '@/custom-hooks/governance/useInitGovernance';
 import React, { useRef, useState } from 'react';
-import ProposalOverivew from './ProposalOverivew';
 import {
   HandleInputChangeEvent,
   ProposalsData,
@@ -14,6 +13,7 @@ import ProposalsList from './ProposalsList';
 import SearchProposalInput from './SearchProposalInput';
 import { useAppSelector } from '@/custom-hooks/StateHooks';
 import GovDashboardLoading from '../loaders/GovDashboardLoading';
+import ProposalOverview from './ProposalOverivew';
 
 const GovDashboard = ({ chainIDs }: { chainIDs: string[] }) => {
   useInitGovernance({ chainIDs });
@@ -39,16 +39,19 @@ const GovDashboard = ({ chainIDs }: { chainIDs: string[] }) => {
     proposalId,
     isActive,
   }: SelectedProposal) => {
-    setSelectedProposal({
-      chainID,
-      proposalId,
-      isActive,
+    setSelectedProposal((proposal) => {
+      if (!!proposal) return null;
+      return {
+        chainID,
+        proposalId,
+        isActive,
+      };
     });
   };
 
-  const onCloseOverview = () => {
-    setSelectedProposal(null);
-  };
+  // const onCloseOverview = () => {
+  //   setSelectedProposal(null);
+  // };
 
   const handleSearchQueryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value;
@@ -87,7 +90,10 @@ const GovDashboard = ({ chainIDs }: { chainIDs: string[] }) => {
 
         const daysNo = proposal.proposalInfo.endTime.match(/\d+/) || 0;
         if (daysNo && daysNo.length) {
-          if (Number(daysNo[0]) <= days || !proposal.proposalInfo.endTime.includes('days')) {
+          if (
+            Number(daysNo[0]) <= days ||
+            !proposal.proposalInfo.endTime.includes('days')
+          ) {
             return true;
           }
         }
@@ -104,46 +110,55 @@ const GovDashboard = ({ chainIDs }: { chainIDs: string[] }) => {
 
   return (
     <div className="gov-main">
-      <div className="space-y-10 sticky top-0">
+      <div className="space-y-6 sticky top-0">
         <GovHeader />
-        <QuickFilters
-          handleSearchQueryChange={handleSearchQueryChange}
-          searchQuery={searchQuery}
-          handleShowAllProposals={handleShowAllProposals}
-          handleFiltersChange={handleFiltersChange}
-          filterDays={filterDays}
-        />
       </div>
-      <div className="flex gap-6 w-full flex-1 h-full overflow-y-scroll">
-        <div className="flex flex-col w-full gap-6 py-0 pb-6 flex-1 overflow-y-scroll">
-          {proposalsLoading ? (
-            <GovDashboardLoading />
-          ) : (
-            <>
-              {searchQuery?.length || filterDays ? (
-                <ProposalsList
-                  proposals={filteredProposals}
-                  handleViewProposal={handleViewProposal}
-                  selectedProposal={selectedProposal}
-                />
-              ) : (
-                <ProposalsList
-                  proposals={proposalsData}
-                  handleViewProposal={handleViewProposal}
-                  selectedProposal={selectedProposal}
-                />
-              )}
-            </>
-          )}
+      <div className="flex">
+        <div
+          className={`flex flex-col ${selectedProposal ? 'w-2/5' : 'w-full'}`}
+        >
+          <div className="sticky top-0 pt-4">
+            <QuickFilters
+              handleSearchQueryChange={handleSearchQueryChange}
+              searchQuery={searchQuery}
+              handleShowAllProposals={handleShowAllProposals}
+              handleFiltersChange={handleFiltersChange}
+              filterDays={filterDays}
+              selectedProposal={selectedProposal}
+            />
+          </div>
+          <div className="flex flex-col flex-1 overflow-y-scroll gap-2 max-h-[70vh]">
+            {proposalsLoading ? (
+              <GovDashboardLoading />
+            ) : (
+              <>
+                {searchQuery?.length || filterDays ? (
+                  <ProposalsList
+                    proposals={filteredProposals}
+                    handleViewProposal={handleViewProposal}
+                    selectedProposal={selectedProposal}
+                  />
+                ) : (
+                  <ProposalsList
+                    proposals={proposalsData}
+                    handleViewProposal={handleViewProposal}
+                    selectedProposal={selectedProposal}
+                  />
+                )}
+              </>
+            )}
+          </div>
         </div>
-        {selectedProposal ? (
-          <ProposalOverivew
-            proposalId={selectedProposal?.proposalId}
-            chainID={selectedProposal?.chainID}
-            isActive={selectedProposal?.isActive}
-            onClose={onCloseOverview}
-          />
-        ) : null}
+        {selectedProposal && (
+          <div className="w-3/5 ml-10">
+            <ProposalOverview
+              proposalId={selectedProposal?.proposalId}
+              chainID={selectedProposal?.chainID}
+              isActive={selectedProposal?.isActive}
+              onClose={handleViewProposal}
+            />
+          </div>
+        )}
       </div>
     </div>
   );
@@ -157,42 +172,46 @@ const QuickFilters = ({
   handleShowAllProposals,
   handleFiltersChange,
   filterDays,
+  selectedProposal,
 }: {
   searchQuery: string;
   handleSearchQueryChange: HandleInputChangeEvent;
   handleShowAllProposals: (arg: boolean) => void;
   handleFiltersChange: (n: number) => void;
   filterDays: number;
+  selectedProposal: SelectedProposal | null;
 }) => {
   return (
-    <div className="flex gap-20">
-      <div className="flex py-2 gap-4">
+    <div className="flex justify-between w-full pb-4">
+      <div className="flex py-2 gap-2">
         <button
           onClick={() => handleFiltersChange(0)}
-          className={`selected-btns text-base ${filterDays === 0 ? 'bg-[#ffffff14] border-transparent' : 'border-[#ffffff26]'}`}
+          className={`selected-btns text-[12px] ${filterDays === 0 ? 'bg-[#ffffff14] border-transparent' : 'border-[#ffffff26]'}`}
         >
           All
         </button>
         <button
           onClick={() => handleFiltersChange(2)}
-          className={`selected-btns text-base ${filterDays === 2 ? 'bg-[#ffffff14] border-transparent' : 'border-[#ffffff26]'}`}
+          className={`selected-btns text-[12px] ${filterDays === 2 ? 'bg-[#ffffff14] border-transparent' : 'border-[#ffffff26]'}`}
         >
           Voting ends in 2 days
         </button>
         <button
           onClick={() => handleFiltersChange(1)}
-          className={`selected-btns text-base ${filterDays === 1 ? 'bg-[#ffffff14] border-transparent' : 'border-[#ffffff26]'}`}
+          className={`selected-btns text-[12px] ${filterDays === 1 ? 'bg-[#ffffff14] border-transparent' : 'border-[#ffffff26]'}`}
         >
           Voting ends in 1 day
         </button>
       </div>
 
-      <div className="flex items-end flex-1">
-        <SearchProposalInput
-          handleSearchQueryChange={handleSearchQueryChange}
-          searchQuery={searchQuery}
-          handleShowAllProposals={handleShowAllProposals}
-        />
+      <div className="flex flex-1 items-end justify-end">
+        {!selectedProposal && (
+          <SearchProposalInput
+            handleSearchQueryChange={handleSearchQueryChange}
+            searchQuery={searchQuery}
+            handleShowAllProposals={handleShowAllProposals}
+          />
+        )}
       </div>
     </div>
   );

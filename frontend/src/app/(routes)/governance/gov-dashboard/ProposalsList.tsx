@@ -19,7 +19,7 @@ const ProposalsList = ({
   handleViewProposal: HandleSelectProposalEvent;
 }) => {
   return (
-    <>
+    <div className="w-full">
       {proposals?.length ? (
         proposals.map((proposalsData) => {
           const { chainID, chainLogo, chainName, isActive, proposalInfo } =
@@ -49,7 +49,7 @@ const ProposalsList = ({
           height={264}
         />
       )}
-    </>
+    </div>
   );
 };
 

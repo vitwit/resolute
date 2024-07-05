@@ -1,46 +1,12 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import Image from 'next/image';
 import { REDIRECT_ICON, TIMER_ICON_YELLOW } from '@/constants/image-names';
-import govSlice from '@/store/features/gov/govSlice';
 import useInitGovernance from '@/custom-hooks/governance/useInitGovernance';
 import useGetProposals from '@/custom-hooks/governance/useGetProposals';
 import { get } from 'lodash';
+import { ProposalsData } from '@/types/gov';
 
-type Proposal = {
-  id: number;
-  title: string;
-  creator: string;
-  votingEnds: string;
-};
-
-const proposals: Proposal[] = [
-  {
-    id: 123,
-    title: 'Aave v3.1 Cantina competition',
-    creator: 'Akash',
-    votingEnds: '08 hours',
-  },
-  {
-    id: 124,
-    title: 'Aave v3.2 Cantina competition',
-    creator: 'Cosmoshub',
-    votingEnds: '12 hours',
-  },
-  {
-    id: 125,
-    title: 'Aave v3.3 Cantina competition',
-    creator: 'Akash',
-    votingEnds: '10 hours',
-  },
-  {
-    id: 126,
-    title: 'Aave v3.4 Cantina competition',
-    creator: 'Akash',
-    votingEnds: '14 hours',
-  },
-];
-
-const ProposalCard: React.FC<{ proposal: any }> = ({ proposal }) => (
+const ProposalCard: React.FC<{ proposal: ProposalsData }> = ({ proposal }) => (
   <div className="flex flex-col justify-center items-start gap-2 p-4 rounded-2xl bg-[#ffffff05]">
     <div className="flex gap-2">
       <div className="proposal-id">
@@ -92,11 +58,11 @@ const ProposalCard: React.FC<{ proposal: any }> = ({ proposal }) => (
 );
 
 const GovernanceView = ({ chainIDs }: { chainIDs: string[] }) => {
-  useInitGovernance({chainIDs})
+  useInitGovernance({ chainIDs });
   const { getProposals } = useGetProposals();
   const proposalsData = getProposals({ chainIDs, showAll: false });
 
-  console.log('proposal data====================', proposalsData)
+  console.log('proposal data====================', proposalsData);
 
   return (
     <div className="flex flex-col p-6 rounded-2xl bg-[#ffffff05] w-[418px] gap-4 overflow-y-scroll flex-1">
@@ -108,7 +74,10 @@ const GovernanceView = ({ chainIDs }: { chainIDs: string[] }) => {
         <div className="divider-line"></div>
       </div>
       {proposalsData.map((proposal) => (
-        <ProposalCard key={get(proposal, 'proposalInfo.proposalId', 0)} proposal={proposal} />
+        <ProposalCard
+          key={get(proposal, 'proposalInfo.proposalId', 0)}
+          proposal={proposal}
+        />
       ))}
     </div>
   );
