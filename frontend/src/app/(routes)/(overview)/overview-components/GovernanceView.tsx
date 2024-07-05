@@ -4,6 +4,7 @@ import { REDIRECT_ICON, TIMER_ICON_YELLOW } from '@/constants/image-names';
 import useInitGovernance from '@/custom-hooks/governance/useInitGovernance';
 import useGetProposals from '@/custom-hooks/governance/useGetProposals';
 import { get } from 'lodash';
+import { ProposalsData } from '@/types/gov';
 
 // type Proposal = {
 //   id: number;
@@ -91,11 +92,11 @@ const ProposalCard: React.FC<{ proposal: any }> = ({ proposal }) => (
 );
 
 const GovernanceView = ({ chainIDs }: { chainIDs: string[] }) => {
-  useInitGovernance({chainIDs})
+  useInitGovernance({ chainIDs });
   const { getProposals } = useGetProposals();
   const proposalsData = getProposals({ chainIDs, showAll: false });
 
-  console.log('proposal data====================', proposalsData)
+  console.log('proposal data====================', proposalsData);
 
   return (
     <div className="flex flex-col p-6 rounded-2xl bg-[#ffffff05] w-[418px] gap-4 overflow-y-scroll flex-1">
@@ -107,7 +108,10 @@ const GovernanceView = ({ chainIDs }: { chainIDs: string[] }) => {
         <div className="divider-line"></div>
       </div>
       {proposalsData.map((proposal) => (
-        <ProposalCard key={get(proposal, 'proposalInfo.proposalId', 0)} proposal={proposal} />
+        <ProposalCard
+          key={get(proposal, 'proposalInfo.proposalId', 0)}
+          proposal={proposal}
+        />
       ))}
     </div>
   );

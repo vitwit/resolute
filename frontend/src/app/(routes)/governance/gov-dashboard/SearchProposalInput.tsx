@@ -10,7 +10,7 @@ const SearchProposalInput = ({
 }: {
   searchQuery: string;
   handleSearchQueryChange: HandleInputChangeEvent;
-  handleShowAllProposals: (arg: boolean)=> void;
+  handleShowAllProposals: (arg: boolean) => void;
 }) => {
   const [check, SetCheck] = useState(false);
   return (
@@ -30,7 +30,7 @@ const SearchProposalInput = ({
         <div
           className="flex items-center gap-1 cursor-pointer"
           onClick={() => {
-            handleShowAllProposals(!check)
+            handleShowAllProposals(!check);
             SetCheck(!check);
           }}
         >
@@ -50,10 +50,7 @@ const SearchProposalInput = ({
             />
           )}
 
-          <label
-            htmlFor="showAllProps"
-            className="text-[14px] text-[#FFFFFF50] cursor-pointer"
-          >
+          <label htmlFor="showAllProps" className="text-[16px] cursor-pointer">
             Show deposit proposals
           </label>
         </div>
