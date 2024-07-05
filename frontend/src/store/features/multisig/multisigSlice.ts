@@ -448,21 +448,21 @@ export const signTransaction = createAsyncThunk(
   'multisig/signTransaction',
   async (
     data: {
-      rpc: string;
       chainID: string;
       multisigAddress: string;
       unSignedTxn: Txn;
       walletAddress: string;
+      rpcURLs: string[];
     },
     { rejectWithValue, dispatch }
   ) => {
     try {
       const payload = await multisigSigning.signTransaction(
-        data.rpc,
         data.chainID,
         data.multisigAddress,
         data.unSignedTxn,
-        data.walletAddress
+        data.walletAddress,
+        data.rpcURLs
       );
       const authToken = getAuthToken(COSMOS_CHAIN_ID);
 
