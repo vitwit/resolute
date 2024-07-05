@@ -68,7 +68,7 @@ const ProposalOverview = ({
                   <div className="flex space-x-1 items-center">
                     <p
                       onClick={navigateToProposal}
-                      className="text-h2 max-w-[400px] truncate cursor-pointer"
+                      className="text-h2 max-w-[400px] truncate cursor-pointer underline underline-offset-[3px]"
                     >
                       {proposalTitle}
                     </p>

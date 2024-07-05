@@ -25,7 +25,7 @@ const Multisig = () => {
   }, []);
 
   return (
-    <div className="py-20 px-10 h-full flex flex-col">
+    <div className="py-10 h-full flex flex-col">
       <PageHeader title="MultiSig" description={MULTISIG_DESCRIPTION} />
       <div>
         <div className="flex-1 flex items-center justify-center mt-16">
