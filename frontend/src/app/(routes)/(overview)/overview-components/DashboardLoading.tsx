@@ -49,7 +49,7 @@ const DashboardLoading = () => {
                 {Array(3)
                   .fill(null)
                   .map((_, colIndex) => (
-                    <tr key={colIndex} className=" animate-pulse  w-[1064px]">
+                    <tr key={colIndex} className=" animate-pulse">
                       {Array(6)
                         .fill(null)
                         .map((_, colIndex) => (
@@ -61,31 +61,6 @@ const DashboardLoading = () => {
                   ))}
               </tbody>
             </table>
-          </div>
-        </div>
-        <div className="flex flex-col gap-10 h-[calc(100vh-104px)]">
-          <div className="flex flex-col p-6 rounded-2xl bg-[#ffffff05] w-[418px] h-[302px] gap-10">
-            <div className="flex flex-col gap-2 w-full">
-              <div className="text-h2">Token Allocation</div>
-              <div className="secondary-text">
-                Connect your wallet now to access all the modules on{' '}
-              </div>
-              <div className="divider-line"></div>
-            </div>
-            <div className="h-[150px] w-[370px] bg-[#252525] rounded animate-pulse"></div>
-          </div>
-          <div className="flex flex-col p-6 rounded-2xl bg-[#ffffff05] w-[418px] h-[486px] gap-4">
-            <div className="flex flex-col gap-2 w-full">
-              <div className="text-h2">Governance</div>
-              <div className="secondary-text">
-                Connect your wallet now to access all the modules on{' '}
-              </div>
-              <div className="divider-line"></div>
-            </div>
-            <div className="h-[79px] w-[370px] bg-[#252525] rounded animate-pulse"></div>
-            <div className="h-[79px] w-[370px] bg-[#252525] rounded animate-pulse"></div>
-            <div className="h-[79px] w-[370px] bg-[#252525] rounded animate-pulse"></div>
-            <div className="h-[79px] w-[370px] bg-[#252525] rounded animate-pulse"></div>
           </div>
         </div>
       </div>
