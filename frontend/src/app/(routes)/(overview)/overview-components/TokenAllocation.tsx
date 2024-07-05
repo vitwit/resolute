@@ -4,8 +4,23 @@ import useGetAssetsAmount from '@/custom-hooks/useGetAssetsAmount';
 import { get } from 'lodash';
 import { useAppSelector } from '@/custom-hooks/StateHooks';
 import TokenAllocationSkeleton from './TokenAllocationSkeleton';
+import { RootState } from '@/store/store';
+import { useParams } from 'next/navigation';
 
-const TokenAllocation = ({ chainIDs }: { chainIDs: string[] }) => {
+const TokenAllocation = () => {
+
+  const params = useParams();
+  const currentChainName = params?.chainNames?.[0]
+  console.log({ params })
+
+  const nameToChainIDs = useAppSelector(
+    (state: RootState) => state.wallet.nameToChainIDs
+  );
+
+  const chainIDs = Object.keys(nameToChainIDs).map(
+    (chainName) => nameToChainIDs[chainName]
+  );
+
   const [, , , , totalAmountByChain] = useGetAssetsAmount(chainIDs);
 
   const balancesLoading = useAppSelector(
@@ -70,7 +85,11 @@ const TokenAllocation = ({ chainIDs }: { chainIDs: string[] }) => {
               <div className="mb-6 text-xs">{get(value, 'chainName', key)}</div>
               <div
                 className="w-6 rounded-[8px_8px_0px_0px] flex flex-col justify-end items-center"
-                style={{ background: get(value, 'theme.gradient'), height: '100%' }}
+                style={{
+                  background: get(value, 'theme.gradient'),
+                  border: get(value, 'chainName', key).toLowerCase() === currentChainName ? '1px solid' : '',
+                  height: '100%'
+                }}
               >
                 {/* Here we have to replace with the "chainLogo's" */}
                 <Image
