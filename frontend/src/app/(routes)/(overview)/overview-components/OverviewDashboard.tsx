@@ -53,6 +53,7 @@ const OverviewDashboard = ({ chainIDs }: { chainIDs: string[] }) => {
       );
     });
   }, []);
+  
   return (
     <div>
       <div className="flex pt-10 gap-10">
