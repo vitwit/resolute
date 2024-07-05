@@ -21,7 +21,7 @@ const SignTxn: React.FC<SignTxnProps> = (props) => {
   const { address, isMember, unSignedTxn, chainID } = props;
   const dispatch = useAppDispatch();
   const { getChainInfo } = useGetChainInfo();
-  const { rpc, address: walletAddress } = getChainInfo(chainID);
+  const { address: walletAddress, rpcURLs } = getChainInfo(chainID);
   const { isAccountVerified } = useVerifyAccount({
     address: walletAddress,
   });
@@ -35,9 +35,9 @@ const SignTxn: React.FC<SignTxnProps> = (props) => {
       signTransaction({
         chainID,
         multisigAddress: address,
-        rpc,
         unSignedTxn,
         walletAddress,
+        rpcURLs
       })
     );
   };
