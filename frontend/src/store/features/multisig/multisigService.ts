@@ -12,6 +12,7 @@ import {
 } from '@/types/multisig';
 import { API_URL } from '@/utils/constants';
 import { getAddressByPrefix } from '@/utils/address';
+import { SigningStargateClient } from '@cosmjs/stargate';
 
 const BASE_URL: string = cleanURL(API_URL);
 
@@ -119,6 +120,20 @@ export const deleteMultisig = (
     `${BASE_URL}/multisig/${address}` + SIGNATURE_PARAMS_STRING(queryParams)
   );
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+export const getStargateClient = async (urls: string[]) => {
+  for (const url of urls) {
+    try {
+      const client = await SigningStargateClient.connect(url);
+      return client;
+      /* eslint-disable @typescript-eslint/no-explicit-any */
+    } catch (error: any) {
+      console.error(`Error connecting to ${url}: ${error.message}`);
+    }
+  }
+  throw new Error('Unable to connect to any RPC URLs');
+};
+
 export default {
   createAccount,
   getAccounts,
@@ -131,4 +146,5 @@ export default {
   deleteMultisig,
   verifyUser,
   getAccountAllMultisigTxns,
+  getStargateClient,
 };

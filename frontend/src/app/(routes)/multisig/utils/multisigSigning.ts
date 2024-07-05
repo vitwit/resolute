@@ -14,15 +14,16 @@ import axios from 'axios';
 import { TxRaw } from 'cosmjs-types/cosmos/tx/v1beta1/tx';
 import { parseTxResult } from '@/utils/signing';
 import { NETWORK_ERROR } from '@/utils/errors';
+import multisigService from '@/store/features/multisig/multisigService';
 
 declare let window: WalletWindow;
 
 const signTransaction = async (
-  rpc: string,
   chainID: string,
   multisigAddress: string,
   unSignedTxn: Txn,
-  walletAddress: string
+  walletAddress: string,
+  rpcURLs: string[]
 ) => {
   try {
     window.wallet.defaultOptions = {
@@ -32,7 +33,7 @@ const signTransaction = async (
         disableBalanceCheck: true,
       },
     };
-    const client = await SigningStargateClient.connect(rpc);
+    const client = await multisigService.getStargateClient(rpcURLs);
 
     const result = await getWalletAmino(chainID);
     const wallet = result[0];
