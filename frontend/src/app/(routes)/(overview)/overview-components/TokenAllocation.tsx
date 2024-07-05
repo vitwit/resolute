@@ -11,7 +11,7 @@ const TokenAllocation = ({ chainIDs }: { chainIDs: string[] }) => {
   /* eslint-disable @typescript-eslint/no-explicit-any */
   const sumOfTotals: any = Object.values(totalAmtObj).reduce((acc, curr: any) => acc + curr.total, 0);
 
-  for (let key in totalAmtObj) {
+  for (const key in totalAmtObj) {
     if (totalAmtObj.hasOwnProperty(key)) {
       // Calculate the percentage
       totalAmtObj[key].percentage = totalAmtObj[key].total * 100 / sumOfTotals;
