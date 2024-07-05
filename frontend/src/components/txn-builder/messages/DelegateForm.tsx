@@ -10,6 +10,7 @@ import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import { TxStatus } from '@/types/enums';
 import { Decimal } from '@cosmjs/math';
 import { formatCoin } from '@/utils/util';
+import FileUpload from '../components/FileUpload';
 
 interface DelegateFormProps {
   chainID: string;
@@ -86,73 +87,86 @@ const DelegateForm = (props: DelegateFormProps) => {
     }
   };
 
+  const handleAddMsgs = (msgs: Msg[]) => {
+    for (const msg of msgs) {
+      onDelegate(msg);
+    }
+  };
+
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
       className="flex flex-col justify-between h-full"
     >
-      <div className="bg-[#FFFFFF05] rounded-2xl space-y-2">
-        <div className="bg-[#FFFFFF05] rounded-2xl px-6 py-4 flex items-center justify-between">
-          <div className="text-b1">Delegate</div>
-          <button
-            className="secondary-btn"
-            onClick={cancelAddMsg}
-            type="button"
-          >
-            Cancel
-          </button>
-        </div>
-        <div className="space-y-6 px-6 pb-6">
-          <div className="flex-1 space-y-2">
-            <div className="text-b1-light">Select Validator</div>
-            <CustomAutoComplete
-              dataLoading={validatorsLoading === TxStatus.PENDING}
-              handleChange={handleValidatorChange}
-              options={validatorsList}
-              selectedOption={selectedOption}
-              name="Select Validator"
-            />
+      <div className="space-y-6">
+        <div className="bg-[#FFFFFF05] rounded-2xl space-y-2">
+          <div className="bg-[#FFFFFF05] rounded-2xl px-6 py-4 flex items-center justify-between">
+            <div className="text-b1">Delegate</div>
+            <button
+              className="secondary-btn"
+              onClick={cancelAddMsg}
+              type="button"
+            >
+              Cancel
+            </button>
           </div>
-          <div className="flex-1 space-y-2">
-            <div className="text-b1-light">Enter Amount</div>
-            <Controller
-              name="amount"
-              control={control}
-              render={({ field }) => (
-                <TextField
-                  className="bg-transparent rounded-full border-[1px] border-[#ffffff80] h-10"
-                  {...field}
-                  sx={{
-                    ...customMUITextFieldStyles,
-                  }}
-                  required
-                  placeholder="Amount"
-                  fullWidth
-                  InputProps={{
-                    sx: {
-                      input: {
-                        color: 'white',
-                        fontSize: '14px',
-                        padding: 2,
+          <div className="space-y-6 px-6 pb-6">
+            <div className="flex-1 space-y-2">
+              <div className="text-b1-light">Select Validator</div>
+              <CustomAutoComplete
+                dataLoading={validatorsLoading === TxStatus.PENDING}
+                handleChange={handleValidatorChange}
+                options={validatorsList}
+                selectedOption={selectedOption}
+                name="Select Validator"
+              />
+            </div>
+            <div className="flex-1 space-y-2">
+              <div className="text-b1-light">Enter Amount</div>
+              <Controller
+                name="amount"
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    className="bg-transparent rounded-full border-[1px] border-[#ffffff80] h-10"
+                    {...field}
+                    sx={{
+                      ...customMUITextFieldStyles,
+                    }}
+                    required
+                    placeholder="Amount"
+                    fullWidth
+                    InputProps={{
+                      sx: {
+                        input: {
+                          color: 'white',
+                          fontSize: '14px',
+                          padding: 2,
+                        },
                       },
-                    },
-                    endAdornment: (
-                      <div className="text-small-light">
-                        <InputAdornment
-                          position="start"
-                          sx={{ color: '#ffffff80' }}
-                        >
-                          {'Available:'}{' '}
-                          {formatCoin(availableBalance, currency.coinDenom)}{' '}
-                        </InputAdornment>
-                      </div>
-                    ),
-                  }}
-                />
-              )}
-            />
+                      endAdornment: (
+                        <div className="text-small-light">
+                          <InputAdornment
+                            position="start"
+                            sx={{ color: '#ffffff80' }}
+                          >
+                            {'Available:'}{' '}
+                            {formatCoin(availableBalance, currency.coinDenom)}{' '}
+                          </InputAdornment>
+                        </div>
+                      ),
+                    }}
+                  />
+                )}
+              />
+            </div>
           </div>
         </div>
+        <FileUpload
+          fromAddress={fromAddress}
+          msgType="Delegate"
+          onUpload={handleAddMsgs}
+        />
       </div>
       <div>
         <button className="primary-btn w-full">Add</button>

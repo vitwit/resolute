@@ -69,7 +69,7 @@ const TxnBuilder = ({
   };
 
   const handleAddMessage = (msg: Msg) => {
-    setMessages([...messages, msg]);
+    setMessages(prev => [...prev, msg]);
     if (msg.typeUrl === SEND_TYPE_URL) {
       const amount = parseBalance(
         msg.value?.amount,

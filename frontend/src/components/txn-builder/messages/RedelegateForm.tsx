@@ -13,6 +13,7 @@ import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import { TxStatus } from '@/types/enums';
 import { formatCoin } from '@/utils/util';
 import { Decimal } from '@cosmjs/math';
+import FileUpload from '../components/FileUpload';
 
 interface ReDelegateProps {
   chainID: string;
@@ -110,6 +111,12 @@ const RedelegateForm = (props: ReDelegateProps) => {
     }
   };
 
+  const handleAddMsgs = (msgs: Msg[]) => {
+    for (const msg of msgs) {
+      onReDelegate(msg);
+    }
+  };
+
   useEffect(() => {
     if (chainID) {
       dispatch(getAllValidators({ chainID, baseURLs }));
@@ -122,86 +129,95 @@ const RedelegateForm = (props: ReDelegateProps) => {
       onSubmit={handleSubmit(onSubmit)}
       className="flex flex-col justify-between h-full"
     >
-      <div className="bg-[#FFFFFF05] rounded-2xl space-y-2">
-        <div className="bg-[#FFFFFF05] rounded-2xl px-6 py-4 flex items-center justify-between">
-          <div className="text-b1">Redelegate</div>
-          <button
-            className="secondary-btn"
-            onClick={cancelAddMsg}
-            type="button"
-          >
-            Cancel
-          </button>
-        </div>
-        <div className="space-y-6">
-          <div className="flex items-center gap-6 px-6">
-            <div className="flex-1 space-y-2">
-              <div className="text-b1-light">Select Source Validator</div>
-              <CustomAutoComplete
-                dataLoading={validatorsLoading === TxStatus.PENDING}
-                handleChange={handleSrcValidatorChange}
-                options={delegatedValidators}
-                selectedOption={selectedOption}
-                name="Select Validator"
-              />
-            </div>
-            <div className="flex-1 space-y-2">
-              <div className="text-b1-light">Select Destination Validator</div>
-              <CustomAutoComplete
-                dataLoading={validatorsLoading === TxStatus.PENDING}
-                handleChange={handleDestValidatorChange}
-                options={validatorsList}
-                selectedOption={selectedDestValidator}
-                name="Select Validator"
-              />
-            </div>
+      <div className="space-y-6">
+        <div className="bg-[#FFFFFF05] rounded-2xl space-y-2">
+          <div className="bg-[#FFFFFF05] rounded-2xl px-6 py-4 flex items-center justify-between">
+            <div className="text-b1">Redelegate</div>
+            <button
+              className="secondary-btn"
+              onClick={cancelAddMsg}
+              type="button"
+            >
+              Cancel
+            </button>
           </div>
-          <div className="flex items-center gap-6 px-6 pb-6">
-            <div className="flex-1 space-y-2">
-              <div className="text-b1-light">Enter Amount</div>
-              <Controller
-                name="amount"
-                control={control}
-                render={({ field }) => (
-                  <TextField
-                    className="bg-transparent rounded-full border-[1px] border-[#ffffff80] h-10"
-                    {...field}
-                    sx={{
-                      ...customMUITextFieldStyles,
-                    }}
-                    placeholder="Enter amount"
-                    fullWidth
-                    InputProps={{
-                      sx: {
-                        input: {
-                          color: 'white',
-                          fontSize: '14px',
-                          padding: 2,
+          <div className="space-y-6">
+            <div className="flex items-center gap-6 px-6">
+              <div className="flex-1 space-y-2">
+                <div className="text-b1-light">Select Source Validator</div>
+                <CustomAutoComplete
+                  dataLoading={validatorsLoading === TxStatus.PENDING}
+                  handleChange={handleSrcValidatorChange}
+                  options={delegatedValidators}
+                  selectedOption={selectedOption}
+                  name="Select Validator"
+                />
+              </div>
+              <div className="flex-1 space-y-2">
+                <div className="text-b1-light">
+                  Select Destination Validator
+                </div>
+                <CustomAutoComplete
+                  dataLoading={validatorsLoading === TxStatus.PENDING}
+                  handleChange={handleDestValidatorChange}
+                  options={validatorsList}
+                  selectedOption={selectedDestValidator}
+                  name="Select Validator"
+                />
+              </div>
+            </div>
+            <div className="flex items-center gap-6 px-6 pb-6">
+              <div className="flex-1 space-y-2">
+                <div className="text-b1-light">Enter Amount</div>
+                <Controller
+                  name="amount"
+                  control={control}
+                  render={({ field }) => (
+                    <TextField
+                      className="bg-transparent rounded-full border-[1px] border-[#ffffff80] h-10"
+                      {...field}
+                      sx={{
+                        ...customMUITextFieldStyles,
+                      }}
+                      placeholder="Enter amount"
+                      fullWidth
+                      InputProps={{
+                        sx: {
+                          input: {
+                            color: 'white',
+                            fontSize: '14px',
+                            padding: 2,
+                          },
                         },
-                      },
-                      endAdornment: (
-                        <div className="text-small-light">
-                          {amountForUndelegation ? (
-                            <InputAdornment
-                              position="start"
-                              sx={{ color: '#ffffff80' }}
-                            >
-                              {'Available for Redelegation :'}{' '}
-                              {formatCoin(
-                                Number(amountForUndelegation?.amount),
-                                displayDenom
-                              )}{' '}
-                            </InputAdornment>
-                          ) : null}
-                        </div>
-                      ),
-                    }}
-                  />
-                )}
-              />
+                        endAdornment: (
+                          <div className="text-small-light">
+                            {amountForUndelegation ? (
+                              <InputAdornment
+                                position="start"
+                                sx={{ color: '#ffffff80' }}
+                              >
+                                {'Available for Redelegation :'}{' '}
+                                {formatCoin(
+                                  Number(amountForUndelegation?.amount),
+                                  displayDenom
+                                )}{' '}
+                              </InputAdornment>
+                            ) : null}
+                          </div>
+                        ),
+                      }}
+                    />
+                  )}
+                />
+              </div>
             </div>
           </div>
         </div>
+        <FileUpload
+          fromAddress={fromAddress}
+          msgType="Redelegate"
+          onUpload={handleAddMsgs}
+        />
       </div>
       <div>
         <button className="primary-btn w-full">Add</button>

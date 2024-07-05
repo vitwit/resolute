@@ -5,3 +5,8 @@
 .msg-btn-selected {
   @apply bg-[#FFFFFF10] border-transparent;
 }
+
+.upload-box {
+  @apply rounded-3xl px-6 py-[10.5px] flex items-center justify-center cursor-pointer gap-2;
+  border: 0.25px dashed #ffffff20;
+}

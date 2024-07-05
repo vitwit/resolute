@@ -7,6 +7,7 @@ import ProposalsList from '../components/ProposalsList';
 import useGov from '@/custom-hooks/txn-builder/useGov';
 import VoteOptionsList from '../components/VoteOptionsList';
 import { msgVoteTypeUrl } from '@/txns/gov/vote';
+import FileUpload from '../components/FileUpload';
 
 interface VoteProps {
   fromAddress: string;
@@ -69,6 +70,12 @@ const VoteForm = (props: VoteProps) => {
     handleVoteChange(null);
   };
 
+  const handleAddMsgs = (msgs: Msg[]) => {
+    for (const msg of msgs) {
+      onVote(msg);
+    }
+  };
+
   useEffect(() => {
     if (chainID) {
       dispatch(
@@ -82,35 +89,42 @@ const VoteForm = (props: VoteProps) => {
       onSubmit={handleSubmit(onSubmit)}
       className="flex flex-col justify-between h-full"
     >
-      <div className="bg-[#FFFFFF05] rounded-2xl space-y-2">
-        <div className="bg-[#FFFFFF05] rounded-2xl px-6 py-4 flex items-center justify-between">
-          <div className="text-b1">Vote</div>
-          <button
-            className="secondary-btn"
-            onClick={cancelAddMsg}
-            type="button"
-          >
-            Cancel
-          </button>
-        </div>
-        <div className="space-y-6 px-6 pb-6">
-          <div className="flex-1 space-y-2">
-            <div className="text-b1-light">Select Proposal</div>
-            <ProposalsList
-              dataLoading={proposalsLoading}
-              handleChange={handleProposalChange}
-              options={activeProposalsList}
-              selectedOption={selectedOption}
-            />
+      <div className="space-y-6">
+        <div className="bg-[#FFFFFF05] rounded-2xl space-y-2">
+          <div className="bg-[#FFFFFF05] rounded-2xl px-6 py-4 flex items-center justify-between">
+            <div className="text-b1">Vote</div>
+            <button
+              className="secondary-btn"
+              onClick={cancelAddMsg}
+              type="button"
+            >
+              Cancel
+            </button>
           </div>
-          <div className="flex-1 space-y-2">
-            <div className="text-b1-light">Select Vote</div>
-            <VoteOptionsList
-              handleChange={handleVoteChange}
-              selectedOption={selectedVoteOption}
-            />
+          <div className="space-y-6 px-6 pb-6">
+            <div className="flex-1 space-y-2">
+              <div className="text-b1-light">Select Proposal</div>
+              <ProposalsList
+                dataLoading={proposalsLoading}
+                handleChange={handleProposalChange}
+                options={activeProposalsList}
+                selectedOption={selectedOption}
+              />
+            </div>
+            <div className="flex-1 space-y-2">
+              <div className="text-b1-light">Select Vote</div>
+              <VoteOptionsList
+                handleChange={handleVoteChange}
+                selectedOption={selectedVoteOption}
+              />
+            </div>
           </div>
         </div>
+        <FileUpload
+          fromAddress={fromAddress}
+          msgType="Vote"
+          onUpload={handleAddMsgs}
+        />
       </div>
       <div>
         <button className="primary-btn w-full">Add</button>
