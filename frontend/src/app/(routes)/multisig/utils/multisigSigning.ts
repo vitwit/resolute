@@ -74,7 +74,6 @@ const signTransaction = async (
 };
 
 export async function broadcastTransaction(data: {
-  rpc: string;
   chainID: string;
   multisigAddress: string;
   signedTxn: Txn;
@@ -82,6 +81,7 @@ export async function broadcastTransaction(data: {
   pubKeys: MultisigAddressPubkey[];
   threshold: number;
   baseURLs: string[];
+  rpcURLs: string[];
 }) {
   const authToken = getAuthToken(COSMOS_CHAIN_ID);
   const queryParams = {
@@ -90,7 +90,7 @@ export async function broadcastTransaction(data: {
   };
 
   try {
-    const client = await SigningStargateClient.connect(data.rpc);
+    const client = await multisigService.getStargateClient(data.rpcURLs);
     const multisigAcc = await client.getAccount(data.multisigAddress);
     if (!multisigAcc) {
       throw new Error('Multisig account does not exist on chain');
