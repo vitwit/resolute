@@ -4,7 +4,6 @@ import { REDIRECT_ICON, TIMER_ICON_YELLOW } from '@/constants/image-names';
 import useInitGovernance from '@/custom-hooks/governance/useInitGovernance';
 import useGetProposals from '@/custom-hooks/governance/useGetProposals';
 import { get } from 'lodash';
-import { ProposalsData } from '@/types/gov';
 
 // type Proposal = {
 //   id: number;
