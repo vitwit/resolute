@@ -27,9 +27,9 @@ const BroadCastTxn: React.FC<BroadCastTxnProps> = (props) => {
   const dispatch = useAppDispatch();
   const { getChainInfo } = useGetChainInfo();
   const {
-    rpc,
     address: walletAddress,
     restURLs: baseURLs,
+    rpcURLs,
   } = getChainInfo(chainID);
   const { isAccountVerified } = useVerifyAccount({
     address: walletAddress,
@@ -65,12 +65,12 @@ const BroadCastTxn: React.FC<BroadCastTxnProps> = (props) => {
       broadcastTransaction({
         chainID,
         multisigAddress,
-        rpc,
         signedTxn: txn,
         walletAddress,
         threshold,
         pubKeys,
         baseURLs,
+        rpcURLs,
       })
     );
   };
