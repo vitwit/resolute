@@ -132,12 +132,12 @@ const MultisigDashboard: React.FC<MultisigDashboardI> = (props) => {
   }, []);
 
   return (
-    <div className="mt-10 space-y-20">
+    <div className="mt-10 space-y-10">
+      <RecentTransactions chainID={chainID} />
       <AllMultisigAccounts
         chainName={chainName}
         setCreateDialogOpen={setCreateDialogOpen}
       />
-      <RecentTransactions chainID={chainID} />
       <DialogVerifyAccount walletAddress={walletAddress} />
       <Loader />
     </div>

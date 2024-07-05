@@ -4,12 +4,21 @@ import EmptyScreen from '@/components/common/EmptyScreen';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import useVerifyAccount from '@/custom-hooks/useVerifyAccount';
-import { setVerifyDialogOpen } from '@/store/features/multisig/multisigSlice';
+import {
+  createTxn,
+  setVerifyDialogOpen,
+} from '@/store/features/multisig/multisigSlice';
 import { setConnectWalletOpen } from '@/store/features/wallet/walletSlice';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import PageHeader from '@/components/common/PageHeader';
 import TxnBuilder from '@/components/txn-builder/TxnBuilder';
 import DialogVerifyAccount from '../../../components/common/DialogVerifyAccount';
+import { fee } from '@/txns/execute';
+import { getAuthToken } from '@/utils/localStorage';
+import { COSMOS_CHAIN_ID } from '@/utils/constants';
+import { setError } from '@/store/features/common/commonSlice';
+import { useRouter } from 'next/navigation';
+import { parseBalance } from '@/utils/denom';
 
 const PageTxnBuilder = ({
   paramChain,
@@ -19,6 +28,7 @@ const PageTxnBuilder = ({
   multisigAddress: string;
 }) => {
   const dispatch = useAppDispatch();
+  const router = useRouter();
   const nameToChainIDs = useAppSelector((state) => state.common.nameToChainIDs);
   const chainName = paramChain.toLowerCase();
   const validChain = chainName in nameToChainIDs;
@@ -27,11 +37,22 @@ const PageTxnBuilder = ({
     dispatch(setConnectWalletOpen(true));
   };
 
+  const handleBackToMultisig = () => {
+    router.push(`/multisig/${chainName}/${multisigAddress}`);
+  };
+
   return (
-    <div className="py-20 px-10 h-[calc(100vh-64px)] flex flex-col">
-      <div className="flex-1 sticky top-0">
+    <div className="py-10 h-[calc(100vh-64px)] flex flex-col">
+      <div className="flex-1 sticky top-0 space-y-2">
+        <button
+          type="button"
+          className="secondary-btn h-8"
+          onClick={handleBackToMultisig}
+        >
+          Back to multisig
+        </button>
         <PageHeader
-          title="Transaction Builder"
+          title="Multisig Transaction Builder"
           description="Transaction builder allows to create single transaction with multiple
           messages of same or different type."
         />
@@ -42,6 +63,7 @@ const PageTxnBuilder = ({
             <PageTxnBuilderEntry
               chainName={chainName}
               multisigAddress={multisigAddress}
+              handleBackToMultisig={handleBackToMultisig}
             />
           ) : (
             <div className="flex-1 flex items-center justify-center">
@@ -71,17 +93,28 @@ export default PageTxnBuilder;
 const PageTxnBuilderEntry = ({
   chainName,
   multisigAddress,
+  handleBackToMultisig,
 }: {
   chainName: string;
   multisigAddress: string;
+  handleBackToMultisig: () => void;
 }) => {
   const dispatch = useAppDispatch();
   const nameToChainIDs = useAppSelector((state) => state.wallet.nameToChainIDs);
   const chainID = nameToChainIDs?.[chainName];
-  const { getChainInfo } = useGetChainInfo();
+  const { getChainInfo, getDenomInfo } = useGetChainInfo();
   const { address } = getChainInfo(chainID);
+  const { decimals, displayDenom, minimalDenom } = getDenomInfo(chainID);
+  const currency = {
+    coinDenom: displayDenom,
+    coinDecimals: decimals,
+    coinMinimalDenom: minimalDenom,
+  };
   const { isAccountVerified } = useVerifyAccount({ address });
 
+  const [availableBalance, setAvailableBalance] = useState(0);
+
+  const createRes = useAppSelector((state) => state.multisig.createTxnRes);
   const handleVerifyAccount = () => {
     dispatch(setVerifyDialogOpen(true));
   };
@@ -92,13 +125,72 @@ const PageTxnBuilderEntry = ({
     }
   }, []);
 
+  const onSubmit = (data: TxnBuilderForm) => {
+    const feeObj = fee(
+      currency.coinMinimalDenom,
+      data.fees.toString(),
+      data.gas
+    );
+    const authToken = getAuthToken(COSMOS_CHAIN_ID);
+    dispatch(
+      createTxn({
+        data: {
+          address: multisigAddress,
+          chain_id: chainID,
+          messages: data.msgs,
+          fee: feeObj,
+          memo: data.memo,
+          gas: data.gas,
+        },
+        queryParams: {
+          address,
+          signature: authToken?.signature || '',
+        },
+      })
+    );
+  };
+
+  useEffect(() => {
+    if (createRes?.status === 'rejected') {
+      dispatch(
+        setError({
+          type: 'error',
+          message: createRes?.error,
+        })
+      );
+    } else if (createRes?.status === 'idle') {
+      dispatch(
+        setError({
+          type: 'success',
+          message: 'Transaction created',
+        })
+      );
+      setTimeout(handleBackToMultisig, 1000);
+    }
+  }, [createRes]);
+
+  const balance = useAppSelector((state) => state.multisig.balance.balance);
+  useEffect(() => {
+    if (balance) {
+      setAvailableBalance(
+        parseBalance(
+          [balance],
+          currency.coinDecimals,
+          currency.coinMinimalDenom
+        )
+      );
+    }
+  }, [balance]);
+
   return (
     <>
       {isAccountVerified() ? (
         <TxnBuilder
           chainID={chainID}
-          multisigAddress={multisigAddress}
-          chainName={chainName}
+          onSubmit={onSubmit}
+          loading={createRes.status === 'pending'}
+          availableBalance={availableBalance}
+          fromAddress={multisigAddress}
         />
       ) : (
         <EmptyScreen

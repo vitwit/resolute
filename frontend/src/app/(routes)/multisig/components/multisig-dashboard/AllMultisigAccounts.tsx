@@ -5,6 +5,7 @@ import { TxStatus } from '@/types/enums';
 import EmptyScreen from '@/components/common/EmptyScreen';
 import { NO_DATA_ILLUSTRATION } from '@/constants/image-names';
 import MultisigAccountsLoading from '../loaders/MultisigAccountsLoading';
+import SectionHeader from '@/components/common/SectionHeader';
 
 const AllMultisigAccounts = ({
   chainName,
@@ -25,7 +26,11 @@ const AllMultisigAccounts = ({
       {status === TxStatus.PENDING ? (
         <MultisigAccountsLoading />
       ) : (
-        <div>
+        <div className="space-y-10">
+          <SectionHeader
+            title={'Multisig Accounts'}
+            description="All multisig accounts you are part of."
+          />
           {accounts?.length ? (
             <div className="grid grid-cols-3 gap-6 px-6">
               {accounts.map((account) => (

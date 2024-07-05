@@ -28,4 +28,6 @@ export const NO_DATA_ILLUSTRATION = '/illustrations/no-data-illustration.png';
 export const NO_MESSAGES_ILLUSTRATION =
   '/illustrations/no-messages-illustration.png';
 export const LOGOUT_ICON = '/icons/logout.png';
+export const ALERT_ICON = '/icons/alert-icon.svg';
 export const TIMER_ICON_YELLOW = 'timer-icon.svg';
+export const UPLOAD_ICON = '/icons/upload-icon.svg';

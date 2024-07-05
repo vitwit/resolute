@@ -147,7 +147,7 @@ const Transactions = ({
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-2 w-full">
+      <div className="flex items-end gap-2 w-full">
         <div className="flex-1">
           <SectionHeader title="Transactions" description="All transactions" />
         </div>

@@ -1,58 +1,30 @@
-import { I_ICON, NO_MESSAGES_ILLUSTRATION } from '@/constants/image-names';
-import { TXN_BUILDER_MSGS } from '@/constants/multisig';
+import { ALERT_ICON, NO_MESSAGES_ILLUSTRATION } from '@/constants/image-names';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import Image from 'next/image';
-import React, { useEffect } from 'react';
-import {
-  Controller,
-  FieldArrayWithId,
-  useFieldArray,
-  useForm,
-  UseFormSetValue,
-} from 'react-hook-form';
+import React, { useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
 import '@/app/(routes)/multiops/multiops.css';
 import { TextField } from '@mui/material';
 import { customMUITextFieldStyles } from '@/app/(routes)/multiops/styles';
-import SendMessage from './messages/SendMessage';
 import CustomButton from '../common/CustomButton';
-import { fee } from '@/txns/execute';
-import { getAuthToken } from '@/utils/localStorage';
-import { COSMOS_CHAIN_ID } from '@/utils/constants';
-import { createTxn } from '@/store/features/multisig/multisigSlice';
-import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
-import { msgSendTypeUrl } from '@/txns/bank/send';
-import { setError } from '@/store/features/common/commonSlice';
-import { useRouter } from 'next/navigation';
-import { Decimal } from '@cosmjs/math';
-import DelegateMessage from './messages/DelegateMessage';
-import { msgDelegate } from '@/txns/staking/delegate';
-import UndelegateMessage from './messages/UndelegateMessage';
-import RedelegateMessage from './messages/RedelegateMessage';
-import { msgUnDelegate } from '@/txns/staking/undelegate';
-import { msgReDelegate } from '@/txns/staking/redelegate';
-import VoteMessage from './messages/VoteMessage';
-import { msgVoteTypeUrl } from '@/txns/gov/vote';
-import CustomMessage from './messages/CustomMessage';
-
-type MsgType =
-  | 'Send'
-  | 'Delegate'
-  | 'Undelegate'
-  | 'Redelegate'
-  | 'Vote'
-  | 'Custom';
+import MessagesList from './components/MessagesList';
+import { DELEGATE_TYPE_URL, SEND_TYPE_URL } from '@/utils/constants';
+import { parseBalance } from '@/utils/denom';
+import SelectMessage from './components/SelectMessage';
 
 const TxnBuilder = ({
   chainID,
-  multisigAddress,
-  chainName,
+  onSubmit,
+  loading,
+  availableBalance,
+  fromAddress,
 }: {
   chainID: string;
-  multisigAddress: string;
-  chainName: string;
+  onSubmit: (data: TxnBuilderForm) => void;
+  loading: boolean;
+  availableBalance: number;
+  fromAddress: string;
 }) => {
-  const dispatch = useAppDispatch();
-  const router = useRouter();
   const { getChainInfo, getDenomInfo } = useGetChainInfo();
   const basicChainInfo = getChainInfo(chainID);
   const { decimals, displayDenom, minimalDenom } = getDenomInfo(chainID);
@@ -61,417 +33,224 @@ const TxnBuilder = ({
     coinDecimals: decimals,
     coinMinimalDenom: minimalDenom,
   };
-  const { address: walletAddress, feeAmount } = basicChainInfo;
+  const { feeAmount } = basicChainInfo;
 
-  const { handleSubmit, control, reset, setValue } = useForm<TxnBuilderForm>({
+  const [txType, setTxType] = useState('');
+  const [messages, setMessages] = useState<Msg[]>([]);
+  const [estimatedBalance, setEstimatedBalances] = useState<number>(
+    availableBalance || 0
+  );
+
+  const { handleSubmit, control } = useForm({
     defaultValues: {
       gas: 900000,
       memo: '',
       fees: feeAmount * 10 ** currency.coinDecimals,
-      msgs: [],
     },
   });
 
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: 'msgs',
-  });
+  const handleSelectMessage = (type: TxnMsgType) => {
+    setTxType(type);
+  };
 
-  const handleAddMessage = (type: MsgType) => {
-    if (type === 'Send') {
-      append({ type: 'Send', address: '', amount: '' });
-    } else if (type === 'Delegate') {
-      append({ type: 'Delegate', validator: '', amount: '' });
-    } else if (type === 'Undelegate') {
-      append({ type: 'Undelegate', validator: '', amount: '' });
-    } else if (type === 'Redelegate') {
-      append({
-        type: 'Redelegate',
-        sourceValidator: '',
-        destValidator: '',
-        amount: '',
+  const handleAddMessage = (msg: Msg) => {
+    setMessages((prev) => [...prev, msg]);
+    if (msg.typeUrl === SEND_TYPE_URL) {
+      const amount = parseBalance(
+        msg.value?.amount,
+        currency.coinDecimals,
+        currency.coinMinimalDenom
+      );
+      setEstimatedBalances((prev) => {
+        const newBalance = prev - amount;
+        return newBalance;
       });
-    } else if (type === 'Vote') {
-      append({
-        type: 'Vote',
-        option: '',
-        proposalId: '',
-      });
-    } else if (type === 'Custom') {
-      append({
-        type: 'Custom',
-        typeUrl: '',
-        value: '',
+    } else if (msg.typeUrl === DELEGATE_TYPE_URL) {
+      const amount = parseBalance(
+        [msg.value?.amount],
+        currency.coinDecimals,
+        currency.coinMinimalDenom
+      );
+      setEstimatedBalances((prev) => {
+        const newBalance = prev - amount;
+        return newBalance;
       });
     }
   };
 
-  const handleClearAll = () => {
-    reset({
-      gas: 900000,
-      memo: '',
-      fees: feeAmount * 10 ** currency.coinDecimals,
-      msgs: [],
+  const onDeleteMsg = (index: number) => {
+    const msg = messages[index];
+    if (msg.typeUrl === SEND_TYPE_URL) {
+      const amount = parseBalance(
+        msg.value?.amount,
+        currency.coinDecimals,
+        currency.coinMinimalDenom
+      );
+      setEstimatedBalances((prev) => {
+        const newBalance = prev + amount;
+        return newBalance;
+      });
+    } else if (msg.typeUrl === DELEGATE_TYPE_URL) {
+      const amount = parseBalance(
+        [msg.value?.amount],
+        currency.coinDecimals,
+        currency.coinMinimalDenom
+      );
+      setEstimatedBalances((prev) => {
+        const newBalance = prev + amount;
+        return newBalance;
+      });
+    }
+    const arr = messages.filter((_, i) => i !== index);
+    setMessages(arr);
+  };
+
+  const onFormSubmit = (data: { gas: number; memo: string; fees: number }) => {
+    onSubmit({
+      fees: data.fees,
+      gas: data.gas,
+      memo: data.memo,
+      msgs: messages,
     });
   };
 
-  const onSubmit = (data: TxnBuilderForm) => {
-    const feeObj = fee(
-      currency.coinMinimalDenom,
-      data.fees.toString(),
-      data.gas
-    );
-    const authToken = getAuthToken(COSMOS_CHAIN_ID);
-    const formattedMsgs = formatMsgs(
-      data.msgs,
-      multisigAddress,
-      minimalDenom,
-      decimals
-    );
-    dispatch(
-      createTxn({
-        data: {
-          address: multisigAddress,
-          chain_id: chainID,
-          messages: formattedMsgs,
-          fee: feeObj,
-          memo: data.memo,
-          gas: data.gas,
-        },
-        queryParams: {
-          address: walletAddress,
-          signature: authToken?.signature || '',
-        },
-      })
-    );
-  };
-
-  const handleBackToMultisig = () => {
-    router.push(`/multisig/${chainName}/${multisigAddress}`);
-  };
-
   return (
-    <form
-      onSubmit={handleSubmit(onSubmit)}
-      className="mt-10 h-full overflow-y-scroll flex gap-10"
-    >
-      <SelectMessage control={control} handleAddMessage={handleAddMessage} />
-      <DividerLine />
-      <MessagesList
-        control={control}
-        fields={fields}
-        remove={remove}
-        handleClearAll={handleClearAll}
-        handleBackToMultisig={handleBackToMultisig}
-        setValue={setValue}
+    <div className="mt-10 h-full overflow-y-scroll flex gap-10">
+      <SelectMessage
+        handleSelectMessage={handleSelectMessage}
+        txType={txType}
+        fromAddress={fromAddress}
+        handleAddMessage={handleAddMessage}
+        currency={currency}
         chainID={chainID}
+        availableBalance={availableBalance}
+        cancelAddMsg={() => {
+          setTxType('');
+        }}
       />
-    </form>
+      <div className="flex-1 space-y-6 h-full flex flex-col bg-[#FFFFFF05] rounded-2xl p-6 overflow-y-scroll">
+        <div className="flex items-center justify-between">
+          <div className="text-[#FFFFFF80]">Transaction Summary</div>
+          {messages?.length ? (
+            <div
+              className="secondary-btn cursor-pointer"
+              onClick={() => setMessages([])}
+            >
+              Clear All
+            </div>
+          ) : null}
+        </div>
+        {messages?.length ? (
+          <div className="flex-1 flex flex-col gap-6">
+            <MessagesList
+              currency={currency}
+              messages={messages}
+              onDeleteMsg={onDeleteMsg}
+            />
+            <div className="space-y-6">
+              <div className="p-4 rounded-2xl bg-[#FFFFFF0A] space-y-4">
+                <div className="flex items-center gap-1">
+                  <Image
+                    src={ALERT_ICON}
+                    width={24}
+                    height={24}
+                    alt="info-icon"
+                    draggable={false}
+                  />
+                  <div className="text-b1 text-[#FFC13C]">Asset Summary</div>
+                </div>
+                <div className="text-[12px] flex items-center gap-2">
+                  <div className="font-bold">
+                    {estimatedBalance < 0 ? 0 : estimatedBalance.toFixed(3)}{' '}
+                    {currency.coinDenom}
+                  </div>
+                  <div className="text-[#FFFFFF80]">
+                    is the estimated balance after this transaction
+                  </div>
+                </div>
+              </div>
+              <form className="space-y-6" onSubmit={handleSubmit(onFormSubmit)}>
+                <div className="flex items-center gap-6 w-full">
+                  <div className="space-y-2 w-full">
+                    <div className="text-b1-light">Enter Gas</div>
+                    <Controller
+                      name="gas"
+                      control={control}
+                      render={({ field }) => (
+                        <TextField
+                          className="bg-transparent rounded-full border-[1px] border-[#ffffff80] h-10"
+                          {...field}
+                          sx={{
+                            ...customMUITextFieldStyles,
+                          }}
+                          placeholder="Gas"
+                          fullWidth
+                          InputProps={{
+                            sx: {
+                              input: {
+                                color: 'white',
+                                fontSize: '14px',
+                                padding: 2,
+                              },
+                            },
+                          }}
+                        />
+                      )}
+                    />
+                  </div>
+                  <div className="space-y-2 w-full">
+                    <div className="text-b1-light">Enter Memo (optional)</div>
+                    <Controller
+                      name="memo"
+                      control={control}
+                      render={({ field }) => (
+                        <TextField
+                          className="bg-transparent rounded-full border-[1px] border-[#ffffff80] h-10"
+                          {...field}
+                          sx={{
+                            ...customMUITextFieldStyles,
+                          }}
+                          placeholder="Memo"
+                          fullWidth
+                          InputProps={{
+                            sx: {
+                              input: {
+                                color: 'white',
+                                fontSize: '14px',
+                                padding: 2,
+                              },
+                            },
+                          }}
+                        />
+                      )}
+                    />
+                  </div>
+                </div>
+                <CustomButton
+                  btnText="Create Transaction"
+                  btnDisabled={loading}
+                  btnLoading={loading}
+                  btnType="submit"
+                  btnStyles="w-full"
+                />
+              </form>
+            </div>
+          </div>
+        ) : (
+          <div className="h-full flex-1 flex flex-col items-center justify-center opacity-70">
+            <Image
+              src={NO_MESSAGES_ILLUSTRATION}
+              height={130}
+              width={195}
+              alt="No Messages"
+            />
+            <div className="text-b1 font-light">No messages yet</div>
+          </div>
+        )}
+      </div>
+    </div>
   );
 };
 
 export default TxnBuilder;
 
-const SelectMessage = ({
-  control,
-  handleAddMessage,
-}: {
-  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-  control: any;
-  handleAddMessage: (type: MsgType) => void;
-}) => {
-  return (
-    <div className="w-[35%]">
-      <div className="text-b1">Add Messages</div>
-      <div className="space-y-10">
-        <div className="space-y-6 mt-6">
-          <div className="flex gap-2">
-            <div className="text-b1-light">Select Message</div>
-            <Image src={I_ICON} height={20} width={20} alt="" />
-          </div>
-          <div className="flex gap-2 flex-wrap">
-            {TXN_BUILDER_MSGS.map((msg) => (
-              <button
-                key={msg}
-                className="msg-btn"
-                type="button"
-                onClick={() => handleAddMessage(msg as MsgType)}
-              >
-                {msg}
-              </button>
-            ))}
-          </div>
-        </div>
-        <div className="flex-1 space-y-2">
-          <div className="text-b1-light">Enter Gas</div>
-          <Controller
-            name="gas"
-            control={control}
-            render={({ field }) => (
-              <TextField
-                className="bg-transparent rounded-full border-[1px] border-[#ffffff80] h-10"
-                {...field}
-                sx={{
-                  ...customMUITextFieldStyles,
-                }}
-                placeholder="Enter gas"
-                fullWidth
-                InputProps={{
-                  sx: {
-                    input: {
-                      color: 'white',
-                      fontSize: '14px',
-                      padding: 2,
-                    },
-                  },
-                }}
-              />
-            )}
-          />
-        </div>
-        <div className="flex-1 space-y-2">
-          <div className="text-b1-light">Enter Memo (optional)</div>
-          <Controller
-            name="memo"
-            control={control}
-            render={({ field }) => (
-              <TextField
-                className="bg-transparent rounded-full border-[1px] border-[#ffffff80] h-10"
-                {...field}
-                sx={{
-                  ...customMUITextFieldStyles,
-                }}
-                placeholder="Enter memo"
-                fullWidth
-                InputProps={{
-                  sx: {
-                    input: {
-                      color: 'white',
-                      fontSize: '14px',
-                      padding: 2,
-                    },
-                  },
-                }}
-              />
-            )}
-          />
-        </div>
-      </div>
-    </div>
-  );
-};
-
-const DividerLine = () => {
-  return <div className="h-full w-[1px] bg-[#ffffff80] opacity-20"></div>;
-};
-
-const MessagesList = ({
-  control,
-  fields,
-  remove,
-  handleClearAll,
-  handleBackToMultisig,
-  setValue,
-  chainID,
-}: {
-  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-  control: any;
-  fields: FieldArrayWithId<TxnBuilderForm, 'msgs', 'id'>[];
-  remove: (index: number) => void;
-  handleClearAll: () => void;
-  handleBackToMultisig: () => void;
-  setValue: UseFormSetValue<TxnBuilderForm>;
-  chainID: string;
-}) => {
-  const dispatch = useAppDispatch();
-  const createRes = useAppSelector((state) => state.multisig.createTxnRes);
-  useEffect(() => {
-    if (createRes?.status === 'rejected') {
-      dispatch(
-        setError({
-          type: 'error',
-          message: createRes?.error,
-        })
-      );
-    } else if (createRes?.status === 'idle') {
-      dispatch(
-        setError({
-          type: 'success',
-          message: 'Transaction created',
-        })
-      );
-      setTimeout(handleBackToMultisig, 1000);
-    }
-  }, [createRes]);
-
-  return (
-    <div className="flex-1 space-y-6 h-full overflow-y-scroll">
-      <div className="flex items-center justify-between">
-        <div>Messages</div>
-        <div className="secondary-btn cursor-pointer" onClick={handleClearAll}>
-          Clear All
-        </div>
-      </div>
-      <div className="space-y-6">
-        {fields.map((field, index) => (
-          <div key={field.id}>
-            {field.type === 'Send' && (
-              <SendMessage control={control} index={index} remove={remove} />
-            )}
-            {field.type === 'Delegate' && (
-              <DelegateMessage
-                control={control}
-                index={index}
-                remove={remove}
-                setValue={setValue}
-                chainID={chainID}
-              />
-            )}
-            {field.type === 'Undelegate' && (
-              <UndelegateMessage
-                control={control}
-                index={index}
-                remove={remove}
-                setValue={setValue}
-                chainID={chainID}
-              />
-            )}
-            {field.type === 'Redelegate' && (
-              <RedelegateMessage
-                control={control}
-                index={index}
-                remove={remove}
-                setValue={setValue}
-                chainID={chainID}
-              />
-            )}
-            {field.type === 'Vote' && (
-              <VoteMessage
-                index={index}
-                remove={remove}
-                setValue={setValue}
-                chainID={chainID}
-              />
-            )}
-            {field.type === 'Custom' && (
-              <CustomMessage control={control} index={index} remove={remove} />
-            )}
-          </div>
-        ))}
-      </div>
-      {fields?.length ? (
-        <CustomButton
-          btnType="submit"
-          btnText="Create Transaction"
-          btnStyles="w-full"
-          btnDisabled={createRes.status === 'pending'}
-          btnLoading={createRes.status === 'pending'}
-        />
-      ) : (
-        <div className="h-full flex flex-col items-center justify-center">
-          <Image
-            src={NO_MESSAGES_ILLUSTRATION}
-            height={260}
-            width={390}
-            alt="No Messages"
-          />
-          <div className="text-b1 font-light">No messages yet</div>
-        </div>
-      )}
-    </div>
-  );
-};
-
-const formatMsgs = (
-  msgs: Message[],
-  fromAddress: string,
-  minimalDenom: string,
-  coinDecimals: number
-) => {
-  const messages: Msg[] = [];
-  msgs.forEach((msg) => {
-    if (msg.type === 'Send') {
-      const amountInAtomics = Decimal.fromUserInput(
-        msg.amount,
-        Number(coinDecimals)
-      ).atomics;
-      messages.push({
-        typeUrl: msgSendTypeUrl,
-        value: {
-          fromAddress,
-          toAddress: msg.address,
-          amount: [
-            {
-              amount: amountInAtomics,
-              denom: minimalDenom,
-            },
-          ],
-        },
-      });
-    } else if (msg.type === 'Delegate') {
-      const amountInAtomics = Decimal.fromUserInput(
-        msg.amount,
-        Number(coinDecimals)
-      ).atomics;
-      messages.push({
-        typeUrl: msgDelegate,
-        value: {
-          delegatorAddress: fromAddress,
-          validatorAddress: msg.validator,
-          amount: {
-            amount: amountInAtomics,
-            denom: minimalDenom,
-          },
-        },
-      });
-    } else if (msg.type === 'Undelegate') {
-      const amountInAtomics = Decimal.fromUserInput(
-        msg.amount,
-        Number(coinDecimals)
-      ).atomics;
-      messages.push({
-        typeUrl: msgUnDelegate,
-        value: {
-          delegatorAddress: fromAddress,
-          validatorAddress: msg.validator,
-          amount: {
-            amount: amountInAtomics,
-            denom: minimalDenom,
-          },
-        },
-      });
-    } else if (msg.type === 'Redelegate') {
-      const amountInAtomics = Decimal.fromUserInput(
-        msg.amount,
-        Number(coinDecimals)
-      ).atomics;
-      messages.push({
-        typeUrl: msgReDelegate,
-        value: {
-          delegatorAddress: fromAddress,
-          validatorDstAddress: msg.destValidator,
-          validatorSrcAddress: msg.sourceValidator,
-          amount: {
-            amount: amountInAtomics,
-            denom: minimalDenom,
-          },
-        },
-      });
-    } else if (msg.type === 'Vote') {
-      messages.push({
-        typeUrl: msgVoteTypeUrl,
-        value: {
-          voter: fromAddress,
-          option: Number(msg.option),
-          proposalId: Number(msg.proposalId),
-        },
-      });
-    } else if (msg.type === 'Custom') {
-      messages.push({
-        typeUrl: msg.typeUrl,
-        value: JSON.parse(msg.value),
-      });
-    }
-  });
-  return messages;
-};
