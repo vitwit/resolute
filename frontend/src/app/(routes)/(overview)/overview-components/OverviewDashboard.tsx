@@ -14,7 +14,7 @@ const OverviewDashboard = ({ chainIDs }: { chainIDs: string[] }) => {
         </div>
       </div>
       <div className="flex flex-col gap-10 h-[calc(100vh-104px)]">
-        <TokenAllocation />
+        <TokenAllocation chainIDs={chainIDs} />
         <GovernanceView chainIDs={chainIDs} />
       </div>
     </div>
