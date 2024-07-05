@@ -44,7 +44,7 @@ const UndelegateForm = (props: UnDelegateProps) => {
   );
   const { handleSubmit, control, setValue, reset } = useForm({
     defaultValues: {
-      amount: 0,
+      amount: '',
       validator: '',
       delegator: fromAddress,
     },
@@ -70,13 +70,13 @@ const UndelegateForm = (props: UnDelegateProps) => {
   };
 
   const onSubmit = (data: {
-    amount: number;
+    amount: string;
     validator: string;
     delegator: string;
   }) => {
     if (data.validator) {
       const baseAmount = Decimal.fromUserInput(
-        data.amount.toString(),
+        data.amount,
         Number(currency?.coinDecimals)
       ).atomics;
       const msgUnDelegate = {

@@ -88,3 +88,11 @@ interface VoteOption {
   label: string;
   value: number;
 }
+
+type TxnMsgType =
+  | 'Send'
+  | 'Delegate'
+  | 'Undelegate'
+  | 'Redelegate'
+  | 'Vote'
+  | 'Custom';

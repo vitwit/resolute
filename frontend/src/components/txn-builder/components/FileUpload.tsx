@@ -1,11 +1,7 @@
 import { UPLOAD_ICON } from '@/constants/image-names';
 import { useAppDispatch } from '@/custom-hooks/StateHooks';
 import { setError } from '@/store/features/common/commonSlice';
-import {
-  MULTIOPS_MSG_TYPES,
-  MULTIOPS_SAMPLE_FILES,
-  MULTISIG_TX_TYPES,
-} from '@/utils/constants';
+import { MULTIOPS_MSG_TYPES, MULTIOPS_SAMPLE_FILES } from '@/utils/constants';
 import {
   parseDelegateMsgsFromContent,
   parseReDelegateMsgsFromContent,
@@ -14,7 +10,6 @@ import {
   parseVoteMsgsFromContent,
 } from '@/utils/parseMsgs';
 import Image from 'next/image';
-import Link from 'next/link';
 import React from 'react';
 
 interface FileUploadProps {
@@ -177,7 +172,7 @@ const FileUpload = (props: FileUploadProps) => {
             const reader = new FileReader();
             reader.onload = (e) => {
               const contents = (e?.target?.result as string) || '';
-              const isValid = onFileContents(contents, msgType);
+              onFileContents(contents, msgType);
             };
             reader.onerror = (e) => {
               alert(e);

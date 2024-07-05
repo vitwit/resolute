@@ -4,6 +4,8 @@ import { Txn } from '@/types/multisig';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import LetterAvatar from '@/components/common/LetterAvatar';
 import TxnsCard from '../common/TxnsCard';
+import { TxStatus } from '@/types/enums';
+import TransactionsLoading from '../loaders/TransactionsLoading';
 
 const RecentTransactions = ({ chainID }: { chainID: string }) => {
   const { getDenomInfo } = useGetChainInfo();
@@ -13,6 +15,7 @@ const RecentTransactions = ({ chainID }: { chainID: string }) => {
   );
   const accounts = multisigAccounts.accounts;
   const txnsState = useAppSelector((state) => state.multisig.txns.list);
+  const txnsLoading = useAppSelector((state) => state.multisig.txns.status);
 
   const currency = useMemo(
     () => ({
@@ -51,7 +54,11 @@ const RecentTransactions = ({ chainID }: { chainID: string }) => {
             })}
           </div>
         </div>
-      ) : null}
+      ) : (
+        <div className="px-6">
+          {txnsLoading === TxStatus.PENDING ? <TransactionsLoading /> : null}
+        </div>
+      )}
     </>
   );
 };

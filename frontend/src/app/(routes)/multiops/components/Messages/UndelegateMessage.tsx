@@ -1,6 +1,7 @@
 import { REMOVE_ICON } from '@/constants/image-names';
 import { TxnMsgProps } from '@/types/multisig';
 import { parseBalance } from '@/utils/denom';
+import { shortenAddress } from '@/utils/util';
 import Image from 'next/image';
 import React from 'react';
 
@@ -21,7 +22,9 @@ const UndelegateMessage: React.FC<TxnMsgProps> = (props) => {
             {currency.coinDenom}&nbsp;
           </span>
           <span>from&nbsp;</span>
-          <span className="font-extralight">{msg.value.validatorAddress}</span>
+          <span className="font-extralight">
+            {shortenAddress(msg.value.validatorAddress, 20)}
+          </span>
         </div>
       </div>
       {onDelete ? (

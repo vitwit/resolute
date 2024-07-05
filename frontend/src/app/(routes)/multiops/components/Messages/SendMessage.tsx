@@ -1,5 +1,6 @@
 import { REMOVE_ICON } from '@/constants/image-names';
 import { parseBalance } from '@/utils/denom';
+import { shortenAddress } from '@/utils/util';
 import Image from 'next/image';
 import React from 'react';
 
@@ -27,7 +28,9 @@ const SendMessage = (props: TxnMsgProps) => {
             {currency.coinDenom}&nbsp;
           </span>
           <span>to&nbsp;</span>
-          <span className="font-extralight">{msg.value.toAddress}</span>
+          <span className="font-extralight">
+            {shortenAddress(msg.value.toAddress, 20)}
+          </span>
         </div>
       </div>
       {onDelete ? (

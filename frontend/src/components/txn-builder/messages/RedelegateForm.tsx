@@ -48,7 +48,7 @@ const RedelegateForm = (props: ReDelegateProps) => {
 
   const { handleSubmit, control, setValue, reset } = useForm({
     defaultValues: {
-      amount: 0,
+      amount: '',
       validatorSrcAddress: '',
       validatorDstAddress: '',
       delegator: fromAddress,
@@ -81,14 +81,14 @@ const RedelegateForm = (props: ReDelegateProps) => {
   };
 
   const onSubmit = (data: {
-    amount: number;
+    amount: string;
     validatorSrcAddress: string;
     validatorDstAddress: string;
     delegator: string;
   }) => {
     if (data?.validatorSrcAddress && data?.validatorDstAddress) {
       const baseAmount = Decimal.fromUserInput(
-        data.amount.toString(),
+        data.amount,
         Number(currency?.coinDecimals)
       ).atomics;
       const msgReDelegate = {

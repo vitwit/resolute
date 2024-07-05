@@ -7,25 +7,10 @@ import '@/app/(routes)/multiops/multiops.css';
 import { TextField } from '@mui/material';
 import { customMUITextFieldStyles } from '@/app/(routes)/multiops/styles';
 import CustomButton from '../common/CustomButton';
-import { TXN_BUILDER_MSGS } from '@/constants/txn-builder';
-import SectionHeader from '../common/SectionHeader';
 import MessagesList from './components/MessagesList';
-import SendForm from './messages/SendForm';
-import DelegateForm from './messages/DelegateForm';
 import { DELEGATE_TYPE_URL, SEND_TYPE_URL } from '@/utils/constants';
 import { parseBalance } from '@/utils/denom';
-import UndelegateForm from './messages/UndelegateForm';
-import RedelegateForm from './messages/RedelegateForm';
-import VoteForm from './messages/VoteForm';
-import CustomMessageForm from './messages/CustomMessageForm';
-
-type MsgType =
-  | 'Send'
-  | 'Delegate'
-  | 'Undelegate'
-  | 'Redelegate'
-  | 'Vote'
-  | 'Custom';
+import SelectMessage from './components/SelectMessage';
 
 const TxnBuilder = ({
   chainID,
@@ -53,7 +38,7 @@ const TxnBuilder = ({
   const [txType, setTxType] = useState('');
   const [messages, setMessages] = useState<Msg[]>([]);
   const [estimatedBalance, setEstimatedBalances] = useState<number>(
-    2 || availableBalance || 0
+    availableBalance || 0
   );
 
   const { handleSubmit, control } = useForm({
@@ -64,12 +49,12 @@ const TxnBuilder = ({
     },
   });
 
-  const handleSelectMessage = (type: MsgType) => {
+  const handleSelectMessage = (type: TxnMsgType) => {
     setTxType(type);
   };
 
   const handleAddMessage = (msg: Msg) => {
-    setMessages(prev => [...prev, msg]);
+    setMessages((prev) => [...prev, msg]);
     if (msg.typeUrl === SEND_TYPE_URL) {
       const amount = parseBalance(
         msg.value?.amount,
@@ -78,7 +63,7 @@ const TxnBuilder = ({
       );
       setEstimatedBalances((prev) => {
         const newBalance = prev - amount;
-        return newBalance < 0 ? 0 : newBalance;
+        return newBalance;
       });
     } else if (msg.typeUrl === DELEGATE_TYPE_URL) {
       const amount = parseBalance(
@@ -88,12 +73,34 @@ const TxnBuilder = ({
       );
       setEstimatedBalances((prev) => {
         const newBalance = prev - amount;
-        return newBalance < 0 ? 0 : newBalance;
+        return newBalance;
       });
     }
   };
 
   const onDeleteMsg = (index: number) => {
+    const msg = messages[index];
+    if (msg.typeUrl === SEND_TYPE_URL) {
+      const amount = parseBalance(
+        msg.value?.amount,
+        currency.coinDecimals,
+        currency.coinMinimalDenom
+      );
+      setEstimatedBalances((prev) => {
+        const newBalance = prev + amount;
+        return newBalance;
+      });
+    } else if (msg.typeUrl === DELEGATE_TYPE_URL) {
+      const amount = parseBalance(
+        [msg.value?.amount],
+        currency.coinDecimals,
+        currency.coinMinimalDenom
+      );
+      setEstimatedBalances((prev) => {
+        const newBalance = prev + amount;
+        return newBalance;
+      });
+    }
     const arr = messages.filter((_, i) => i !== index);
     setMessages(arr);
   };
@@ -154,7 +161,8 @@ const TxnBuilder = ({
                 </div>
                 <div className="text-[12px] flex items-center gap-2">
                   <div className="font-bold">
-                    {estimatedBalance.toFixed(3)} {currency.coinDenom}
+                    {estimatedBalance < 0 ? 0 : estimatedBalance.toFixed(3)}{' '}
+                    {currency.coinDenom}
                   </div>
                   <div className="text-[#FFFFFF80]">
                     is the estimated balance after this transaction
@@ -246,98 +254,3 @@ const TxnBuilder = ({
 
 export default TxnBuilder;
 
-const SelectMessage = ({
-  handleSelectMessage,
-  txType,
-  handleAddMessage,
-  currency,
-  chainID,
-  fromAddress,
-  availableBalance,
-  cancelAddMsg,
-}: {
-  handleSelectMessage: (type: MsgType) => void;
-  txType: string;
-  handleAddMessage: (msg: Msg) => void;
-  currency: Currency;
-  chainID: string;
-  fromAddress: string;
-  availableBalance: number;
-  cancelAddMsg: () => void;
-}) => {
-  return (
-    <div className="w-[40%] space-y-6 flex flex-col">
-      <div className="space-y-6">
-        <SectionHeader
-          title="Transaction Messages"
-          description="Select and add the transaction messages"
-        />
-        <div className="flex gap-2 flex-wrap">
-          {TXN_BUILDER_MSGS.map((msg) => (
-            <button
-              key={msg}
-              className={`msg-btn ${txType === msg ? 'msg-btn-selected' : ''} `}
-              type="button"
-              onClick={() => handleSelectMessage(msg as MsgType)}
-            >
-              {msg}
-            </button>
-          ))}
-        </div>
-      </div>
-      <div className="flex-1">
-        {txType === 'Send' && (
-          <SendForm
-            onSend={handleAddMessage}
-            currency={currency}
-            fromAddress={fromAddress}
-            availableBalance={availableBalance}
-            cancelAddMsg={cancelAddMsg}
-          />
-        )}
-        {txType === 'Delegate' && (
-          <DelegateForm
-            chainID={chainID}
-            currency={currency}
-            onDelegate={handleAddMessage}
-            fromAddress={fromAddress}
-            availableBalance={availableBalance}
-            cancelAddMsg={cancelAddMsg}
-          />
-        )}
-        {txType === 'Undelegate' && (
-          <UndelegateForm
-            chainID={chainID}
-            currency={currency}
-            fromAddress={fromAddress}
-            onUndelegate={handleAddMessage}
-            cancelAddMsg={cancelAddMsg}
-          />
-        )}
-        {txType === 'Redelegate' && (
-          <RedelegateForm
-            chainID={chainID}
-            currency={currency}
-            fromAddress={fromAddress}
-            onReDelegate={handleAddMessage}
-            cancelAddMsg={cancelAddMsg}
-          />
-        )}
-        {txType === 'Vote' && (
-          <VoteForm
-            chainID={chainID}
-            fromAddress={fromAddress}
-            onVote={handleAddMessage}
-            cancelAddMsg={cancelAddMsg}
-          />
-        )}
-        {txType === 'Custom' && (
-          <CustomMessageForm
-            onAddMsg={handleAddMessage}
-            cancelAddMsg={cancelAddMsg}
-          />
-        )}
-      </div>
-    </div>
-  );
-};

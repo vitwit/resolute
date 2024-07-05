@@ -43,7 +43,7 @@ const DelegateForm = (props: DelegateFormProps) => {
   );
   const { handleSubmit, control, setValue, reset } = useForm({
     defaultValues: {
-      amount: 0,
+      amount: '',
       validator: '',
       delegator: fromAddress,
     },
@@ -60,13 +60,13 @@ const DelegateForm = (props: DelegateFormProps) => {
   }, []);
 
   const onSubmit = (data: {
-    amount: number;
+    amount: string;
     validator: string;
     delegator: string;
   }) => {
     if (data.validator) {
       const baseAmount = Decimal.fromUserInput(
-        data.amount.toString(),
+        data.amount,
         Number(currency?.coinDecimals)
       ).atomics;
       const msgDelegate = {
