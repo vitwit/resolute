@@ -152,8 +152,8 @@ const Asset = ({
   }, []);
 
   return (
-    <tr className="table-border-line hover:bg-[#FFFFFF14]">
-      <th className="rounded-l-2xl px-6 py-6 w-1/4">
+    <tr className="hover:bg-[#FFFFFF14]">
+      <th className="rounded-l-2xl px-4 py-4 w-1/4">
         <div className="flex flex-col items-start gap-2">
           <div className="text-[14px] font-normal leading-[normal]">
             {formatCoin(asset.balance, asset.displayDenom).split('.')[0]}.
