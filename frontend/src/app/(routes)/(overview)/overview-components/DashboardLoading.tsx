@@ -72,6 +72,7 @@ const DashboardLoading = () => {
               </div>
               <div className="divider-line"></div>
             </div>
+            <div className="h-[150px] w-[370px] bg-[#252525] rounded animate-pulse"></div>
           </div>
           <div className="flex flex-col p-6 rounded-2xl bg-[#ffffff05] w-[418px] h-[486px] gap-4">
             <div className="flex flex-col gap-2 w-full">

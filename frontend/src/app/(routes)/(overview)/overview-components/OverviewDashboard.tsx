@@ -3,7 +3,6 @@ import AssetsTable from './AssetsTable';
 import TokenAllocation from './TokenAllocation';
 import BalanceSummary from './BalanceSummary';
 import GovernanceView from './GovernanceView';
-import DashboardLoading from './DashboardLoading';
 
 const OverviewDashboard = ({ chainIDs }: { chainIDs: string[] }) => {
   return (
@@ -20,7 +19,6 @@ const OverviewDashboard = ({ chainIDs }: { chainIDs: string[] }) => {
           <GovernanceView chainIDs={chainIDs} />
         </div>
       </div>
-      {/* <DashboardLoading /> */}
     </div>
   );
 };
