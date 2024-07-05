@@ -71,7 +71,7 @@ const PageMultisig = ({ chainName }: { chainName: string }) => {
   }, [createMultiAccRes]);
 
   return (
-    <div className="py-20 px-10 h-full flex flex-col">
+    <div className="py-10 h-full flex flex-col">
       <div className="flex items-end gap-10 w-full">
         <div className="flex-1">
           <PageHeader

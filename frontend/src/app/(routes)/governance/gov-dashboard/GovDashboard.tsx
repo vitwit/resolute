@@ -40,7 +40,12 @@ const GovDashboard = ({ chainIDs }: { chainIDs: string[] }) => {
     isActive,
   }: SelectedProposal) => {
     setSelectedProposal((proposal) => {
-      if (!!proposal) return null;
+      if (
+        proposal?.chainID === chainID &&
+        proposal?.proposalId === proposalId
+      ) {
+        return null;
+      }
       return {
         chainID,
         proposalId,
@@ -48,10 +53,6 @@ const GovDashboard = ({ chainIDs }: { chainIDs: string[] }) => {
       };
     });
   };
-
-  // const onCloseOverview = () => {
-  //   setSelectedProposal(null);
-  // };
 
   const handleSearchQueryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value;

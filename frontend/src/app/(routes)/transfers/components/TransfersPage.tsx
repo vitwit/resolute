@@ -53,7 +53,7 @@ const TransfersPage = ({ chainIDs }: { chainIDs: string[] }) => {
           {transferType === 'ibc-swap' ? <IBCSwapPage /> : null}
         </div>
       ) : (
-        <div className="py-20 px-10 h-full flex flex-col">
+        <div className="py-10 h-full flex flex-col">
           <div className="flex-1 flex items-center justify-center mt-16">
             <EmptyScreen
               title="Connect your wallet"
