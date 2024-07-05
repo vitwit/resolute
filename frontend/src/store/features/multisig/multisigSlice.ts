@@ -334,7 +334,6 @@ export const broadcastTransaction = createAsyncThunk(
   'multisig/broadcastTransaction',
   async (
     data: {
-      rpc: string;
       chainID: string;
       multisigAddress: string;
       signedTxn: Txn;
@@ -342,6 +341,7 @@ export const broadcastTransaction = createAsyncThunk(
       pubKeys: MultisigAddressPubkey[];
       threshold: number;
       baseURLs: string[];
+      rpcURLs: string[];
     },
     { rejectWithValue, dispatch }
   ) => {
