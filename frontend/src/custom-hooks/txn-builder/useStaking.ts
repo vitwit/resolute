@@ -38,7 +38,6 @@ const useStaking = () => {
       [];
     const delegationsData = [];
     const delegatedValidators = [];
-    console.log(totalDelegations)
 
     for (const validator of validatorsList) {
       const delegation = totalDelegations.find(

@@ -304,7 +304,6 @@ export const getTxns = createAsyncThunk(
   async (data: GetTxnsInputs, { rejectWithValue }) => {
     try {
       const response = await multisigService.getTxns(data.address, data.status);
-      console.log('here...', data);
       return response.data;
     } catch (error) {
       if (error instanceof AxiosError)

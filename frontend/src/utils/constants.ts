@@ -312,7 +312,7 @@ export const voteOptions: Record<string, string> = {
   VOTE_OPTION_UNSPECIFIED: '',
 };
 
-export const MULTIOPS_MSG_TYPES = {
+export const MULTIOPS_MSG_TYPES: Record<string, string> = {
   send: 'Send',
   delegate: 'Delegate',
   undelegate: 'Undelegate',
@@ -324,7 +324,7 @@ export const MULTIOPS_NOTE = `Note: Please ensure to allocate additional gas if 
 transaction involves multiple messages, and be sure to
 select the appropriate fee option in the signing
 wallet.`;
-export const MULTIOPS_SAMPLE_FILES = {
+export const MULTIOPS_SAMPLE_FILES: Record<string, string> = {
   delegate:
     'https://raw.githubusercontent.com/vitwit/resolute/a6a02cc1b74ee34604e6df35cfce7a46c39980ea/frontend/src/example-files/delegate.csv',
   deposit:
