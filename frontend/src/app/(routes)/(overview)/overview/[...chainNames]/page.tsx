@@ -6,8 +6,9 @@ import '../../overview.css';
 import { useAppSelector } from '@/custom-hooks/StateHooks';
 import { RootState } from '@/store/store';
 import { useParams } from 'next/navigation';
-import OverviewTable from '../../overview-components/OverviewTable';
+// import OverviewTable from '../../overview-components/OverviewTable';
 import WithoutConnectionIllustration from '@/components/illustrations/WithoutConnectionIllustration';
+import OverviewDashboard from '../../overview-components/OverviewDashboard';
 
 const Overview = () => {
   const params = useParams();
@@ -30,7 +31,7 @@ const Overview = () => {
       {isWalletConnected ? (
         <>
           {chainIDs.length ? (
-            <OverviewTable chainIDs={chainIDs} />
+            <OverviewDashboard chainIDs={chainIDs} />
           ) : (
             // <OverviewPage chainIDs={chainIDs} />
             <div className="w-full h-full text-white flex justify-center items-center">
