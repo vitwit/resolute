@@ -229,8 +229,8 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
             </div>
           ) : null}
 
-          <div className="flex items-start gap-10 pt-20 pb-0 px-10 w-full h-full">
-            <div className="flex items-start gap-20 w-full h-full">
+          <div className="flex items-start gap-10 pt-20 w-full h-full">
+            <div className="flex items-start gap-10 w-full h-full">
               <div className="flex flex-col flex-1 justify-between h-full">
                 <div className="flex flex-col gap-6">
                   <div className="secondary-btn" onClick={() => router.back()}>
@@ -309,13 +309,13 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
                     <div className="divider-line"></div>
                   </div>
 
-                  <div className="text-white h-[22vh] flex flex-col justify-between relative z-0">
+                  <div className="text-white  flex flex-col justify-between relative z-0">
                     <p
                       style={{
                         padding: 8,
                         whiteSpace: 'pre-line',
                       }}
-                      className={`proposal-description-markdown h-[22vh] secondary-text ${contentLength > 900 ? (showFullText ? 'overflow-scroll' : 'overflow-hidden') : 'overflow-scroll'}`}
+                      className={`proposal-description-markdown h-[30vh] secondary-text ${contentLength > 900 ? (showFullText ? 'overflow-scroll' : 'overflow-hidden') : 'overflow-scroll'}`}
                     >
                       {proposalMarkdown}
                     </p>

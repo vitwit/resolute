@@ -129,7 +129,7 @@ const DialogVote = ({
                   voteOption === option.label
                     ? option.selectedColor
                     : 'transparent',
-                borderColor: option.color,
+                borderColor: '',
               }}
               disabled={
                 loading === TxStatus.PENDING ||
