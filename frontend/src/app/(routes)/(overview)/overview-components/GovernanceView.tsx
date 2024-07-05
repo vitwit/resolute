@@ -1,6 +1,6 @@
 import React from 'react';
 import Image from 'next/image';
-import { REDIRECT_ICON, TIMER_ICON_YELLOW } from '@/constants/image-names';
+import { REDIRECT_ICON} from '@/constants/image-names';
 import useInitGovernance from '@/custom-hooks/governance/useInitGovernance';
 import useGetProposals from '@/custom-hooks/governance/useGetProposals';
 import { get } from 'lodash';
