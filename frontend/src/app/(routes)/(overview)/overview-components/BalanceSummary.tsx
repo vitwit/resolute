@@ -9,12 +9,14 @@ type AssetSummary = { icon: string; alt: string; type: string; amount: string };
 export default function BalanceSummary({ chainIDs }: { chainIDs: string[] }) {
   const isAuthzMode = useAppSelector((state) => state.authz.authzModeEnabled);
   const [myStaked, myAvailable, myRewards] = useGetAssetsAmount(chainIDs);
+
   const [authzStaked, authzAvailable, authzRewards] =
     useGetAuthzAssetsAmount(chainIDs);
 
   const stakedAmount = isAuthzMode ? authzStaked : myStaked;
   const availableAmount = isAuthzMode ? authzAvailable : myAvailable;
   const rewardsAmount = isAuthzMode ? authzRewards : myRewards;
+
 
   const available = formatDollarAmount(availableAmount);
   const staked = formatDollarAmount(stakedAmount);
@@ -23,6 +25,7 @@ export default function BalanceSummary({ chainIDs }: { chainIDs: string[] }) {
     stakedAmount + availableAmount + rewardsAmount
   );
 
+  
   const assetsSummaryData: AssetSummary[] = [
     {
       icon: '/total-bal.png',
