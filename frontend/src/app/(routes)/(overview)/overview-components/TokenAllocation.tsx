@@ -11,7 +11,7 @@ const TokenAllocation = ({ chainIDs }: { chainIDs: string[] }) => {
   /* eslint-disable @typescript-eslint/no-explicit-any */
   const sumOfTotals: any = Object.values(totalAmtObj).reduce((acc, curr: any) => acc + curr.total, 0);
 
-  for (let key in totalAmtObj) {
+  for (const key in totalAmtObj) {
     if (totalAmtObj.hasOwnProperty(key)) {
       // Calculate the percentage
       totalAmtObj[key].percentage = totalAmtObj[key].total * 100 / sumOfTotals;
@@ -24,10 +24,10 @@ const TokenAllocation = ({ chainIDs }: { chainIDs: string[] }) => {
   /* eslint-disable @typescript-eslint/no-explicit-any */
   entries.sort((a: any, b: any) => b[1].percentage - a[1].percentage);
 
-  const firstEntries = entries.slice(0, 3);
+  const firstEntries = entries.slice(0, 5);
 
   // Calculate the "Others" total and percentage
-  const others = entries.slice(3);
+  const others = entries.slice(5);
   // const othersTotal = others.reduce((acc, [key, value]) => acc + value?.total || 0, 0);
   const othersPercentage = others.reduce((acc, [, value]) => {
     if (value && typeof value === 'object' && 'percentage' in value && typeof value.percentage === 'number') {
@@ -51,7 +51,7 @@ const TokenAllocation = ({ chainIDs }: { chainIDs: string[] }) => {
         <div className="divider-line"></div>
       </div>
       <div className="flex items-end justify-between h-[150px]">
-        {Object.entries(sortedObj).slice(0, 3).map(([key, value], index) => (
+        {Object.entries(sortedObj).slice(0, 5).map(([key, value], index) => (
 
           <div key={index} className="flex flex-col items-center" style={{ height: get(value, 'percentage', 0) + '%' }}>
             <div className="mb-6 text-xs">{get(value, 'chainName', key)}</div>
