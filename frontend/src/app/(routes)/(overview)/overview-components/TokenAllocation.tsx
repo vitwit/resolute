@@ -2,9 +2,20 @@ import React from 'react';
 import Image from 'next/image';
 import useGetAssetsAmount from '@/custom-hooks/useGetAssetsAmount';
 import { get } from 'lodash';
+import { useAppSelector } from '@/custom-hooks/StateHooks';
+import TokenAllocationSkeleton from './TokenAllocationSkeleton';
 
 const TokenAllocation = ({ chainIDs }: { chainIDs: string[] }) => {
   const [, , , , totalAmountByChain] = useGetAssetsAmount(chainIDs);
+
+  const balancesLoading = useAppSelector(
+    (state) => state.bank.balancesLoading > 0
+  );
+  const delegationsLoading = useAppSelector(
+    (state) => state.staking.delegationsLoading > 0
+  );
+
+  const loading = (balancesLoading || delegationsLoading);
 
   const totalAmtObj = totalAmountByChain()
 
@@ -46,47 +57,51 @@ const TokenAllocation = ({ chainIDs }: { chainIDs: string[] }) => {
       <div className="flex flex-col gap-2 w-full">
         <div className="text-h2">Token Allocation</div>
         <div className="secondary-text">
-          Connect your wallet now to access all the modules on{' '}
+          Token Allocation{' '}
         </div>
         <div className="divider-line"></div>
       </div>
-      <div className="flex items-end justify-between h-[150px]">
-        {Object.entries(sortedObj).slice(0, 5).map(([key, value], index) => (
 
-          <div key={index} className="flex flex-col items-center" style={{ height: get(value, 'percentage', 0) + '%' }}>
-            <div className="mb-6 text-xs">{get(value, 'chainName', key)}</div>
+      {
+        loading ? <TokenAllocationSkeleton /> : <div className="flex items-end justify-between h-[150px]">
+          {Object.entries(sortedObj).slice(0, 5).map(([key, value], index) => (
+
+            <div key={index} className="flex flex-col items-center" style={{ height: get(value, 'percentage', 0) + '%' }}>
+              <div className="mb-6 text-xs">{get(value, 'chainName', key)}</div>
+              <div
+                className="w-6 rounded-[8px_8px_0px_0px] flex flex-col justify-end items-center"
+                style={{ background: get(value, 'theme.gradient'), height: '100%' }}
+              >
+                {/* Here we have to replace with the "chainLogo's" */}
+                <Image
+                  className='mt-20'
+                  src={get(value, 'logoUrl', '')}
+                  height={24}
+                  width={24}
+                  alt={`Radio ${index}`}
+                />
+              </div>
+            </div>
+          ))}
+
+          <div key={6} className="flex flex-col items-center" style={{ height: othersPercentage + '%' }}>
+            <div className="mb-2 text-xs">{'others'}</div>
             <div
               className="w-6 rounded-[8px_8px_0px_0px] flex flex-col justify-end items-center"
-              style={{ background: get(value, 'theme.gradient'), height: '100%' }}
+              style={{ background: 'linear-gradient(180deg, #ac04d2 0%, #121215 100%)', height: '100%' }}
             >
               {/* Here we have to replace with the "chainLogo's" */}
               <Image
-               className='mt-20'
-                src={get(value, 'logoUrl', '')}
+                src={''}
                 height={24}
                 width={24}
-                alt={`Radio ${index}`}
+                alt={`Radio ${6}`}
               />
             </div>
           </div>
-        ))}
-
-        <div key={6} className="flex flex-col items-center" style={{ height: othersPercentage + '%' }}>
-          <div className="mb-2 text-xs">{'others'}</div>
-          <div
-            className="w-6 rounded-[8px_8px_0px_0px] flex flex-col justify-end items-center"
-            style={{ background: 'linear-gradient(180deg, #ac04d2 0%, #121215 100%)', height: '100%' }}
-          >
-            {/* Here we have to replace with the "chainLogo's" */}
-            <Image
-              src={''}
-              height={24}
-              width={24}
-              alt={`Radio ${6}`}
-            />
-          </div>
         </div>
-      </div>
+      }
+
     </div>
   );
 };

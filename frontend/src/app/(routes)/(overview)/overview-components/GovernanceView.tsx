@@ -4,6 +4,8 @@ import { REDIRECT_ICON, TIMER_ICON_YELLOW } from '@/constants/image-names';
 import useInitGovernance from '@/custom-hooks/governance/useInitGovernance';
 import useGetProposals from '@/custom-hooks/governance/useGetProposals';
 import { get } from 'lodash';
+import { useAppSelector } from '@/custom-hooks/StateHooks';
+import GovSkeleton from './GovSkeleton';
 
 // type Proposal = {
 //   id: number;
@@ -95,23 +97,34 @@ const GovernanceView = ({ chainIDs }: { chainIDs: string[] }) => {
   const { getProposals } = useGetProposals();
   const proposalsData = getProposals({ chainIDs, showAll: false });
 
-  console.log('proposal data====================', proposalsData);
+  const proposalsLoading =
+    useAppSelector((state) => state.gov?.activeProposalsLoading) >
+    chainIDs?.length;
 
   return (
     <div className="flex flex-col p-6 rounded-2xl bg-[#ffffff05] w-[418px] gap-4 overflow-y-scroll flex-1">
       <div className="flex flex-col gap-2 w-full">
         <div className="text-h2">Governance</div>
         <div className="secondary-text">
-          Connect your wallet now to access all the modules on{' '}
+          Acitve proposals{' '}
         </div>
         <div className="divider-line"></div>
       </div>
+
       {proposalsData.map((proposal) => (
         <ProposalCard
           key={get(proposal, 'proposalInfo.proposalId', 0)}
           proposal={proposal}
         />
       ))}
+
+      {
+        proposalsLoading ? <GovSkeleton /> : null
+      }
+
+      {
+        (!proposalsLoading && !proposalsData.length)? 'No Active Proposals found.': null
+      }
     </div>
   );
 };
