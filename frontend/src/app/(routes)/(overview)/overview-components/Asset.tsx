@@ -198,7 +198,8 @@ const Asset = ({
               <span>
                 {formatCoin(asset.staked, asset.displayDenom).split('.')[0]}
                 <span className="text-[10px]">
-                  .{
+                  .
+                  {
                     formatCoin(asset.staked, asset.displayDenom)
                       ?.split('.')[1]
                       ?.split(' ')[0]
@@ -220,7 +221,8 @@ const Asset = ({
               <span>
                 {formatCoin(asset.rewards, asset.displayDenom).split('.')[0]}
                 <span className="text-[10px]">
-                  .{
+                  .
+                  {
                     formatCoin(asset.rewards, asset.displayDenom)
                       ?.split('.')[1]
                       ?.split(' ')[0]
@@ -235,9 +237,12 @@ const Asset = ({
         </div>
       </th>
       <th>
-        <div className="flex flex-col gap-2">
-          <div className="text-[14px] font-normal leading-[normal] items-start flex">
-            {formatDollarAmount(asset.usdPrice)}
+        <div className="flex flex-col items-start gap-2">
+          <div className="text-[14px] font-normal leading-[normal] flex items-baseline">
+            {formatDollarAmount(asset.usdPrice).split('.')[0]}.
+            <span className="text-[10px]">
+              {formatDollarAmount(asset.usdPrice).split('.')[1]}
+            </span>
           </div>
           <div className="flex">
             <div
@@ -247,7 +252,12 @@ const Asset = ({
               }
             >
               <p className="text-sm font-extralight leading-[normal]">
-                {formatAmount(Math.abs(asset.inflation))}%
+                {formatAmount(Math.abs(asset.inflation)).split('.')[0]}.
+                <span className="text-[10px]">
+                  {' '}
+                  {formatAmount(Math.abs(asset.inflation)).split('.')[1]}
+                </span>
+                %
               </p>
             </div>
             <Image
