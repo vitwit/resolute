@@ -1,55 +1,24 @@
 import React from 'react';
 import Image from 'next/image';
-import { REDIRECT_ICON, TIMER_ICON_YELLOW } from '@/constants/image-names';
+import { REDIRECT_ICON} from '@/constants/image-names';
 import useInitGovernance from '@/custom-hooks/governance/useInitGovernance';
 import useGetProposals from '@/custom-hooks/governance/useGetProposals';
 import { get } from 'lodash';
 import { useAppSelector } from '@/custom-hooks/StateHooks';
 import GovSkeleton from './GovSkeleton';
 
-// type Proposal = {
-//   id: number;
-//   title: string;
-//   creator: string;
-//   votingEnds: string;
-// };
-
-// const proposals: Proposal[] = [
-//   {
-//     id: 123,
-//     title: 'Aave v3.1 Cantina competition',
-//     creator: 'Akash',
-//     votingEnds: '08 hours',
-//   },
-//   {
-//     id: 124,
-//     title: 'Aave v3.2 Cantina competition',
-//     creator: 'Cosmoshub',
-//     votingEnds: '12 hours',
-//   },
-//   {
-//     id: 125,
-//     title: 'Aave v3.3 Cantina competition',
-//     creator: 'Akash',
-//     votingEnds: '10 hours',
-//   },
-//   {
-//     id: 126,
-//     title: 'Aave v3.4 Cantina competition',
-//     creator: 'Akash',
-//     votingEnds: '14 hours',
-//   },
-// ];
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const ProposalCard: React.FC<{ proposal: any }> = ({ proposal }) => (
   <div className="flex flex-col justify-center items-start gap-2 p-4 rounded-2xl bg-[#ffffff05]">
     <div className="flex gap-2">
       <div className="proposal-id">
-        <span>{get(proposal, 'proposalInfo.proposalId', 0)}</span>
+        <span className=" ">
+          {get(proposal, 'proposalInfo.proposalId', 0)}
+        </span>
       </div>
       <div className="flex flex-col gap-2">
         <div className="flex gap-2">
-          <div>{get(proposal, 'proposalInfo.proposalTitle', '-')}</div>
+          <div className='truncate w-[234px]'>{get(proposal, 'proposalInfo.proposalTitle', '-')}</div>
           <button type="button" className="flex justify-center">
             <Image
               src={REDIRECT_ICON}
@@ -60,7 +29,7 @@ const ProposalCard: React.FC<{ proposal: any }> = ({ proposal }) => (
             />
           </button>
         </div>
-        <div className="flex gap-4 items-center">
+        <div className="flex gap-4">
           <div className="flex items-center gap-1">
             <Image
               className="w-3 h-3 rounded-full"
@@ -74,9 +43,9 @@ const ProposalCard: React.FC<{ proposal: any }> = ({ proposal }) => (
               {get(proposal, 'chainName', '-')}
             </p>
           </div>
-          <div className="flex space-x-1">
+          <div className="flex space-x-1 items-center">
             <Image
-              src={TIMER_ICON_YELLOW}
+              src="/Timer-icon.svg"
               width={12}
               height={12}
               alt="timer-icon"
@@ -105,9 +74,7 @@ const GovernanceView = ({ chainIDs }: { chainIDs: string[] }) => {
     <div className="flex flex-col p-6 rounded-2xl bg-[#ffffff05] w-[418px] gap-4 overflow-y-scroll flex-1">
       <div className="flex flex-col gap-2 w-full">
         <div className="text-h2">Governance</div>
-        <div className="secondary-text">
-          Acitve proposals{' '}
-        </div>
+        <div className="secondary-text">Acitve proposals </div>
         <div className="divider-line"></div>
       </div>
 
@@ -118,13 +85,11 @@ const GovernanceView = ({ chainIDs }: { chainIDs: string[] }) => {
         />
       ))}
 
-      {
-        proposalsLoading ? <GovSkeleton /> : null
-      }
+      {proposalsLoading ? <GovSkeleton /> : null}
 
-      {
-        (!proposalsLoading && !proposalsData.length)? 'No Active Proposals found.': null
-      }
+      {!proposalsLoading && !proposalsData.length
+        ? 'No Active Proposals found.'
+        : null}
     </div>
   );
 };
