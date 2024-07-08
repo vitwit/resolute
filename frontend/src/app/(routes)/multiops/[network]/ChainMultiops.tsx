@@ -13,7 +13,7 @@ const ChainMultiops = ({ network }: { network: string }) => {
         <PageMultiops chainName={chainName} />
       ) : (
         <>
-          <div className="flex justify-center items-center h-screen w-full text-white txt-lg">
+          <div className="flex justify-center items-center h-screen w-full text-[#ffffffad] txt-lg">
             - The {chainName} is not supported -
           </div>
         </>

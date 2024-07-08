@@ -483,7 +483,7 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
                       setPage(2);
                       setImportMultisig(true);
                     }}
-                    className="secondary-btn !text-[16px] !font-bold !text-white"
+                    className="secondary-btn !text-[16px] !font-bold !text-[#ffffffad]"
                   >
                     here
                   </button>

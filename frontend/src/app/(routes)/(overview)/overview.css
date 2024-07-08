@@ -78,12 +78,10 @@
   background: rgba(255, 255, 255, 0.02);
 }
 .proposal-id {
-  @apply relative flex items-center justify-center font-bold rounded-lg w-16 text-white text-[14px] tracking-[1.96px] h-[35px];
+  @apply relative flex items-center justify-center font-bold rounded-lg w-16 text-[#ffffffad] text-[14px] tracking-[1.96px] h-[35px];
   background: linear-gradient(
     180deg,
     rgba(122, 126, 156, 0.2) 0.5%,
     rgba(9, 9, 10, 0.2) 100%
   );
 }
-
-

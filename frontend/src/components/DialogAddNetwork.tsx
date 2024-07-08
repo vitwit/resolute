@@ -171,7 +171,7 @@ const DialogAddNetwork = ({
               <h2 className="text-[20px] font-bold leading-normal">
                 Add Network
               </h2>
-              <div className="flex gap-6 text-white">
+              <div className="flex gap-6 text-[#ffffffad]">
                 <div
                   className="custom-radio-button-label"
                   onClick={() => handleAddNetworkType(false)}

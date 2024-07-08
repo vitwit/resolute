@@ -11,7 +11,7 @@ const NotSupported = ({ feature }: { feature: string }) => {
         height={236}
         alt="no assets"
       />
-      <div className="text-white text-center text-base italic font-extralight leading-[normal] flex justify-center opacity-50 disable-draggable">
+      <div className="text-[#ffffffad] text-center text-base italic font-extralight leading-[normal] flex justify-center opacity-50 disable-draggable">
         {feature} is not supported in authz mode yet
       </div>
     </div>

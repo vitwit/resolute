@@ -102,7 +102,7 @@ const Vote = ({
         {GOV_VOTE_OPTIONS?.map((option) => (
           <button
             key={option.label}
-            className={`vote-optn-btn flex-1 text-white text-base`}
+            className={`vote-optn-btn flex-1 text-[#ffffffad] text-base`}
             onClick={() => handleOptionClick(option.label)}
             style={{
               backgroundColor:

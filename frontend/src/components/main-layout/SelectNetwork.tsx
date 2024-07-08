@@ -60,7 +60,7 @@ const SelectNetwork = () => {
         <div>
           <div
             onClick={openChangeNetwork}
-            className="text-[16px] h-6 font-bold text-white capitalize cursor-pointer"
+            className="text-[16px] h-6 font-bold text-[#ffffffad] capitalize cursor-pointer"
           >
             {shortenName(selectedNetwork.chainName, 15) || 'All Networks'}
           </div>

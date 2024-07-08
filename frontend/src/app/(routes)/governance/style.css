@@ -4,7 +4,7 @@
 }
 
 .proposal-id {
-  @apply relative flex items-center justify-center font-bold rounded-lg w-16 text-white text-[14px] tracking-[1.96px] h-[52px];
+  @apply relative flex items-center justify-center font-bold rounded-lg w-16 text-[#ffffffad] text-[14px] tracking-[1.96px] h-[52px];
   background: linear-gradient(
     180deg,
     rgba(122, 126, 156, 0.2) 0.5%,
@@ -47,7 +47,7 @@
   -webkit-text-fill-color: transparent;
 }
 .selected-btns {
-  @apply flex justify-center items-center gap-4 px-4 py-[10.5px] rounded-lg border-[0.25px]  hover:bg-[#ffffff14] hover:border-transparent;
+  @apply flex justify-center items-center gap-4 px-4 py-[10.5px] rounded-lg border-[0.25px]  hover:bg-[#ffffff14] hover:border-transparent text-[#ffffffad];
 }
 
 .proposal-view {

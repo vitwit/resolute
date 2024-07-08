@@ -29,7 +29,7 @@ const Loader = () => {
       <DialogContent>
         <div className="flex gap-4 items-center">
           <CircularProgress size={32} sx={{ color: 'white' }} />
-          <div className="text-white">
+          <div className="text-[#ffffffad]">
             {' '}
             <span className="italic">Loading</span>
             <span className="dots-flashing"></span>

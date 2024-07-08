@@ -192,7 +192,7 @@ const SingleSend = ({ sortedAssets }: { sortedAssets: ParsedAsset[] }) => {
           className="flex items-center gap-2 cursor-pointer w-fit"
         >
           <Image src={chainLogo} height={40} width={40} alt="" />
-          <div className="text-[20px] font-bold capitalize">
+          <div className="text-[20px] font-bold capitalize text-[#ffffffad]">
             {shortenName(selectedNetwork.chainName, 15) || 'All Networks'}
           </div>
           <Image src="/drop-down-icon.svg" height={24} width={24} alt="" />

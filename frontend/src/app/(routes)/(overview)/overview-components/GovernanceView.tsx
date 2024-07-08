@@ -1,6 +1,6 @@
 import React from 'react';
 import Image from 'next/image';
-import { REDIRECT_ICON} from '@/constants/image-names';
+import { REDIRECT_ICON } from '@/constants/image-names';
 import useInitGovernance from '@/custom-hooks/governance/useInitGovernance';
 import useGetProposals from '@/custom-hooks/governance/useGetProposals';
 import { get } from 'lodash';
@@ -12,13 +12,13 @@ const ProposalCard: React.FC<{ proposal: any }> = ({ proposal }) => (
   <div className="flex flex-col justify-center items-start gap-2 p-4 rounded-2xl bg-[#ffffff05]">
     <div className="flex gap-2">
       <div className="proposal-id">
-        <span className=" ">
-          {get(proposal, 'proposalInfo.proposalId', 0)}
-        </span>
+        <span className=" ">{get(proposal, 'proposalInfo.proposalId', 0)}</span>
       </div>
       <div className="flex flex-col gap-2">
         <div className="flex gap-2">
-          <div className='truncate w-[234px]'>{get(proposal, 'proposalInfo.proposalTitle', '-')}</div>
+          <div className="truncate w-[234px] text-[#ffffffad]">
+            {get(proposal, 'proposalInfo.proposalTitle', '-')}
+          </div>
           <button type="button" className="flex justify-center">
             <Image
               src={REDIRECT_ICON}

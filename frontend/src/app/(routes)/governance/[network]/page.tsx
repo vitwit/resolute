@@ -4,7 +4,7 @@ import { RootState } from '@/store/store';
 import { useParams } from 'next/navigation';
 import React from 'react';
 import GovDashboard from '../gov-dashboard/GovDashboard';
-import '../style.css'
+import '../style.css';
 
 const ChainProposals = () => {
   const params = useParams();
@@ -22,7 +22,7 @@ const ChainProposals = () => {
       {chainID.length ? (
         <GovDashboard chainIDs={[chainID]} />
       ) : (
-        <div className="w-full h-full text-white flex justify-center items-center">
+        <div className="w-full h-full text-[#ffffffad] flex justify-center items-center">
           - Chain Not found -
         </div>
       )}

@@ -93,7 +93,7 @@ const AssetsDropDown: React.FC<AssetsDropDownProps> = ({
                   }}
                 />
                 <div className="flex items-center gap-2">
-                  <div className="flex gap-1 items-center text-[14px] leading-[24px] text-white">
+                  <div className="flex gap-1 items-center text-[14px] leading-[24px] text-[#ffffffad]">
                     <div>{selectedAsset.balance}</div>
                   </div>
                 </div>
@@ -105,7 +105,7 @@ const AssetsDropDown: React.FC<AssetsDropDownProps> = ({
           <InputAdornment position="end">
             <div className="flex items-center gap-2">
               {selectedAsset && (
-                <div className="secondary-text !text-[12px] text-white mr-2">
+                <div className="secondary-text !text-[12px] text-[#ffffffad] mr-2">
                   on{' '}
                   <span className="capitalize">{selectedAsset.chainName}</span>
                 </div>
