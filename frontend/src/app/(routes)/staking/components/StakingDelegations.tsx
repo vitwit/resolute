@@ -245,7 +245,7 @@ function StakingDelegations({
                             .amount?.split('.')[0]
                         }
                         .{' '}
-                        <span className="text-[10px]">
+                        <span className="text-[12px]">
                           {
                             staking
                               .getAmountObjectWithDecimal(
@@ -272,7 +272,7 @@ function StakingDelegations({
                           ).split('.')[0]
                         }
                         .
-                        <span className="text-[10px]">
+                        <span className="text-[12px]">
                           {
                             getValRewards(
                               get(data, 'delegation.validator_address'),

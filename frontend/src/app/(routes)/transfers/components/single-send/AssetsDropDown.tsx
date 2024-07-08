@@ -55,7 +55,7 @@ const AssetsDropDown: React.FC<AssetsDropDownProps> = ({
               <div>
                 {String(option.balance).split('.')[0]}
                 {option.balance > 0 ? (
-                  <span className="text-[10px]">
+                  <span className="text-[12px]">
                     .{String(option.balance).split('.')[1]}
                   </span>
                 ) : null}
