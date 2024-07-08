@@ -270,7 +270,7 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
                               Voting
                             </p>
                             <p className="text-[#ffffffad] text-sm font-normal leading-[normal]">
-                              Ends in{' '}
+                              ends in{' '}
                               {getTimeDifferenceToFutureDate(
                                 get(proposalInfo, 'voting_end_time')
                               )}
@@ -282,7 +282,7 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
                               Deposit
                             </p>
                             <p className="text-[#ffffffad] text-sm font-normal leading-[normal]">
-                              Ends in{' '}
+                              ends in{' '}
                               {getTimeDifferenceToFutureDate(
                                 get(proposalInfo, 'deposit_end_time')
                               )}
@@ -315,7 +315,7 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
                         padding: 8,
                         whiteSpace: 'pre-line',
                       }}
-                      className={`proposal-description-markdown h-[30vh] secondary-text ${contentLength > 900 ? (showFullText ? 'overflow-scroll' : 'overflow-hidden') : 'overflow-scroll'}`}
+                      className={`proposal-description-markdown h-[36vh] secondary-text ${contentLength > 900 ? (showFullText ? 'overflow-scroll' : 'overflow-hidden') : 'overflow-scroll'}`}
                     >
                       {proposalMarkdown}
                     </p>
@@ -360,7 +360,7 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
                   <div className="cast-vote-grid mt-10">
                     {isStatusVoting ? (
                       <>
-                        <div className="flex px-6 py-4 rounded-2xl bg-[#FFFFFF05] justify-between w-full">
+                        {/* <div className="flex px-6 py-4 rounded-2xl bg-[#FFFFFF05] justify-between w-full">
                           <p className="text-b1">Cast your vote</p>
                           <p className="text-xs font-extralight leading-[18px]">
                             Voting ends in{' '}
@@ -368,7 +368,7 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
                               get(proposalInfo, 'voting_end_time')
                             )}
                           </p>
-                        </div>
+                        </div> */}
 
                         <Vote
                           proposalId={proposalID}

@@ -113,7 +113,7 @@ const DialogVote = ({
             </div>
             <div className="flex gap-1 items-center">
               <span className="text-small-light">Voting</span>
-              <p className="text-b1">Ends in {endTime}</p>
+              <p className="text-b1">ends in {endTime}</p>
             </div>
           </div>
           <div className="divider-line"></div>
@@ -142,7 +142,9 @@ const DialogVote = ({
         </div>
         <div>
           <CustomButton
-            btnText={isWalletConnected ? 'Submit Vote' : 'Connect Wallet to Vote'}
+            btnText={
+              isWalletConnected ? 'Submit Vote' : 'Connect Wallet to Vote'
+            }
             btnLoading={
               loading === TxStatus.PENDING ||
               (isAuthzMode && authzLoading === TxStatus.PENDING)
