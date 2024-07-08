@@ -194,7 +194,7 @@ export const networks: Network[] = [
     keplrExperimental: false,
     leapExperimental: false,
     isTestnet: false,
-    govV1: false,
+    govV1: true,
     explorerTxHashEndpoint: 'https://www.mintscan.io/cosmos/txs/',
     config: {
       chainId: 'cosmoshub-4',
@@ -358,7 +358,7 @@ export const networks: Network[] = [
     leapExperimental: false,
     isTestnet: false,
     explorerTxHashEndpoint: 'https://www.mintscan.io/evmos/txs/',
-    govV1: false,
+    govV1: true,
     config: {
       chainId: 'evmos_9001-2',
       chainName: 'Evmos',
@@ -526,18 +526,18 @@ export const networks: Network[] = [
     config: {
       chainId: 'omniflixhub-1',
       chainName: 'OmniflixHub',
-      rest: 'https://omniflixhub-api.lavenderfive.com',
-      rpc: 'https://omniflixhub-rpc.lavenderfive.com',
+      rest: 'https://api-omniflixhub-ia.cosmosia.notional.ventures',
+      rpc: 'https://rpc-omniflixhub-ia.cosmosia.notional.ventures',
       restURIs: [
-        'https://omniflixhub-api.lavenderfive.com',
-        'https://omniflix-rest.publicnode.com',
         'https://api-omniflixhub-ia.cosmosia.notional.ventures',
+        'https://omniflix-rest.publicnode.com',
+        'https://omniflixhub-api.lavenderfive.com',
         'https://api.resolute.vitwit.com/omniflix_api',
       ],
       rpcURIs: [
-        'https://omniflixhub-rpc.lavenderfive.com',
-        'https://omniflix-rpc.publicnode.com:443',
         'https://rpc-omniflixhub-ia.cosmosia.notional.ventures',
+        'https://omniflix-rpc.publicnode.com:443',
+        'https://omniflixhub-rpc.lavenderfive.com',
         'https://api.resolute.vitwit.com/omniflix_rpc',
       ],
       currencies: [
@@ -1021,7 +1021,7 @@ export const networks: Network[] = [
     keplrExperimental: false,
     leapExperimental: false,
     isTestnet: false,
-    govV1: false,
+    govV1: true,
     explorerTxHashEndpoint: 'https://www.mintscan.io/stargaze/txs/',
     config: {
       chainId: 'stargaze-1',

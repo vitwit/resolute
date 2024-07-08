@@ -17,8 +17,8 @@ import { getBalances } from '@/store/features/bank/bankSlice';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import Image from 'next/image';
 import {
-  NO_DELEGATIONS_MSG,
   NO_MESSAGES_ILLUSTRATION,
+  OVERVIEW_NO_DELEGATIONS,
 } from '@/utils/constants';
 import { CircularProgress } from '@mui/material';
 import MainTopNav from '@/components/MainTopNav';
@@ -161,15 +161,23 @@ const StakingOverview = () => {
       {(!isAuthzMode && delegationsLoading === 0 && !hasDelegations) ||
       (isAuthzMode && authzDelegationsLoading && !hasAuthzDelegations) ? (
         <div className="no-data">
-          <Image
-            src={NO_MESSAGES_ILLUSTRATION}
-            width={200}
-            height={177}
-            alt={'No Transactions'}
-            draggable={false}
-          />
-          <div className="text-[16px] opacity-50 mt-2 mb-6 leading-normal italic font-extralight text-center">
-            {NO_DELEGATIONS_MSG}
+          <div className="flex-1 flex flex-col justify-center items-center gap-4">
+            <Image
+              src={NO_MESSAGES_ILLUSTRATION}
+              width={400}
+              height={235}
+              alt={'No Transactions'}
+              draggable={false}
+            />
+            <p>{OVERVIEW_NO_DELEGATIONS}</p>
+            <button
+              className="primary-custom-btn"
+              onClick={() => {
+                document.getElementById('select-network')!.click();
+              }}
+            >
+              Select Network
+            </button>
           </div>
         </div>
       ) : null}

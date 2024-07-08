@@ -25,7 +25,7 @@ const AddAddresses = (props: AddAddressesI) => {
     const input = e.target.value;
     const newAddresses = addresses.map((value, key) => {
       if (index === key) {
-        input.trim();
+       return input.trim();
       }
       return value;
     });

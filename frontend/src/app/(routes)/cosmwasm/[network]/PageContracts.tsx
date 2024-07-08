@@ -19,12 +19,19 @@ const PageContracts = ({ chainName }: { chainName: string }) => {
   const [selectedTab, setSelectedTab] = useState('Contracts');
 
   const paramContractAddress = useSearchParams().get('contract');
+  const paramsCodeId = useSearchParams().get('code_id');
 
   useEffect(() => {
     if (paramContractAddress?.length) {
       setSelectedTab('Contracts');
     }
   }, [paramContractAddress]);
+
+  useEffect(() => {
+    if (paramsCodeId?.length) {
+      setSelectedTab('All Contracts');
+    }
+  }, [paramsCodeId]);
 
   return (
     <div className="h-screen flex flex-col p-6 px-10 gap-10">

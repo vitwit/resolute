@@ -26,6 +26,7 @@ const AllProposals = ({
   currentOverviewId,
   handleProposalSelected,
   isSelected,
+  overviewPropChainID,
 }: {
   isRightBarOpen: boolean;
   chainIDs: string[];
@@ -35,6 +36,7 @@ const AllProposals = ({
   currentOverviewId: number;
   handleProposalSelected: (value: boolean) => void;
   isSelected: boolean;
+  overviewPropChainID: string;
 }) => {
   const dispatch = useAppDispatch();
   const [selectedChainsProposals, setSelectedChainsProposals] =
@@ -193,7 +195,8 @@ const AllProposals = ({
                               proposal,
                               'proposal_id',
                               get(proposal, 'id', '')
-                            )
+                            ) &&
+                          overviewPropChainID === chainID
                             ? 'proposal proposal-selected'
                             : 'proposal'
                         }
@@ -209,7 +212,8 @@ const AllProposals = ({
                                     proposal,
                                     'proposal_id',
                                     get(proposal, 'id', '')
-                                  )
+                                  ) &&
+                                overviewPropChainID === chainID
                                   ? 'proposal-id'
                                   : 'proposal-id proposal-id-static'
                               }
