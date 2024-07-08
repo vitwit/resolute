@@ -5,7 +5,7 @@ const StakingVal = () => {
     <div className="flex flex-col items-center gap-10 self-stretch">
       <div className="flex items-start gap-10 flex-[1_0_0] self-stretch px-10 py-20">
         <div className="space-y-2">
-          <div className="text-[#ffffffad] text-[28px] not-italic font-bold leading-[normal]">
+          <div className="text-[28px] not-italic font-bold leading-[normal]">
             Staking
           </div>
           <div className="text-[rgba(255,255,255,0.50)] text-sm not-italic font-extralight leading-[21px]">
@@ -22,7 +22,7 @@ const StakingVal = () => {
           alt="Dashboard-Image"
         />
         <div className="custom-btn">
-          <button className="text-[#ffffffad] text-center text-sm not-italic font-light leading-[normal]">
+          <button className="text-center text-sm not-italic font-light leading-[normal]">
             Connect your wallet here
           </button>
         </div>

@@ -120,13 +120,13 @@ function StakingDelegations({
                         alt="chain-logo"
                         draggable={false}
                       />
-                      <p className="text-base font-normal leading-8 flex justify-center items-center capitalize text-[#ffffffad]">
+                      <p className="text-base font-normal leading-8 flex justify-center items-center capitalize">
                         {staking.chainName(key)}
                       </p>
                     </div>
                     <div className="flex gap-4 ml-8">
                       <div className="flex gap-2 items-center">
-                        <p className="text-[#ffffffad] text-xs font-bold leading-[normal]">
+                        <p className="text-xs font-bold leading-[normal]">
                           {
                             staking
                               .getAmountObjectWithDecimal(
@@ -162,7 +162,7 @@ function StakingDelegations({
                         </p>
                       </div>
                       <div className="flex gap-2 items-center">
-                        <p className="text-[#ffffffad] text-xs font-bold leading-[normal]">
+                        <p className="text-xs font-bold leading-[normal]">
                           {getChainTotalRewards(key).split('.')[0]}.
                           <span className="text-[10px]">
                             {

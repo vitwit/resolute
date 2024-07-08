@@ -32,7 +32,7 @@ const SingleStakingDashboard = ({ chainID }: { chainID: string }) => {
     <div className="flex flex-col items-start gap-10 w-full py-10">
       <div className="flex flex-col w-full gap-6">
         <div className="items-start">
-          <div className="text-[#ffffffad] text-[28px] font-bold leading-[normal]">
+          <div className="text-[28px] font-bold leading-[normal]">
             Staking
           </div>
           <div className="text-[rgba(255,255,255,0.50)] text-sm font-extralight leading-8 pb-2">

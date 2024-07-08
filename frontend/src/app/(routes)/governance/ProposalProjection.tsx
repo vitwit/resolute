@@ -126,7 +126,7 @@ const ProposalProjection = ({
           </div>
           <div className="flex gap-4 w-full">
             <div className="flex justify-center items-center gap-2 px-4 py-2 rounded-[100px] bg-[#FFFFFF05] w-[158px]">
-              <p className="text-[#ffffffad] text-xs font-bold leading-[normal]">
+              <p className="text-xs font-bold leading-[normal]">
                 {quorumPercent.split('.')[0]}
                 {Number(quorumPercent) > 0 ? (
                   <span className="text-[10px]">
@@ -140,7 +140,7 @@ const ProposalProjection = ({
               </p>
             </div>
             <div className="flex justify-center items-center gap-2 px-4 py-2 rounded-[100px] bg-[#FFFFFF05] w-[158px]">
-              <p className="text-[#ffffffad] text-xs font-bold leading-[normal]">
+              <p className="text-xs font-bold leading-[normal]">
                 {quorumRequired.split('.')[0]}
                 {Number(quorumRequired) > 0 ? (
                   <span className="text-[10px]">

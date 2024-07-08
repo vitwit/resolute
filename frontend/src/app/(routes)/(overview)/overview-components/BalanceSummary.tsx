@@ -64,7 +64,7 @@ export default function BalanceSummary({ chainIDs }: { chainIDs: string[] }) {
         {assetsSummaryData.map((data, index) => (
           <div key={index} className="portfolio-card">
             <div className="flex flex-col gap-4">
-              <div className="text-[#ffffffad] text-xl font-bold leading-[18px]">
+              <div className="text-xl font-bold leading-[18px]">
                 {data.amount?.split('.')[0]}
                 {Number(data.amount) > 0 ? (
                   <span className="text-[16px]">

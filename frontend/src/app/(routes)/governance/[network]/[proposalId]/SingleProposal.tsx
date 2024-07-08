@@ -238,7 +238,7 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
                   </div>
                   <div className="flex flex-col gap-4">
                     <div className="flex justify-between w-full">
-                      <p className="text-[#ffffffad] text-[28px] font-bold leading-[normal]">
+                      <p className="text-[28px] font-bold leading-[normal]">
                         {/* Aave v3.1 Cantina competitione */}
                         {get(
                           proposalInfo,
@@ -253,11 +253,11 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
                         ) || get(proposalInfo, 'content.@type', '')}
                       </p>
                       {isStatusVoting ? (
-                        <div className="active-badge text-[#ffffffad] text-sm font-normal leading-[normal]">
+                        <div className="active-badge text-sm font-normal leading-[normal]">
                           Active
                         </div>
                       ) : (
-                        <div className="deposit-badge text-[#ffffffad] text-sm font-normal leading-[normal]">
+                        <div className="deposit-badge text-sm font-normal leading-[normal]">
                           Deposit
                         </div>
                       )}
@@ -269,7 +269,7 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
                             <p className="text-[rgba(255,255,255,0.50)] text-xs font-extralight leading-[normal]">
                               Voting
                             </p>
-                            <p className="text-[#ffffffad] text-sm font-normal leading-[normal]">
+                            <p className="text-sm font-normal leading-[normal]">
                               ends in{' '}
                               {getTimeDifferenceToFutureDate(
                                 get(proposalInfo, 'voting_end_time')
@@ -281,7 +281,7 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
                             <p className="text-[rgba(255,255,255,0.50)] text-xs font-extralight leading-[normal]">
                               Deposit
                             </p>
-                            <p className="text-[#ffffffad] text-sm font-normal leading-[normal]">
+                            <p className="text-sm font-normal leading-[normal]">
                               ends in{' '}
                               {getTimeDifferenceToFutureDate(
                                 get(proposalInfo, 'deposit_end_time')
@@ -301,7 +301,7 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
                           alt="Network-logo"
                           draggable={false}
                         />
-                        <p className="text-[#ffffffad] text-sm font-normal leading-[normal] capitalize">
+                        <p className="text-sm font-normal leading-[normal] capitalize">
                           {chainName}
                         </p>
                       </div>
@@ -309,7 +309,7 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
                     <div className="divider-line"></div>
                   </div>
 
-                  <div className="text-[#ffffffad]  flex flex-col justify-between relative z-0">
+                  <div className="flex flex-col justify-between relative z-0">
                     <p
                       style={{
                         padding: 8,
@@ -459,7 +459,7 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
                             ago
                           </p>
                         </Tooltip>
-                        <p className="text-xs font-normal leading-[normal] text-[#ffffffad]">
+                        <p className="text-xs font-normal leading-[normal]">
                           Proposal Created
                         </p>
                       </div>
@@ -501,7 +501,7 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
                             ago
                           </p>
                         </Tooltip>
-                        <p className="text-[#ffffffad] text-xs font-normal leading-[normal]">
+                        <p className="text-xs font-normal leading-[normal]">
                           {isStatusVoting ? 'Voting ' : 'Deposit Time '}
                           started
                         </p>
@@ -541,7 +541,7 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
                                 )}
                           </p>
                         </Tooltip>
-                        <p className="text-[#ffffffad] text-xs font-normal leading-[normal]">
+                        <p className="text-xs font-normal leading-[normal]">
                           {isStatusVoting ? 'Voting' : 'Deposit Time '} ends
                         </p>
                       </div>
@@ -555,7 +555,7 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
                   ) : (
                     <div className="flex flex-col gap-6 p-6 rounded-2xl bg-[#FFFFFF05]">
                       <div className="flex flex-col gap-2">
-                        <p className="text-[#ffffffad] text-sm font-normal leading-[normal]">
+                        <p className="text-sm font-normal leading-[normal]">
                           Current Status
                         </p>
                         <div className="divider-line"></div>
@@ -563,7 +563,7 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
                       {data.map((v) => (
                         <div key={v.label} className="flex flex-col gap-2">
                           <div className="flex gap-1 items-center">
-                            <p className="text-[#ffffffad] text-xs font-normal leading-[normal]">
+                            <p className="text-xs font-normal leading-[normal]">
                               {formatAmount(
                                 Number((v.count / 10 ** decimals).toFixed(0))
                               )}{' '}
@@ -584,7 +584,7 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
                               ></div>
                             </div>
 
-                            <p className="text-[#ffffffad] text-xs font-normal leading-[normal]">
+                            <p className="text-xs font-normal leading-[normal]">
                               {v.value?.split('.')[0]}
                               {Number(v.value) > 0 ? (
                                 <span className="text-[10px]">

@@ -12,7 +12,7 @@ const NoTransactions = () => {
         height={200}
         alt="no transactions"
       />
-      <div className="mt-2 text-[#ffffffad] text-center text-base italic font-extralight leading-[normal] flex flex-1 justify-center opacity-50">
+      <div className="mt-2 text-center text-base italic font-extralight leading-[normal] flex flex-1 justify-center opacity-50">
         {messages.noTransactions}
       </div>
     </div>

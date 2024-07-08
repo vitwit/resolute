@@ -99,7 +99,7 @@ const TogglePubkey = ({
         width={16}
         alt=""
       />
-      <span className="text-[12px] font-light text-[#ffffffad]">pubkey</span>
+      <span className="text-[12px] font-light">pubkey</span>
     </button>
   );
 };

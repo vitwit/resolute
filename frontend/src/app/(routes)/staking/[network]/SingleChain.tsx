@@ -35,7 +35,7 @@ function SingleChain({
                 />
             ) : (
                 <>
-                    <div className="flex justify-center items-center h-screen w-full text-[#ffffffad] txt-lg">
+                    <div className="flex justify-center items-center h-screen w-full txt-lg">
                         - Chain not found -
                     </div>
                 </>

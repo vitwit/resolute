@@ -34,7 +34,7 @@ const Overview = () => {
             <OverviewDashboard chainIDs={chainIDs} />
           ) : (
             // <OverviewPage chainIDs={chainIDs} />
-            <div className="w-full h-full text-[#ffffffad] flex justify-center items-center">
+            <div className="w-full h-full flex justify-center items-center">
               - Chain Not found -
             </div>
           )}

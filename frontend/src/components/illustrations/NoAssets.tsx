@@ -12,7 +12,7 @@ const NoAssets = () => {
         height={200}
         alt="no assets"
       />
-      <div className="text-[#ffffffad] text-center text-base italic font-extralight leading-[normal] flex justify-center opacity-50 disable-draggable">
+      <div className="text-center text-base italic font-extralight leading-[normal] flex justify-center opacity-50 disable-draggable">
         {messages.noAssets}
       </div>
     </div>

@@ -52,7 +52,7 @@ const SearchProposalInput = ({
 
           <label
             htmlFor="showAllProps"
-            className="text-[16px] cursor-pointer text-[#ffffffad]"
+            className="text-[16px] cursor-pointer"
           >
             Show deposit proposals
           </label>

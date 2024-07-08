@@ -98,13 +98,13 @@ const TokenAllocation = () => {
                 className="flex flex-col rounded-full w-6 h-[150px] justify-end"
               >
                 {Number(get(value, 'percentage', 0).toFixed(2)) > 0 ? null : (
-                  <div className="text-xs mb-1 text-start text-[#ffffffad]">
+                  <div className="text-xs mb-1 text-start">
                     0%
                   </div>
                 )}
 
                 <Tooltip title={get(value, 'chainName', key)} placement="top">
-                  <div className="mb-2 text-xs text-[#ffffffad]">
+                  <div className="mb-2 text-xs">
                     {truncateChainName(get(value, 'chainName', key), 3)}
                   </div>
                 </Tooltip>
@@ -171,13 +171,13 @@ const TokenAllocation = () => {
 
           <div className="flex flex-col rounded-full w-6 h-[150px] justify-end">
             {Number(othersPercentage) > 0 ? null : (
-              <div className="text-xs mb-1 text-center text-[#ffffffad]">
+              <div className="text-xs mb-1 text-center">
                 0%
               </div>
             )}
 
             <Tooltip title="Others" placement="top">
-              <div className="mb-2 text-xs text-[#ffffffad]">Others</div>
+              <div className="mb-2 text-xs">Others</div>
             </Tooltip>
             <Tooltip title={`${othersPercentage}%`} placement="top">
               <div

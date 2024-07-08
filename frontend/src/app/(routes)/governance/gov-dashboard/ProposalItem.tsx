@@ -65,7 +65,7 @@ const ProposalItem = ({
             >
               <div className="flex space-x-1 items-center cursor-pointer">
                 <p
-                  className={`text-[16px] text-[#ffffffad] truncate ${selectedProposal ? 'max-w-[254px]' : 'max-w-[500px]'}`}
+                  className={`text-[16px] truncate ${selectedProposal ? 'max-w-[254px]' : 'max-w-[500px]'}`}
                 >
                   {proposalTitle}
                 </p>
@@ -87,9 +87,9 @@ const ProposalItem = ({
               {!selectedProposal && (
                 <div>
                   {isActive ? (
-                    <div className="active-badge text-[#ffffffad]">Active</div>
+                    <div className="active-badge">Active</div>
                   ) : (
-                    <div className="deposit-badge text-[#ffffffad]">
+                    <div className="deposit-badge">
                       Deposit
                     </div>
                   )}
