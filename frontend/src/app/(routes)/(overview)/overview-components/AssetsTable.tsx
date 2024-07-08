@@ -36,7 +36,7 @@ const AssetsTable = ({ chainIDs }: { chainIDs: string[] }) => {
     <div className="flex flex-col gap-10 w-full bg-[#ffffff05] rounded-2xl p-6 h-[60vh]">
       <div className="space-y-2">
         <div className="text-h2">Asset Information</div>
-        <div className="secondary-text">your total assets information.</div>
+        <div className="secondary-text">Your total assets information.</div>
         <div className="divider-line"></div>
       </div>
 

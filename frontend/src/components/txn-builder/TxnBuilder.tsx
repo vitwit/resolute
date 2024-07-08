@@ -1,7 +1,7 @@
 import { ALERT_ICON, NO_MESSAGES_ILLUSTRATION } from '@/constants/image-names';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import Image from 'next/image';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import '@/app/(routes)/multiops/multiops.css';
 import { TextField } from '@mui/material';
@@ -37,9 +37,8 @@ const TxnBuilder = ({
 
   const [txType, setTxType] = useState('');
   const [messages, setMessages] = useState<Msg[]>([]);
-  const [estimatedBalance, setEstimatedBalances] = useState<number>(
-    availableBalance || 0
-  );
+  const [estimatedBalance, setEstimatedBalance] =
+    useState<number>(availableBalance);
 
   const { handleSubmit, control } = useForm({
     defaultValues: {
@@ -61,7 +60,7 @@ const TxnBuilder = ({
         currency.coinDecimals,
         currency.coinMinimalDenom
       );
-      setEstimatedBalances((prev) => {
+      setEstimatedBalance((prev) => {
         const newBalance = prev - amount;
         return newBalance;
       });
@@ -71,7 +70,7 @@ const TxnBuilder = ({
         currency.coinDecimals,
         currency.coinMinimalDenom
       );
-      setEstimatedBalances((prev) => {
+      setEstimatedBalance((prev) => {
         const newBalance = prev - amount;
         return newBalance;
       });
@@ -86,7 +85,7 @@ const TxnBuilder = ({
         currency.coinDecimals,
         currency.coinMinimalDenom
       );
-      setEstimatedBalances((prev) => {
+      setEstimatedBalance((prev) => {
         const newBalance = prev + amount;
         return newBalance;
       });
@@ -96,7 +95,7 @@ const TxnBuilder = ({
         currency.coinDecimals,
         currency.coinMinimalDenom
       );
-      setEstimatedBalances((prev) => {
+      setEstimatedBalance((prev) => {
         const newBalance = prev + amount;
         return newBalance;
       });
@@ -113,6 +112,10 @@ const TxnBuilder = ({
       msgs: messages,
     });
   };
+
+  useEffect(() => {
+    setEstimatedBalance(availableBalance);
+  }, [availableBalance]);
 
   return (
     <div className="mt-10 h-full overflow-y-scroll flex gap-10">
@@ -253,4 +256,3 @@ const TxnBuilder = ({
 };
 
 export default TxnBuilder;
-

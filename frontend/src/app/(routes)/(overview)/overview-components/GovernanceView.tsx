@@ -1,64 +1,71 @@
 import React from 'react';
 import Image from 'next/image';
-import { REDIRECT_ICON} from '@/constants/image-names';
+import { REDIRECT_ICON } from '@/constants/image-names';
 import useInitGovernance from '@/custom-hooks/governance/useInitGovernance';
 import useGetProposals from '@/custom-hooks/governance/useGetProposals';
 import { get } from 'lodash';
 import { useAppSelector } from '@/custom-hooks/StateHooks';
 import GovSkeleton from './GovSkeleton';
+import Link from 'next/link';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const ProposalCard: React.FC<{ proposal: any }> = ({ proposal }) => (
-  <div className="flex flex-col justify-center items-start gap-2 p-4 rounded-2xl bg-[#ffffff05]">
-    <div className="flex gap-2">
-      <div className="proposal-id">
-        <span className=" ">
-          {get(proposal, 'proposalInfo.proposalId', 0)}
-        </span>
-      </div>
-      <div className="flex flex-col gap-2">
-        <div className="flex gap-2">
-          <div className='truncate w-[234px]'>{get(proposal, 'proposalInfo.proposalTitle', '-')}</div>
-          <button type="button" className="flex justify-center">
-            <Image
-              src={REDIRECT_ICON}
-              width={24}
-              height={24}
-              alt="View-full-icon"
-              draggable={false}
-            />
-          </button>
+  <Link
+    href={`/governance/${get(proposal, 'chainName', '')}/${get(proposal, 'proposalInfo.proposalId', '')}`}
+  >
+    <div className="flex flex-col justify-center items-start gap-2 p-4 rounded-2xl bg-[#ffffff05]">
+      <div className="flex gap-2">
+        <div className="proposal-id">
+          <span className=" ">
+            {get(proposal, 'proposalInfo.proposalId', 0)}
+          </span>
         </div>
-        <div className="flex gap-4">
-          <div className="flex items-center gap-1">
-            <Image
-              className="w-3 h-3 rounded-full"
-              src={get(proposal, 'chainLogo', '-')}
-              width={12}
-              height={12}
-              alt=""
-              draggable={false}
-            />
-            <p className="text-[rgba(255,255,255,0.50)] text-[10px] font-extralight capitalize">
-              {get(proposal, 'chainName', '-')}
-            </p>
+        <div className="flex flex-col gap-2">
+          <div className="flex gap-2">
+            <div className="truncate w-[234px] hover:underline hover:underline-offset-[3px]">
+              {get(proposal, 'proposalInfo.proposalTitle', '-')}
+            </div>
+            <button type="button" className="flex justify-center">
+              <Image
+                src={REDIRECT_ICON}
+                width={24}
+                height={24}
+                alt="View-full-icon"
+                draggable={false}
+              />
+            </button>
           </div>
-          <div className="flex space-x-1 items-center">
-            <Image
-              src="/Timer-icon.svg"
-              width={12}
-              height={12}
-              alt="timer-icon"
-              draggable={false}
-            />
-            <p className="text-[#FFC13C] text-[10px] font-extralight">
-              Voting ends in {get(proposal, 'proposalInfo.endTime', 0)}
-            </p>
+          <div className="flex gap-4">
+            <div className="flex items-center gap-1">
+              <Image
+                className="w-3 h-3 rounded-full"
+                src={get(proposal, 'chainLogo', '-')}
+                width={12}
+                height={12}
+                alt=""
+                draggable={false}
+              />
+              <p className="text-[rgba(255,255,255,0.50)] text-[10px] font-extralight capitalize">
+                {get(proposal, 'chainName', '-')}
+              </p>
+            </div>
+            <div className="flex space-x-1 items-center">
+              <Image
+                src="/Timer-icon.svg"
+                width={12}
+                height={12}
+                alt="timer-icon"
+                draggable={false}
+              />
+              <p className="text-[#FFC13C] text-[10px] font-extralight">
+                Voting ends in {get(proposal, 'proposalInfo.endTime', 0)}
+              </p>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
+  </Link>
 );
 
 const GovernanceView = ({ chainIDs }: { chainIDs: string[] }) => {
