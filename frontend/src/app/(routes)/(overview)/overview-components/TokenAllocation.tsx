@@ -89,7 +89,7 @@ const TokenAllocation = () => {
       {loading ? (
         <TokenAllocationSkeleton />
       ) : (
-        <div className="flex justify-between h-[150px] gap-2">
+        <div className="flex gap-10 h-[150px]">
           {Object.entries(sortedObj)
             .slice(0, 5)
             .map(([key, value], index) => (
@@ -103,7 +103,7 @@ const TokenAllocation = () => {
 
                 <Tooltip title={get(value, 'chainName', key)} placement="top">
                   <div className="mb-2 text-xs">
-                    {truncateChainName(get(value, 'chainName', key), 5)}
+                    {truncateChainName(get(value, 'chainName', key), 3)}
                   </div>
                 </Tooltip>
                 <Tooltip
@@ -173,7 +173,7 @@ const TokenAllocation = () => {
             )}
 
             <Tooltip title="Others" placement="top">
-              <div className="mb-2 text-xs truncate">Others</div>
+              <div className="mb-2 text-xs ">Others</div>
             </Tooltip>
             <Tooltip title={`${othersPercentage}%`} placement="top">
               <div
