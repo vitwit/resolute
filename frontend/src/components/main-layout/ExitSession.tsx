@@ -60,10 +60,9 @@ const ExitSession = () => {
               height={20}
               width={20}
               alt="Dashboard"
+              className="opacity-60"
             />
-            <div className="text-white text-[14px] leading-[19px]">
-              Exit Session
-            </div>
+            <div className=" text-[14px] leading-[19px]">Exit Session</div>
           </button>
         </div>
       ) : null}

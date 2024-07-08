@@ -54,7 +54,7 @@
 }
 
 .menu-item-name {
-  @apply text-white text-[14px] leading-[19px];
+  @apply text-[14px] leading-[19px];
 }
 
 .top-bar {
