@@ -8,7 +8,7 @@ const SingleTransfer = ({ sortedAssets }: { sortedAssets: ParsedAsset[] }) => {
       <IBCSendAlert />
       <div className="flex flex-col md:flex-row gap-6 justify-between items-center h-full">
         <div className="space-y-2 w-[600px] md:w-[400px]">
-          <div className="text-[20px] font-bold text-[#ffffffad]">Single Transfer</div>
+          <div className="text-[20px] font-bold">Single Transfer</div>
           <div className="divider-line"></div>
           <div className="secondary-text">Single Transfer</div>
         </div>
