@@ -1,6 +1,6 @@
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { setChangeNetworkDialogOpen } from '@/store/features/common/commonSlice';
-import { ALL_NETWORKS_ICON } from '@/utils/constants';
+import { ALL_NETWORKS_ICON, COSMOS_CHAIN_ID } from '@/utils/constants';
 import { copyToClipboard } from '@/utils/copyToClipboard';
 import { shortenMsg, shortenName } from '@/utils/util';
 import { Box, Tooltip } from '@mui/material';
@@ -39,6 +39,11 @@ const SelectNetwork = () => {
       setWalletAddress('');
       setChainLogo(ALL_NETWORKS_ICON);
       setChainGradient('');
+    }
+    if (!selectedNetwork.chainName && isWalletConnected) {
+      setWalletAddress(
+        networks?.[COSMOS_CHAIN_ID]?.walletInfo?.bech32Address || ''
+      );
     }
   }, [selectedNetwork, isWalletConnected, allNetworks]);
 
