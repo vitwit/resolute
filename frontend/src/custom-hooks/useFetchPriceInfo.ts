@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useAppDispatch } from './StateHooks';
 import { getAllTokensPrice } from '@/store/features/common/commonSlice';
 

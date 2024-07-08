@@ -8,7 +8,6 @@ import { getBalances } from "@/store/features/bank/bankSlice";
 // import useGetAssets from "./useGetAssets";
 // import { Interface } from "readline";
 import useGetAssetsAmount from "./useGetAssetsAmount";
-import { getAllTokensPrice } from "@/store/features/common/commonSlice";
 
 const useSingleStaking = (chainID: string) => {
     const dispatch = useAppDispatch();
