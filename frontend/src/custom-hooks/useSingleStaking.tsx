@@ -84,9 +84,6 @@ const useSingleStaking = (chainID: string) => {
 
         // Fetch unbonding delegations
         dispatch(getUnbonding({ baseURLs: restURLs, address, chainID }));
-
-
-        dispatch(getAllTokensPrice());
     }, [isWalletConnected, chainID]);
 
     useEffect(() => {
