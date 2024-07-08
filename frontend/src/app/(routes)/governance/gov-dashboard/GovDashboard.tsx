@@ -114,7 +114,7 @@ const GovDashboard = ({ chainIDs }: { chainIDs: string[] }) => {
       <div className="space-y-6 sticky top-0">
         <GovHeader />
       </div>
-      <div className="flex">
+      <div className="flex h-full">
         <div
           className={`flex flex-col ${selectedProposal ? 'w-2/5' : 'w-full'}`}
         >
@@ -151,7 +151,7 @@ const GovDashboard = ({ chainIDs }: { chainIDs: string[] }) => {
           </div>
         </div>
         {selectedProposal && (
-          <div className="w-3/5 ml-10">
+          <div className="w-3/5 ml-10 h-full">
             <ProposalOverview
               proposalId={selectedProposal?.proposalId}
               chainID={selectedProposal?.chainID}

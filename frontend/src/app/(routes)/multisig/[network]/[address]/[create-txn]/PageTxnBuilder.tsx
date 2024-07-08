@@ -6,6 +6,7 @@ import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import useVerifyAccount from '@/custom-hooks/useVerifyAccount';
 import {
   createTxn,
+  getMultisigBalance,
   setVerifyDialogOpen,
 } from '@/store/features/multisig/multisigSlice';
 import { setConnectWalletOpen } from '@/store/features/wallet/walletSlice';
@@ -103,7 +104,7 @@ const PageTxnBuilderEntry = ({
   const nameToChainIDs = useAppSelector((state) => state.wallet.nameToChainIDs);
   const chainID = nameToChainIDs?.[chainName];
   const { getChainInfo, getDenomInfo } = useGetChainInfo();
-  const { address } = getChainInfo(chainID);
+  const { address, baseURL, restURLs } = getChainInfo(chainID);
   const { decimals, displayDenom, minimalDenom } = getDenomInfo(chainID);
   const currency = {
     coinDenom: displayDenom,
@@ -181,6 +182,20 @@ const PageTxnBuilderEntry = ({
       );
     }
   }, [balance]);
+
+  useEffect(() => {
+    if (chainID) {
+      dispatch(
+        getMultisigBalance({
+          baseURL,
+          address: multisigAddress,
+          denom: currency.coinMinimalDenom,
+          baseURLs: restURLs,
+          chainID,
+        })
+      );
+    }
+  }, []);
 
   return (
     <>

@@ -131,7 +131,7 @@ const Vote = ({
       </div>
 
       <CustomButton
-        btnText={isWalletConnected ? 'Vote' : 'Connect Wallet to Vote'}
+        btnText={isWalletConnected ? 'Submit Vote' : 'Connect Wallet to Vote'}
         btnLoading={
           loading === TxStatus.PENDING ||
           (isAuthzMode && authzLoading === TxStatus.PENDING)
