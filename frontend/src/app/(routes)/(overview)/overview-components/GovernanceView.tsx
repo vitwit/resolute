@@ -7,13 +7,13 @@ import { get } from 'lodash';
 import { useAppSelector } from '@/custom-hooks/StateHooks';
 import GovSkeleton from './GovSkeleton';
 import Link from 'next/link';
-import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
+// import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const ProposalCard: React.FC<{ proposal: any }> = ({ proposal }) => {
-  const { getChainInfo } = useGetChainInfo();
-  const chainID = get(proposal, 'chainID').toLowerCase();
-  const { chainLogo } = getChainInfo(chainID);
+  // const { getChainInfo } = useGetChainInfo();
+  // const chainID = get(proposal, 'chainID').toLowerCase();
+  // const { chainLogo } = getChainInfo(chainID);
 
   return (
     <Link
@@ -21,24 +21,14 @@ const ProposalCard: React.FC<{ proposal: any }> = ({ proposal }) => {
     >
       <div className="flex flex-col justify-center items-start gap-2 p-4 rounded-2xl bg-[#ffffff05]">
         <div className="flex gap-2">
-          <div className="proposal-id">
+          <div className="proposal-id-dashboard">
             <span className=" ">
               {get(proposal, 'proposalInfo.proposalId', 0)}
             </span>
-            <div className="proposal-network-logo">
-              <Image
-                src={chainLogo}
-                width={16}
-                height={16}
-                alt="Network-Logo"
-                className="rounded-full"
-                draggable={false}
-              />
-            </div>
           </div>
-          <div className="flex flex-col gap-2">
-            <div className="flex gap-2">
-              <div className="truncate w-[234px] hover:underline hover:underline-offset-[3px]">
+          <div className="flex flex-col">
+            <div className="flex">
+              <div className="truncate w-[260px] hover:underline hover:underline-offset-[3px] text-[14px]">
                 {get(proposal, 'proposalInfo.proposalTitle', '-')}
               </div>
               <button type="button" className="flex justify-center">
