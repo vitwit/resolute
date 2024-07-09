@@ -56,7 +56,7 @@ export default function BalanceSummary({ chainIDs }: { chainIDs: string[] }) {
       <div className="gap-2 flex flex-col">
         <div className="text-h2">Portfolio</div>
         <div className="secondary-text">
-          Connect your wallet now to access all the modules on resolute{' '}
+         Summary of assets information{' '}
         </div>
         <div className="divider-line"></div>
       </div>
