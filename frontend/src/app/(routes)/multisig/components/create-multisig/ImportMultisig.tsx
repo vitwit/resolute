@@ -73,7 +73,7 @@ const ImportMultisig = ({
         </div>{' '}
         <button
           onClick={switchToCreateMultisig}
-          className="secondary-btn !text-[16px] !font-bold !text-white"
+          className="secondary-btn !text-[16px] !font-bold"
         >
           here
         </button>

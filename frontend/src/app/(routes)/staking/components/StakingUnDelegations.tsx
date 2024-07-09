@@ -123,7 +123,7 @@ function StakingUnDelegations({
                               .amount?.split('.')[0]
                           }
                           .
-                          <span className="text-[10px]">
+                          <span className="text-[12px]">
                             {
                               staking
                                 .getAmountObjectWithDecimal(

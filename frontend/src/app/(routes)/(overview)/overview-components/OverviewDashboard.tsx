@@ -4,7 +4,6 @@ import TokenAllocation from './TokenAllocation';
 import BalanceSummary from './BalanceSummary';
 import GovernanceView from './GovernanceView';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
-import { getAllTokensPrice } from '@/store/features/common/commonSlice';
 import { getBalances } from '@/store/features/bank/bankSlice';
 import {
   getDelegations,
@@ -17,7 +16,6 @@ const OverviewDashboard = ({ chainIDs }: { chainIDs: string[] }) => {
   const dispatch = useAppDispatch();
   const networks = useAppSelector((state) => state.wallet.networks);
   useEffect(() => {
-    dispatch(getAllTokensPrice());
 
     chainIDs.forEach((chainID) => {
       const allChainInfo = networks[chainID];
@@ -63,7 +61,7 @@ const OverviewDashboard = ({ chainIDs }: { chainIDs: string[] }) => {
             <AssetsTable chainIDs={chainIDs} />
           </div>
         </div>
-        <div className="flex flex-col gap-10 h-[calc(100vh-104px)]">
+        <div className="flex flex-col gap-10 h-[calc(100vh-104px)] pb-3">
           <TokenAllocation />
           <GovernanceView chainIDs={chainIDs} />
         </div>

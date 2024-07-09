@@ -15,7 +15,6 @@ const truncateChainName = (name: string, maxLength: number) => {
 const TokenAllocation = () => {
   const params = useParams();
   const currentChainName = params?.chainNames?.[0];
-  console.log({ params });
 
   const nameToChainIDs = useAppSelector(
     (state: RootState) => state.wallet.nameToChainIDs
@@ -76,8 +75,6 @@ const TokenAllocation = () => {
   }, 0); // Convert the sorted array back into an object
   const sortedObj = Object.fromEntries(firstEntries);
 
-  console.log(sortedObj);
-
   return (
     <div className="flex flex-col p-6 rounded-2xl bg-[#ffffff05] w-[418px] gap-10">
       <div className="flex flex-col gap-2 w-full">
@@ -89,7 +86,7 @@ const TokenAllocation = () => {
       {loading ? (
         <TokenAllocationSkeleton />
       ) : (
-        <div className="flex justify-between h-[150px] gap-2">
+        <div className="flex gap-10 h-[150px]">
           {Object.entries(sortedObj)
             .slice(0, 5)
             .map(([key, value], index) => (
@@ -98,12 +95,14 @@ const TokenAllocation = () => {
                 className="flex flex-col rounded-full w-6 h-[150px] justify-end"
               >
                 {Number(get(value, 'percentage', 0).toFixed(2)) > 0 ? null : (
-                  <div className="text-xs mb-1 text-start">0%</div>
+                  <div className="text-xs mb-1 text-start">
+                    0%
+                  </div>
                 )}
 
                 <Tooltip title={get(value, 'chainName', key)} placement="top">
                   <div className="mb-2 text-xs">
-                    {truncateChainName(get(value, 'chainName', key), 5)}
+                    {truncateChainName(get(value, 'chainName', key), 3)}
                   </div>
                 </Tooltip>
                 <Tooltip
@@ -169,11 +168,13 @@ const TokenAllocation = () => {
 
           <div className="flex flex-col rounded-full w-6 h-[150px] justify-end">
             {Number(othersPercentage) > 0 ? null : (
-              <div className="text-xs mb-1 text-start">0%</div>
+              <div className="text-xs mb-1 text-center">
+                0%
+              </div>
             )}
 
             <Tooltip title="Others" placement="top">
-              <div className="mb-2 text-xs truncate">Others</div>
+              <div className="mb-2 text-xs">Others</div>
             </Tooltip>
             <Tooltip title={`${othersPercentage}%`} placement="top">
               <div

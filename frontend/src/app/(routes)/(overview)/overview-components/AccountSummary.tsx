@@ -29,7 +29,7 @@ const AccountSummery = ({ chainID }: { chainID: string }) => {
       value: (
         <CommonCopy
           message={pubkey}
-          style="text-white text-base not-italic font-bold leading-[normal] max-w-[200px]"
+          style="text-[#ffffffad] text-base not-italic font-bold leading-[normal] max-w-[200px]"
         />
       ),
     },

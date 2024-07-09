@@ -2,14 +2,14 @@ import React from 'react';
 
 function GovSkeleton() {
   return (
-    <div className="flex flex-col p-6 rounded-2xl bg-[#ffffff05] w-[418px] h-[486px] gap-4">
-      <div className="flex flex-col gap-2 w-full">
+    <div className="flex flex-col  gap-4">
+      {/* <div className="flex flex-col gap-2 w-full">
         <div className="text-h2">Governance</div>
         <div className="secondary-text">
           Connect your wallet now to access all the modules on{' '}
         </div>
         <div className="divider-line"></div>
-      </div>
+      </div> */}
       <div className="h-[79px] w-[370px] bg-[#ffffff05] rounded p-4">
         <div className="flex gap-2">
           <div className="w-[64px] h-[35px] bg-[#252525] rounded animate-pulse"></div>
