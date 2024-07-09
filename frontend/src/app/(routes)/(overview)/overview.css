@@ -74,7 +74,7 @@
   background: rgba(255, 255, 255, 0.02);
 }
 .portfolio-card {
-  @apply flex flex-col justify-center items-center gap-2 px-6 py-4 rounded-2xl;
+  @apply flex flex-col gap-2 px-6 py-4 rounded-2xl;
   background: rgba(255, 255, 255, 0.02);
 }
 .proposal-id {

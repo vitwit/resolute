@@ -25,20 +25,10 @@ const ProposalCard: React.FC<{ proposal: any }> = ({ proposal }) => {
             <span className=" ">
               {get(proposal, 'proposalInfo.proposalId', 0)}
             </span>
-            <div className="proposal-network-logo">
-              <Image
-                src={chainLogo}
-                width={16}
-                height={16}
-                alt="Network-Logo"
-                className="rounded-full"
-                draggable={false}
-              />
-            </div>
           </div>
           <div className="flex flex-col">
             <div className="flex">
-              <div className="truncate w-[234px] hover:underline hover:underline-offset-[3px] text-[14px]">
+              <div className="truncate w-[260px] hover:underline hover:underline-offset-[3px] text-[14px]">
                 {get(proposal, 'proposalInfo.proposalTitle', '-')}
               </div>
               <button type="button" className="flex justify-center">

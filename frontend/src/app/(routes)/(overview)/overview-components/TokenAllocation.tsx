@@ -77,7 +77,7 @@ const TokenAllocation = () => {
   const sortedObj = Object.fromEntries(firstEntries);
 
   return (
-    <div className="flex flex-col p-6  rounded-2xl bg-[#ffffff05] w-[418px] gap-10">
+    <div className="flex flex-col p-6 rounded-2xl bg-[#ffffff05] w-[418px] gap-10">
       <div className="flex flex-col gap-2 w-full">
         <div className="text-h2">Token Allocation</div>
         <div className="secondary-text">Token Allocation</div>
@@ -87,7 +87,7 @@ const TokenAllocation = () => {
       {loading ? (
         <TokenAllocationSkeleton />
       ) : (
-        <div className="flex justify-between h-[150px] gap-2">
+        <div className="flex justify-between h-[150px] mb-6 gap-2">
           {Object.entries(sortedObj).map(([key, value], index) => (
             <div key={index} className="">
               <div className="flex flex-col rounded-full w-6 h-[150px] justify-end bg-[#ffffff0a]">
@@ -130,7 +130,7 @@ const TokenAllocation = () => {
                 </Tooltip>
               </div>
               <Tooltip title={get(value, 'chainName', key)} placement="top">
-                <div className="mb-2 text-[10px] mt-2">
+                <div className="mb-2 text-xs mt-2">
                   {truncateChainName(get(value, 'chainName', key), 5)}
                 </div>
               </Tooltip>
