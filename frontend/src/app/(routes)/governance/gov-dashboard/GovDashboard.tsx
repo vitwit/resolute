@@ -14,6 +14,7 @@ import SearchProposalInput from './SearchProposalInput';
 import { useAppSelector } from '@/custom-hooks/StateHooks';
 import GovDashboardLoading from '../loaders/GovDashboardLoading';
 import ProposalOverview from './ProposalOverivew';
+import { CSSTransition } from 'react-transition-group';
 
 const GovDashboard = ({ chainIDs }: { chainIDs: string[] }) => {
   useInitGovernance({ chainIDs });
@@ -21,8 +22,8 @@ const GovDashboard = ({ chainIDs }: { chainIDs: string[] }) => {
   const [showAll, setShowAll] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [filterDays, setFilterDays] = useState(0);
-  const propsData = getProposals({ chainIDs, showAll: showAll });
-  const proposalsData = getProposals({ chainIDs, showAll: showAll });
+  const propsData = getProposals({ chainIDs, showAll });
+  const proposalsData = getProposals({ chainIDs, showAll });
   const [filteredProposals, setFilteredProposals] = useState<ProposalsData[]>(
     []
   );
@@ -150,16 +151,23 @@ const GovDashboard = ({ chainIDs }: { chainIDs: string[] }) => {
             )}
           </div>
         </div>
-        {selectedProposal && (
+        <CSSTransition
+          in={!!selectedProposal}
+          timeout={300}
+          classNames="proposal-overview"
+          unmountOnExit
+        >
           <div className="w-3/5 ml-10 h-full">
-            <ProposalOverview
-              proposalId={selectedProposal?.proposalId}
-              chainID={selectedProposal?.chainID}
-              isActive={selectedProposal?.isActive}
-              onClose={handleViewProposal}
-            />
+            {selectedProposal && (
+              <ProposalOverview
+                proposalId={selectedProposal?.proposalId}
+                chainID={selectedProposal?.chainID}
+                isActive={selectedProposal?.isActive}
+                onClose={handleViewProposal}
+              />
+            )}
           </div>
-        )}
+        </CSSTransition>
       </div>
     </div>
   );
@@ -187,19 +195,31 @@ const QuickFilters = ({
       <div className="flex py-2 gap-2">
         <button
           onClick={() => handleFiltersChange(0)}
-          className={`selected-btns text-[12px] ${filterDays === 0 ? 'bg-[#ffffff14] border-transparent' : 'border-[#ffffff26]'}`}
+          className={`selected-btns text-[12px] ${
+            filterDays === 0
+              ? 'bg-[#ffffff14] border-transparent'
+              : 'border-[#ffffff26]'
+          }`}
         >
           All
         </button>
         <button
           onClick={() => handleFiltersChange(2)}
-          className={`selected-btns text-[12px] ${filterDays === 2 ? 'bg-[#ffffff14] border-transparent' : 'border-[#ffffff26]'}`}
+          className={`selected-btns text-[12px] ${
+            filterDays === 2
+              ? 'bg-[#ffffff14] border-transparent'
+              : 'border-[#ffffff26]'
+          }`}
         >
           Voting ends in 2 days
         </button>
         <button
           onClick={() => handleFiltersChange(1)}
-          className={`selected-btns text-[12px] ${filterDays === 1 ? 'bg-[#ffffff14] border-transparent' : 'border-[#ffffff26]'}`}
+          className={`selected-btns text-[12px] ${
+            filterDays === 1
+              ? 'bg-[#ffffff14] border-transparent'
+              : 'border-[#ffffff26]'
+          }`}
         >
           Voting ends in 1 day
         </button>
