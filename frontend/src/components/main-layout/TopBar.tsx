@@ -53,7 +53,7 @@ const TopBar = () => {
             onClick={() => setProfileOpen(true)}
           >
             <Image src={walletLogo} height={20} width={20} alt="Wallet" />
-            <div className="text-[14px] text-white">{walletUserName}</div>
+            <div className="text-[14px]">{walletUserName}</div>
             <Image src="/drop-down-icon.svg" height={24} width={24} alt="" />
           </div>
         ) : null}

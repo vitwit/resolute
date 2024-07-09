@@ -84,7 +84,7 @@ const OverviewTable = ({ chainIDs }: { chainIDs: string[] }) => {
         <div className="flex flex-col items-start gap-2 w-full">
           <div className="flex space-x-2 items-center">
             <div className="flex items-center space-x-2">
-              <p className="text-white text-2xl font-normal leading-[normal]">
+              <p className="text-2xl font-normal leading-[normal]">
                 {shortenAddress(getCosmosAddress(), 20)}
               </p>
               <Image

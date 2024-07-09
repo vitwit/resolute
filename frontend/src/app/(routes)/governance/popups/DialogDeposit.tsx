@@ -170,7 +170,7 @@ const DialogDeposit = ({
             </div>
             <div className="flex gap-1 items-center">
               <span className="text-small-light">Deposit</span>
-              <p className="text-b1">Ends in {endTime}</p>
+              <p className="text-b1">ends in {endTime}</p>
             </div>
           </div>
           <div className="divider-line"></div>

@@ -51,7 +51,7 @@ const AssetsTable = ({ chainIDs }: { chainIDs: string[] }) => {
                   (header, hIndex) => (
                     <th
                       key={hIndex}
-                      className="border-b-[0.5px] border-[#ffffff0d]"
+                      className="border-b-[0.5px] border-[#ffffff0d] pb-2"
                     >
                       <div className="secondary-text items-start flex">
                         {header}
@@ -73,7 +73,7 @@ const AssetsTable = ({ chainIDs }: { chainIDs: string[] }) => {
           </table>
         </div>
       ) : (
-        <div className="w-full flex flex-col flex-1 items-center justify-start text-white">
+        <div className="w-full flex flex-col flex-1 items-center justify-start text-[#ffffffad">
           {loading || authzLoading ? <DashboardLoading /> : <NoAssets />}
         </div>
       )}
