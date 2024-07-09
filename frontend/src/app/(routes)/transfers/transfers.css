@@ -32,7 +32,7 @@
 }
 
 .amount-options {
-  @apply text-white text-sm not-italic font-normal leading-[normal] rounded-[100px];
+  @apply text-sm not-italic font-normal leading-[normal] rounded-[100px];
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(2px);
 }
@@ -79,7 +79,7 @@
 }
 
 .multisend-btn-active {
-  @apply text-white rounded-2xl;
+  @apply text-[#ffffffad] rounded-2xl;
   background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
   box-shadow: 0px 4px 4px 0px #100;
 }

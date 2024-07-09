@@ -245,7 +245,7 @@ export const TxnsCard = ({
         onClose={() => setViewRawOpen(false)}
         title="Raw Transaction"
       >
-        <div className="w-[800px] bg-black text-white h-[400px] max-h-[400px] overflow-y-scroll p-2">
+        <div className="w-[800px] bg-black h-[400px] max-h-[400px] overflow-y-scroll p-2">
           {txn ? (
             <pre>{JSON.stringify(txn, undefined, 2)}</pre>
           ) : (

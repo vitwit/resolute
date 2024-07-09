@@ -55,7 +55,7 @@ const AssetsDropDown: React.FC<AssetsDropDownProps> = ({
               <div>
                 {String(option.balance).split('.')[0]}
                 {option.balance > 0 ? (
-                  <span className="text-[10px]">
+                  <span className="text-[12px]">
                     .{String(option.balance).split('.')[1]}
                   </span>
                 ) : null}
@@ -93,7 +93,7 @@ const AssetsDropDown: React.FC<AssetsDropDownProps> = ({
                   }}
                 />
                 <div className="flex items-center gap-2">
-                  <div className="flex gap-1 items-center text-[14px] leading-[24px] text-white">
+                  <div className="flex gap-1 items-center text-[14px] leading-[24px]">
                     <div>{selectedAsset.balance}</div>
                   </div>
                 </div>
@@ -105,7 +105,7 @@ const AssetsDropDown: React.FC<AssetsDropDownProps> = ({
           <InputAdornment position="end">
             <div className="flex items-center gap-2">
               {selectedAsset && (
-                <div className="secondary-text !text-[12px] text-white mr-2">
+                <div className="secondary-text !text-[12px] mr-2">
                   on{' '}
                   <span className="capitalize">{selectedAsset.chainName}</span>
                 </div>

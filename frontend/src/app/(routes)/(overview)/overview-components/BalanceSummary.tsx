@@ -17,7 +17,6 @@ export default function BalanceSummary({ chainIDs }: { chainIDs: string[] }) {
   const availableAmount = isAuthzMode ? authzAvailable : myAvailable;
   const rewardsAmount = isAuthzMode ? authzRewards : myRewards;
 
-
   const available = formatDollarAmount(availableAmount);
   const staked = formatDollarAmount(stakedAmount);
   const rewards = formatDollarAmount(rewardsAmount);
@@ -25,7 +24,6 @@ export default function BalanceSummary({ chainIDs }: { chainIDs: string[] }) {
     stakedAmount + availableAmount + rewardsAmount
   );
 
-  
   const assetsSummaryData: AssetSummary[] = [
     {
       icon: '/total-bal.png',
@@ -58,7 +56,7 @@ export default function BalanceSummary({ chainIDs }: { chainIDs: string[] }) {
       <div className="gap-2 flex flex-col">
         <div className="text-h2">Portfolio</div>
         <div className="secondary-text">
-          Connect your wallet now to access all the modules on resolute{' '}
+         Summary of assets information{' '}
         </div>
         <div className="divider-line"></div>
       </div>
@@ -66,7 +64,7 @@ export default function BalanceSummary({ chainIDs }: { chainIDs: string[] }) {
         {assetsSummaryData.map((data, index) => (
           <div key={index} className="portfolio-card">
             <div className="flex flex-col gap-4">
-              <div className="text-white text-xl font-bold leading-[18px]">
+              <div className="text-xl font-bold leading-[18px]">
                 {data.amount?.split('.')[0]}
                 {Number(data.amount) > 0 ? (
                   <span className="text-[16px]">

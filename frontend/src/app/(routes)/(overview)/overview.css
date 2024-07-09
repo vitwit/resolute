@@ -74,16 +74,18 @@
   background: rgba(255, 255, 255, 0.02);
 }
 .portfolio-card {
-  @apply flex flex-col justify-center items-center gap-2 px-6 py-4 rounded-2xl;
+  @apply flex flex-col gap-2 px-6 py-4 rounded-2xl;
   background: rgba(255, 255, 255, 0.02);
 }
-.proposal-id {
-  @apply relative flex items-center justify-center font-bold rounded-lg w-16 text-white text-[14px] tracking-[1.96px] h-[35px];
+.proposal-id-dashboard {
+  @apply relative flex items-center justify-center font-bold rounded-lg w-12 text-[14px] tracking-[1.96px] h-[35px];
   background: linear-gradient(
     180deg,
     rgba(122, 126, 156, 0.2) 0.5%,
     rgba(9, 9, 10, 0.2) 100%
   );
 }
-
-
+.proposal-network-logo {
+  @apply absolute bottom-[-8px] right-[-4px] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] rounded-[100px] border-2 border-solid border-[#111115];
+  background: lightgray 50% / cover no-repeat;
+}

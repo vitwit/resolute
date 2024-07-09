@@ -65,7 +65,7 @@ const ProposalItem = ({
             >
               <div className="flex space-x-1 items-center cursor-pointer">
                 <p
-                  className={`text-[16px] truncate ${selectedProposal ? 'max-w-[254px]' : 'max-w-[500px]'}`}
+                  className={`text-[16px] truncate ${selectedProposal ? 'max-w-[320px]' : 'max-w-[500px]'}`}
                 >
                   {proposalTitle}
                 </p>

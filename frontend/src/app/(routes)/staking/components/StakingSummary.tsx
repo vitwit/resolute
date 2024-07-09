@@ -15,18 +15,20 @@ function StakingSummary({
   unstakeAmount: number;
   availableAmount: number;
 }) {
+  const total = stakedAmount + rewardsAmount + unstakeAmount + availableAmount;
+
   const assetsSummaryData: AssetSummary[] = [
     {
       icon: '/staked-bal.png',
       alt: 'stake',
-      type: 'Total Staking',
-      amount: formatDollarAmount(stakedAmount),
+      type: 'Total Amount',
+      amount: formatDollarAmount(total),
     },
     {
       icon: '/total-bal.png',
       alt: 'available',
       type: 'Staked Amount',
-      amount: formatDollarAmount(availableAmount),
+      amount: formatDollarAmount(stakedAmount),
     },
     {
       icon: '/rewards.png',
@@ -39,7 +41,7 @@ function StakingSummary({
       icon: '/avail-bal.png',
       alt: 'Avail-bal-icon',
       type: 'Available Balance',
-      amount: formatDollarAmount(unstakeAmount),
+      amount: formatDollarAmount(availableAmount),
       // amount: parseInt(stakedBal)+rewardsBal+availableBal,
     },
   ];
@@ -51,7 +53,7 @@ function StakingSummary({
           <div key={index} className="staking-summary-card">
             <div className="flex flex-col items-center space-y-2">
               <div className="text-small-light">{data.type}</div>
-              <div className="text-white text-xl font-bold leading-[18px]">
+              <div className="text-xl font-bold leading-[18px]">
                 {data?.amount?.split('.')[0]}
                 {Number(data.amount) > 0
                   ? '.' +

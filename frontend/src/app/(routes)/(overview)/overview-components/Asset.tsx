@@ -157,7 +157,7 @@ const Asset = ({
         <div className="flex flex-col items-start gap-2">
           <div className="text-[14px] font-normal leading-[normal]">
             {formatCoin(asset.balance, asset.displayDenom).split('.')[0]}.
-            <span className="text-[10px]">
+            <span className="text-[12px]">
               {
                 formatCoin(asset.balance, asset.displayDenom)
                   ?.split('.')[1]
@@ -197,13 +197,22 @@ const Asset = ({
             {asset.type === 'native' ? (
               <span>
                 {formatCoin(asset.staked, asset.displayDenom).split('.')[0]}
-                <span className="text-[10px]">
-                  .
+                <span className="text-[12px]">
+                  {Number(
+                    formatCoin(asset.staked, asset.displayDenom).split(' ')[0]
+                  ) > 0
+                    ? '.'
+                    : ''}
                   {
                     formatCoin(asset.staked, asset.displayDenom)
                       ?.split('.')[1]
                       ?.split(' ')[0]
                   }{' '}
+                  {
+                    formatCoin(asset.staked, asset.displayDenom)
+                      ?.split('.')[1]
+                      ?.split(' ')[1]
+                  }
                 </span>
               </span>
             ) : (
@@ -220,12 +229,21 @@ const Asset = ({
             {asset.type === 'native' ? (
               <span>
                 {formatCoin(asset.rewards, asset.displayDenom).split('.')[0]}
-                <span className="text-[10px]">
-                  .
+                <span className="text-[12px]">
+                  {Number(
+                    formatCoin(asset.rewards, asset.displayDenom).split(' ')[0]
+                  ) > 0
+                    ? '.'
+                    : ''}
                   {
                     formatCoin(asset.rewards, asset.displayDenom)
                       ?.split('.')[1]
                       ?.split(' ')[0]
+                  }{' '}
+                  {
+                    formatCoin(asset.rewards, asset.displayDenom)
+                      ?.split('.')[1]
+                      ?.split(' ')[1]
                   }
                 </span>
               </span>
@@ -240,7 +258,7 @@ const Asset = ({
         <div className="flex flex-col items-start gap-2">
           <div className="text-[14px] font-normal leading-[normal] flex items-baseline">
             {formatDollarAmount(asset.usdPrice).split('.')[0]}.
-            <span className="text-[10px]">
+            <span className="text-[12px]">
               {formatDollarAmount(asset.usdPrice).split('.')[1]}
             </span>
           </div>
@@ -253,7 +271,7 @@ const Asset = ({
             >
               <p className="text-sm font-extralight leading-[normal]">
                 {formatAmount(Math.abs(asset.inflation)).split('.')[0]}.
-                <span className="text-[10px]">
+                <span className="text-[12px]">
                   {' '}
                   {formatAmount(Math.abs(asset.inflation)).split('.')[1]}
                 </span>
