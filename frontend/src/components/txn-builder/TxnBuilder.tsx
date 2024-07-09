@@ -11,6 +11,7 @@ import MessagesList from './components/MessagesList';
 import { DELEGATE_TYPE_URL, SEND_TYPE_URL } from '@/utils/constants';
 import { parseBalance } from '@/utils/denom';
 import SelectMessage from './components/SelectMessage';
+import { DEFAULT_MESSAGES_COUNT } from '@/constants/txn-builder';
 
 const TxnBuilder = ({
   chainID,
@@ -37,6 +38,9 @@ const TxnBuilder = ({
 
   const [txType, setTxType] = useState('');
   const [messages, setMessages] = useState<Msg[]>([]);
+  const [messagesCount, setMessagesCount] = useState<MessagesCount>(
+    DEFAULT_MESSAGES_COUNT
+  );
   const [estimatedBalance, setEstimatedBalance] =
     useState<number>(availableBalance);
 
@@ -75,6 +79,7 @@ const TxnBuilder = ({
         return newBalance;
       });
     }
+    updateMessagesCount(txType as TxnMsgType, 'increase');
   };
 
   const onDeleteMsg = (index: number) => {
@@ -100,8 +105,34 @@ const TxnBuilder = ({
         return newBalance;
       });
     }
+    updateMessagesCount(txType as TxnMsgType, 'decrease');
     const arr = messages.filter((_, i) => i !== index);
     setMessages(arr);
+  };
+
+  const updateMessagesCount = (
+    key: TxnMsgType,
+    action: 'increase' | 'decrease'
+  ) => {
+    if (!key?.length) {
+      return;
+    }
+    setMessagesCount((prevState) => {
+      const newValue =
+        action === 'increase' ? prevState[key] + 1 : prevState[key] - 1;
+
+      return {
+        ...prevState,
+        [key]: newValue >= 0 ? newValue : 0,
+      };
+    });
+  };
+
+  const clearAllMessages = () => {
+    setTxType('');
+    setEstimatedBalance(availableBalance);
+    setMessagesCount(DEFAULT_MESSAGES_COUNT);
+    setMessages([]);
   };
 
   const onFormSubmit = (data: { gas: number; memo: string; fees: number }) => {
@@ -130,6 +161,7 @@ const TxnBuilder = ({
         cancelAddMsg={() => {
           setTxType('');
         }}
+        messagesCount={messagesCount}
       />
       <div className="flex-1 space-y-6 h-full flex flex-col bg-[#FFFFFF05] rounded-2xl p-6 overflow-y-scroll">
         <div className="flex items-center justify-between">
@@ -137,7 +169,7 @@ const TxnBuilder = ({
           {messages?.length ? (
             <div
               className="secondary-btn cursor-pointer"
-              onClick={() => setMessages([])}
+              onClick={clearAllMessages}
             >
               Clear All
             </div>

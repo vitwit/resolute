@@ -4,12 +4,10 @@ import '../../../multisig.css';
 
 const page = ({ params }: { params: { network: string; address: string } }) => {
   return (
-    <div>
-      <PageTxnBuilder
-        paramChain={params.network.toLowerCase()}
-        multisigAddress={params.address}
-      />
-    </div>
+    <PageTxnBuilder
+      paramChain={params.network.toLowerCase()}
+      multisigAddress={params.address}
+    />
   );
 };
 

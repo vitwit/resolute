@@ -17,6 +17,7 @@ const AllMultisigAccounts = ({
   const multisigAccounts = useAppSelector(
     (state) => state.multisig.multisigAccounts
   );
+  const txnsState = useAppSelector((state) => state.multisig.txns.list);
   const accounts = multisigAccounts.accounts;
   const pendingTxns = multisigAccounts.txnCounts;
   const status = multisigAccounts.status;
@@ -27,10 +28,12 @@ const AllMultisigAccounts = ({
         <MultisigAccountsLoading />
       ) : (
         <div className="space-y-10">
-          <SectionHeader
-            title={'Multisig Accounts'}
-            description="All multisig accounts you are part of."
-          />
+          {txnsState?.length ? (
+            <SectionHeader
+              title={'Multisig Accounts'}
+              description="All multisig accounts you are part of."
+            />
+          ) : null}
           {accounts?.length ? (
             <div className="grid grid-cols-3 gap-6 px-6">
               {accounts.map((account) => (
