@@ -32,7 +32,7 @@ const ReDelegatePopup: React.FC<PopupProps> = ({
 
   // Custom hooks to fetch staking details
   const singleStake = useSingleStaking(chainID);
-  const { totalStakedAmount } = singleStake.getStakingAssets();
+  const totalStakedAmount = singleStake.totalValStakedAssets(chainID, validator)
   const denom = singleStake.getDenomWithChainID(chainID);
   const staking = useStaking({isSingleChain: true});
   const allVals = singleStake.getValidators()?.active;
