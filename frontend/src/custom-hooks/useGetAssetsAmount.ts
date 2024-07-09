@@ -212,16 +212,9 @@ const useGetAssetsAmount = (chainIDs: string[]) => {
 
     });
 
-
-
-    console.log({ totalAmountByChainObj })
-
     return totalAmountByChainObj
 
   }
-
-  // totalAmountByChain()
-
 
   return [totalStakedAmount, availableAmount, rewardsAmount, totalUnStakedAmount, totalAmountByChain];
 };

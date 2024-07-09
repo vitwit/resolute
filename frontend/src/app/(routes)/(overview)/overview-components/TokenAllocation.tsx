@@ -15,7 +15,6 @@ const truncateChainName = (name: string, maxLength: number) => {
 const TokenAllocation = () => {
   const params = useParams();
   const currentChainName = params?.chainNames?.[0];
-  console.log({ params });
 
   const nameToChainIDs = useAppSelector(
     (state: RootState) => state.wallet.nameToChainIDs
@@ -75,8 +74,6 @@ const TokenAllocation = () => {
     return acc;
   }, 0); // Convert the sorted array back into an object
   const sortedObj = Object.fromEntries(firstEntries);
-
-  console.log(sortedObj);
 
   return (
     <div className="flex flex-col p-6 rounded-2xl bg-[#ffffff05] w-[418px] gap-10">
