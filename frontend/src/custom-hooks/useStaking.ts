@@ -20,10 +20,6 @@ import { getBalances } from '@/store/features/bank/bankSlice';
 // import useGetAssets from "./useGetAssets";
 // import { Interface } from "readline";
 import useGetAssetsAmount from './useGetAssetsAmount';
-import {
-  getAllTokensPrice,
-  //  getTokenPrice
-} from '@/store/features/common/commonSlice';
 import useGetTxInputs from './useGetTxInputs';
 
 const useStaking = ({ isSingleChain }: { isSingleChain: boolean }) => {
@@ -113,7 +109,6 @@ const useStaking = ({ isSingleChain }: { isSingleChain: boolean }) => {
         // Fetch all validators
         // dispatch(getAllValidators({ baseURLs: restURLs, chainID }));
       });
-      dispatch(getAllTokensPrice());
     }
   }, [isWalletConnected]);
 
