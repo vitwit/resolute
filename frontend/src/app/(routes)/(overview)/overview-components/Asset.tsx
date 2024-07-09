@@ -198,12 +198,21 @@ const Asset = ({
               <span>
                 {formatCoin(asset.staked, asset.displayDenom).split('.')[0]}
                 <span className="text-[12px]">
-                  .
+                  {Number(
+                    formatCoin(asset.staked, asset.displayDenom).split(' ')[0]
+                  ) > 0
+                    ? '.'
+                    : ''}
                   {
                     formatCoin(asset.staked, asset.displayDenom)
                       ?.split('.')[1]
                       ?.split(' ')[0]
                   }{' '}
+                  {
+                    formatCoin(asset.staked, asset.displayDenom)
+                      ?.split('.')[1]
+                      ?.split(' ')[1]
+                  }
                 </span>
               </span>
             ) : (
@@ -221,11 +230,20 @@ const Asset = ({
               <span>
                 {formatCoin(asset.rewards, asset.displayDenom).split('.')[0]}
                 <span className="text-[12px]">
-                  .
+                  {Number(
+                    formatCoin(asset.rewards, asset.displayDenom).split(' ')[0]
+                  ) > 0
+                    ? '.'
+                    : ''}
                   {
                     formatCoin(asset.rewards, asset.displayDenom)
                       ?.split('.')[1]
                       ?.split(' ')[0]
+                  }{' '}
+                  {
+                    formatCoin(asset.rewards, asset.displayDenom)
+                      ?.split('.')[1]
+                      ?.split(' ')[1]
                   }
                 </span>
               </span>
