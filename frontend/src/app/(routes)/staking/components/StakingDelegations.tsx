@@ -73,23 +73,17 @@ function StakingDelegations({
             <div className="secondary-text">Summary of staked assets.</div>
           </div>
           <div className="flex gap-4 items-end">
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-2">
               <p className="status-active"></p>
-              <p className="text-[rgba(255,255,255,0.50)] text-[10px] font-extralight leading-[normal]">
-                Active
-              </p>
+              <p className="text-[12px]">Active</p>
             </div>
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-2">
               <p className="status-unbonded"></p>
-              <p className="text-[rgba(255,255,255,0.50)] text-[10px] font-extralight leading-[normal]">
-                InActive
-              </p>
+              <p className="text-[12px]">Inactive</p>
             </div>
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-2">
               <p className="status-jailed"></p>
-              <p className="text-[rgba(255,255,255,0.50)] text-[10px] font-extralight leading-[normal]">
-                Jailed
-              </p>
+              <p className="text-[12px]">Jailed</p>
             </div>
           </div>
         </div>
