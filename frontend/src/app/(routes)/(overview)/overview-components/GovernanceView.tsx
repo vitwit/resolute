@@ -7,13 +7,13 @@ import { get } from 'lodash';
 import { useAppSelector } from '@/custom-hooks/StateHooks';
 import GovSkeleton from './GovSkeleton';
 import Link from 'next/link';
-import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
+// import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const ProposalCard: React.FC<{ proposal: any }> = ({ proposal }) => {
-  const { getChainInfo } = useGetChainInfo();
-  const chainID = get(proposal, 'chainID').toLowerCase();
-  const { chainLogo } = getChainInfo(chainID);
+  // const { getChainInfo } = useGetChainInfo();
+  // const chainID = get(proposal, 'chainID').toLowerCase();
+  // const { chainLogo } = getChainInfo(chainID);
 
   return (
     <Link
