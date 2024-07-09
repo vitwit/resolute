@@ -48,7 +48,7 @@ const StakingDashboard = () => {
           <div className="text-h1">Staking</div>
           <div className="space-y-2">
             <div className="secondary-text">
-              {isWalletConnected ? (
+              {!isWalletConnected ? (
                 'Connect your wallet now to access all the modules on resolute'
               ) : (
                 <p>

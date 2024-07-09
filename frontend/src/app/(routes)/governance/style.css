@@ -135,3 +135,29 @@
   list-style-position: inside;
   margin-left: 1em;
 }
+
+.proposal-overview-enter {
+  opacity: 0;
+  transform: translateX(100%);
+}
+
+.proposal-overview-enter-active {
+  opacity: 1;
+  transform: translateX(0);
+  transition:
+    opacity 300ms,
+    transform 300ms;
+}
+
+.proposal-overview-exit {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.proposal-overview-exit-active {
+  opacity: 0;
+  transform: translateX(-100%);
+  transition:
+    opacity 300ms,
+    transform 300ms;
+}

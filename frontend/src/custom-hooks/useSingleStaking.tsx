@@ -83,13 +83,9 @@ const useSingleStaking = (chainID: string) => {
 
         // Fetch unbonding delegations
         dispatch(getUnbonding({ baseURLs: restURLs, address, chainID }));
-    }, [isWalletConnected, chainID]);
 
-    useEffect(() => {
-        const { restURLs } = getChainInfo(chainID);
-        // Fetch all validators
         dispatch(getAllValidators({ baseURLs: restURLs, chainID }));
-      }, [chainID]);
+    }, [isWalletConnected, chainID]);
 
     const fetchValidatorDetails = (valoperAddress: string, chainID: string) => {
         const { restURLs } = getChainInfo(chainID);
@@ -123,7 +119,7 @@ const useSingleStaking = (chainID: string) => {
 
     const getAmountWithDecimal = (amount: number, chainID: string) => {
         const { decimals, displayDenom } = getDenomInfo(chainID);
-        return parseInt((amount / 10 ** decimals).toString()) + ' ' + displayDenom;
+        return parseInt((amount / 10 ** decimals).toString()).toLocaleString() + ' ' + displayDenom;
     }
 
     const getDenomWithChainID = (chainID: string) => {

@@ -61,7 +61,6 @@ const TokenAllocation = () => {
 
   // Calculate the "Others" total and percentage
   const others = entries.slice(5);
-  // const othersTotal = others.reduce((acc, [key, value]) => acc + value?.total || 0, 0);
   const othersPercentage = others.reduce((acc, [, value]) => {
     if (
       value &&
@@ -72,41 +71,36 @@ const TokenAllocation = () => {
       return acc + value.percentage;
     }
     return acc;
-  }, 0); // Convert the sorted array back into an object
+  }, 0);
+
+  // Convert the sorted array back into an object
   const sortedObj = Object.fromEntries(firstEntries);
 
   return (
     <div className="flex flex-col p-6 rounded-2xl bg-[#ffffff05] w-[418px] gap-10">
       <div className="flex flex-col gap-2 w-full">
         <div className="text-h2">Token Allocation</div>
-        <div className="secondary-text">Token Allocation </div>
+        <div className="secondary-text">Token Allocation</div>
         <div className="divider-line"></div>
       </div>
 
       {loading ? (
         <TokenAllocationSkeleton />
       ) : (
-        <div className="flex gap-10 h-[150px]">
-          {Object.entries(sortedObj)
-            .slice(0, 5)
-            .map(([key, value], index) => (
-              <div
-                key={index}
-                className="flex flex-col rounded-full w-6 h-[150px] justify-end"
-              >
-                {Number(get(value, 'percentage', 0).toFixed(2)) > 0 ? null : (
-                  <div className="text-xs mb-1 text-start">
-                    0%
+        <div className="flex justify-between h-[150px] mb-6 gap-2">
+          {Object.entries(sortedObj).map(([key, value], index) => (
+            <div key={index} className="">
+              <div className="flex flex-col rounded-full w-6 h-[150px] justify-end bg-[#ffffff0a]">
+                {Number(get(value, 'percentage', 0).toFixed(2)) > 0 ? (
+                  <div className="text-[10px] mb-1 text-center">
+                    {Math.round(get(value, 'percentage', 0))}%
                   </div>
+                ) : (
+                  <div className="text-[10px] mb-1 text-center">0%</div>
                 )}
 
-                <Tooltip title={get(value, 'chainName', key)} placement="top">
-                  <div className="mb-2 text-xs">
-                    {truncateChainName(get(value, 'chainName', key), 3)}
-                  </div>
-                </Tooltip>
                 <Tooltip
-                  title={`${get(value, 'percentage', 0).toFixed(2)}%`}
+                  title={`${Math.round(get(value, 'percentage', 0))}%`}
                   placement="top"
                 >
                   <div
@@ -123,7 +117,7 @@ const TokenAllocation = () => {
                   ></div>
                 </Tooltip>
                 <Tooltip
-                  title={`${get(value, 'percentage', 0).toFixed(2)}%`}
+                  title={`${Math.round(get(value, 'percentage', 0))}%`}
                   placement="top"
                 >
                   <Image
@@ -135,65 +129,51 @@ const TokenAllocation = () => {
                   />
                 </Tooltip>
               </div>
-            ))}
+              <Tooltip title={get(value, 'chainName', key)} placement="top">
+                <div className="mb-2 text-xs mt-2">
+                  {truncateChainName(get(value, 'chainName', key), 5)}
+                </div>
+              </Tooltip>
+            </div>
+          ))}
 
-          {/* <div
-            key={6}
-            className="flex flex-col items-center"
-            style={{ height: othersPercentage + '%' }}
-          >
-            <div className="mb-2 text-xs">{'others'}</div>
-            <Tooltip
-              title={`${othersPercentage.toFixed(2)}%`}
-              placement="bottom-start"
-            >
-              <div
-                className="w-6 rounded-[8px_8px_0px_0px] flex flex-col justify-end"
-                style={{
-                  background:
-                    'linear-gradient(180deg, #ac04d2 0%, #121215 100%)',
-                  height: '100%',
-                }}
+          <div className="">
+            <div className="flex flex-col rounded-full w-6 h-[150px] justify-end bg-[#ffffff0a]">
+              {Number(othersPercentage.toFixed(2)) > 0 ? (
+                <div className="text-[10px] mb-1 text-center">
+                  {Math.round(othersPercentage)}%
+                </div>
+              ) : (
+                <div className="text-[10px] mb-1 text-center">0%</div>
+              )}
+              <Tooltip
+                title={`${Math.round(othersPercentage)}%`}
+                placement="top"
               >
-               
+                <div
+                  className="w-6 rounded-[8px_8px_0px_0px] flex flex-col justify-end"
+                  style={{
+                    background:
+                      'linear-gradient(180deg, #ac04d2 0%, #121215 100%)',
+                    height: othersPercentage.toFixed(2) + '%',
+                  }}
+                ></div>
+              </Tooltip>
+              <Tooltip
+                placement="top"
+                title={`${Math.round(othersPercentage)}%`}
+              >
                 <Image
+                  className="rounded-full"
                   src="/others.svg"
                   height={24}
                   width={24}
-                  alt={`Radio ${6}`}
+                  alt={`Radio 6`}
                 />
-              </div>
-            </Tooltip>
-          </div> */}
-
-          <div className="flex flex-col rounded-full w-6 h-[150px] justify-end">
-            {Number(othersPercentage) > 0 ? null : (
-              <div className="text-xs mb-1 text-center">
-                0%
-              </div>
-            )}
-
-            <Tooltip title="Others" placement="top">
-              <div className="mb-2 text-xs">Others</div>
-            </Tooltip>
-            <Tooltip title={`${othersPercentage}%`} placement="top">
-              <div
-                className="w-6 rounded-[8px_8px_0px_0px]"
-                style={{
-                  height: othersPercentage + '%',
-                  background:
-                    'linear-gradient(180deg, #ac04d2 0%, #121215 100%)',
-                }}
-              ></div>
-            </Tooltip>
-            <Tooltip title={`${othersPercentage.toFixed(2)}%`} placement="top">
-              <Image
-                className="rounded-full"
-                src="/others.svg"
-                height={24}
-                width={24}
-                alt={`Radio 6`}
-              />
+              </Tooltip>
+            </div>
+            <Tooltip title="" placement="top">
+              <div className="mb-2 text-xs mt-2">Others</div>
             </Tooltip>
           </div>
         </div>

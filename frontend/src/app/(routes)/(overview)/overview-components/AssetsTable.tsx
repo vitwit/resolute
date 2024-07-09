@@ -33,7 +33,7 @@ const AssetsTable = ({ chainIDs }: { chainIDs: string[] }) => {
     isAuthzMode && (authzBalanceLoading || authzDelegationsLoading);
 
   return (
-    <div className="flex flex-col gap-10 w-full bg-[#ffffff05] rounded-2xl p-6 h-[60vh]">
+    <div className="flex flex-col gap-10 w-full bg-[#ffffff05] rounded-2xl p-6">
       <div className="space-y-2">
         <div className="text-h2">Asset Information</div>
         <div className="secondary-text">Your total assets information.</div>
@@ -43,7 +43,7 @@ const AssetsTable = ({ chainIDs }: { chainIDs: string[] }) => {
       {/* table */}
 
       {assets.length ? (
-        <div className="flex flex-col items-start gap-2 w-full overflow-y-scroll flex-1">
+        <div className="flex flex-col items-start gap-2 w-full flex-1">
           <table className="relative w-full">
             <thead className="w-full">
               <tr>

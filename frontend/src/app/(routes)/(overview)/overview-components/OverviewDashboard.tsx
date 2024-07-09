@@ -16,7 +16,6 @@ const OverviewDashboard = ({ chainIDs }: { chainIDs: string[] }) => {
   const dispatch = useAppDispatch();
   const networks = useAppSelector((state) => state.wallet.networks);
   useEffect(() => {
-
     chainIDs.forEach((chainID) => {
       const allChainInfo = networks[chainID];
       const chainInfo = allChainInfo.network;
@@ -51,12 +50,12 @@ const OverviewDashboard = ({ chainIDs }: { chainIDs: string[] }) => {
       );
     });
   }, []);
-  
+
   return (
     <div>
       <div className="flex pt-10 gap-10">
         <div className="flex flex-1">
-          <div className="flex flex-col gap-10">
+          <div className="flex flex-col gap-10 h-[calc(100vh-104px)] overflow-y-auto pb-3">
             <BalanceSummary chainIDs={chainIDs} />
             <AssetsTable chainIDs={chainIDs} />
           </div>
