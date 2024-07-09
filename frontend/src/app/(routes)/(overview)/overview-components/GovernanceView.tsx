@@ -21,7 +21,7 @@ const ProposalCard: React.FC<{ proposal: any }> = ({ proposal }) => {
     >
       <div className="flex flex-col justify-center items-start gap-2 p-4 rounded-2xl bg-[#ffffff05]">
         <div className="flex gap-2">
-          <div className="proposal-id">
+          <div className="proposal-id-dashboard">
             <span className=" ">
               {get(proposal, 'proposalInfo.proposalId', 0)}
             </span>

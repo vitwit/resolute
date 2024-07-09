@@ -77,7 +77,7 @@
   @apply flex flex-col gap-2 px-6 py-4 rounded-2xl;
   background: rgba(255, 255, 255, 0.02);
 }
-.proposal-id {
+.proposal-id-dashboard {
   @apply relative flex items-center justify-center font-bold rounded-lg w-12 text-[14px] tracking-[1.96px] h-[35px];
   background: linear-gradient(
     180deg,
