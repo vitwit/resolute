@@ -36,9 +36,9 @@ const ProposalCard: React.FC<{ proposal: any }> = ({ proposal }) => {
               />
             </div>
           </div>
-          <div className="flex flex-col gap-2">
-            <div className="flex gap-2">
-              <div className="truncate w-[234px] hover:underline hover:underline-offset-[3px]">
+          <div className="flex flex-col">
+            <div className="flex">
+              <div className="truncate w-[234px] hover:underline hover:underline-offset-[3px] text-[14px]">
                 {get(proposal, 'proposalInfo.proposalTitle', '-')}
               </div>
               <button type="button" className="flex justify-center">
