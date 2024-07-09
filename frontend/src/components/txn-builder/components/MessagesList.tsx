@@ -77,7 +77,9 @@ const MessagesList = ({
 
   return (
     <div className="flex-1 flex flex-col gap-2">
-      <div className="space-y-4 border-b-[0.5px] border-[#ffffff2e] min-h-[300px]">
+      <div
+        className={`space-y-4 min-h-[300px] ${messages?.length > PER_PAGE ? 'border-b-[0.5px] border-[#ffffff2e]' : ''}`}
+      >
         {slicedMsgs.map((msg, index) => {
           return (
             <div key={index + PER_PAGE * (currentPage - 1)}>

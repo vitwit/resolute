@@ -96,3 +96,12 @@ type TxnMsgType =
   | 'Redelegate'
   | 'Vote'
   | 'Custom';
+
+interface MessagesCount {
+  Send: number;
+  Delegate: number;
+  Redelegate: number;
+  Undelegate: number;
+  Vote: number;
+  Custom: number;
+}
