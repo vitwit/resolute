@@ -24,10 +24,7 @@ import useInitAuthzForOverview from '@/custom-hooks/useInitAuthzForOverview';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import Image from 'next/image';
 import BalanceSummary from './BalanceSummary';
-import {
-  getAllTokensPrice,
-  setError,
-} from '@/store/features/common/commonSlice';
+import { setError } from '@/store/features/common/commonSlice';
 import { copyToClipboard } from '@/utils/copyToClipboard';
 import AssetsTable from './AssetsTable';
 import { shortenAddress } from '@/utils/util';
@@ -46,8 +43,6 @@ const OverviewTable = ({ chainIDs }: { chainIDs: string[] }) => {
 
   useInitAuthzForOverview(chainIDs);
   useEffect(() => {
-    dispatch(getAllTokensPrice());
-
     chainIDs.forEach((chainID) => {
       const allChainInfo = networks[chainID];
       const chainInfo = allChainInfo.network;
@@ -89,7 +84,7 @@ const OverviewTable = ({ chainIDs }: { chainIDs: string[] }) => {
         <div className="flex flex-col items-start gap-2 w-full">
           <div className="flex space-x-2 items-center">
             <div className="flex items-center space-x-2">
-              <p className="text-white text-2xl font-normal leading-[normal]">
+              <p className="text-2xl font-normal leading-[normal]">
                 {shortenAddress(getCosmosAddress(), 20)}
               </p>
               <Image

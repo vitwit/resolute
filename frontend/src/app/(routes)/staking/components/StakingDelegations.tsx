@@ -126,7 +126,7 @@ function StakingDelegations({
                     </div>
                     <div className="flex gap-4 ml-8">
                       <div className="flex gap-2 items-center">
-                        <p className="text-white text-xs font-bold leading-[normal]">
+                        <p className="text-xs font-bold leading-[normal]">
                           {
                             staking
                               .getAmountObjectWithDecimal(
@@ -162,7 +162,7 @@ function StakingDelegations({
                         </p>
                       </div>
                       <div className="flex gap-2 items-center">
-                        <p className="text-white text-xs font-bold leading-[normal]">
+                        <p className="text-xs font-bold leading-[normal]">
                           {getChainTotalRewards(key).split('.')[0]}.
                           <span className="text-[10px]">
                             {
@@ -245,7 +245,7 @@ function StakingDelegations({
                             .amount?.split('.')[0]
                         }
                         .{' '}
-                        <span className="text-[10px]">
+                        <span className="text-[12px]">
                           {
                             staking
                               .getAmountObjectWithDecimal(
@@ -272,7 +272,7 @@ function StakingDelegations({
                           ).split('.')[0]
                         }
                         .
-                        <span className="text-[10px]">
+                        <span className="text-[12px]">
                           {
                             getValRewards(
                               get(data, 'delegation.validator_address'),

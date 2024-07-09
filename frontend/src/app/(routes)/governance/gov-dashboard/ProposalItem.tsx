@@ -89,7 +89,9 @@ const ProposalItem = ({
                   {isActive ? (
                     <div className="active-badge">Active</div>
                   ) : (
-                    <div className="deposit-badge">Deposit</div>
+                    <div className="deposit-badge">
+                      Deposit
+                    </div>
                   )}
                 </div>
               )}

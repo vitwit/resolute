@@ -758,7 +758,7 @@ const IBCSwap = () => {
                     onClick={() => setSettingsOpen(true)}
                     className="text-b1 flex items-center gap-[2px] cursor-pointer"
                   >
-                    <div className="text-white underline underline-offset-[3px]">
+                    <div className="underline underline-offset-[3px]">
                       {slippage || swapRoute?.params?.slippage}%
                     </div>
                     <div className="text-[#ffffff80] underline underline-offset-[3px]">

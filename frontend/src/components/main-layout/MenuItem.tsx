@@ -24,7 +24,7 @@ const MenuItem = (props: MenuItemProps) => {
       <div
         className={`menu-item ${routePath === path ? 'menu-item-selected' : 'font-medium'}`}
       >
-        <Image src={icon} height={20} width={20} alt="Dashboard" />
+        <Image src={icon} height={20} width={20} alt="Dashboard" className="opacity-60"/>
         <div className="menu-item-name">{name}</div>
       </div>
     </Link>

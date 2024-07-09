@@ -98,7 +98,7 @@ const ValidatorTable: React.FC<{ chainID: string }> = ({ chainID }) => {
         <tr className="table-border-line">
           <td className="px-0 py-8">
             <div className="mr-auto flex">
-              <div className="text-white text-base font-normal leading-[normal]">
+              <div className="text-base font-normal leading-[normal]">
                 # {get(value, 'rank', '-')}
               </div>
             </div>
@@ -111,7 +111,7 @@ const ValidatorTable: React.FC<{ chainID: string }> = ({ chainID }) => {
                 identity={get(value, 'description.identity', '')}
               />{' '}
               &nbsp;
-              <p className="text-white text-sm font-normal leading-[normal]">
+              <p className="text-sm font-normal leading-[normal]">
                 {shortenName(get(value, 'description.moniker', ''), 12)}
               </p>{' '}
               &nbsp;
@@ -122,7 +122,7 @@ const ValidatorTable: React.FC<{ chainID: string }> = ({ chainID }) => {
             </div>
           </td>
           <td className="">
-            <div className="text-white text-left text-base font-normal leading-[normal]">
+            <div className="text-left text-base font-normal leading-[normal]">
               {parseInt(
                 (
                   get(value, 'commission.commission_rates.rate') * 100

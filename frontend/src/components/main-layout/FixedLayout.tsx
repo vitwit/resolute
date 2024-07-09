@@ -25,6 +25,7 @@ import { setAllNetworksInfo } from '@/store/features/common/commonSlice';
 import useShortCuts from '@/custom-hooks/useShortCuts';
 import TransactionStatusPopup from '../txn-status-popups/TransactionStatusPopup';
 import IBCSwapTxStatus from '../IBCSwapTxStatus';
+import useFetchPriceInfo from '@/custom-hooks/useFetchPriceInfo';
 
 const FixedLayout = ({ children }: { children: React.ReactNode }) => {
   const dispatch = useAppDispatch();
@@ -89,6 +90,8 @@ const FixedLayout = ({ children }: { children: React.ReactNode }) => {
       );
     };
   }, []);
+
+  useFetchPriceInfo();
 
   return (
     <div className="fixed-layout">
