@@ -110,11 +110,7 @@ const TokenAllocation = () => {
                     style={{
                       height: get(value, 'percentage', 0) + '%',
                       background: get(value, 'theme.gradient'),
-                      border:
-                        get(value, 'chainName', key).toLowerCase() ===
-                        currentChainName
-                          ? '1px solid'
-                          : '',
+                      
                     }}
                   ></div>
                 </Tooltip>
