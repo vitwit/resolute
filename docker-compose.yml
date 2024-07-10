@@ -37,7 +37,7 @@ services:
       - "5432:5432"
     environment:
       - POSTGRES_DB=multisig
-      - POSTGRES_USER=postgres
+      - POSTGRES_USER=alice
       - POSTGRES_PASSWORD=password
     networks:
       - my_network
