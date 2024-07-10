@@ -77,11 +77,13 @@ const TokenAllocation = () => {
   const sortedObj = Object.fromEntries(firstEntries);
 
   return (
-    <div className="flex flex-col p-6 rounded-2xl bg-[#ffffff05] w-[418px] gap-10">
-      <div className="flex flex-col gap-2 w-full">
+    <div className="flex flex-col p-6 rounded-2xl bg-[#ffffff05] w-[418px] gap-6">
+      <div className="flex gap-1 flex-col w-full">
         <div className="text-h2">Token Allocation</div>
-        <div className="secondary-text">Token Allocation</div>
-        <div className="divider-line"></div>
+        <div className="flex flex-col gap-2">
+          <div className="secondary-text">Token Allocation</div>
+          <div className="divider-line"></div>
+        </div>
       </div>
 
       {loading ? (
@@ -90,13 +92,13 @@ const TokenAllocation = () => {
         <div className="flex justify-between h-[150px] mb-6 gap-2">
           {Object.entries(sortedObj).map(([key, value], index) => (
             <div key={index} className="">
-              <div className="flex flex-col rounded-full w-6 h-[150px] justify-end bg-[#ffffff0a]">
+              <div className="flex flex-col rounded-md w-6 h-[150px] justify-end bg-[#ffffff05]">
                 {Number(get(value, 'percentage', 0).toFixed(2)) > 0 ? (
-                  <div className="text-[10px] mb-1 text-center">
+                  <div className="text-[12px] font-extralight mb-1 text-center">
                     {Math.round(get(value, 'percentage', 0))}%
                   </div>
                 ) : (
-                  <div className="text-[10px] mb-1 text-center">0%</div>
+                  <div className="text-[12px] font-extralight mb-1 text-center">0%</div>
                 )}
 
                 <Tooltip
@@ -130,7 +132,7 @@ const TokenAllocation = () => {
                 </Tooltip>
               </div>
               <Tooltip title={get(value, 'chainName', key)} placement="top">
-                <div className="mb-2 text-xs mt-2">
+                <div className="mb-2 text-[12px] font-extralight mt-2">
                   {truncateChainName(get(value, 'chainName', key), 5)}
                 </div>
               </Tooltip>
@@ -138,13 +140,13 @@ const TokenAllocation = () => {
           ))}
 
           <div className="">
-            <div className="flex flex-col rounded-full w-6 h-[150px] justify-end bg-[#ffffff0a]">
+            <div className="flex flex-col rounded-md w-6 h-[150px] justify-end bg-[#ffffff05]">
               {Number(othersPercentage.toFixed(2)) > 0 ? (
-                <div className="text-[10px] mb-1 text-center">
+                <div className="text-[12px] font-extralight mb-1 text-center">
                   {Math.round(othersPercentage)}%
                 </div>
               ) : (
-                <div className="text-[10px] mb-1 text-center">0%</div>
+                <div className="text-[12px] font-extralight mb-1 text-center">0%</div>
               )}
               <Tooltip
                 title={`${Math.round(othersPercentage)}%`}
@@ -173,7 +175,7 @@ const TokenAllocation = () => {
               </Tooltip>
             </div>
             <Tooltip title="" placement="top">
-              <div className="mb-2 text-xs mt-2">Others</div>
+              <div className="mb-2 text-[12px] font-extralight mt-2">Others</div>
             </Tooltip>
           </div>
         </div>
