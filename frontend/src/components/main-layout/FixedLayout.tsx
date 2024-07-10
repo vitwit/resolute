@@ -99,7 +99,10 @@ const FixedLayout = ({ children }: { children: React.ReactNode }) => {
       <main className="main">
         <div className="main-container">
           <SideBar />
-          <section className="dynamic-section">{children}</section>
+          <section className="dynamic-section">
+            <div className='bg1'></div>
+            {children}
+            </section>
         </div>
       </main>
       <TransactionStatusPopup />
