@@ -42,7 +42,7 @@ services:
     networks:
       - my_network
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "postgres", "-d", "multisig", "-h", "localhost"]
+      test: ["CMD", "pg_isready", "-U", "alice", "-d", "multisig", "-h", "localhost"]
       interval: 30s
       timeout: 10s
       retries: 3
