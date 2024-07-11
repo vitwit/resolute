@@ -214,7 +214,7 @@
   background: rgba(255, 255, 255, 0.08);
 }
 .staking-summary-card {
-  @apply flex-1 rounded-2xl p-6 flex flex-col justify-center items-center gap-4;
+  @apply flex-1 rounded-2xl p-6 flex flex-col justify-center items-center gap-4 h-[92px];
   background: rgba(255, 255, 255, 0.02);
 }
 
