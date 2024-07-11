@@ -5,6 +5,7 @@ import { toBase64 } from '@cosmjs/encoding';
 import { getAuthToken } from '@/utils/localStorage';
 import { COSMOS_CHAIN_ID } from '@/utils/constants';
 import {
+  addChainIDParam,
   cleanURL,
   isNetworkError,
   NewMultisigThresholdPubkey,
@@ -141,9 +142,10 @@ export async function broadcastTransaction(data: {
     const result = await client.broadcastTx(
       Uint8Array.from(TxRaw.encode(signedTx).finish())
     );
-    const txn = await axios.get(
-      `${cleanURL(data.baseURLs[0])}/cosmos/tx/v1beta1/txs/${result.transactionHash}`
-    );
+    let txnUrl = `${cleanURL(data.baseURLs[0])}/cosmos/tx/v1beta1/txs/${result.transactionHash}`;
+    txnUrl = addChainIDParam(txnUrl, data.chainID);
+    const txn = await axios.get(txnUrl);
+
     const {
       code,
       transactionHash,
