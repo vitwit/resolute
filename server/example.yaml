@@ -14,7 +14,7 @@ production:
 
 dev:
   database:
-    host: "localhost"
+    host: "database"
     port: 5432
     user: "alice"
     password: "password"
