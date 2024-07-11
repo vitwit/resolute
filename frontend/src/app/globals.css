@@ -151,7 +151,7 @@ body {
 }
 
 .text-b1 {
-  @apply text-[14px];
+  @apply text-[14px] leading-[21px];
 }
 
 .text-b1-light {

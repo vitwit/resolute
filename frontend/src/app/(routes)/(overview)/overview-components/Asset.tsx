@@ -152,8 +152,8 @@ const Asset = ({
   }, []);
 
   return (
-    <tr className="hover:bg-[#FFFFFF14]">
-      <th className="rounded-l-2xl px-4 py-4 w-1/4">
+    <tr className="hover:bg-[#FFFFFF14] space-y-2">
+      <th className=" px-4 py-4 w-1/4">
         <div className="flex flex-col items-start gap-2">
           <div className="text-[14px] font-normal leading-[normal]">
             {formatCoin(asset.balance, asset.displayDenom).split('.')[0]}.
@@ -200,9 +200,9 @@ const Asset = ({
                 <span className="text-[12px]">
                   {Number(
                     formatCoin(asset.staked, asset.displayDenom).split(' ')[0]
-                  ) > 0
-                    ? '.'
-                    : ''}
+                  ) === 0
+                    ? ''
+                    : '.'}
                   {
                     formatCoin(asset.staked, asset.displayDenom)
                       ?.split('.')[1]
@@ -232,9 +232,9 @@ const Asset = ({
                 <span className="text-[12px]">
                   {Number(
                     formatCoin(asset.rewards, asset.displayDenom).split(' ')[0]
-                  ) > 0
-                    ? '.'
-                    : ''}
+                  ) == 0
+                    ? ' '
+                    : '.'}
                   {
                     formatCoin(asset.rewards, asset.displayDenom)
                       ?.split('.')[1]
@@ -275,7 +275,7 @@ const Asset = ({
                   {' '}
                   {formatAmount(Math.abs(asset.inflation)).split('.')[1]}
                 </span>
-                %
+               {' '} %
               </p>
             </div>
             <Image
@@ -300,7 +300,7 @@ const Asset = ({
           <div className="w-4 h-4" />
         </div>
       </th> */}
-      <th className="rounded-r-2xl">
+      <th className="">
         <div className="items-center justify-center relative inline-block">
           <Image
             src="/more.svg"

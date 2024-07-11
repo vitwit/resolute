@@ -1,7 +1,6 @@
 import { useAppSelector } from '@/custom-hooks/StateHooks';
 import useGetAssetsAmount from '@/custom-hooks/useGetAssetsAmount';
 import { formatDollarAmount } from '@/utils/util';
-import Image from 'next/image';
 import React from 'react';
 import useGetAuthzAssetsAmount from '../../../../custom-hooks/useGetAuthzAssetsAmount';
 type AssetSummary = { icon: string; alt: string; type: string; amount: string };
@@ -28,13 +27,13 @@ export default function BalanceSummary({ chainIDs }: { chainIDs: string[] }) {
     {
       icon: '/total-bal.png',
       alt: 'total-balance',
-      type: 'TotalBalance',
+      type: 'Total Balance',
       amount: total,
     },
     {
       icon: '/staked-bal.png',
       alt: 'stake',
-      type: 'StakedAmt',
+      type: 'Staked Amt',
       amount: staked,
     },
     {
@@ -52,35 +51,26 @@ export default function BalanceSummary({ chainIDs }: { chainIDs: string[] }) {
   ];
 
   return (
-    <div className="portfolio-bg gap-4">
-      <div className="gap-2 flex flex-col">
+    <div className="portfolio-bg gap-6">
+      <div className="flex flex-col gap-1">
         <div className="text-h2">Portfolio</div>
-        <div className="secondary-text">
-         Summary of assets information{' '}
+        <div className="flex flex-col gap-2">
+          <div className="secondary-text">Summary of assets information </div>
+          <div className="divider-line"></div>
         </div>
-        <div className="divider-line"></div>
       </div>
       <div className="grid grid-cols-4 gap-6 w-full">
         {assetsSummaryData.map((data, index) => (
           <div key={index} className="portfolio-card">
-            <div className="flex flex-col gap-4">
-              <div className="text-xl font-bold leading-[18px]">
+            <div className="flex flex-col space-y-2 items-center">
+              <div className="secondary-text">{data.type}</div>
+              <div className="text-[18px] font-bold leading-[27px]">
                 {data.amount?.split('.')[0]}
                 {Number(data.amount) > 0 ? (
                   <span className="text-[16px]">
                     .{data.amount?.split('.')[1]}
                   </span>
                 ) : null}
-              </div>
-              <div className="flex gap-1 items-center">
-                <Image
-                  src={data.icon}
-                  width={24}
-                  height={24}
-                  alt={data.alt}
-                  draggable={false}
-                />
-                <div className="secondary-text">{data.type}</div>
               </div>
             </div>
           </div>
