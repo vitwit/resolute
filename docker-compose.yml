@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        NEXT_PUBLIC_APP_API_URI: http://${HOST_IP}:1323
+    ports:
+      - "3000:3000"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - my_network
+
+  backend:
+    build:
+      context: ./server
+    ports:
+      - "1323:1323"
+    depends_on:
+      database:
+        condition: service_healthy
+    networks:
+      - my_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://backend:1323"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  database:
+    build:
+      context: ./db-docker
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=multisig
+      - POSTGRES_USER=alice
+      - POSTGRES_PASSWORD=password
+    networks:
+      - my_network
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "alice", "-d", "multisig", "-h", "localhost"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+networks:
+  my_network:
+    driver: bridge
