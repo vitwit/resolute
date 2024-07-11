@@ -4,9 +4,14 @@ import { ValidatorProfileInfo } from '@/types/staking';
 import { getValidatorRank } from '@/utils/util';
 import { parseBalance } from '@/utils/denom';
 import useGetAllChainsInfo from './useGetAllChainsInfo';
-import { COIN_GECKO_IDS, OASIS_CONFIG, POLYGON_CONFIG, WITVAL } from '@/utils/constants';
+import {
+  COIN_GECKO_IDS,
+  OASIS_CONFIG,
+  POLYGON_CONFIG,
+  WITVAL,
+} from '@/utils/constants';
 
-const removedChains = ['crescent-1', 'archway-1', 'celestia']
+const removedChains = ['crescent-1', 'archway-1', 'celestia'];
 
 const useGetValidatorInfo = () => {
   const stakingData = useAppSelector(
@@ -16,10 +21,9 @@ const useGetValidatorInfo = () => {
     (state: RootState) => state.common.allNetworksInfo
   );
 
-
   const allChainIds = Object.keys(allNetworksInfo);
 
-  const chainIDs = allChainIds.filter(c => !removedChains.includes(c))
+  const chainIDs = allChainIds.filter((c) => !removedChains.includes(c));
 
   const tokensPriceInfo = useAppSelector(
     (state) => state.common.allTokensInfoState.info
@@ -43,10 +47,12 @@ const useGetValidatorInfo = () => {
       const validator = Object.values(
         stakingData?.[chainID]?.validators.active
       ).find((v) => {
-        return (
+        // For few networks supported by Vitwit Validator, Moniker name is still Witval, so considering that validator also
+        const isMatchingMoniker =
           v.description.moniker.trim().toLowerCase() ===
-          moniker.trim().toLowerCase()
-        );
+          moniker.trim().toLowerCase();
+        const isWitval = v.description.moniker.trim().toLowerCase() === WITVAL;
+        return isMatchingMoniker || isWitval;
       });
 
       if (validator) {
@@ -173,7 +179,7 @@ const useGetValidatorInfo = () => {
       }
       const delegatorsCount =
         stakingData[validator.chainID].validatorProfiles?.[
-        validator.operatorAddress
+          validator.operatorAddress
         ];
 
       totalDelegators += Number(delegatorsCount?.totalDelegators || 0);
@@ -284,8 +290,8 @@ const useGetValidatorInfo = () => {
       totalDelegators = oasisDelegations?.data?.totalSize;
       operatorAddress = OASIS_CONFIG.witval.operatorAddress;
     } else {
-      totalDelegators = 8
-      totalStakedTokens = 11641594
+      totalDelegators = 8;
+      totalStakedTokens = 11641594;
       commission = OASIS_CONFIG.witval.commission.toString();
 
       totalStakedInUSD = usdPriceInfo

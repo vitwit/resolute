@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useAppDispatch, useAppSelector } from './StateHooks';
 import {
   getAllValidators,
@@ -14,18 +14,33 @@ const useInitAllValidator = () => {
   const dispatch = useAppDispatch();
   const chainIDs = Object.keys(networks);
   const { getAllChainInfo } = useGetAllChainsInfo();
+  const networksCount = chainIDs.length;
+  const [dataFetched, setDataFetched] = useState(false);
+  const fetchedChains = useRef<{ [key: string]: boolean }>({});
+
+  const allChainsFetched = chainIDs.every(
+    (chainID) => fetchedChains.current[chainID]
+  );
 
   useEffect(() => {
-    chainIDs.forEach((chainID) => {
-      const { restURLs } = getAllChainInfo(chainID);
-      dispatch(
-        getAllValidators({
-          baseURLs: restURLs,
-          chainID: chainID,
-        })
-      );
-    });
-  }, []);
+    if (networksCount > 0 && !dataFetched && !allChainsFetched) {
+      chainIDs.forEach((chainID) => {
+        if (!fetchedChains.current?.[chainID]) {
+          const { restURLs } = getAllChainInfo(chainID);
+          dispatch(
+            getAllValidators({
+              baseURLs: restURLs,
+              chainID: chainID,
+            })
+          );
+          fetchedChains.current[chainID] = true;
+        }
+      });
+      if (allChainsFetched) {
+        setDataFetched(true);
+      }
+    }
+  }, [chainIDs, networksCount]);
 
   useEffect(() => {
     dispatch(
