@@ -22,6 +22,7 @@ const GovDashboard = ({ chainIDs }: { chainIDs: string[] }) => {
   const [showAll, setShowAll] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [filterDays, setFilterDays] = useState(0);
+  const [showAnimation, toggleAnimation] = useState(false);
   const propsData = getProposals({ chainIDs, showAll });
   const proposalsData = getProposals({ chainIDs, showAll });
   const [filteredProposals, setFilteredProposals] = useState<ProposalsData[]>(
@@ -47,6 +48,7 @@ const GovDashboard = ({ chainIDs }: { chainIDs: string[] }) => {
       ) {
         return null;
       }
+      toggleAnimation(true)
       return {
         chainID,
         proposalId,
@@ -119,7 +121,7 @@ const GovDashboard = ({ chainIDs }: { chainIDs: string[] }) => {
         <div
           className={`flex flex-col ${selectedProposal ? 'w-2/5' : 'w-full'}`}
         >
-          <div className="sticky top-0 pt-4">
+          <div className="sticky top-0 pt-6">
             <QuickFilters
               handleSearchQueryChange={handleSearchQueryChange}
               searchQuery={searchQuery}
@@ -152,20 +154,28 @@ const GovDashboard = ({ chainIDs }: { chainIDs: string[] }) => {
           </div>
         </div>
         <CSSTransition
-          in={!!selectedProposal}
+          in={showAnimation}
           timeout={300}
           classNames="proposal-overview"
           unmountOnExit
         >
           <div className="w-3/5 ml-10 h-full">
-            {selectedProposal && (
+          {
+            selectedProposal && (
               <ProposalOverview
                 proposalId={selectedProposal?.proposalId}
                 chainID={selectedProposal?.chainID}
                 isActive={selectedProposal?.isActive}
-                onClose={handleViewProposal}
+                onClose={({chainID,isActive,proposalId})=>{
+                  toggleAnimation(false)
+                  setTimeout(() => {
+                    handleViewProposal({chainID,isActive,proposalId})
+                  }, 300);
+                }}
               />
-            )}
+            )
+          }
+            
           </div>
         </CSSTransition>
       </div>
@@ -195,7 +205,7 @@ const QuickFilters = ({
       <div className="flex py-2 gap-2">
         <button
           onClick={() => handleFiltersChange(0)}
-          className={`selected-btns text-[12px] ${
+          className={`selected-btns text-[14px] ${
             filterDays === 0
               ? 'bg-[#ffffff14] border-transparent'
               : 'border-[#ffffff26]'
@@ -205,7 +215,7 @@ const QuickFilters = ({
         </button>
         <button
           onClick={() => handleFiltersChange(2)}
-          className={`selected-btns text-[12px] ${
+          className={`selected-btns text-[14px] ${
             filterDays === 2
               ? 'bg-[#ffffff14] border-transparent'
               : 'border-[#ffffff26]'
@@ -215,7 +225,7 @@ const QuickFilters = ({
         </button>
         <button
           onClick={() => handleFiltersChange(1)}
-          className={`selected-btns text-[12px] ${
+          className={`selected-btns text-[14px] ${
             filterDays === 1
               ? 'bg-[#ffffff14] border-transparent'
               : 'border-[#ffffff26]'
