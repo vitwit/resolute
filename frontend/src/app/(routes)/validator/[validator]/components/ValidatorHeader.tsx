@@ -82,12 +82,12 @@ const ValidatorHeader = (props: ValidatorHeaderProps) => {
         />
         <StatsCard
           name="Total Networks"
-          value={isNaN(totalNetworks) ? '-' : totalNetworks.toString()}
+          value={Number.isNaN(totalNetworks) ? '-' : totalNetworks.toString()}
           isLoading={isLoading}
         />
         <StatsCard
           name="Active Networks"
-          value={isNaN(activeNetworks) ? '-' : activeNetworks.toString()}
+          value={Number.isNaN(activeNetworks) ? '-' : activeNetworks.toString()}
           isLoading={isLoading}
         />
       </div>
