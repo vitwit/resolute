@@ -65,7 +65,7 @@ const ValidatorItem = ({
           </button>
         ) : (
           <Tooltip title="Connect wallet to stake">
-            <button className="stake-btn button-disabled">Stake</button>
+            <button className="primary-btn !opacity-50">Stake</button>
           </Tooltip>
         )}
       </td>
