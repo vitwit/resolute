@@ -1,41 +1,21 @@
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
-import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
-import {
-  getTotalDelegationsCount,
-  txDelegate,
-} from '@/store/features/staking/stakeSlice';
-import { DelegateTxInputs, ValidatorProfileInfo } from '@/types/staking';
+import { getTotalDelegationsCount } from '@/store/features/staking/stakeSlice';
+import { ValidatorProfileInfo } from '@/types/staking';
 import { formatCommission, formatValidatorStatsValue } from '@/utils/util';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import NetworkItem from './NetworkItem';
-import DialogDelegate from '@/app/(routes)/staking/components/DialogDelegate';
-import { parseBalance } from '@/utils/denom';
-import { TxStatus } from '@/types/enums';
 import useGetAllChainsInfo from '@/custom-hooks/useGetAllChainsInfo';
 import { Tooltip } from '@mui/material';
-import { getBalances } from '@/store/features/bank/bankSlice';
 
 const ValidatorItem = ({
   validatorInfo,
 }: {
   validatorInfo: ValidatorProfileInfo;
 }) => {
-  const {
-    chainID,
-    commission,
-    rank,
-    totalStakedInUSD,
-    tokens,
-    operatorAddress,
-  } = validatorInfo;
-  const { getChainInfo, getDenomInfo } = useGetChainInfo();
+  const { chainID, commission, totalStakedInUSD, tokens, operatorAddress } =
+    validatorInfo;
   const { getAllChainInfo } = useGetAllChainsInfo();
-  const {
-    chainName,
-    chainLogo,
-    restURLs,
-    feeAmount: avgFeeAmount,
-  } = getAllChainInfo(chainID);
+  const { chainName, chainLogo, restURLs } = getAllChainInfo(chainID);
   const dispatch = useAppDispatch();
 
   const totalDelegators = useAppSelector(
@@ -47,35 +27,7 @@ const ValidatorItem = ({
   const totalStaked = formatValidatorStatsValue(totalStakedInUSD, 0);
   const totalDelegatorsCount = formatValidatorStatsValue(totalDelegators, 0);
 
-  const { decimals, minimalDenom, displayDenom } = getDenomInfo(chainID);
-  const [availableBalance, setAvailableBalance] = useState(0);
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const handleDialogClose = () => {
-    setDialogOpen(false);
-  };
-  const stakingParams = useAppSelector(
-    (state) => state.staking.chains[chainID]?.params
-  );
-  const balance = useAppSelector((state) => state.bank.balances[chainID]);
-  const txStatus = useAppSelector((state) => state.staking.chains[chainID]?.tx);
-  const feeAmount = avgFeeAmount * 10 ** decimals;
   const connected = useAppSelector((state) => state.wallet.connected);
-
-  const onDelegateTx = (data: DelegateTxInputs) => {
-    const basicChainInfo = getChainInfo(chainID);
-    dispatch(
-      txDelegate({
-        isAuthzMode: false,
-        basicChainInfo: basicChainInfo,
-        delegator: basicChainInfo.address,
-        validator: data.validator,
-        amount: data.amount * 10 ** decimals,
-        denom: minimalDenom,
-        feeAmount: feeAmount,
-        feegranter: '',
-      })
-    );
-  };
 
   useEffect(() => {
     if (operatorAddress?.length) {
@@ -89,37 +41,12 @@ const ValidatorItem = ({
     }
   }, [operatorAddress]);
 
-  useEffect(() => {
-    setAvailableBalance(
-      parseBalance(
-        balance?.list?.length ? balance.list : [],
-        decimals,
-        minimalDenom
-      )
-    );
-  }, [balance]);
-
-  useEffect(() => {
-    if (txStatus?.status === TxStatus.IDLE) {
-      handleDialogClose();
-    }
-  }, [txStatus?.status]);
-
   const handleDelegate = () => {
-    const { address, baseURL } = getChainInfo(chainID);
-    dispatch(
-      getBalances({
-        baseURLs: restURLs,
-        chainID,
-        address,
-        baseURL,
-      })
-    );
-    setDialogOpen(true);
+    // TODO: open delegate dialog box and allow user to delegate from this page
   };
 
   return (
-    <tr className='text-[#E1E1E1]'>
+    <tr className="hover:bg-[#FFFFFF14]">
       <td>
         <NetworkItem
           logo={chainLogo}
@@ -127,17 +54,13 @@ const ValidatorItem = ({
           operatorAddress={operatorAddress}
         />
       </td>
-      <td>{rank}</td>
       <td>{votingPower}</td>
       <td>{totalDelegatorsCount !== '0' ? totalDelegatorsCount : '-'}</td>
       <td>{formatCommission(commission)}</td>
       <td>{'$ ' + totalStaked}</td>
-      <td>
+      <td className="w-[7%]">
         {connected ? (
-          <button
-            onClick={handleDelegate}
-            className="stake-btn primary-gradient"
-          >
+          <button onClick={handleDelegate} className="primary-btn">
             Stake
           </button>
         ) : (
@@ -146,17 +69,6 @@ const ValidatorItem = ({
           </Tooltip>
         )}
       </td>
-      <DialogDelegate
-        onClose={handleDialogClose}
-        open={dialogOpen}
-        validator={validatorInfo?.validatorInfo}
-        stakingParams={stakingParams}
-        availableBalance={availableBalance}
-        loading={txStatus?.status}
-        displayDenom={displayDenom}
-        onDelegate={onDelegateTx}
-        feeAmount={avgFeeAmount}
-      />
     </tr>
   );
 };

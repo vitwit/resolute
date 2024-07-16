@@ -6,6 +6,8 @@ import React from 'react';
 import ValidatorHeader from './components/ValidatorHeader';
 import ValidatorsTable from './components/ValidatorsTable';
 import { VITWIT_VALIDATOR_NAMES } from '@/utils/constants';
+import SectionHeader from '@/components/common/SectionHeader';
+import { capitalizeFirstLetter } from '@/utils/util';
 
 const ValidatorProfile = ({ moniker }: { moniker: string }) => {
   useInitAllValidator();
@@ -45,7 +47,7 @@ const ValidatorProfile = ({ moniker }: { moniker: string }) => {
   totalDelegators += totalPolygonDelegators;
   totalDelegators += totalOasisDelegator;
   return (
-    <div className="py-10">
+    <div className="py-10 space-y-10">
       <ValidatorHeader
         activeNetworks={activeNetworks}
         avgCommission={avgCommission}
@@ -57,10 +59,16 @@ const ValidatorProfile = ({ moniker }: { moniker: string }) => {
         totalStaked={totalStaked}
         website={validatorWebsite}
       />
-      <ValidatorsTable
-        data={chainWiseValidatorData}
-        isWitval={VITWIT_VALIDATOR_NAMES.includes(moniker.toLowerCase())}
-      />
+      <div className="space-y-6">
+        <SectionHeader
+          title="Networks"
+          description={`Networks supported by ${capitalizeFirstLetter(moniker)}`}
+        />
+        <ValidatorsTable
+          data={chainWiseValidatorData}
+          isWitval={VITWIT_VALIDATOR_NAMES.includes(moniker.toLowerCase())}
+        />
+      </div>
     </div>
   );
 };

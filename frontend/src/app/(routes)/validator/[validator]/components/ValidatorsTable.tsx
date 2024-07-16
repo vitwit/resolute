@@ -1,7 +1,6 @@
 import { ValidatorProfileInfo } from '@/types/staking';
 import React from 'react';
 import ValidatorItem from './ValidatorItem';
-import TableHeader from './TableHeader';
 import NetworkItem from './NetworkItem';
 import useGetValidatorInfo from '@/custom-hooks/useGetValidatorInfo';
 import { OASIS_CONFIG, POLYGON_CONFIG } from '@/utils/constants';
@@ -9,6 +8,7 @@ import { formatCommission, formatValidatorStatsValue } from '@/utils/util';
 import { useAppSelector } from '@/custom-hooks/StateHooks';
 import Link from 'next/link';
 import { Tooltip } from '@mui/material';
+import TableHeader from './TableHeader';
 
 const ValidatorsTable = ({
   data,
@@ -18,8 +18,7 @@ const ValidatorsTable = ({
   isWitval: boolean;
 }) => {
   const columnTitles = [
-    'Network Name',
-    'Validator Rank',
+    'Network',
     'Voting Power',
     'Total Delegators',
     'Commission',
@@ -28,21 +27,23 @@ const ValidatorsTable = ({
   ];
 
   const sortedKeys = Object.keys(data).sort((a, b) => {
-    return parseInt(data[b].totalStakedInUSD) - parseInt(data[a].totalStakedInUSD);
+    return (
+      parseInt(data[b].totalStakedInUSD) - parseInt(data[a].totalStakedInUSD)
+    );
   });
-  
+
   const sortedObject: Record<string, ValidatorProfileInfo> = {};
-  sortedKeys.forEach(key => {
+  sortedKeys.forEach((key) => {
     sortedObject[key] = data[key];
   });
 
   return (
-    <div className="flex flex-col flex-1 overflow-y-scroll text-[#E1E1E1]">
-      <div className="validators-table bg-[#1a1a1b] px-8 py-8">
+    <div className="flex flex-col flex-1 overflow-y-scroll">
+      <div className="validators-table">
         <div className="flex flex-col flex-1">
           <div className="flex-1">
             <table className="w-full text-sm leading-normal">
-              <thead className="border-b-[0.5px] border-[#B0B0B033] relative">
+              <thead className="relative">
                 <tr className="text-left">
                   {columnTitles.map((title) => (
                     <TableHeader key={title} title={title} />
@@ -64,7 +65,6 @@ const ValidatorsTable = ({
                     />
                   );
                 })}
-
               </tbody>
             </table>
           </div>
@@ -99,7 +99,7 @@ const NonCosmosValidators = ({ networkName }: { networkName: string }) => {
   const connected = useAppSelector((state) => state.wallet.connected);
 
   return (
-    <tr className='text-[#E1E1E1]'>
+    <tr className="hover:bg-[#FFFFFF14]">
       <td>
         <NetworkItem
           logo={logo}
@@ -107,7 +107,6 @@ const NonCosmosValidators = ({ networkName }: { networkName: string }) => {
           operatorAddress={operatorAddress}
         />
       </td>
-      <td>{'-'}</td>
       <td>{votingPower || '-'}</td>
       <td>{totalDelegators !== 0 ? totalDelegators.toLocaleString() : '-'}</td>
       <td>{formatCommission(Number(commission))}</td>
@@ -115,11 +114,11 @@ const NonCosmosValidators = ({ networkName }: { networkName: string }) => {
       <td>
         {connected ? (
           <Link href={witval.profile} target="_blank">
-            <button className="stake-btn primary-gradient">Stake</button>
+            <button className="primary-btn">Stake</button>
           </Link>
         ) : (
           <Tooltip title="Connect wallet to stake">
-            <button className="stake-btn button-disabled">Stake</button>
+            <button className="primary-btn">Stake</button>
           </Tooltip>
         )}
       </td>

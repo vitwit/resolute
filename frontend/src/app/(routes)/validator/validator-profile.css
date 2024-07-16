@@ -1,0 +1,15 @@
+.validators-table {
+  @apply text-[#ffffffad] flex flex-col flex-1;
+}
+
+.validators-table th {
+  @apply pb-4;
+}
+
+.validators-table td {
+  @apply text-[14px] text-[#ffffffad] py-4 px-6;
+}
+
+.validators-table tr {
+  @apply mb-2;
+}
