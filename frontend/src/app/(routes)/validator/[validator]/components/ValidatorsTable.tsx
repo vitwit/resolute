@@ -9,6 +9,7 @@ import { useAppSelector } from '@/custom-hooks/StateHooks';
 import Link from 'next/link';
 import { Tooltip } from '@mui/material';
 import TableHeader from './TableHeader';
+import ValidatorsLoading from './ValidatorsLoading';
 
 const ValidatorsTable = ({
   data,
@@ -67,6 +68,7 @@ const ValidatorsTable = ({
                 })}
               </tbody>
             </table>
+            <ValidatorsLoading />
           </div>
         </div>
       </div>

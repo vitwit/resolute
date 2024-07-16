@@ -1,5 +1,6 @@
 import ValidatorLogo from '@/app/(routes)/staking/components/ValidatorLogo';
 import { REDIRECT_ICON } from '@/constants/image-names';
+import { useAppSelector } from '@/custom-hooks/StateHooks';
 import {
   VITWIT,
   VITWIT_VALIDATOR_DESCRIPTION,
@@ -38,6 +39,10 @@ const ValidatorHeader = (props: ValidatorHeaderProps) => {
   const totalStakedAmount = formatValidatorStatsValue(totalStaked, 0);
   const totalDelegatorsCount = formatValidatorStatsValue(totalDelegators, 0);
   const parsedAvgCommission = formatValidatorStatsValue(avgCommission, 2);
+  const validatorsLoadingCount = useAppSelector(
+    (state) => state.staking.validatorsLoading
+  );
+  const isLoading = validatorsLoadingCount > 0;
   return (
     <div className="space-y-6">
       <div className="space-y-2">
@@ -47,27 +52,43 @@ const ValidatorHeader = (props: ValidatorHeaderProps) => {
             <div className="text-[28px] text-[#ffffffad] font-bold">
               {isWitval ? VITWIT : capitalizeFirstLetter(name)}
             </div>
-            <Link href={website}>
-              <Image src={REDIRECT_ICON} width={32} height={32} alt="" />
-            </Link>
+            {!isLoading ? (
+              <Link href={website} target="_blank">
+                <Image src={REDIRECT_ICON} width={32} height={32} alt="" />
+              </Link>
+            ) : null}
           </div>
-          <div className="text-[#FFFFFF80] font-extralight text-[14px] leading-8">
+          <div className="validator-description">
             {isWitval ? VITWIT_VALIDATOR_DESCRIPTION : description || '-'}
           </div>
         </div>
         <div className="divider-line"></div>
       </div>
       <div className="flex gap-6 justify-between flex-wrap">
-        <StatsCard name="Total Staked Assets" value={totalStakedAmount} />
-        <StatsCard name="Total Delegators" value={totalDelegatorsCount} />
-        <StatsCard name="Avg. Commission" value={parsedAvgCommission} />
+        <StatsCard
+          name="Total Staked Assets"
+          value={totalStakedAmount}
+          isLoading={isLoading}
+        />
+        <StatsCard
+          name="Total Delegators"
+          value={totalDelegatorsCount}
+          isLoading={isLoading}
+        />
+        <StatsCard
+          name="Avg. Commission"
+          value={parsedAvgCommission}
+          isLoading={isLoading}
+        />
         <StatsCard
           name="Total Networks"
           value={isNaN(totalNetworks) ? '-' : totalNetworks.toString()}
+          isLoading={isLoading}
         />
         <StatsCard
           name="Active Networks"
           value={isNaN(activeNetworks) ? '-' : activeNetworks.toString()}
+          isLoading={isLoading}
         />
       </div>
     </div>
@@ -76,9 +97,17 @@ const ValidatorHeader = (props: ValidatorHeaderProps) => {
 
 export default ValidatorHeader;
 
-const StatsCard = ({ name, value }: { name: string; value: string }) => {
+const StatsCard = ({
+  name,
+  value,
+  isLoading,
+}: {
+  name: string;
+  value: string;
+  isLoading: boolean;
+}) => {
   return (
-    <div className="bg-[#FFFFFF05] p-4 flex flex-col gap-2 items-center justify-center flex-1 rounded-2xl">
+    <div className={`validator-stats-card ${isLoading ? 'animate-pulse' : ''}`}>
       <div className="text-[12px] font-light leading-[18px] text-[#FFFFFF80]">
         {name}
       </div>

@@ -13,3 +13,11 @@
 .validators-table tr {
   @apply mb-2;
 }
+
+.validator-stats-card {
+  @apply bg-[#FFFFFF05] p-4 flex flex-col gap-2 items-center justify-center flex-1 rounded-2xl;
+}
+
+.validator-description {
+  @apply text-[#FFFFFF80] font-extralight text-[14px] leading-8;
+}
