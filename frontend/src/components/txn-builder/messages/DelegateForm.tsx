@@ -11,6 +11,7 @@ import { TxStatus } from '@/types/enums';
 import { Decimal } from '@cosmjs/math';
 import { formatCoin } from '@/utils/util';
 import FileUpload from '../components/FileUpload';
+import AddMsgButton from '../components/AddMsgButton';
 
 interface DelegateFormProps {
   chainID: string;
@@ -48,6 +49,9 @@ const DelegateForm = (props: DelegateFormProps) => {
       delegator: fromAddress,
     },
   });
+
+  const [fileUploadTxns, setFileUploadTxns] = useState<Msg[]>([]);
+
   const handleValidatorChange = (option: ValidatorOption | null) => {
     setValue('validator', option?.address || '');
     setSelectedOption(option);
@@ -91,6 +95,14 @@ const DelegateForm = (props: DelegateFormProps) => {
     for (const msg of msgs) {
       onDelegate(msg);
     }
+  };
+
+  const onAddFileUploadTxns = (msgs: Msg[]) => {
+    setFileUploadTxns(msgs);
+  };
+
+  const onRemoveFileUploadTxns = () => {
+    setFileUploadTxns([]);
   };
 
   return (
@@ -165,12 +177,16 @@ const DelegateForm = (props: DelegateFormProps) => {
         <FileUpload
           fromAddress={fromAddress}
           msgType="Delegate"
-          onUpload={handleAddMsgs}
+          onUpload={onAddFileUploadTxns}
+          onCancel={onRemoveFileUploadTxns}
+          msgsCount={fileUploadTxns?.length}
         />
       </div>
-      <div>
-        <button className="primary-btn w-full">Add</button>
-      </div>
+      <AddMsgButton
+        fileUploadTxns={fileUploadTxns}
+        handleAddMsgs={handleAddMsgs}
+        onRemoveFileUploadTxns={onRemoveFileUploadTxns}
+      />
     </form>
   );
 };

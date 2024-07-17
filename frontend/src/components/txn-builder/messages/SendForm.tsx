@@ -1,10 +1,11 @@
 import { customMUITextFieldStyles } from '@/app/(routes)/multiops/styles';
 import { InputAdornment, TextField } from '@mui/material';
-import React from 'react';
+import React, { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { Decimal } from '@cosmjs/math';
 import { formatCoin } from '@/utils/util';
 import FileUpload from '../components/FileUpload';
+import AddMsgButton from '../components/AddMsgButton';
 
 interface SendFormProps {
   fromAddress: string;
@@ -24,6 +25,8 @@ const SendForm = (props: SendFormProps) => {
       from: fromAddress,
     },
   });
+
+  const [fileUploadTxns, setFileUploadTxns] = useState<Msg[]>([]);
 
   const onSubmit = (data: {
     amount: string;
@@ -59,6 +62,14 @@ const SendForm = (props: SendFormProps) => {
     for (const msg of msgs) {
       onSend(msg);
     }
+  };
+
+  const onAddFileUploadTxns = (msgs: Msg[]) => {
+    setFileUploadTxns(msgs);
+  };
+
+  const onRemoveFileUploadTxns = () => {
+    setFileUploadTxns([]);
   };
 
   return (
@@ -120,6 +131,7 @@ const SendForm = (props: SendFormProps) => {
                     }}
                     placeholder="Enter amount"
                     fullWidth
+                    required
                     InputProps={{
                       sx: {
                         input: {
@@ -149,12 +161,16 @@ const SendForm = (props: SendFormProps) => {
         <FileUpload
           fromAddress={fromAddress}
           msgType="Send"
-          onUpload={handleAddMsgs}
+          onUpload={onAddFileUploadTxns}
+          onCancel={onRemoveFileUploadTxns}
+          msgsCount={fileUploadTxns?.length}
         />
       </div>
-      <div>
-        <button className="primary-btn w-full">Add</button>
-      </div>
+      <AddMsgButton
+        fileUploadTxns={fileUploadTxns}
+        handleAddMsgs={handleAddMsgs}
+        onRemoveFileUploadTxns={onRemoveFileUploadTxns}
+      />
     </form>
   );
 };

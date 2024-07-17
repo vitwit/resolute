@@ -8,6 +8,7 @@ import useGov from '@/custom-hooks/txn-builder/useGov';
 import VoteOptionsList from '../components/VoteOptionsList';
 import { msgVoteTypeUrl } from '@/txns/gov/vote';
 import FileUpload from '../components/FileUpload';
+import AddMsgButton from '../components/AddMsgButton';
 
 interface VoteProps {
   fromAddress: string;
@@ -38,6 +39,8 @@ const VoteForm = (props: VoteProps) => {
       from: fromAddress,
     },
   });
+
+  const [fileUploadTxns, setFileUploadTxns] = useState<Msg[]>([]);
 
   const handleProposalChange = (option: ProposalOption | null) => {
     setValue('proposalID', option?.value || '');
@@ -74,6 +77,14 @@ const VoteForm = (props: VoteProps) => {
     for (const msg of msgs) {
       onVote(msg);
     }
+  };
+
+  const onAddFileUploadTxns = (msgs: Msg[]) => {
+    setFileUploadTxns(msgs);
+  };
+
+  const onRemoveFileUploadTxns = () => {
+    setFileUploadTxns([]);
   };
 
   useEffect(() => {
@@ -123,12 +134,16 @@ const VoteForm = (props: VoteProps) => {
         <FileUpload
           fromAddress={fromAddress}
           msgType="Vote"
-          onUpload={handleAddMsgs}
+          onUpload={onAddFileUploadTxns}
+          onCancel={onRemoveFileUploadTxns}
+          msgsCount={fileUploadTxns?.length}
         />
       </div>
-      <div>
-        <button className="primary-btn w-full">Add</button>
-      </div>
+      <AddMsgButton
+        fileUploadTxns={fileUploadTxns}
+        handleAddMsgs={handleAddMsgs}
+        onRemoveFileUploadTxns={onRemoveFileUploadTxns}
+      />
     </form>
   );
 };

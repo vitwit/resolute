@@ -14,6 +14,7 @@ import { TxStatus } from '@/types/enums';
 import { formatCoin } from '@/utils/util';
 import { Decimal } from '@cosmjs/math';
 import FileUpload from '../components/FileUpload';
+import AddMsgButton from '../components/AddMsgButton';
 
 interface ReDelegateProps {
   chainID: string;
@@ -54,6 +55,8 @@ const RedelegateForm = (props: ReDelegateProps) => {
       delegator: fromAddress,
     },
   });
+
+  const [fileUploadTxns, setFileUploadTxns] = useState<Msg[]>([]);
 
   const handleSrcValidatorChange = (option: ValidatorOption | null) => {
     setValue('validatorSrcAddress', option?.address || '');
@@ -115,6 +118,14 @@ const RedelegateForm = (props: ReDelegateProps) => {
     for (const msg of msgs) {
       onReDelegate(msg);
     }
+  };
+
+  const onAddFileUploadTxns = (msgs: Msg[]) => {
+    setFileUploadTxns(msgs);
+  };
+
+  const onRemoveFileUploadTxns = () => {
+    setFileUploadTxns([]);
   };
 
   useEffect(() => {
@@ -216,12 +227,16 @@ const RedelegateForm = (props: ReDelegateProps) => {
         <FileUpload
           fromAddress={fromAddress}
           msgType="Redelegate"
-          onUpload={handleAddMsgs}
+          onUpload={onAddFileUploadTxns}
+          onCancel={onRemoveFileUploadTxns}
+          msgsCount={fileUploadTxns?.length}
         />
       </div>
-      <div>
-        <button className="primary-btn w-full">Add</button>
-      </div>
+      <AddMsgButton
+        fileUploadTxns={fileUploadTxns}
+        handleAddMsgs={handleAddMsgs}
+        onRemoveFileUploadTxns={onRemoveFileUploadTxns}
+      />
     </form>
   );
 };
