@@ -3,19 +3,10 @@ import { InputAdornment, TextField, Select, MenuItem } from '@mui/material';
 import React, { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { Decimal } from '@cosmjs/math';
-import { formatCoin } from '@/utils/util';
 import FileUpload from '../components/FileUpload';
 import AddMsgButton from '../components/AddMsgButton';
 import useGetAllAssets from '@/custom-hooks/multisig/useGetAllAssets';
 import { customSelectStyles } from '../styles';
-
-interface Asset {
-  amount: number;
-  displayDenom: string;
-  minimalDenom: string;
-  decimals: number;
-  amountInDenom: number;
-}
 
 interface SendFormProps {
   fromAddress: string;
@@ -27,14 +18,7 @@ interface SendFormProps {
 }
 
 const SendForm = (props: SendFormProps) => {
-  const {
-    fromAddress,
-    currency,
-    onSend,
-    availableBalance,
-    cancelAddMsg,
-    chainID,
-  } = props;
+  const { fromAddress, onSend, cancelAddMsg, chainID } = props;
   const { getAllAssets } = useGetAllAssets();
   const { allAssets } = getAllAssets(chainID, true);
   const { handleSubmit, control, reset } = useForm({
@@ -47,7 +31,6 @@ const SendForm = (props: SendFormProps) => {
   });
 
   const [fileUploadTxns, setFileUploadTxns] = useState<Msg[]>([]);
-  const [selectedAsset, setSelectedAsset] = useState<Asset | null>(null);
 
   const onSubmit = (data: {
     amount: string;
@@ -75,8 +58,6 @@ const SendForm = (props: SendFormProps) => {
         },
       ],
     };
-
-    console.log(msgSend);
 
     const msg = {
       typeUrl: '/cosmos.bank.v1beta1.MsgSend',
@@ -180,11 +161,6 @@ const SendForm = (props: SendFormProps) => {
                                 value={field.value || ''}
                                 onChange={(event) => {
                                   field.onChange(event);
-                                  const asset = allAssets.find(
-                                    (asset) =>
-                                      asset.displayDenom === event.target.value
-                                  );
-                                  setSelectedAsset(asset || null);
                                 }}
                                 displayEmpty
                                 sx={customSelectStyles}

@@ -51,7 +51,34 @@ const useGetAllAssets = () => {
     return { allAssets };
   };
 
-  return { getAllAssets };
+  const getParsedAsset = ({
+    amount,
+    chainID,
+    denom,
+  }: {
+    chainID: string;
+    amount: string;
+    denom: string;
+  }) => {
+    const { chainName } = getChainInfo(chainID);
+    const denomInfo = chainDenomsData[chainName.toLowerCase()]?.filter(
+      (denomInfo) => {
+        return denomInfo.denom === denom;
+      }
+    );
+    const { symbol, decimals, origin_denom } = denomInfo[0];
+    const assetInfo = {
+      amountInDenom: parseBalance(
+        [{ amount, denom: origin_denom }],
+        decimals,
+        origin_denom
+      ),
+      displayDenom: symbol,
+    };
+    return { assetInfo };
+  };
+
+  return { getAllAssets, getParsedAsset };
 };
 
 export default useGetAllAssets;

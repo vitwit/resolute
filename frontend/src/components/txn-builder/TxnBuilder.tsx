@@ -103,6 +103,7 @@ const TxnBuilder = ({
               currency={currency}
               messages={messages}
               onDeleteMsg={onDeleteMsg}
+              chainID={chainID}
             />
             <div className="space-y-6">
               <form className="space-y-6" onSubmit={handleSubmit(onFormSubmit)}>
