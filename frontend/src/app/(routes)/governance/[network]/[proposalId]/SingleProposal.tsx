@@ -229,135 +229,141 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
             </div>
           ) : null}
 
-          <div className="flex items-start gap-10 pt-20 w-full h-full">
-            <div className="flex items-start gap-10 w-full h-full">
+          <div className="flex items-start pt-10 w-full h-full">
+            <div
+              className={`flex items-start gap-10 w-full h-full ${isProposal2daysgo() ? 'pt-10' : ''}`}
+            >
               <div className="flex flex-col flex-1 justify-between h-full">
-                <div className="flex flex-col gap-6">
-                  <div className="secondary-btn" onClick={() => router.back()}>
-                    Go back
-                  </div>
-                  <div className="flex flex-col gap-4">
-                    <div className="flex justify-between w-full">
-                      <p className="text-[28px] font-bold leading-[normal]">
-                        {/* Aave v3.1 Cantina competitione */}
-                        {get(
-                          proposalInfo,
-                          'proposal_id',
-                          get(proposalInfo, 'id')
-                        )}
-                        . &nbsp;&nbsp;&nbsp;
-                        {get(
-                          proposalInfo,
-                          'content.title',
-                          get(proposalInfo, 'title', '-')
-                        ) || get(proposalInfo, 'content.@type', '')}
-                      </p>
-                      {isStatusVoting ? (
-                        <div className="active-badge text-sm font-normal leading-[normal]">
-                          Active
-                        </div>
-                      ) : (
-                        <div className="deposit-badge text-sm font-normal leading-[normal]">
-                          Deposit
-                        </div>
-                      )}
-                    </div>
-                    <div className="flex gap-6 w-full">
-                      <div className="flex gap-1 items-center">
-                        {isStatusVoting ? (
-                          <>
-                            <p className="text-[rgba(255,255,255,0.50)] text-xs font-extralight leading-[normal]">
-                              Voting
-                            </p>
-                            <p className="text-sm font-normal leading-[normal]">
-                              ends in{' '}
-                              {getTimeDifferenceToFutureDate(
-                                get(proposalInfo, 'voting_end_time')
-                              )}
-                            </p>
-                          </>
-                        ) : (
-                          <>
-                            <p className="text-[rgba(255,255,255,0.50)] text-xs font-extralight leading-[normal]">
-                              Deposit
-                            </p>
-                            <p className="text-sm font-normal leading-[normal]">
-                              ends in{' '}
-                              {getTimeDifferenceToFutureDate(
-                                get(proposalInfo, 'deposit_end_time')
-                              )}
-                            </p>
-                          </>
-                        )}
-                      </div>
-                      <div className="flex gap-1 items-center">
-                        <p className="text-[rgba(255,255,255,0.50)] text-xs font-extralight leading-[normal]">
-                          on
-                        </p>
-                        <Image
-                          src={chainLogo}
-                          width={20}
-                          height={20}
-                          alt="Network-logo"
-                          draggable={false}
-                        />
-                        <p className="text-sm font-normal leading-[normal] capitalize">
-                          {chainName}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="divider-line"></div>
-                  </div>
-
-                  <div className="flex flex-col justify-between relative z-0">
-                    <p
-                      style={{
-                        padding: 8,
-                        whiteSpace: 'pre-line',
-                      }}
-                      className={`proposal-description-markdown h-[36vh] secondary-text ${contentLength > 900 ? (showFullText ? 'overflow-scroll' : 'overflow-hidden') : 'overflow-scroll'}`}
+                <div className="flex flex-col justify-between h-full">
+                  <div className="flex flex-col gap-6">
+                    <div
+                      className="secondary-btn "
+                      onClick={() => router.back()}
                     >
-                      {proposalMarkdown}
-                    </p>
-
-                    {contentLength > 900 ? (
-                      showFullText ? (
-                        <p
-                          onClick={handleToggleText}
-                          className="cursor-pointer justify-center text-b1 underline flex space-x-1 items-center"
-                        >
-                          Show Less
-                          <Image
-                            src="/up.svg"
-                            width={24}
-                            height={24}
-                            alt="Less-icon"
-                          />
+                      Go back
+                    </div>
+                    <div className="flex flex-col gap-4">
+                      <div className="flex justify-between w-full gap-4 items-start">
+                        <p className="text-[28px] font-bold leading-[42px]">
+                          {/* Aave v3.1 Cantina competitione */}
+                          {get(
+                            proposalInfo,
+                            'proposal_id',
+                            get(proposalInfo, 'id')
+                          )}
+                          . &nbsp;&nbsp;&nbsp;
+                          {get(
+                            proposalInfo,
+                            'content.title',
+                            get(proposalInfo, 'title', '-')
+                          ) || get(proposalInfo, 'content.@type', '')}
                         </p>
-                      ) : (
-                        <div className="h-30 w-full absolute bottom-0  bg-transparent z-10">
-                          <div
+                        {isStatusVoting ? (
+                          <div className="active-badge text-sm font-normal leading-[21px]">
+                            Active
+                          </div>
+                        ) : (
+                          <div className="deposit-badge text-sm font-normal leading-[21px]">
+                            Deposit
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex gap-6 w-full">
+                        <div className="flex gap-1 items-center">
+                          {isStatusVoting ? (
+                            <>
+                              <p className="text-[rgba(255,255,255,0.50)] text-xs font-extralight leading-[normal]">
+                                Voting
+                              </p>
+                              <p className="text-sm font-normal leading-[normal]">
+                                ends in{' '}
+                                {getTimeDifferenceToFutureDate(
+                                  get(proposalInfo, 'voting_end_time')
+                                )}
+                              </p>
+                            </>
+                          ) : (
+                            <>
+                              <p className="text-[rgba(255,255,255,0.50)] text-xs font-extralight leading-[normal]">
+                                Deposit
+                              </p>
+                              <p className="text-sm font-normal leading-[normal]">
+                                ends in{' '}
+                                {getTimeDifferenceToFutureDate(
+                                  get(proposalInfo, 'deposit_end_time')
+                                )}
+                              </p>
+                            </>
+                          )}
+                        </div>
+                        <div className="flex gap-1 items-center">
+                          <p className="text-[rgba(255,255,255,0.50)] text-xs font-extralight leading-[normal]">
+                            on
+                          </p>
+                          <Image
+                            src={chainLogo}
+                            width={20}
+                            height={20}
+                            alt="Network-logo"
+                            draggable={false}
+                          />
+                          <p className="text-sm font-normal leading-[normal] capitalize">
+                            {chainName}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="divider-line"></div>
+                    </div>
+
+                    <div className="flex flex-col justify-between relative z-0">
+                      <p
+                        style={{
+                          padding: 8,
+                          whiteSpace: 'pre-line',
+                        }}
+                        className={`proposal-description-markdown h-[36vh] secondary-text ${contentLength > 900 ? (showFullText ? 'overflow-scroll' : 'overflow-hidden') : 'overflow-scroll'}`}
+                      >
+                        {proposalMarkdown}
+                      </p>
+
+                      {contentLength > 900 ? (
+                        showFullText ? (
+                          <p
                             onClick={handleToggleText}
-                            className="cursor-pointer justify-center w-full bottom-14 absolute flex z-10 text-b1 underline space-x-1"
+                            className="cursor-pointer justify-center text-b1 underline flex space-x-1 items-center"
                           >
-                            Continue Reading{' '}
+                            Show Less
                             <Image
-                              src="/down.svg"
+                              src="/up.svg"
                               width={24}
                               height={24}
-                              alt="more-icon"
-                              className="ml-2"
+                              alt="Less-icon"
                             />
+                          </p>
+                        ) : (
+                          <div className="h-30 w-full absolute bottom-0  bg-transparent z-10">
+                            <div
+                              onClick={handleToggleText}
+                              className="cursor-pointer justify-center w-full bottom-14 absolute flex z-10 text-b1 underline space-x-1"
+                            >
+                              Continue Reading{' '}
+                              <Image
+                                src="/down.svg"
+                                width={24}
+                                height={24}
+                                alt="more-icon"
+                                className="ml-2"
+                              />
+                            </div>
+                            <div className="backdrop-blur-sm w-full absolute bottom-0 h-32 bg-transparent">
+                              {' '}
+                            </div>
                           </div>
-                          <div className="backdrop-blur-sm w-full absolute bottom-0 h-32 bg-transparent">
-                            {' '}
-                          </div>
-                        </div>
-                      )
-                    ) : null}
+                        )
+                      ) : null}
+                    </div>
                   </div>
-
-                  <div className="cast-vote-grid mt-10">
+                  <div className="">
                     {isStatusVoting ? (
                       <>
                         {/* <div className="flex px-6 py-4 rounded-2xl bg-[#FFFFFF05] justify-between w-full">
@@ -429,6 +435,57 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
                   />
                 )}
 
+                {isStatusVoting ? (
+                  proposalTallyStatus === TxStatus.PENDING ? (
+                    <div className="w-[380px] h-[342px] animate-pulse bg-[#252525] rounded-2xl"></div>
+                  ) : (
+                    <div className="flex flex-col gap-6 p-6 rounded-2xl bg-[#FFFFFF05]">
+                      <div className="flex flex-col gap-2">
+                        <p className="text-sm font-normal leading-[21px]">
+                          Current Status
+                        </p>
+                        <div className="divider-line"></div>
+                      </div>
+                      {data.map((v) => (
+                        <div key={v.label} className="flex flex-col gap-2">
+                          <div className="flex gap-1 items-center">
+                            <p className="text-[14px] font-normal leading-[21px]">
+                              {formatAmount(
+                                Number((v.count / 10 ** decimals).toFixed(0))
+                              )}{' '}
+                              {displayDenom}
+                            </p>
+                            <p className="font-extralight italic text-[12px] leading-[18px]">
+                              Voted {v.label}
+                            </p>
+                          </div>
+                          <div className="flex space-x-2 items-center">
+                            <div className="bg-[#FFFFFF0D] w-full rounded-full relative">
+                              <div
+                                style={{
+                                  width: `${v.value}%`,
+                                  background: v.color,
+                                }}
+                                className="h-2 rounded-full"
+                              ></div>
+                            </div>
+
+                            <p className="text-[14px] font-normal leading-[21px]">
+                              {v.value?.split('.')[0]}
+                              {Number(v.value) > 0 ? (
+                                <span className="text-[12px] leading-[18px]">
+                                  .{v.value?.split('.')[1]}
+                                </span>
+                              ) : null}
+                              %
+                            </p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )
+                ) : null}
+
                 <div className="flex flex-col gap-6 p-6 rounded-2xl bg-[#FFFFFF05]">
                   <div className="flex flex-col gap-2">
                     <p className="text-b1">Proposal Timeline</p>
@@ -446,12 +503,12 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
                         />
                         <div className="vertical-line "></div>
                       </div>
-                      <div className="flex flex-col gap-2">
+                      <div className="flex flex-col gap-1">
                         <Tooltip
                           title={getLocalTime(get(proposalInfo, 'submit_time'))}
                           placement="top"
                         >
-                          <p className="text-[#FFFFFF80] text-[10px]">
+                          <p className="text-[12px] leading-[18px] font-extralight">
                             {getTimeDifferenceToFutureDate(
                               get(proposalInfo, 'submit_time'),
                               true
@@ -459,7 +516,7 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
                             ago
                           </p>
                         </Tooltip>
-                        <p className="text-xs font-normal leading-[normal]">
+                        <p className="text-[14px] font-normal leading-[21px]">
                           Proposal Created
                         </p>
                       </div>
@@ -475,7 +532,7 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
                         />
                         <div className="vertical-line"></div>
                       </div>
-                      <div className="flex flex-col gap-2">
+                      <div className="flex flex-col gap-1">
                         <Tooltip
                           title={
                             isStatusVoting
@@ -488,7 +545,7 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
                           }
                           placement="top"
                         >
-                          <p className="text-[#FFFFFF80] text-[10px]">
+                          <p className="text-[12px] leading-[18px] font-extralight">
                             {isStatusVoting
                               ? getTimeDifferenceToFutureDate(
                                   get(proposalInfo, 'voting_start_time', '-'),
@@ -501,7 +558,7 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
                             ago
                           </p>
                         </Tooltip>
-                        <p className="text-xs font-normal leading-[normal]">
+                        <p className="text-[14px] font-normal leading-[21px]">
                           {isStatusVoting ? 'Voting ' : 'Deposit Time '}
                           started
                         </p>
@@ -517,7 +574,7 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
                           draggable={false}
                         />
                       </div>
-                      <div className="flex flex-col gap-2">
+                      <div className="flex flex-col gap-1">
                         <Tooltip
                           title={
                             isStatusVoting
@@ -530,7 +587,7 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
                           }
                           placement="top"
                         >
-                          <p className="text-[#FFFFFF80] text-[10px]">
+                          <p className="text-[12px] leading-[18px] font-extralight">
                             in{' '}
                             {isStatusVoting
                               ? getTimeDifferenceToFutureDate(
@@ -541,64 +598,13 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
                                 )}
                           </p>
                         </Tooltip>
-                        <p className="text-xs font-normal leading-[normal]">
+                        <p className="text-[14px] font-normal leading-[21px]">
                           {isStatusVoting ? 'Voting' : 'Deposit Time '} ends
                         </p>
                       </div>
                     </div>
                   </div>
                 </div>
-
-                {isStatusVoting ? (
-                  proposalTallyStatus === TxStatus.PENDING ? (
-                    <div className="w-[380px] h-[342px] animate-pulse bg-[#252525] rounded-2xl"></div>
-                  ) : (
-                    <div className="flex flex-col gap-6 p-6 rounded-2xl bg-[#FFFFFF05]">
-                      <div className="flex flex-col gap-2">
-                        <p className="text-sm font-normal leading-[normal]">
-                          Current Status
-                        </p>
-                        <div className="divider-line"></div>
-                      </div>
-                      {data.map((v) => (
-                        <div key={v.label} className="flex flex-col gap-2">
-                          <div className="flex gap-1 items-center">
-                            <p className="text-xs font-normal leading-[normal]">
-                              {formatAmount(
-                                Number((v.count / 10 ** decimals).toFixed(0))
-                              )}{' '}
-                              {displayDenom}
-                            </p>
-                            <p className="text-[#FFFFFF80] italic text-[10px]">
-                              Voted {v.label}
-                            </p>
-                          </div>
-                          <div className="flex space-x-2 items-center">
-                            <div className="bg-[#FFFFFF0D] w-full rounded-full relative">
-                              <div
-                                style={{
-                                  width: `${v.value}%`,
-                                  background: v.color,
-                                }}
-                                className="h-2 rounded-full"
-                              ></div>
-                            </div>
-
-                            <p className="text-xs font-normal leading-[normal]">
-                              {v.value?.split('.')[0]}
-                              {Number(v.value) > 0 ? (
-                                <span className="text-[10px]">
-                                  .{v.value?.split('.')[1]}
-                                </span>
-                              ) : null}
-                              %
-                            </p>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )
-                ) : null}
               </div>
             </div>
           </div>
