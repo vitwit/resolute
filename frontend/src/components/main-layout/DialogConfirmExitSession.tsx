@@ -1,5 +1,5 @@
 import CustomButton from '@/components/common/CustomButton';
-import { DELETE_ILLUSTRATION, LOGOUT_ICON } from '@/constants/image-names';
+import { LOGOUT_ICON } from '@/constants/image-names';
 import { Dialog, DialogContent } from '@mui/material';
 import Image from 'next/image';
 import React from 'react';
