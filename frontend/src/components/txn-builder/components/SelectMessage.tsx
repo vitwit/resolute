@@ -7,7 +7,6 @@ import UndelegateForm from '../messages/UndelegateForm';
 import RedelegateForm from '../messages/RedelegateForm';
 import VoteForm from '../messages/VoteForm';
 import CustomMessageForm from '../messages/CustomMessageForm';
-import { Badge } from '@mui/material';
 
 const SelectMessage = ({
   handleSelectMessage,
@@ -18,7 +17,6 @@ const SelectMessage = ({
   fromAddress,
   availableBalance,
   cancelAddMsg,
-  messagesCount,
 }: {
   handleSelectMessage: (type: TxnMsgType) => void;
   txType: string;
@@ -28,10 +26,9 @@ const SelectMessage = ({
   fromAddress: string;
   availableBalance: number;
   cancelAddMsg: () => void;
-  messagesCount: MessagesCount;
 }) => {
   return (
-    <div className="w-[40%] space-y-6 flex flex-col pb-6">
+    <div className="w-[40%] space-y-6 flex flex-col pb-6 h-full">
       <div className="space-y-6">
         <SectionHeader
           title="Transaction Messages"
@@ -39,25 +36,14 @@ const SelectMessage = ({
         />
         <div className="flex gap-x-3 gap-y-3 flex-wrap">
           {TXN_BUILDER_MSGS.map((msg: TxnMsgType) => (
-            <Badge
-              badgeContent={messagesCount?.[msg]}
-              sx={{
-                '& .MuiBadge-badge': {
-                  backgroundColor: '#ffc13c !important',
-                  color: 'black',
-                  fontSize: '12px !important',
-                },
-              }}
+            <button
               key={msg}
+              className={`msg-btn ${txType === msg ? 'msg-btn-selected' : ''} `}
+              type="button"
+              onClick={() => handleSelectMessage(msg as TxnMsgType)}
             >
-              <button
-                className={`msg-btn ${txType === msg ? 'msg-btn-selected' : ''} `}
-                type="button"
-                onClick={() => handleSelectMessage(msg as TxnMsgType)}
-              >
-                {msg}
-              </button>
-            </Badge>
+              {msg}
+            </button>
           ))}
         </div>
       </div>

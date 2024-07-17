@@ -1,10 +1,11 @@
 import { customMUITextFieldStyles } from '@/app/(routes)/multiops/styles';
 import { InputAdornment, TextField } from '@mui/material';
-import React from 'react';
+import React, { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { Decimal } from '@cosmjs/math';
 import { formatCoin } from '@/utils/util';
 import FileUpload from '../components/FileUpload';
+import AddMsgButton from '../components/AddMsgButton';
 
 interface SendFormProps {
   fromAddress: string;
@@ -24,6 +25,8 @@ const SendForm = (props: SendFormProps) => {
       from: fromAddress,
     },
   });
+
+  const [fileUploadTxns, setFileUploadTxns] = useState<Msg[]>([]);
 
   const onSubmit = (data: {
     amount: string;
@@ -61,10 +64,18 @@ const SendForm = (props: SendFormProps) => {
     }
   };
 
+  const onAddFileUploadTxns = (msgs: Msg[]) => {
+    setFileUploadTxns(msgs);
+  };
+
+  const onRemoveFileUploadTxns = () => {
+    setFileUploadTxns([]);
+  };
+
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="flex flex-col justify-between h-full"
+      className="flex flex-col justify-between gap-6 h-full"
     >
       <div className="space-y-6">
         <div className="bg-[#FFFFFF05] rounded-2xl space-y-2">
@@ -75,7 +86,7 @@ const SendForm = (props: SendFormProps) => {
               onClick={cancelAddMsg}
               type="button"
             >
-              Cancel
+              Remove
             </button>
           </div>
           <div className="space-y-6 px-6 pb-6">
@@ -120,6 +131,7 @@ const SendForm = (props: SendFormProps) => {
                     }}
                     placeholder="Enter amount"
                     fullWidth
+                    required
                     InputProps={{
                       sx: {
                         input: {
@@ -149,12 +161,16 @@ const SendForm = (props: SendFormProps) => {
         <FileUpload
           fromAddress={fromAddress}
           msgType="Send"
-          onUpload={handleAddMsgs}
+          onUpload={onAddFileUploadTxns}
+          onCancel={onRemoveFileUploadTxns}
+          msgsCount={fileUploadTxns?.length}
         />
       </div>
-      <div>
-        <button className="primary-btn w-full">Add</button>
-      </div>
+      <AddMsgButton
+        fileUploadTxns={fileUploadTxns}
+        handleAddMsgs={handleAddMsgs}
+        onRemoveFileUploadTxns={onRemoveFileUploadTxns}
+      />
     </form>
   );
 };

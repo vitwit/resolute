@@ -1,14 +1,9 @@
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
-import {
-  getTxns,
-  setVerifyDialogOpen,
-} from '@/store/features/multisig/multisigSlice';
+import { getTxns } from '@/store/features/multisig/multisigSlice';
 import { Txn } from '@/types/multisig';
 import React, { useEffect, useState } from 'react';
 import { TxStatus } from '@/types/enums';
 import TxnsCard from '../common/TxnsCard';
-import { useRouter } from 'next/navigation';
-import useVerifyAccount from '@/custom-hooks/useVerifyAccount';
 import useFetchTxns from '@/custom-hooks/multisig/useFetchTxns';
 import NoData from '@/components/common/NoData';
 import TransactionsLoading from '../loaders/TransactionsLoading';

@@ -16,10 +16,12 @@ interface FileUploadProps {
   fromAddress: string;
   msgType: string;
   onUpload: (msgs: Msg[]) => void;
+  onCancel: () => void;
+  msgsCount: number;
 }
 
 const FileUpload = (props: FileUploadProps) => {
-  const { fromAddress, msgType, onUpload } = props;
+  const { fromAddress, msgType, onUpload, onCancel, msgsCount } = props;
 
   const dispatch = useAppDispatch();
   const onFileContents = (content: string, type: string) => {
@@ -127,32 +129,56 @@ const FileUpload = (props: FileUploadProps) => {
             document.getElementById('multiops_file')!.click();
           }}
         >
-          <Image
-            src={UPLOAD_ICON}
-            height={32}
-            width={32}
-            alt=""
-            className="opacity-50"
-          />
-          <div className="secondary-text">Upload CSV here</div>
-        </div>
-        <div className="flex items-center justify-end gap-1 h-6 text-[12px]">
-          <div className="secondary-text !text-[12px] !font-light">
-            Download Sample
-          </div>
-          <button
-            type="button"
-            onClick={() => {
-              window.open(
-                MULTIOPS_SAMPLE_FILES?.[msgType.toLowerCase()],
-                '_blank',
-                'noopener,noreferrer'
-              );
-            }}
-            className="underline underline-offset-[3px] font-bold"
-          >
-            here
-          </button>
+          {msgsCount > 0 ? (
+            <div className="flex items-center justify-between w-full">
+              <div className="text-[12px]">
+                You are adding{' '}
+                <span className="font-bold">{msgsCount} messages</span> to this
+                transaction
+              </div>
+              <button
+                onClick={(e) => {
+                  onCancel();
+                  e.stopPropagation();
+                }}
+                className="secondary-btn"
+                type="button"
+              >
+                Cancel
+              </button>
+            </div>
+          ) : (
+            <div className="flex w-full items-center justify-between">
+              <div className="flex items-center">
+                <Image
+                  src={UPLOAD_ICON}
+                  height={32}
+                  width={32}
+                  alt=""
+                  className="opacity-50"
+                />
+                <div className="secondary-text">Upload CSV here</div>
+              </div>
+              <div className="flex items-center justify-end gap-1 h-6 text-[12px]">
+                <div className="secondary-text !text-[12px] !font-light">
+                  Download Sample
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    window.open(
+                      MULTIOPS_SAMPLE_FILES?.[msgType.toLowerCase()],
+                      '_blank',
+                      'noopener,noreferrer'
+                    );
+                  }}
+                  className="underline underline-offset-[3px] font-bold"
+                >
+                  here
+                </button>
+              </div>
+            </div>
+          )}
         </div>
         <input
           id="multiops_file"
