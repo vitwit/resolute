@@ -17,8 +17,8 @@ const AddressField = ({
   balanceTypeText: string;
 }) => {
   return (
-    <div className="border-[0.25px] border-[#ffffff30] rounded-3xl py-10 px-6">
-      <div className="space-y-2">
+    <div className="border-[0.25px] border-[#ffffff30] rounded-3xl py-6 px-6 w-full">
+      <div className="space-y-1">
         <div className="flex items-center gap-2">
           <div className="text-[14px] font-light leading-[24px]">{denom}</div>
           <div className="flex-1">

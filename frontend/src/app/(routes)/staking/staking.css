@@ -182,7 +182,7 @@
   @apply bg-transparent w-full border-none focus:outline-none text-[40px] font-bold placeholder:text-[#FFFFFF33];
 }
 .staking-alert {
-  @apply flex flex-col items-start gap-4 px-6 py-4 rounded-2xl;
+  @apply flex flex-col items-start gap-2 px-6 py-4 rounded-2xl;
   background: rgba(255, 255, 255, 0.08);
 }
 .unBonding-card {

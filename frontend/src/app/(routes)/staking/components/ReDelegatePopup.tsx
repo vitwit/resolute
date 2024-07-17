@@ -32,9 +32,12 @@ const ReDelegatePopup: React.FC<PopupProps> = ({
 
   // Custom hooks to fetch staking details
   const singleStake = useSingleStaking(chainID);
-  const totalStakedAmount = singleStake.totalValStakedAssets(chainID, validator)
+  const totalStakedAmount = singleStake.totalValStakedAssets(
+    chainID,
+    validator
+  );
   const denom = singleStake.getDenomWithChainID(chainID);
-  const staking = useStaking({isSingleChain: true});
+  const staking = useStaking({ isSingleChain: true });
   const allVals = singleStake.getValidators()?.active;
   const stakeModule = staking.getAllDelegations();
   const val = stakeModule[chainID]?.validators?.active?.[validator];
@@ -189,7 +192,7 @@ const ReDelegatePopup: React.FC<PopupProps> = ({
 
           {/* Staking alert */}
           <div className="staking-alert w-full">
-            <div className="flex space-x-2 items-center">
+            <div className="flex space-x-1 items-center">
               <Image
                 src="/info-yellow.svg"
                 width={24}
@@ -201,7 +204,7 @@ const ReDelegatePopup: React.FC<PopupProps> = ({
                 Staking will lock your funds for 21 days
               </p>
             </div>
-            <div className="text-b1">
+            <div className="text-b1 pl-6">
               No staking rewards, cancellation of unbonding, or fund withdrawals
               until 21+ days post-undelegation.
             </div>
