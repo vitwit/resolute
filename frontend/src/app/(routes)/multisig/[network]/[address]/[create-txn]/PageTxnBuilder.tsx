@@ -53,7 +53,7 @@ const PageTxnBuilder = ({
           Back to multisig
         </button>
         <PageHeader
-          title="Multisig Transaction Builder"
+          title="Create Multisig Transaction"
           description="Transaction builder allows to create single transaction with multiple
           messages of same or different type."
         />

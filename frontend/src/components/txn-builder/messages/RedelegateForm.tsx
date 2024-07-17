@@ -138,7 +138,7 @@ const RedelegateForm = (props: ReDelegateProps) => {
               onClick={cancelAddMsg}
               type="button"
             >
-              Cancel
+              Remove
             </button>
           </div>
           <div className="space-y-6">

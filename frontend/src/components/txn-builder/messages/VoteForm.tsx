@@ -98,7 +98,7 @@ const VoteForm = (props: VoteProps) => {
               onClick={cancelAddMsg}
               type="button"
             >
-              Cancel
+              Remove
             </button>
           </div>
           <div className="space-y-6 px-6 pb-6">
