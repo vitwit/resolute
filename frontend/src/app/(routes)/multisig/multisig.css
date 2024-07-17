@@ -11,8 +11,7 @@
 }
 
 .stats-card {
-  @apply flex-1 rounded-2xl bg-[#FFFFFF05] p-6 flex flex-col justify-center items-center gap-4;
-  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25) inset;
+  @apply flex-1 rounded-2xl bg-[#FFFFFF05] p-6 flex flex-col justify-center items-center gap-2;
 }
 
 .members-list {
@@ -76,3 +75,7 @@
   -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
 } */
 
+.selected-tab {
+  background: linear-gradient(90deg, #4453df 0%, #7f5ced 100%);
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+}

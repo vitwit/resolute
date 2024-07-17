@@ -1,5 +1,3 @@
-import CustomButton from '@/components/common/CustomButton';
-import SectionHeader from '@/components/common/SectionHeader';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import {
   getTxns,
@@ -28,21 +26,13 @@ const Transactions = ({
   multisigAddress,
   currency,
   threshold,
-  chainName,
-  walletAddress,
 }: {
   chainID: string;
   multisigAddress: string;
   currency: Currency;
   threshold: number;
-  chainName: string;
-  walletAddress: string;
 }) => {
   const dispatch = useAppDispatch();
-  const router = useRouter();
-  const { isAccountVerified } = useVerifyAccount({
-    address: walletAddress,
-  });
   const txnsState = useAppSelector((state) => state.multisig.txns.list);
 
   const [txnsList, setTxnsList] = useState<Txn[]>([]);
@@ -79,14 +69,6 @@ const Transactions = ({
       return true;
     }
     return false;
-  };
-
-  const onCreateNewTxn = () => {
-    if (!isAccountVerified()) {
-      dispatch(setVerifyDialogOpen(true));
-      return;
-    }
-    router.push(`/multisig/${chainName}/${multisigAddress}/create-txn`);
   };
 
   useEffect(() => {
@@ -147,16 +129,6 @@ const Transactions = ({
 
   return (
     <div className="space-y-6">
-      <div className="flex items-end gap-2 w-full">
-        <div className="flex-1">
-          <SectionHeader title="Transactions" description="All transactions" />
-        </div>
-        <CustomButton
-          btnText="Create Transaction"
-          btnStyles="w-fit"
-          btnOnClick={onCreateNewTxn}
-        />
-      </div>
       <div className="space-y-6">
         <TransactionsFilters
           txnsType={txnsType}
