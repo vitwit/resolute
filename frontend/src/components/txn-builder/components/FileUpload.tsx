@@ -10,7 +10,7 @@ import {
   parseVoteMsgsFromContent,
 } from '@/utils/parseMsgs';
 import Image from 'next/image';
-import React, { useState } from 'react';
+import React from 'react';
 
 interface FileUploadProps {
   fromAddress: string;
@@ -148,35 +148,37 @@ const FileUpload = (props: FileUploadProps) => {
               </button>
             </div>
           ) : (
-            <>
-              <Image
-                src={UPLOAD_ICON}
-                height={32}
-                width={32}
-                alt=""
-                className="opacity-50"
-              />
-              <div className="secondary-text">Upload CSV here</div>
-            </>
+            <div className="flex w-full items-center justify-between">
+              <div className="flex items-center">
+                <Image
+                  src={UPLOAD_ICON}
+                  height={32}
+                  width={32}
+                  alt=""
+                  className="opacity-50"
+                />
+                <div className="secondary-text">Upload CSV here</div>
+              </div>
+              <div className="flex items-center justify-end gap-1 h-6 text-[12px]">
+                <div className="secondary-text !text-[12px] !font-light">
+                  Download Sample
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    window.open(
+                      MULTIOPS_SAMPLE_FILES?.[msgType.toLowerCase()],
+                      '_blank',
+                      'noopener,noreferrer'
+                    );
+                  }}
+                  className="underline underline-offset-[3px] font-bold"
+                >
+                  here
+                </button>
+              </div>
+            </div>
           )}
-        </div>
-        <div className="flex items-center justify-end gap-1 h-6 text-[12px]">
-          <div className="secondary-text !text-[12px] !font-light">
-            Download Sample
-          </div>
-          <button
-            type="button"
-            onClick={() => {
-              window.open(
-                MULTIOPS_SAMPLE_FILES?.[msgType.toLowerCase()],
-                '_blank',
-                'noopener,noreferrer'
-              );
-            }}
-            className="underline underline-offset-[3px] font-bold"
-          >
-            here
-          </button>
         </div>
         <input
           id="multiops_file"

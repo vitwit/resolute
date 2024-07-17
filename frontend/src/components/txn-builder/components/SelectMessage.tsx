@@ -28,7 +28,7 @@ const SelectMessage = ({
   cancelAddMsg: () => void;
 }) => {
   return (
-    <div className="w-[40%] space-y-6 flex flex-col pb-6">
+    <div className="w-[40%] space-y-6 flex flex-col pb-6 h-full">
       <div className="space-y-6">
         <SectionHeader
           title="Transaction Messages"

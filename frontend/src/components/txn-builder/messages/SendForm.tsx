@@ -75,7 +75,7 @@ const SendForm = (props: SendFormProps) => {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="flex flex-col justify-between h-full"
+      className="flex flex-col justify-between gap-6 h-full"
     >
       <div className="space-y-6">
         <div className="bg-[#FFFFFF05] rounded-2xl space-y-2">

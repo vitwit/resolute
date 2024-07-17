@@ -85,7 +85,7 @@ const TxnBuilder = ({
           setTxType('');
         }}
       />
-      <div className="flex-1 space-y-6 h-full flex flex-col bg-[#FFFFFF05] rounded-2xl p-6 overflow-y-scroll">
+      <div className="flex-1 space-y-6 flex flex-col min-h-full h-fit bg-[#FFFFFF05] rounded-2xl p-6">
         <div className="flex items-center justify-between">
           <div className="text-[#FFFFFF80]">Transaction Summary</div>
           {messages?.length ? (
