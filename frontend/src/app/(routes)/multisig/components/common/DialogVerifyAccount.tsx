@@ -46,7 +46,10 @@ const DialogVerifyAccount = ({ walletAddress }: { walletAddress: string }) => {
       }}
     >
       <DialogContent sx={{ padding: 0 }}>
-        <div className="w-[550px] p-4">
+        <div className="w-[550px] p-4 relative">
+          <button className="absolute top-6 right-6" onClick={handleClose}>
+            <Image src="/close.svg" width={20} height={20} alt="close-icon" />
+          </button>
           <div className="px-10 py-20 space-y-10">
             <div className="flex flex-col items-center gap-6">
               <Image
