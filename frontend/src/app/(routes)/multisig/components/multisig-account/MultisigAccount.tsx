@@ -31,7 +31,7 @@ import useVerifyAccount from '@/custom-hooks/useVerifyAccount';
 import { Dialog, DialogContent } from '@mui/material';
 import { dialogBoxPaperPropStyles } from '@/utils/commonStyles';
 import SectionHeader from '@/components/common/SectionHeader';
-import useGetIBCAssets from '@/custom-hooks/multisig/useGetIBCAssets';
+import useGetAllAssets from '@/custom-hooks/multisig/useGetAllAssets';
 
 const MultisigAccount = ({
   chainName,
@@ -402,8 +402,8 @@ const DialogMultisigAssets = ({
   const handleClose = () => {
     onClose();
   };
-  const { getIBCAssets } = useGetIBCAssets();
-  const { ibcAssets } = getIBCAssets(chainID);
+  const { getAllAssets } = useGetAllAssets();
+  const { allAssets } = getAllAssets(chainID, false);
   return (
     <Dialog
       onClose={handleClose}
@@ -430,10 +430,10 @@ const DialogMultisigAssets = ({
             description="IBC assets available on this multisig account"
           />
           <div className="grid grid-cols-4 gap-6">
-            {ibcAssets.length === 0 ? (
+            {allAssets.length === 0 ? (
               <div className="text-center">No IBC assets found</div>
             ) : (
-              ibcAssets.map((asset) => (
+              allAssets.map((asset) => (
                 <div
                   key={asset.minimalDenom}
                   className="flex gap-1 items-center p-4 bg-[#FFFFFF05] rounded-2xl text-[14px] text-[#ffffffad]"

@@ -6,6 +6,7 @@ import { Decimal } from '@cosmjs/math';
 import { formatCoin } from '@/utils/util';
 import FileUpload from '../components/FileUpload';
 import AddMsgButton from '../components/AddMsgButton';
+import useGetAllAssets from '@/custom-hooks/multisig/useGetAllAssets';
 
 interface SendFormProps {
   fromAddress: string;
@@ -13,11 +14,20 @@ interface SendFormProps {
   currency: Currency;
   availableBalance: number;
   cancelAddMsg: () => void;
+  chainID: string;
 }
 
 const SendForm = (props: SendFormProps) => {
-  const { fromAddress, currency, onSend, availableBalance, cancelAddMsg } =
-    props;
+  const {
+    fromAddress,
+    currency,
+    onSend,
+    availableBalance,
+    cancelAddMsg,
+    chainID,
+  } = props;
+  const { getAllAssets } = useGetAllAssets();
+  const { allAssets } = getAllAssets(chainID, true);
   const { handleSubmit, control, reset } = useForm({
     defaultValues: {
       amount: '',

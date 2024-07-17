@@ -55,6 +55,7 @@ const SelectMessage = ({
             fromAddress={fromAddress}
             availableBalance={availableBalance}
             cancelAddMsg={cancelAddMsg}
+            chainID={chainID}
           />
         )}
         {txType === 'Delegate' && (
