@@ -1,4 +1,3 @@
-import React from 'react';
 import { useAppSelector } from '../StateHooks';
 import useGetChainInfo from '../useGetChainInfo';
 import chainDenoms from '@/utils/chainDenoms.json';
