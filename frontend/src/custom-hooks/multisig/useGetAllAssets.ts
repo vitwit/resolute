@@ -9,6 +9,7 @@ interface MultisigAsset {
   minimalDenom: string;
   decimals: number;
   amountInDenom: number;
+  ibcDenom: string;
 }
 
 const chainDenomsData = chainDenoms as AssetData;
@@ -41,6 +42,7 @@ const useGetAllAssets = () => {
         decimals: decimals,
         displayDenom: symbol,
         minimalDenom: origin_denom,
+        ibcDenom: denomInfo[0].denom,
       };
       if (includeNative || nativeMinimalDenom !== denomInfo[0].denom) {
         allAssets.push(assetInfo);

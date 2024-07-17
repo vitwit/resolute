@@ -1,5 +1,5 @@
 import { customMUITextFieldStyles } from '@/app/(routes)/multiops/styles';
-import { InputAdornment, TextField } from '@mui/material';
+import { InputAdornment, TextField, Select, MenuItem } from '@mui/material';
 import React, { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { Decimal } from '@cosmjs/math';
@@ -7,6 +7,15 @@ import { formatCoin } from '@/utils/util';
 import FileUpload from '../components/FileUpload';
 import AddMsgButton from '../components/AddMsgButton';
 import useGetAllAssets from '@/custom-hooks/multisig/useGetAllAssets';
+import { customSelectStyles } from '../styles';
+
+interface Asset {
+  amount: number;
+  displayDenom: string;
+  minimalDenom: string;
+  decimals: number;
+  amountInDenom: number;
+}
 
 interface SendFormProps {
   fromAddress: string;
@@ -33,19 +42,27 @@ const SendForm = (props: SendFormProps) => {
       amount: '',
       recipient: '',
       from: fromAddress,
+      selectedAsset: '',
     },
   });
 
   const [fileUploadTxns, setFileUploadTxns] = useState<Msg[]>([]);
+  const [selectedAsset, setSelectedAsset] = useState<Asset | null>(null);
 
   const onSubmit = (data: {
     amount: string;
     recipient: string;
     from: string;
+    selectedAsset: string;
   }) => {
+    const selectedAsset = allAssets.find(
+      (asset) => asset.displayDenom === data.selectedAsset
+    );
+    if (!selectedAsset) return;
+
     const amountInAtomics = Decimal.fromUserInput(
       data.amount,
-      Number(currency.coinDecimals)
+      selectedAsset.decimals
     ).atomics;
 
     const msgSend = {
@@ -54,10 +71,12 @@ const SendForm = (props: SendFormProps) => {
       amount: [
         {
           amount: amountInAtomics,
-          denom: currency.coinMinimalDenom,
+          denom: selectedAsset.ibcDenom,
         },
       ],
     };
+
+    console.log(msgSend);
 
     const msg = {
       typeUrl: '/cosmos.bank.v1beta1.MsgSend',
@@ -151,15 +170,51 @@ const SendForm = (props: SendFormProps) => {
                         },
                       },
                       endAdornment: (
-                        <div className="text-small-light">
-                          <InputAdornment
-                            position="start"
-                            sx={{ color: '#ffffff80' }}
-                          >
-                            {'Available:'}{' '}
-                            {formatCoin(availableBalance, currency.coinDenom)}{' '}
-                          </InputAdornment>
-                        </div>
+                        <InputAdornment position="end">
+                          <Controller
+                            name="selectedAsset"
+                            control={control}
+                            render={({ field }) => (
+                              <Select
+                                {...field}
+                                value={field.value || ''}
+                                onChange={(event) => {
+                                  field.onChange(event);
+                                  const asset = allAssets.find(
+                                    (asset) =>
+                                      asset.displayDenom === event.target.value
+                                  );
+                                  setSelectedAsset(asset || null);
+                                }}
+                                displayEmpty
+                                sx={customSelectStyles}
+                                MenuProps={{
+                                  PaperProps: {
+                                    sx: {
+                                      backgroundColor: '#FFFFFF14',
+                                      backdropFilter: 'blur(15px)',
+                                      color: '#ffffffad',
+                                      borderRadius: '16px',
+                                      marginTop: '8px',
+                                    },
+                                  },
+                                }}
+                              >
+                                <MenuItem value="" disabled>
+                                  Select Asset
+                                </MenuItem>
+                                {allAssets.map((asset) => (
+                                  <MenuItem
+                                    key={asset.displayDenom}
+                                    value={asset.displayDenom}
+                                  >
+                                    {asset.amountInDenom} {asset.displayDenom}
+                                  </MenuItem>
+                                ))}
+                              </Select>
+                            )}
+                          />
+                        </InputAdornment>
                       ),
                     }}
                   />
