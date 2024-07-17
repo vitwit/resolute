@@ -6,7 +6,7 @@ import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import useVerifyAccount from '@/custom-hooks/useVerifyAccount';
 import {
   createTxn,
-  getMultisigBalance,
+  getMultisigBalances,
   setVerifyDialogOpen,
 } from '@/store/features/multisig/multisigSlice';
 import { setConnectWalletOpen } from '@/store/features/wallet/walletSlice';
@@ -174,11 +174,7 @@ const PageTxnBuilderEntry = ({
   useEffect(() => {
     if (balance) {
       setAvailableBalance(
-        parseBalance(
-          [balance],
-          currency.coinDecimals,
-          currency.coinMinimalDenom
-        )
+        parseBalance(balance, currency.coinDecimals, currency.coinMinimalDenom)
       );
     }
   }, [balance]);
@@ -186,10 +182,9 @@ const PageTxnBuilderEntry = ({
   useEffect(() => {
     if (chainID) {
       dispatch(
-        getMultisigBalance({
+        getMultisigBalances({
           baseURL,
           address: multisigAddress,
-          denom: currency.coinMinimalDenom,
           baseURLs: restURLs,
           chainID,
         })

@@ -2,7 +2,7 @@ import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import {
   getMultisigAccounts,
-  getMultisigBalance,
+  getMultisigBalances,
   multisigByAddress,
   resetBroadcastTxnRes,
   resetCreateTxnState,
@@ -18,7 +18,7 @@ import { useEffect, useState } from 'react';
 import MultisigAccountHeader from './MultisigAccountHeader';
 import Copy from '@/components/common/Copy';
 import { formatStakedAmount } from '@/utils/util';
-import { parseBalance } from '@/utils/denom';
+import { checkForIBCTokens, parseBalance } from '@/utils/denom';
 import Transactions from './Transactions';
 import Loader from '../common/Loader';
 import Link from 'next/link';
@@ -28,6 +28,10 @@ import MultisigInfoLoading from '../loaders/MultisigInfoLoading';
 import { getTimeDifferenceToFutureDate } from '@/utils/dataTime';
 import { useRouter } from 'next/navigation';
 import useVerifyAccount from '@/custom-hooks/useVerifyAccount';
+import { Dialog, DialogContent } from '@mui/material';
+import { dialogBoxPaperPropStyles } from '@/utils/commonStyles';
+import SectionHeader from '@/components/common/SectionHeader';
+import useGetIBCAssets from '@/custom-hooks/multisig/useGetIBCAssets';
 
 const MultisigAccount = ({
   chainName,
@@ -83,10 +87,9 @@ const MultisigAccount = ({
   useEffect(() => {
     if (chainID) {
       dispatch(
-        getMultisigBalance({
+        getMultisigBalances({
           baseURL,
           address: multisigAddress,
-          denom: coinMinimalDenom,
           baseURLs: restURLs,
           chainID,
         })
@@ -194,6 +197,7 @@ const MultisigAccountInfo = ({
   createdTime: string;
 }) => {
   const [availableBalance, setAvailableBalance] = useState<number>(0);
+  const [hasIBCTokens, setHasIBCTokens] = useState(false);
 
   const multisigAccount = useAppSelector(
     (state) => state.multisig.multisigAccount
@@ -217,8 +221,9 @@ const MultisigAccountInfo = ({
 
   useEffect(() => {
     setAvailableBalance(
-      parseBalance([balance], currency.coinDecimals, currency.coinMinimalDenom)
+      parseBalance(balance, currency.coinDecimals, currency.coinMinimalDenom)
     );
+    setHasIBCTokens(checkForIBCTokens(balance, currency.coinMinimalDenom));
   }, [balance]);
 
   return (
@@ -228,6 +233,8 @@ const MultisigAccountInfo = ({
         created={getTimeDifferenceToFutureDate(createdTime, true) || '-'}
         stakedBalance={formatStakedAmount(stakedTokens, currency)}
         availableBalance={`${availableBalance} ${currency.coinDenom}`}
+        hasIBCTokens={hasIBCTokens}
+        chainID={chainID}
       />
     </div>
   );
@@ -238,20 +245,21 @@ const MultisigAccountStats = ({
   created,
   stakedBalance,
   availableBalance,
+  hasIBCTokens,
+  chainID,
 }: {
   actionsRequired: number;
   created: string;
   stakedBalance: string;
   availableBalance: string;
+  hasIBCTokens: boolean;
+  chainID: string;
 }) => {
+  const [viewIBC, setViewIBC] = useState(false);
   const stats = [
     {
       name: 'Staked Balance',
       value: stakedBalance,
-    },
-    {
-      name: 'Available Balance',
-      value: availableBalance,
     },
     {
       name: 'Actions Required',
@@ -264,6 +272,13 @@ const MultisigAccountStats = ({
   ];
   return (
     <div className="flex gap-4 flex-wrap">
+      <MultisigAccountStatsCard
+        key={'Available Balance'}
+        name={'Available Balance'}
+        value={availableBalance}
+        action={() => setViewIBC(true)}
+        actionName={hasIBCTokens ? 'View IBC' : ''}
+      />
       {stats.map((stat) => (
         <MultisigAccountStatsCard
           key={stat.name}
@@ -271,6 +286,11 @@ const MultisigAccountStats = ({
           value={stat.value}
         />
       ))}
+      <DialogMultisigAssets
+        onClose={() => setViewIBC(false)}
+        open={viewIBC}
+        chainID={chainID}
+      />
     </div>
   );
 };
@@ -278,16 +298,29 @@ const MultisigAccountStats = ({
 const MultisigAccountStatsCard = ({
   name,
   value,
+  action,
+  actionName,
 }: {
   name: string;
   value: string | number;
+  action?: () => void;
+  actionName?: string;
 }) => {
   return (
     <div className="stats-card">
       <div className="text-[12px] font-light text-[#ffffff80] leading-[18px]">
         {name}
       </div>
-      <div className="text-[18px] text-[#ffffffad] font-bold">{value}</div>
+      {actionName ? (
+        <div className="flex items-center gap-2">
+          <div className="text-[18px] text-[#ffffffad] font-bold">{value}</div>
+          <button className="secondary-btn !font-bold" onClick={action}>
+            View IBC
+          </button>
+        </div>
+      ) : (
+        <div className="text-[18px] text-[#ffffffad] font-bold">{value}</div>
+      )}
     </div>
   );
 };
@@ -313,7 +346,7 @@ const MultisigMember = ({
     <div className="p-6 space-y-2 rounded-2xl bg-[#ffffff04]">
       <div className="text-[12px] text-[#ffffff80]">Member #{index}</div>
       <div className="flex items-center gap-2">
-        <div className="text-[14px] text-[#ffffffad]">{address}</div>
+        <div>{address}</div>
         <Copy content={address} height={20} width={20} />
       </div>
     </div>
@@ -354,5 +387,65 @@ const TabsGroup = ({
         Create Transaction
       </button>
     </div>
+  );
+};
+
+const DialogMultisigAssets = ({
+  onClose,
+  open,
+  chainID,
+}: {
+  open: boolean;
+  onClose: () => void;
+  chainID: string;
+}) => {
+  const handleClose = () => {
+    onClose();
+  };
+  const { getIBCAssets } = useGetIBCAssets();
+  const { ibcAssets } = getIBCAssets(chainID);
+  return (
+    <Dialog
+      onClose={handleClose}
+      open={open}
+      maxWidth="lg"
+      sx={{
+        '& .MuiDialog-paper': {
+          color: 'white',
+        },
+      }}
+      PaperProps={{
+        sx: dialogBoxPaperPropStyles,
+      }}
+    >
+      <DialogContent sx={{ padding: 0 }}>
+        <div className="p-10 space-y-6 w-[600px]">
+          <div className="flex justify-end px-6">
+            <button onClick={onClose} className="text-btn !h-8">
+              Close
+            </button>
+          </div>
+          <SectionHeader
+            title="IBC Assets"
+            description="IBC assets available on this multisig account"
+          />
+          <div className="grid grid-cols-4 gap-6">
+            {ibcAssets.length === 0 ? (
+              <div className="text-center">No IBC assets found</div>
+            ) : (
+              ibcAssets.map((asset) => (
+                <div
+                  key={asset.minimalDenom}
+                  className="flex gap-1 items-center p-4 bg-[#FFFFFF05] rounded-2xl text-[14px] text-[#ffffffad]"
+                >
+                  <div>{asset.amountInDenom}</div>
+                  <div>{asset.displayDenom}</div>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 };
