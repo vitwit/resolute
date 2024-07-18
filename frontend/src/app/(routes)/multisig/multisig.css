@@ -51,7 +51,7 @@
 }
 
 .add-members {
-  @apply grid grid-cols-2 gap-x-10 gap-y-2;
+  @apply space-y-2;
 }
 
 /* .add-members {
