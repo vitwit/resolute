@@ -127,7 +127,7 @@ export const TxnsCard = ({
           <div className="flex items-center gap-2">
             <div className="flex gap-1">
               <div className="text-b1">#1</div>
-              <TxnMsg msg={messages[0]} currency={currency} />
+              <TxnMsg msg={messages[0]} currency={currency} chainID={chainID} />
             </div>
             {messages?.length > 1 ? (
               <ExpandViewButton
@@ -141,7 +141,7 @@ export const TxnsCard = ({
                 <div key={index}>
                   <div className="flex gap-2">
                     <div className="font-bold">{`#${index + 2}`}</div>
-                    <TxnMsg msg={msg} currency={currency} />
+                    <TxnMsg msg={msg} currency={currency} chainID={chainID} />
                   </div>
                 </div>
               ))
