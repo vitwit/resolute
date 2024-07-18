@@ -390,7 +390,7 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
       open={open}
       title={importMultisig ? 'Import Multisig' : 'Create Multisig'}
       onClose={handleClose}
-      styles="w-[800px]"
+      styles="w-[800px] !text-[#ffffffad]"
     >
       <div className="w-full">
         {page === 1 ? (

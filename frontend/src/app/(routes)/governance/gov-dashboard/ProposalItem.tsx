@@ -65,7 +65,7 @@ const ProposalItem = ({
             >
               <div className="flex space-x-1 items-center cursor-pointer">
                 <p
-                  className={`text-[16px] truncate ${selectedProposal ? 'max-w-[320px]' : 'max-w-[500px]'}`}
+                  className={`text-[14px] truncate ${selectedProposal ? 'max-w-[320px]' : 'max-w-[500px]'}`}
                 >
                   {proposalTitle}
                 </p>
@@ -85,7 +85,7 @@ const ProposalItem = ({
               </div>
 
               {!selectedProposal && (
-                <div>
+                <div className="text-b1">
                   {isActive ? (
                     <div className="active-badge">Active</div>
                   ) : (
@@ -103,7 +103,7 @@ const ProposalItem = ({
                   alt="timer-icon"
                   draggable={false}
                 />
-                <p className="text-[rgba(255,255,255,0.50)] text-xs">
+                <p className="text-[rgba(255,255,255,0.50)] text-xs leading-[18px]">
                   {isActive ? 'Voting ends in' : 'Deposit ends in'} {endTime}
                 </p>
               </div>
@@ -116,7 +116,7 @@ const ProposalItem = ({
                   alt=""
                   draggable={false}
                 />
-                <p className="text-[rgba(255,255,255,0.50)] text-xs capitalize">
+                <p className="text-[rgba(255,255,255,0.50)] text-xs capitalize leading-[18px]">
                   {chainName} Network
                 </p>
               </div>

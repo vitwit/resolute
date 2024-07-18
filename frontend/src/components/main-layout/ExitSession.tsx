@@ -62,7 +62,7 @@ const ExitSession = () => {
               alt="Dashboard"
               className="opacity-60"
             />
-            <div className=" text-[14px] leading-[19px]">Exit Session</div>
+            <div className=" text-[14px] leading-[21px]">Exit Session</div>
           </button>
         </div>
       ) : null}

@@ -25,7 +25,7 @@ import {
   CreateTxnInputs,
   DeleteMultisigInputs,
   DeleteTxnInputs,
-  GetMultisigBalanceInputs,
+  GetMultisigBalancesInputs,
   GetTxnsInputs,
   ImportMultisigAccountRes,
   MultisigAddressPubkey,
@@ -81,10 +81,7 @@ const initialState: MultisigState = {
     error: '',
   },
   balance: {
-    balance: {
-      amount: '',
-      denom: '',
-    },
+    balance: [],
     status: TxStatus.INIT,
     error: '',
   },
@@ -262,14 +259,13 @@ export const multisigByAddress = createAsyncThunk(
   }
 );
 
-export const getMultisigBalance = createAsyncThunk(
+export const getMultisigBalances = createAsyncThunk(
   'multisig/multisigBalance',
-  async (data: GetMultisigBalanceInputs, { rejectWithValue }) => {
+  async (data: GetMultisigBalancesInputs, { rejectWithValue }) => {
     try {
-      const response = await bankService.balance(
+      const response = await bankService.balances(
         data.baseURLs,
         data.address,
-        data.denom,
         data.chainID
       );
       return response.data;
@@ -702,16 +698,16 @@ export const multisigSlice = createSlice({
         state.multisigAccount.error = payload.message || '';
       });
     builder
-      .addCase(getMultisigBalance.pending, (state) => {
+      .addCase(getMultisigBalances.pending, (state) => {
         state.balance.status = TxStatus.PENDING;
         state.balance.error = '';
       })
-      .addCase(getMultisigBalance.fulfilled, (state, action) => {
+      .addCase(getMultisigBalances.fulfilled, (state, action) => {
         state.balance.status = TxStatus.IDLE;
         state.balance.error = '';
-        state.balance.balance = action.payload.balance;
+        state.balance.balance = action.payload.balances;
       })
-      .addCase(getMultisigBalance.rejected, (state, action) => {
+      .addCase(getMultisigBalances.rejected, (state, action) => {
         state.balance.status = TxStatus.REJECTED;
         const payload = action.payload as { message: string };
         state.balance.error = payload.message || '';

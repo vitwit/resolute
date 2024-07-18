@@ -156,7 +156,7 @@
 
 .proposal-overview-exit-active {
   opacity: 0;
-  transform: translateX(-100%);
+  transform: translateX(100%);
   transition:
     opacity 300ms,
     transform 300ms;
