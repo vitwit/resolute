@@ -74,11 +74,10 @@ interface MultisigAddressPubkey {
   pubkey: Pubkey;
 }
 
-interface GetMultisigBalanceInputs {
+interface GetMultisigBalancesInputs {
   baseURL: string;
   baseURLs: string[];
   address: string;
-  denom: string;
   chainID: string;
 }
 
@@ -155,10 +154,7 @@ interface TxRes {
 }
 
 interface Balance {
-  balance: {
-    denom: string;
-    amount: string;
-  };
+  balance: Coin[];
   status: TxStatus;
   error: string;
 }

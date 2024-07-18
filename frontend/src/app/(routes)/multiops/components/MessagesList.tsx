@@ -22,11 +22,12 @@ const renderMessage = (
   msg: Msg,
   index: number,
   currency: Currency,
-  onDelete: (index: number) => void
+  onDelete: (index: number) => void,
+  chainID: string
 ) => {
   switch (msg.typeUrl) {
     case SEND_TYPE_URL:
-      return SendMessage({ msg, index, currency, onDelete });
+      return SendMessage({ msg, index, currency, onDelete, chainID });
     case DELEGATE_TYPE_URL:
       return DelegateMessage({ msg, index, currency, onDelete });
     case UNDELEGATE_TYPE_URL:
@@ -46,10 +47,12 @@ const MessagesList = ({
   messages,
   currency,
   onDeleteMsg,
+  chainID,
 }: {
   messages: Msg[];
   currency: Currency;
   onDeleteMsg: (index: number) => void;
+  chainID: string;
 }) => {
   const [slicedMsgs, setSlicedMsgs] = useState<Msg[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -80,7 +83,8 @@ const MessagesList = ({
                   msg,
                   index + PER_PAGE * (currentPage - 1),
                   currency,
-                  onDeleteMsg
+                  onDeleteMsg,
+                  chainID
                 )}
               </div>
             );

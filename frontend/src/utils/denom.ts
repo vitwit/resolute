@@ -95,3 +95,17 @@ export const getTotalAmount = (
   });
   return totalAmount.toFixed(6);
 };
+
+export const checkForIBCTokens = (balance: Coin[], nativeMinimalDenom: string) => {
+  if (!balance?.length) {
+    return false;
+  }
+  if (balance?.length === 1) {
+    if (balance[0].denom === nativeMinimalDenom) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+  return true;
+};

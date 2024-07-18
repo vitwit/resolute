@@ -1,5 +1,5 @@
 import { REMOVE_ICON } from '@/constants/image-names';
-import { parseBalance } from '@/utils/denom';
+import useGetAllAssets from '@/custom-hooks/multisig/useGetAllAssets';
 import { shortenAddress } from '@/utils/util';
 import Image from 'next/image';
 import React from 'react';
@@ -9,23 +9,26 @@ interface TxnMsgProps {
   onDelete: (index: number) => void;
   currency: Currency;
   index: number;
+  chainID: string;
 }
 
 const SendMessage = (props: TxnMsgProps) => {
-  const { msg, index, currency, onDelete } = props;
+  const { msg, index, onDelete, chainID } = props;
+  const { getParsedAsset } = useGetAllAssets();
+  const { assetInfo } = getParsedAsset({
+    amount: msg.value?.amount?.[0]?.amount,
+    chainID,
+    denom: msg.value?.amount?.[0]?.denom,
+  });
   return (
     <div className="flex justify-between items-center text-[14px]">
       <div className="flex gap-2 items-center">
         <div className="truncate">
           <span>Send&nbsp;</span>
           <span className="msg-amount">
-            {parseBalance(
-              msg.value.amount,
-              currency.coinDecimals,
-              currency.coinMinimalDenom
-            )}
+            {assetInfo?.amountInDenom}
             &nbsp;
-            {currency.coinDenom}&nbsp;
+            {assetInfo?.displayDenom}&nbsp;
           </span>
           <span>to&nbsp;</span>
           <span className="font-extralight">
