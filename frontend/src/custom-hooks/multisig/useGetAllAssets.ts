@@ -1,4 +1,4 @@
-import { useAppDispatch, useAppSelector } from '../StateHooks';
+import { useAppSelector } from '../StateHooks';
 import useGetChainInfo from '../useGetChainInfo';
 import chainDenoms from '@/utils/chainDenoms.json';
 import { parseBalance } from '@/utils/denom';
@@ -15,7 +15,6 @@ interface MultisigAsset {
 const chainDenomsData = chainDenoms as AssetData;
 
 const useGetAllAssets = () => {
-  const dispatch = useAppDispatch();
   const { getChainInfo, getDenomInfo } = useGetChainInfo();
 
   const multisigBalances = useAppSelector(

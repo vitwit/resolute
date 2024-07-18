@@ -11,6 +11,7 @@ import {
 } from '@/utils/parseMsgs';
 import Image from 'next/image';
 import React from 'react';
+import * as XLSX from 'xlsx';
 
 interface FileUploadProps {
   fromAddress: string;
@@ -24,6 +25,14 @@ const FileUpload = (props: FileUploadProps) => {
   const { fromAddress, msgType, onUpload, onCancel, msgsCount } = props;
 
   const dispatch = useAppDispatch();
+
+  const parseExcel = (content: ArrayBuffer) => {
+    const workbook = XLSX.read(content, { type: 'array' });
+    const sheetName = workbook.SheetNames[0];
+    const sheet = workbook.Sheets[sheetName];
+    return XLSX.utils.sheet_to_csv(sheet);
+  };
+
   const onFileContents = (content: string, type: string) => {
     switch (type) {
       case MULTIOPS_MSG_TYPES.send: {
@@ -115,6 +124,7 @@ const FileUpload = (props: FileUploadProps) => {
         onUpload([]);
     }
   };
+
   return (
     <>
       <div className="flex items-center gap-4">
@@ -157,7 +167,7 @@ const FileUpload = (props: FileUploadProps) => {
                   alt=""
                   className="opacity-50"
                 />
-                <div className="secondary-text">Upload CSV here</div>
+                <div className="secondary-text">Upload CSV or Excel here</div>
               </div>
               <div className="flex items-center justify-end gap-1 h-6 text-[12px]">
                 <div className="secondary-text !text-[12px] !font-light">
@@ -182,7 +192,7 @@ const FileUpload = (props: FileUploadProps) => {
         </div>
         <input
           id="multiops_file"
-          accept=".csv"
+          accept=".csv,.xlsx,.xls"
           hidden
           type="file"
           onChange={(e) => {
@@ -195,15 +205,52 @@ const FileUpload = (props: FileUploadProps) => {
               return;
             }
 
-            const reader = new FileReader();
-            reader.onload = (e) => {
-              const contents = (e?.target?.result as string) || '';
-              onFileContents(contents, msgType);
-            };
-            reader.onerror = (e) => {
-              alert(e);
-            };
-            reader.readAsText(file);
+            try {
+              const reader = new FileReader();
+              reader.onload = (e) => {
+                try {
+                  const contents = e?.target?.result;
+                  if (
+                    file.type ===
+                      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ||
+                    file.type === 'application/vnd.ms-excel'
+                  ) {
+                    const parsedContent = parseExcel(contents as ArrayBuffer);
+                    onFileContents(parsedContent, msgType);
+                  } else {
+                    const decoder = new TextDecoder('utf-8');
+                    const decodedContent = decoder.decode(
+                      contents as ArrayBuffer
+                    );
+                    onFileContents(decodedContent, msgType);
+                  }
+                } catch (_) {
+                  dispatch(
+                    setError({
+                      type: 'error',
+                      message: 'Error while parsing file contents',
+                    })
+                  );
+                }
+              };
+              reader.onerror = (e) => {
+                console.log('Error reading the file', e);
+                dispatch(
+                  setError({
+                    type: 'error',
+                    message: 'Error reading the file.',
+                  })
+                );
+              };
+              reader.readAsArrayBuffer(file);
+            } catch (error) {
+              dispatch(
+                setError({
+                  type: 'error',
+                  message: 'Error while uploading file',
+                })
+              );
+            }
             e.target.value = '';
           }}
         />
