@@ -9,7 +9,7 @@ import { setConnectWalletOpen } from '@/store/features/wallet/walletSlice';
 import DialogDeposit from '../popups/DialogDeposit';
 import { useRouter } from 'next/navigation';
 
-const PROPOSAL_OVERVIEW_MAX_LENGTH = 900;
+// const PROPOSAL_OVERVIEW_MAX_LENGTH = 900;
 
 const ProposalOverview = ({
   chainID,
@@ -42,12 +42,12 @@ const ProposalOverview = ({
   const [depositDialogOpen, setDepositDialogOpen] = useState(false);
 
   const isWalletConnected = useAppSelector((state) => state.wallet.connected);
-  const truncatedDescription = proposalDescription.slice(
-    0,
-    PROPOSAL_OVERVIEW_MAX_LENGTH
-  );
-  const isDescriptionTruncated =
-    truncatedDescription.length < proposalDescription.length;
+  // const truncatedDescription = proposalDescription.slice(
+  //   0,
+  //   PROPOSAL_OVERVIEW_MAX_LENGTH
+  // );
+  // const isDescriptionTruncated =
+  //   truncatedDescription.length < proposalDescription.length;
 
   const connectWalletOpen = () => {
     dispatch(setConnectWalletOpen(true));
@@ -60,15 +60,15 @@ const ProposalOverview = ({
   return (
     <div className="pt-6 h-full w-full">
       <div className="proposal-view  h-full !w-full">
-        <div className="flex flex-col h-full justify-between">
-          <div className="flex flex-col gap-10">
+        <div className="flex flex-col h-full justify-between gap-6">
+          <div className="flex flex-col gap-6">
             <div className="flex flex-col gap-2">
               <div className="flex justify-between">
                 <div className="flex items-center gap-4">
                   <div className="flex space-x-1 items-center">
                     <p
                       onClick={navigateToProposal}
-                      className="text-h2 max-w-[400px] truncate cursor-pointer hover:underline hover:underline-offset-[3px]"
+                      className="text-h2 max-w-[400px] truncate cursor-pointer hover:underline hover:underline-offset-[3px] font-bold"
                     >
                       {proposalTitle}
                     </p>
@@ -130,11 +130,12 @@ const ProposalOverview = ({
             </div>
 
             <div className="flex gap-2 flex-col">
-              <div className="text-base">Summary</div>
+              <div className="text-b1">Summary</div>
               <div className="divider-line"></div>
-              <div className="secondary-text">
-                {truncatedDescription || proposalTitle}
-                {isDescriptionTruncated && '...'}
+              <div className="secondary-text overflow-y-scroll h-[42vh]">
+                {/* {truncatedDescription || proposalTitle}
+                {isDescriptionTruncated && '...'} */}
+                {proposalDescription}
               </div>
             </div>
           </div>

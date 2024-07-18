@@ -69,7 +69,7 @@ const ValidatorName: React.FC<ValidatorNameProps> = ({
           {/* Validator name  */}
           <Tooltip title={get(validatorDetails, 'description.moniker')}>
             <p
-              className={` ${smallFont ? 'text-[18px]' : 'text-b1'} flex items-center truncate`}
+              className={` ${smallFont ? 'text-[18px]' : 'text-b1'} flex items-center truncate text-[#ffffffad]`}
             >
               {shortenName(
                 get(validatorDetails, 'description.moniker', ''),

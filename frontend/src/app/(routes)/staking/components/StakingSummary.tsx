@@ -52,8 +52,8 @@ function StakingSummary({
         {assetsSummaryData.map((data, index) => (
           <div key={index} className="staking-summary-card">
             <div className="flex flex-col items-center space-y-2">
-              <div className="text-small-light">{data.type}</div>
-              <div className="text-xl font-bold leading-[18px]">
+              <div className="secondary-text">{data.type}</div>
+              <div className="text-[18px] font-bold leading-[27px]">
                 {data?.amount?.split('.')[0]}
                 {Number(data.amount) > 0
                   ? '.' +

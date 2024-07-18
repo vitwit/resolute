@@ -16,7 +16,7 @@ const SearchNetworkInput = ({
         placeholder="Search Network"
         value={searchQuery}
         onChange={handleSearchQueryChange}
-        className="search-network-input"
+        className="search-network-input text-[14px]"
         autoFocus={true}
       />
     </div>

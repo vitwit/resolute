@@ -41,7 +41,7 @@ body {
   @apply h-[1px] self-stretch bg-[#1C1C20];
 }
 .primary-btn {
-  @apply border-[1px] text-[14px] rounded-full px-4 py-[10.5px] leading-[19px] !h-8 flex justify-center items-center;
+  @apply border-[1px] text-[14px] rounded-full px-4 py-[10.5px] leading-[21px] !h-8 flex justify-center items-center text-[#ffffffad];
   background: linear-gradient(
     180deg,
     rgba(68, 83, 223, 0.1) 12.5%,
@@ -135,7 +135,7 @@ body {
 }
 
 .empty-screen-description {
-  @apply text-[16px] font-extralight tracking-[1.6px] leading-[21px];
+  @apply text-[14px] font-extralight tracking-[1.6px] leading-[21px];
   background: linear-gradient(270deg, #fff -67.89%, #999 99.95%);
   background-clip: text;
   -webkit-background-clip: text;
@@ -143,7 +143,7 @@ body {
 }
 
 .text-h1 {
-  @apply text-[28px] font-bold;
+  @apply text-[28px] font-bold text-[#ffffffad];
 }
 
 .text-h2 {
@@ -151,7 +151,7 @@ body {
 }
 
 .text-b1 {
-  @apply text-[14px];
+  @apply text-[14px] leading-[21px] text-[#ffffffad];
 }
 
 .text-b1-light {
@@ -195,4 +195,8 @@ input[type='checkbox'] {
 }
 .search-text {
   @apply w-full border-none cursor-text focus:outline-none bg-transparent placeholder:text-[#FFFFFF30] placeholder:font-normal text-[#ffffff];
+}
+.footer-bg {
+  @apply flex flex-col items-start gap-4 w-full p-10;
+  background: rgba(255, 255, 255, 0.02);
 }

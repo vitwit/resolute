@@ -70,25 +70,25 @@ function StakingDelegations({
       <div className="space-y-2">
         <div className="flex justify-between">
           <div className="flex flex-col">
-            <div className="text-h2">Delegations</div>
-            <div className="secondary-text">Summary of staked assets.</div>
+            <div className="text-h2 mb-1">Delegations</div>
+            <div className="secondary-text">Summary of staked assets</div>
           </div>
           <div className="flex gap-4 items-end">
             <div className="flex items-center gap-2">
               <p className="status-active"></p>
-              <p className="text-[12px]">Active</p>
+              <p className="text-[12px] font-extralight">Active</p>
             </div>
             <div className="flex items-center gap-2">
               <p className="status-unbonded"></p>
-              <p className="text-[12px]">Inactive</p>
+              <p className="text-[12px] font-extralight">Inactive</p>
             </div>
             <div className="flex items-center gap-2">
               <p className="status-jailed"></p>
-              <p className="text-[12px]">Jailed</p>
+              <p className="text-[12px] font-extralight">Jailed</p>
             </div>
           </div>
         </div>
-        <div className="horizontal-line"></div>
+        <div className="divider-line"></div>
       </div>
 
       {!isSingleChain && staking.delegationsLoading === 0 && !bondingCount ? (
@@ -115,12 +115,9 @@ function StakingDelegations({
                         alt="chain-logo"
                         draggable={false}
                       />
-                      <Link
-                        href={`/staking/${staking.chainName(key).toLowerCase()}`}
-                        className="text-base font-normal leading-8 flex justify-center items-center capitalize"
-                      >
+                      <p className="text-[14px] font-normal leading-8 flex justify-center items-center capitalize">
                         {staking.chainName(key)}
-                      </Link>
+                      </p>
                     </div>
                     <div className="flex gap-4 ml-8">
                       <div className="flex gap-2 items-center">
@@ -155,7 +152,7 @@ function StakingDelegations({
                             ).denom
                           }
                         </p>
-                        <p className="text-[rgba(255,255,255,0.50)] text-[10px] font-extralight leading-[normal]">
+                        <p className="text-[rgba(255,255,255,0.50)] text-[12px] font-extralight leading-[18px]">
                           Total Staked
                         </p>
                       </div>
@@ -174,7 +171,7 @@ function StakingDelegations({
                               .split('.')[1]
                               .split(' ')[1]}
                         </p>
-                        <p className="text-[rgba(255,255,255,0.50)] text-[10px] font-extralight leading-[normal]">
+                        <p className="text-[rgba(255,255,255,0.50)] text-[12px] font-extralight leading-[18px]">
                           Total Rewards
                         </p>
                       </div>

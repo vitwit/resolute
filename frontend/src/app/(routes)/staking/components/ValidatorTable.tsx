@@ -103,23 +103,21 @@ const ValidatorTable: React.FC<{ chainID: string }> = ({ chainID }) => {
   const validatorRows = useMemo(() => {
     return Object.entries(filteredValidators || {}).map(([key, value]) => (
       <React.Fragment key={key}>
-        <tr className="table-border-line">
-          <td className="px-0 py-8">
+        <tr className="">
+          <td className="px-0 py-4">
             <div className="mr-auto flex">
-              <div className="text-base font-normal leading-[normal]">
-                # {get(value, 'rank', '-')}
-              </div>
+              <div className="text-b1"># {get(value, 'rank', '-')}</div>
             </div>
           </td>
           <td className="">
-            <div className="flex space-x-2 items-center">
+            <div className="flex space-x-1 items-center">
               <ValidatorLogo
                 width={20}
                 height={20}
                 identity={get(value, 'description.identity', '')}
               />{' '}
               &nbsp;
-              <p className="text-sm font-normal leading-[normal]">
+              <p className="text-b1">
                 {shortenName(get(value, 'description.moniker', ''), 12)}
               </p>{' '}
               &nbsp;
@@ -130,7 +128,7 @@ const ValidatorTable: React.FC<{ chainID: string }> = ({ chainID }) => {
             </div>
           </td>
           <td className="">
-            <div className="text-left text-base font-normal leading-[normal]">
+            <div className="text-left text-b1">
               {parseInt(
                 (
                   get(value, 'commission.commission_rates.rate') * 100
@@ -140,12 +138,12 @@ const ValidatorTable: React.FC<{ chainID: string }> = ({ chainID }) => {
             </div>
           </td>
           <td className="">
-            <div className="text-left text-base font-normal leading-[normal]">
+            <div className="text-left text-b1">
               {getAmountWithDecimal(Number(get(value, 'tokens')), chainID)}
             </div>
           </td>
           <td className="">
-            <div className="text-left text-base font-normal leading-[normal]">
+            <div className="text-left text-b1">
               {get(value, 'jailed')
                 ? 'Jailed'
                 : valStatusObj[get(value, 'status')]}
@@ -204,9 +202,9 @@ const ValidatorTable: React.FC<{ chainID: string }> = ({ chainID }) => {
         />
       ) : null}
 
-      <div className="space-y-1">
-        <div className="text-h2">Validators</div>
-        <div className="secondary-text">
+      <div className="">
+        <div className="text-h2 mb-1">Validators</div>
+        <div className="secondary-text mb-2">
           List of the validators in the network.
         </div>
         <div className="horizontal-line"></div>
@@ -221,29 +219,19 @@ const ValidatorTable: React.FC<{ chainID: string }> = ({ chainID }) => {
             <thead className="w-full">
               <tr>
                 <th className="w-1/6">
-                  <div className="text-[rgba(255,255,255,0.50)] text-left text-base font-normal leading-[normal]">
-                    Rank
-                  </div>
+                  <div className="secondary-text text-left ">Rank</div>
                 </th>
                 <th className="w-1/5">
-                  <div className="text-[rgba(255,255,255,0.50)] text-left text-base font-normal leading-[normal]">
-                    Validator
-                  </div>
+                  <div className="secondary-text text-left">Validator</div>
                 </th>
                 <th className="w-1/5">
-                  <div className="text-[rgba(255,255,255,0.50)] text-left text-base font-normal leading-[normal]">
-                    Commission
-                  </div>
+                  <div className="secondary-text text-left">Commission</div>
                 </th>
                 <th className="w-1/5">
-                  <div className="text-[rgba(255,255,255,0.50)] text-left text-base font-normal leading-[normal]">
-                    Voting Power
-                  </div>
+                  <div className="secondary-text text-left">Voting Power</div>
                 </th>
                 <th className="w-1/5">
-                  <div className="text-[rgba(255,255,255,0.50)] text-left text-base font-normal leading-[normal]">
-                    Status
-                  </div>
+                  <div className="secondary-text text-left">Status</div>
                 </th>
                 <th className="w-1/6">
                   <div></div>

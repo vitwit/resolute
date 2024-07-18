@@ -7,6 +7,6 @@
 }
 
 .upload-box {
-  @apply rounded-3xl px-6 py-[10.5px] flex items-center justify-center cursor-pointer gap-2;
+  @apply rounded-3xl px-6 py-[10.5px] flex items-center justify-center cursor-pointer gap-2 h-[55px];
   border: 0.25px dashed #ffffff20;
 }

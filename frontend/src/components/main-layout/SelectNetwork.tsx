@@ -63,11 +63,20 @@ const SelectNetwork = () => {
           <Image src={chainLogo} height={24} width={24} alt="" />
         </Box>
         <div>
-          <div
-            onClick={openChangeNetwork}
-            className="text-[16px] h-6 font-bold text-[#ffffffad] capitalize cursor-pointer"
-          >
-            {shortenName(selectedNetwork.chainName, 15) || 'All Networks'}
+          <div className="flex items-center gap-2 cursor-pointer">
+            <div
+              onClick={openChangeNetwork}
+              className="text-[16px] h-6 font-bold text-[#ffffffad] capitalize cursor-pointer"
+            >
+              {shortenName(selectedNetwork.chainName, 15) || 'All Networks'}
+            </div>
+            <Image
+              src="/drop-down-icon.svg"
+              width={24}
+              height={24}
+              alt="dropdown-icon"
+              className="opacity-60"
+            />
           </div>
           {walletAddress?.length ? (
             <WalletAddress address={walletAddress} />
