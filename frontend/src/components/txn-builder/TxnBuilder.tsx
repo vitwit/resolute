@@ -182,7 +182,7 @@ const TxnBuilder = ({
               alt="No Messages"
             />
             <div className="text-b1 font-light">
-              Select a message to add here
+              Select a message from the left side to add here
             </div>
           </div>
         )}

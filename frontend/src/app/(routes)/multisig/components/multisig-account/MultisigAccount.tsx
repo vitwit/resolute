@@ -308,9 +308,7 @@ const MultisigAccountStatsCard = ({
 }) => {
   return (
     <div className="stats-card">
-      <div className="text-[12px] font-light text-[#ffffff80] leading-[18px]">
-        {name}
-      </div>
+      <div className="text-[14px] font-extralight text-[#ffffff80]">{name}</div>
       {actionName ? (
         <div className="flex items-center gap-2">
           <div className="text-[18px] text-[#ffffffad] font-bold">{value}</div>
@@ -345,8 +343,8 @@ const MultisigMember = ({
   return (
     <div className="p-6 space-y-2 rounded-2xl bg-[#ffffff04]">
       <div className="text-[12px] text-[#ffffff80]">Member #{index}</div>
-      <div className="flex items-center gap-2">
-        <div>{address}</div>
+      <div className="flex items-center gap-1">
+        <div className="text-[14px]">{address}</div>
         <Copy content={address} height={20} width={20} />
       </div>
     </div>

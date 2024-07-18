@@ -52,7 +52,7 @@ const TxnMsg: React.FC<TxnMsg> = (props) => {
           <p>
             <span className="font-bold">{MAP_TXNS[msg?.typeUrl]}</span> &nbsp;
             <span>
-              {assetInfo.amountInDenom} {assetInfo.displayDenom}
+              {assetInfo?.amountInDenom} {assetInfo?.displayDenom}
             </span>
             &nbsp;To&nbsp;
             <span>{shortenAddress(msg?.value?.toAddress, 20)}</span>

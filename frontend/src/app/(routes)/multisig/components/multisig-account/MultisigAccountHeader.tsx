@@ -87,7 +87,7 @@ const MultisigAccountHeader = ({
             <div className="text-[28px] font-bold text-[#ffffffad]">
               {multisigName}
             </div>
-            <div className="px-4 py-1 rounded-full border-[1px] border-[#ffffff80] bg-[#ffffff14] h-6 flex">
+            <div className="px-4 py-1 rounded-full border-[1px] border-[#ffffff80] bg-[#ffffff14] h-6 flex font-extralight">
               <div className="text-[14px] text-[#ffffffad] h-[17px] flex items-end">
                 {threshold}
               </div>

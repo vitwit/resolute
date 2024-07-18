@@ -26,9 +26,9 @@ const SendMessage = (props: TxnMsgProps) => {
         <div className="truncate">
           <span>Send&nbsp;</span>
           <span className="msg-amount">
-            {assetInfo.amountInDenom}
+            {assetInfo?.amountInDenom}
             &nbsp;
-            {assetInfo.displayDenom}&nbsp;
+            {assetInfo?.displayDenom}&nbsp;
           </span>
           <span>to&nbsp;</span>
           <span className="font-extralight">

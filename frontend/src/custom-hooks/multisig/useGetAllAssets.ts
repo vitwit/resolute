@@ -1,4 +1,4 @@
-import { useAppSelector } from '../StateHooks';
+import { useAppDispatch, useAppSelector } from '../StateHooks';
 import useGetChainInfo from '../useGetChainInfo';
 import chainDenoms from '@/utils/chainDenoms.json';
 import { parseBalance } from '@/utils/denom';
@@ -15,6 +15,7 @@ interface MultisigAsset {
 const chainDenomsData = chainDenoms as AssetData;
 
 const useGetAllAssets = () => {
+  const dispatch = useAppDispatch();
   const { getChainInfo, getDenomInfo } = useGetChainInfo();
 
   const multisigBalances = useAppSelector(
@@ -66,7 +67,10 @@ const useGetAllAssets = () => {
         return denomInfo.denom === denom;
       }
     );
-    const { symbol, decimals, origin_denom } = denomInfo[0];
+    if (!denomInfo?.length) {
+      return { assetInfo: null };
+    }
+    const { symbol, decimals, origin_denom } = denomInfo?.[0];
     const assetInfo = {
       amountInDenom: parseBalance(
         [{ amount, denom: origin_denom }],

@@ -7,6 +7,8 @@ import FileUpload from '../components/FileUpload';
 import AddMsgButton from '../components/AddMsgButton';
 import useGetAllAssets from '@/custom-hooks/multisig/useGetAllAssets';
 import { customSelectStyles } from '../styles';
+import { useAppDispatch } from '@/custom-hooks/StateHooks';
+import { setError } from '@/store/features/common/commonSlice';
 
 interface SendFormProps {
   fromAddress: string;
@@ -19,7 +21,8 @@ interface SendFormProps {
 
 const SendForm = (props: SendFormProps) => {
   const { fromAddress, onSend, cancelAddMsg, chainID } = props;
-  const { getAllAssets } = useGetAllAssets();
+  const dispatch = useAppDispatch();
+  const { getAllAssets, getParsedAsset } = useGetAllAssets();
   const { allAssets } = getAllAssets(chainID, true);
   const { handleSubmit, control, reset } = useForm({
     defaultValues: {
@@ -70,7 +73,18 @@ const SendForm = (props: SendFormProps) => {
 
   const handleAddMsgs = (msgs: Msg[]) => {
     for (const msg of msgs) {
-      onSend(msg);
+      const { assetInfo } = getParsedAsset({
+        amount: msg.value?.amount?.[0]?.amount,
+        chainID,
+        denom: msg.value?.amount?.[0]?.denom,
+      });
+      if (assetInfo) {
+        onSend(msg);
+      } else {
+        dispatch(
+          setError({ type: 'error', message: 'Encountered an invalid denom' })
+        );
+      }
     }
   };
 
