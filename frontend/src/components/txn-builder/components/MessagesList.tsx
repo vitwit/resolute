@@ -22,29 +22,76 @@ const renderMessage = (
   msg: Msg,
   index: number,
   currency: Currency,
-  onDelete: (index: number) => void
+  onDelete: (index: number) => void,
+  chainID: string
 ) => {
   switch (msg.typeUrl) {
     case SEND_TYPE_URL:
-      return SendMessage({ msg, index, currency, onDelete });
-    case DELEGATE_TYPE_URL:
-      return DelegateMessage({ msg, index, currency, onDelete });
-    case UNDELEGATE_TYPE_URL:
-      return UndelegateMessage({ msg, index, currency, onDelete });
-    case REDELEGATE_TYPE_URL:
-      return RedelegateMessage({ msg, index, currency, onDelete });
-    case VOTE_TYPE_URL:
-      return VoteMessage({ msg, index, onDelete });
-    case DEPOSIT_TYPE_URL:
-      return DepositMessage({ msg, index, currency, onDelete });
-    default:
       return (
-        <>
-          {msg?.typeUrl ? (
-            <div className="text-[14px]">{msg?.typeUrl}</div>
-          ) : null}
-        </>
+        <SendMessage
+          key={index}
+          msg={msg}
+          index={index}
+          currency={currency}
+          onDelete={onDelete}
+          chainID={chainID}
+        />
       );
+    case DELEGATE_TYPE_URL:
+      return (
+        <DelegateMessage
+          key={index}
+          msg={msg}
+          index={index}
+          currency={currency}
+          onDelete={onDelete}
+        />
+      );
+    case UNDELEGATE_TYPE_URL:
+      return (
+        <UndelegateMessage
+          key={index}
+          msg={msg}
+          index={index}
+          currency={currency}
+          onDelete={onDelete}
+        />
+      );
+    case REDELEGATE_TYPE_URL:
+      return (
+        <RedelegateMessage
+          key={index}
+          msg={msg}
+          index={index}
+          currency={currency}
+          onDelete={onDelete}
+        />
+      );
+    case VOTE_TYPE_URL:
+      return (
+        <VoteMessage
+          key={index}
+          msg={msg}
+          index={index}
+          onDelete={onDelete}
+        />
+      );
+    case DEPOSIT_TYPE_URL:
+      return (
+        <DepositMessage
+          key={index}
+          msg={msg}
+          index={index}
+          currency={currency}
+          onDelete={onDelete}
+        />
+      );
+    default:
+      return msg?.typeUrl ? (
+        <div key={index} className="text-[14px]">
+          {msg?.typeUrl}
+        </div>
+      ) : null;
   }
 };
 
@@ -52,10 +99,12 @@ const MessagesList = ({
   messages,
   currency,
   onDeleteMsg,
+  chainID,
 }: {
   messages: Msg[];
   currency: Currency;
   onDeleteMsg: (index: number) => void;
+  chainID: string;
 }) => {
   const [slicedMsgs, setSlicedMsgs] = useState<Msg[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -69,7 +118,7 @@ const MessagesList = ({
       setSlicedMsgs(
         messages?.slice(
           (page - 1) * PER_PAGE,
-          (page - 1) * PER_PAGE + 1 * PER_PAGE
+          (page - 1) * PER_PAGE + PER_PAGE
         )
       );
     }
@@ -78,20 +127,19 @@ const MessagesList = ({
   return (
     <div className="flex-1 flex flex-col gap-2">
       <div
-        className={`space-y-4 min-h-[300px] ${messages?.length > PER_PAGE ? 'border-b-[0.5px] border-[#ffffff2e]' : ''}`}
+        className={`space-y-4 min-h-[280px] ${messages?.length > PER_PAGE ? 'border-b-[0.5px] border-[#ffffff2e]' : ''}`}
       >
-        {slicedMsgs.map((msg, index) => {
-          return (
-            <div key={index + PER_PAGE * (currentPage - 1)}>
-              {renderMessage(
-                msg,
-                index + PER_PAGE * (currentPage - 1),
-                currency,
-                onDeleteMsg
-              )}
-            </div>
-          );
-        })}
+        {slicedMsgs.map((msg, index) => (
+          <div key={index + PER_PAGE * (currentPage - 1)}>
+            {renderMessage(
+              msg,
+              index + PER_PAGE * (currentPage - 1),
+              currency,
+              onDeleteMsg,
+              chainID
+            )}
+          </div>
+        ))}
       </div>
       <div
         className={

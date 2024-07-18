@@ -7,27 +7,29 @@ import {
   setVerifyDialogOpen,
 } from '@/store/features/multisig/multisigSlice';
 import { COSMOS_CHAIN_ID } from '@/utils/constants';
-import { getTimeDifferenceToFutureDate } from '@/utils/dataTime';
 import { getAuthToken } from '@/utils/localStorage';
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { setError } from '@/store/features/common/commonSlice';
 import DialogConfirmDelete from './DialogConfirmDelete';
+import Copy from '@/components/common/Copy';
 
 const MultisigAccountHeader = ({
   isAdmin,
   multisigName,
-  createdTime,
   multisigAddress,
   walletAddress,
   chainName,
+  threshold,
+  membersCount,
 }: {
   isAdmin: boolean;
   multisigName: string;
-  createdTime: string;
   multisigAddress: string;
   walletAddress: string;
   chainName: string;
+  threshold: number;
+  membersCount: number;
 }) => {
   const dispatch = useAppDispatch();
   const router = useRouter();
@@ -75,28 +77,39 @@ const MultisigAccountHeader = ({
   }, [deleteMultisigRes]);
 
   return (
-    <div className="flex items-end gap-2 w-full">
-      <div className="flex-1 space-y-6">
-        <div className="space-y-2">
+    <div className="flex items-center w-full">
+      <div className="flex-1 space-y-6 border-b-[1px] border-[#ffffff1d] pb-2">
+        <div className="space-y-1">
           <div className="flex items-center gap-2">
             <div>
               <LetterAvatar name={multisigName} height="32px" width="32px" />
             </div>
-            <div className="text-h1">{multisigName}</div>
-            {createdTime ? (
-              <div className="text-small-light">
-                Created {getTimeDifferenceToFutureDate(createdTime, true)} ago
+            <div className="text-[28px] font-bold text-[#ffffffad]">
+              {multisigName}
+            </div>
+            <div className="px-4 py-1 rounded-full border-[1px] border-[#ffffff80] bg-[#ffffff14] h-6 flex font-extralight">
+              <div className="text-[14px] text-[#ffffffad] h-[17px] flex items-end">
+                {threshold}
               </div>
-            ) : null}
+              <div className="text-[12px] text-[#ffffff80] h-[17px] flex items-end">{`/${membersCount} Threshold`}</div>
+            </div>
           </div>
-          <div className="divider-line"></div>
+          <div className="flex items-center gap-2">
+            <div className="w-8"></div>
+            <div className="flex items-center gap-1">
+              <div className="text-[#ffffff80] text-[12px]">
+                {multisigAddress}
+              </div>
+              <Copy content={multisigAddress} height={16} width={16} />
+            </div>
+          </div>
         </div>
       </div>
       {isAdmin ? (
         <CustomButton
           btnOnClick={onDeleteMultisig}
           btnText="Delete Multisig"
-          btnStyles="w-fit"
+          btnStyles="min-w-[157.6px] mt-6"
         />
       ) : null}
       <DialogConfirmDelete

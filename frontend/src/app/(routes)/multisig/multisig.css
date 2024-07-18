@@ -3,7 +3,7 @@
 }
 
 .actions-required-badge {
-  @apply rounded-full text-[10px] font-light h-6 flex items-center px-3 border-[1px] border-[#F15757] bg-[#F1575780];
+  @apply rounded-full text-[12px] font-extralight h-6 flex items-center px-3 border-[1px] border-[#F15757] bg-[#F1575780] leading-[18px];
 }
 
 .txn-card {
@@ -11,8 +11,7 @@
 }
 
 .stats-card {
-  @apply flex-1 rounded-2xl bg-[#FFFFFF05] p-6 flex flex-col justify-center items-center gap-4;
-  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25) inset;
+  @apply flex-1 rounded-2xl bg-[#FFFFFF05] p-4 flex flex-col justify-center items-center gap-2 h-[92px];
 }
 
 .members-list {
@@ -21,7 +20,7 @@
 }
 
 .txns-filter {
-  @apply !h-8 flex justify-center items-center text-[16px] px-4 py-[10.5px]  rounded-lg;
+  @apply !h-8 flex justify-center items-center text-[14px] px-4 py-[10.5px]  rounded-lg;
 }
 
 .txns-filter-unselected {
@@ -52,7 +51,7 @@
 }
 
 .add-members {
-  @apply grid grid-cols-2 gap-x-10 gap-y-2;
+  @apply space-y-2;
 }
 
 /* .add-members {
@@ -76,3 +75,7 @@
   -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
 } */
 
+.selected-tab {
+  background: linear-gradient(90deg, #4453df 0%, #7f5ced 100%);
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+}
