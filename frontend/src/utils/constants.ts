@@ -264,6 +264,13 @@ export const ALERT_TYPE_MAP: Record<string, string> = {
 };
 export const WITVAL = 'witval';
 export const VITWIT = 'vitwit';
+export const VITWIT_NEW_MONIKER = 'vitwit%20(previously%20witval)';
+export const VITWIT_VALIDATOR_NAMES = [
+  'vitwit',
+  'witval',
+  'validator/vitwit%20(previously%20witval)',
+  'vitwit (previously witval)',
+];
 export const POLYGON_API = 'https://staking-api.polygon.technology/api/v2';
 
 export const POLYGON_CONFIG = {
@@ -349,3 +356,4 @@ export const IBC_SWAP_GRADIENT =
   'linear-gradient(180deg, #5A0DA660 0%, #12131C80 100%)';
 export const IBC_SEND_ALERT =
   'This looks like a IBC transaction. Avoid IBC transfers to centralized exchanges. Your assets may be lost.';
+export const VITWIT_VALIDATOR_DESCRIPTION = 'Vitwit excels in providing top-notch infrastructure services for the Cosmos blockchain ecosystem. We specialize in setting up and managing validators, relayers, and offering expert advisory services.'
