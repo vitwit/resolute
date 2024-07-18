@@ -33,11 +33,13 @@ const AssetsTable = ({ chainIDs }: { chainIDs: string[] }) => {
     isAuthzMode && (authzBalanceLoading || authzDelegationsLoading);
 
   return (
-    <div className="flex flex-col gap-10 w-full bg-[#ffffff05] rounded-2xl p-6">
-      <div className="space-y-2">
+    <div className="flex flex-col gap-6 w-full bg-[#ffffff05] rounded-2xl p-6">
+      <div className=" flex flex-col gap-1">
         <div className="text-h2">Asset Information</div>
-        <div className="secondary-text">Your total assets information.</div>
-        <div className="divider-line"></div>
+        <div className="flex flex-col gap-2">
+          <div className="secondary-text">Your total assets information</div>
+          <div className="divider-line"></div>
+        </div>
       </div>
 
       {/* table */}
@@ -49,10 +51,7 @@ const AssetsTable = ({ chainIDs }: { chainIDs: string[] }) => {
               <tr>
                 {['Available', 'Staked', 'Rewards', 'Value', ''].map(
                   (header, hIndex) => (
-                    <th
-                      key={hIndex}
-                      className="border-b-[0.5px] border-[#ffffff0d] pb-2"
-                    >
+                    <th key={hIndex} className="">
                       <div className="secondary-text items-start flex">
                         {header}
                       </div>

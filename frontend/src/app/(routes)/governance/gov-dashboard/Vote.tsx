@@ -97,12 +97,12 @@ const Vote = ({
   }, [proposalId]);
 
   return (
-    <div className="flex flex-col gap-10 w-full">
+    <div className="flex flex-col gap-6 w-full">
       <div className={`grid-cols-${colCount} grid gap-6`}>
         {GOV_VOTE_OPTIONS?.map((option) => (
           <button
             key={option.label}
-            className={`vote-optn-btn flex-1 text-base`}
+            className={`vote-optn-btn flex-1 text-b1`}
             onClick={() => handleOptionClick(option.label)}
             style={{
               backgroundColor:

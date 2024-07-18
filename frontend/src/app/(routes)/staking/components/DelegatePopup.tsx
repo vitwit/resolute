@@ -40,7 +40,7 @@ const DelegatePopup: React.FC<PopupProps> = ({
   const stakeModule = staking.getAllDelegations();
   const val = stakeModule[chainID]?.validators?.active?.[validator];
 
-  const availableAmount = singleStake.getAvaiailableAmount(chainID)
+  const availableAmount = singleStake.getAvaiailableAmount(chainID);
 
   // Calculate the commission rate for the validator
   const getCommisionRate = () => {
@@ -118,7 +118,7 @@ const DelegatePopup: React.FC<PopupProps> = ({
               Staking will lock your funds for 21 days.
             </p>
           </div>
-          <div className="text-b1">
+          <div className="text-b1 pl-6">
             To make your staked assets liquid, undelegation will take 21 days.
           </div>
         </div>

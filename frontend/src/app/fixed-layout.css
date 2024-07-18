@@ -54,7 +54,7 @@
 }
 
 .menu-item-name {
-  @apply text-[14px] leading-[19px];
+  @apply text-[14px] leading-[21px];
 }
 
 .top-bar {
@@ -83,7 +83,7 @@
 }
 
 .search-network-input {
-  @apply w-full border-none cursor-text focus:outline-none bg-transparent placeholder:text-[16px] placeholder:text-[#FFFFFF80] placeholder:font-normal text-[#ffffff];
+  @apply w-full border-none cursor-text focus:outline-none bg-transparent  placeholder:text-[#FFFFFF30] placeholder:font-normal text-[#ffffff];
 }
 
 .network-item {
@@ -91,7 +91,7 @@
 }
 
 .network-item .network-name {
-  @apply text-[14px] leading-normal opacity-100 font-light;
+  @apply text-[14px] leading-normal opacity-100 font-normal text-[#ffffffad];
 }
 
 .logout-btn {

@@ -45,20 +45,22 @@ const StakingDashboard = () => {
         className={`flex flex-col w-full ${isWalletConnected ? 'gap-6' : ''}`}
       >
         <div className="items-start">
-          <div className="text-h1">Staking</div>
-          <div className="space-y-2">
-            <div className="secondary-text">
-              {!isWalletConnected ? (
-                'Connect your wallet now to access all the modules on resolute'
-              ) : (
-                <p>
-                  Here&apos;s an overview of your staked assets, including
-                  delegation and undelegation details, and your total staked
-                  balance.
-                </p>
-              )}
+          <div className="flex flex-col gap-1">
+            <div className="text-h1">Staking</div>
+            <div className="flex flex-col gap-2">
+              <div className="secondary-text">
+                {!isWalletConnected ? (
+                  'Connect your wallet now to access all the modules on resolute'
+                ) : (
+                  <p>
+                    Here&apos;s an overview of your staked assets, including
+                    delegation and undelegation details, and your total staked
+                    balance.
+                  </p>
+                )}
+              </div>
+              <div className="divider-line"></div>
             </div>
-            <div className="divider-line"></div>
           </div>
         </div>
 

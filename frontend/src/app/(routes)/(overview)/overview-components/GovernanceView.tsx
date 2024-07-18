@@ -26,18 +26,19 @@ const ProposalCard: React.FC<{ proposal: any }> = ({ proposal }) => {
               {get(proposal, 'proposalInfo.proposalId', 0)}
             </span>
           </div>
-          <div className="flex flex-col">
-            <div className="flex">
+          <div className="flex flex-col gap-1">
+            <div className="flex gap-1 items-center">
               <div className="truncate w-[260px] hover:underline hover:underline-offset-[3px] text-[14px]">
                 {get(proposal, 'proposalInfo.proposalTitle', '-')}
               </div>
-              <button type="button" className="flex justify-center">
+              <button type="button" className="flex">
                 <Image
                   src={REDIRECT_ICON}
-                  width={24}
-                  height={24}
+                  width={18}
+                  height={18}
                   alt="View-full-icon"
                   draggable={false}
+                  className="opacity-50"
                 />
               </button>
             </div>
@@ -51,7 +52,7 @@ const ProposalCard: React.FC<{ proposal: any }> = ({ proposal }) => {
                   alt=""
                   draggable={false}
                 />
-                <p className="text-[rgba(255,255,255,0.50)] text-[10px] font-extralight capitalize">
+                <p className="text-[12px] font-extralight capitalize">
                   {get(proposal, 'chainName', '-')}
                 </p>
               </div>
@@ -63,7 +64,7 @@ const ProposalCard: React.FC<{ proposal: any }> = ({ proposal }) => {
                   alt="timer-icon"
                   draggable={false}
                 />
-                <p className="text-[#FFC13C] text-[10px] font-extralight">
+                <p className="text-[#FFC13C] text-[12px] font-extralight">
                   Voting ends in {get(proposal, 'proposalInfo.endTime', 0)}
                 </p>
               </div>
@@ -86,10 +87,12 @@ const GovernanceView = ({ chainIDs }: { chainIDs: string[] }) => {
 
   return (
     <div className="flex flex-col p-6 rounded-2xl bg-[#ffffff05] w-[418px] gap-4 overflow-y-scroll flex-1">
-      <div className="flex flex-col gap-2 w-full">
+      <div className="flex flex-col gap-1 w-full">
         <div className="text-h2">Governance</div>
-        <div className="secondary-text">Acitve proposals </div>
-        <div className="divider-line"></div>
+        <div className="flex flex-col gap-2 mb-2">
+          <div className="secondary-text">Acitve proposals </div>
+          <div className="divider-line"></div>
+        </div>
       </div>
 
       {proposalsData.map((proposal) => (

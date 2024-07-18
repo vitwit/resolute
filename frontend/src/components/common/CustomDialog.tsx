@@ -54,7 +54,9 @@ const CustomDialog = ({
               Close
             </button>
           </div>
-          <div className="text-h1 w-full text-center px-6">{title}</div>
+          <div className="text-h1 w-full text-center px-6">
+            {title}
+          </div>
           <div className="px-6">{children}</div>
           <div className="h-10"></div>
         </div>
