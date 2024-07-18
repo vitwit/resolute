@@ -11,10 +11,10 @@ const AddMemberButton = ({
     <div className="flex justify-center">
       <button
         type="button"
-        className="flex items-center gap-2 font-light"
+        className="flex items-center gap-2 font-light text-[#ffffffad] text-[14px]"
         onClick={handleAddPubKey}
       >
-        <Image src={ADD_ICON} height={24} width={24} alt="" />
+        <Image src={ADD_ICON} height={20} width={20} alt="" />
         <span>Add More</span>
       </button>
     </div>

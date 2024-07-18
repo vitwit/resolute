@@ -135,7 +135,7 @@ body {
 }
 
 .empty-screen-description {
-  @apply text-[16px] font-extralight tracking-[1.6px] leading-[21px];
+  @apply text-[14px] font-extralight tracking-[1.6px] leading-[21px];
   background: linear-gradient(270deg, #fff -67.89%, #999 99.95%);
   background-clip: text;
   -webkit-background-clip: text;
@@ -195,4 +195,8 @@ input[type='checkbox'] {
 }
 .search-text {
   @apply w-full border-none cursor-text focus:outline-none bg-transparent placeholder:text-[#FFFFFF30] placeholder:font-normal text-[#ffffff];
+}
+.footer-bg {
+  @apply flex flex-col items-start gap-4 w-full p-10;
+  background: rgba(255, 255, 255, 0.02);
 }

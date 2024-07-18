@@ -1,3 +1,4 @@
+import useGetAllAssets from '@/custom-hooks/multisig/useGetAllAssets';
 import {
   DELEGATE_TYPE_URL,
   MAP_TXNS,
@@ -13,6 +14,7 @@ import React from 'react';
 interface TxnMsg {
   msg: Msg;
   currency: Currency;
+  chainID: string;
 }
 
 const voteOptions: Record<string, string> = {
@@ -23,7 +25,8 @@ const voteOptions: Record<string, string> = {
 };
 
 const TxnMsg: React.FC<TxnMsg> = (props) => {
-  const { msg, currency } = props;
+  const { msg, currency, chainID } = props;
+  const { getParsedAsset } = useGetAllAssets();
 
   const displayDenom = (amountObj: Coin[] | Coin) => {
     if (Array.isArray(amountObj)) {
@@ -40,10 +43,17 @@ const TxnMsg: React.FC<TxnMsg> = (props) => {
   const renderMessage = () => {
     switch (msg?.typeUrl) {
       case SEND_TYPE_URL:
+        const { assetInfo } = getParsedAsset({
+          amount: msg.value?.amount?.[0]?.amount,
+          chainID,
+          denom: msg.value?.amount?.[0]?.denom,
+        });
         return (
           <p>
             <span className="font-bold">{MAP_TXNS[msg?.typeUrl]}</span> &nbsp;
-            <span>{displayDenom(msg?.value?.amount)}</span>
+            <span>
+              {assetInfo?.amountInDenom} {assetInfo?.displayDenom}
+            </span>
             &nbsp;To&nbsp;
             <span>{shortenAddress(msg?.value?.toAddress, 20)}</span>
           </p>
@@ -92,7 +102,7 @@ const TxnMsg: React.FC<TxnMsg> = (props) => {
         );
 
       default:
-        return <div className='font-bold'>{msg?.typeUrl}</div>;
+        return <div className="font-bold">{msg?.typeUrl}</div>;
     }
   };
 

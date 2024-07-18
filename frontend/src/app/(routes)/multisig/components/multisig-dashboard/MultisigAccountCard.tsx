@@ -36,7 +36,7 @@ const MultisigName = ({ name }: { name: string }) => {
   return (
     <div className="flex items-center gap-2">
       <div>{name ? <LetterAvatar name={name} /> : null}</div>
-      <div className="text-[16px]">{name}</div>
+      <div className="text-[14px]">{name}</div>
     </div>
   );
 };
