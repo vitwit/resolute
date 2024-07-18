@@ -35,7 +35,7 @@ const EmptyScreen = ({
   bgImage = EMPTY_ILLUSTRATION,
 }: EmptyScreenProps) => {
   return (
-    <div className="flex flex-col items-center gap-10">
+    <div className="flex flex-col items-center gap-6">
       <div className="flex flex-col items-center gap-3">
         <div className="flex flex-col items-center">
           <Image
