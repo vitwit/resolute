@@ -10,6 +10,7 @@ import ReDelegatePopup from '../components/ReDelegatePopup';
 import WithConnectionIllustration from '@/components/illustrations/withConnectionIllustration';
 import ValidatorName from './ValidatorName';
 import DelegationsLoading from './loaders/DelegationsLoading';
+import Link from 'next/link';
 
 function StakingDelegations({
   delegations,
@@ -114,9 +115,12 @@ function StakingDelegations({
                         alt="chain-logo"
                         draggable={false}
                       />
-                      <p className="text-base font-normal leading-8 flex justify-center items-center capitalize">
+                      <Link
+                        href={`/staking/${staking.chainName(key).toLowerCase()}`}
+                        className="text-base font-normal leading-8 flex justify-center items-center capitalize"
+                      >
                         {staking.chainName(key)}
-                      </p>
+                      </Link>
                     </div>
                     <div className="flex gap-4 ml-8">
                       <div className="flex gap-2 items-center">

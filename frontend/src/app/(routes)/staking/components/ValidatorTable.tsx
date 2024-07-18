@@ -19,6 +19,8 @@ import {
 import { Validator } from '@/types/staking';
 import SearchValidator from '../components/SearchValidator';
 import { shortenName } from '@/utils/util';
+import { useRouter, useSearchParams } from 'next/navigation';
+import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 
 interface ValStatusObj {
   [key: string]: string;
@@ -31,12 +33,18 @@ const valStatusObj: ValStatusObj = {
 };
 
 const ValidatorTable: React.FC<{ chainID: string }> = ({ chainID }) => {
+  const router = useRouter();
+  const { getChainInfo } = useGetChainInfo();
+  const { chainName } = getChainInfo(chainID);
   const staking = useSingleStaking(chainID);
   const dispatch = useAppDispatch();
   const filteredValidators = useSelector(selectFilteredValidators);
   const searchQuery = useSelector(selectSearchQuery);
 
   const validators = staking.getValidators();
+
+  const paramValidatorAddress = useSearchParams().get('validator_address');
+  const paramAction = useSearchParams().get('action');
 
   useEffect(() => {
     if (validators?.status === 'idle') {
@@ -148,7 +156,7 @@ const ValidatorTable: React.FC<{ chainID: string }> = ({ chainID }) => {
               <button
                 onClick={() => {
                   setOpenDelegate(true);
-                  setSelectedValidator(value);
+                  handleOpenDelegateDialog(value);
                 }}
                 className="primary-btn"
               >
@@ -160,6 +168,30 @@ const ValidatorTable: React.FC<{ chainID: string }> = ({ chainID }) => {
       </React.Fragment>
     ));
   }, [filteredValidators, chainID]);
+
+  const handleOpenDelegateDialog = (validator: Validator) => {
+    setSelectedValidator(validator);
+    router.push(
+      `?validator_address=${validator.operator_address}&action=delegate`
+    );
+  };
+
+  const handleCloseDelegateDialog = (validator: Validator) => {
+    setSelectedValidator(undefined);
+    router.push(`/staking/${chainName.toLowerCase()}`);
+  };
+
+  useEffect(() => {
+    if (paramValidatorAddress?.length && paramAction?.length) {
+      if (paramAction.toLowerCase() === 'delegate') {
+        const validatorInfo = filteredValidators?.[paramValidatorAddress];
+        setSelectedValidator(validatorInfo);
+        if (validatorInfo) {
+          toggleDelegatePopup();
+        }
+      }
+    }
+  }, [paramValidatorAddress, paramAction]);
 
   return (
     <div className="flex flex-col gap-6 w-full">
