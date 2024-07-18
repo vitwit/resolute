@@ -49,6 +49,7 @@ const FileUpload = (props: FileUploadProps) => {
           );
         } else {
           onUpload(parsedTxns);
+          dispatch(setError({ type: 'success', message: 'File uploaded' }));
         }
         break;
       }
@@ -66,6 +67,7 @@ const FileUpload = (props: FileUploadProps) => {
           );
         } else {
           onUpload(parsedTxns);
+          dispatch(setError({ type: 'success', message: 'File uploaded' }));
         }
         break;
       }
@@ -83,6 +85,7 @@ const FileUpload = (props: FileUploadProps) => {
           );
         } else {
           onUpload(parsedTxns);
+          dispatch(setError({ type: 'success', message: 'File uploaded' }));
         }
         break;
       }
@@ -100,6 +103,7 @@ const FileUpload = (props: FileUploadProps) => {
           );
         } else {
           onUpload(parsedTxns);
+          dispatch(setError({ type: 'success', message: 'File uploaded' }));
         }
         break;
       }
@@ -117,6 +121,7 @@ const FileUpload = (props: FileUploadProps) => {
           );
         } else {
           onUpload(parsedTxns);
+          dispatch(setError({ type: 'success', message: 'File uploaded' }));
         }
         break;
       }
