@@ -3,7 +3,7 @@ import React from 'react';
 const SingleProposalLoading = () => {
   return (
     <div className="flex items-start gap-10 pt-20 pb-0 px-10 w-full h-full">
-      <div className="flex items-start gap-20 w-full h-full">
+      <div className="flex items-start gap-10 w-full h-full">
         <div className="flex flex-col flex-1 justify-between h-full">
           <div className="flex flex-col gap-6">
             <div className="secondary-btn">Go back</div>
