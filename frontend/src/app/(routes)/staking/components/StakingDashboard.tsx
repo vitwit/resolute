@@ -10,6 +10,10 @@ import { useAppDispatch } from '@/custom-hooks/StateHooks';
 import StakingSummary from './StakingSummary';
 import StakingUnDelegations from './StakingUnDelegations';
 import StakingDelegations from './StakingDelegations';
+import UnbondingLoading from './loaders/UnbondingLoading';
+import SummaryLoading from './loaders/SummaryLoading';
+import ValidatorTableLoading from './loaders/ValidatorTableLoading';
+import DelegationsLoading from './loaders/DelegationsLoading';
 // import { RootState } from '@/store/store';
 // import { useAppSelector } from '@/custom-hooks/StateHooks';
 
