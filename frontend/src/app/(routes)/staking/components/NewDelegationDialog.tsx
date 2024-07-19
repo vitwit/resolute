@@ -5,13 +5,13 @@ import { useState } from 'react';
 import Image from 'next/image';
 import AddressField from './AddressField';
 import useStaking from '@/custom-hooks/useStaking';
-import { get } from 'lodash';
 import useSingleStaking from '@/custom-hooks/useSingleStaking';
 import useValidators from '@/custom-hooks/staking/useValidators';
 import { ValidatorInfo } from '@/types/staking';
 import ValidatorsAutoComplete from './ValidatorsAutoComplete';
-import { useAppSelector } from '@/custom-hooks/StateHooks';
+import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { TxStatus } from '@/types/enums';
+import { setError } from '@/store/features/common/commonSlice';
 
 interface PopupProps {
   chainID: string;
@@ -24,10 +24,10 @@ const NewDelegationDialog: React.FC<PopupProps> = ({
   open,
   onClose,
 }) => {
+  const dispatch = useAppDispatch();
   const { getValidators } = useValidators();
   const { validatorsList } = getValidators({ chainID });
 
-  const [validator, setValidator] = useState('');
   const [selectedOption, setSelectedOption] = useState<ValidatorInfo | null>(
     null
   );
@@ -45,16 +45,7 @@ const NewDelegationDialog: React.FC<PopupProps> = ({
   // Custom hook to get staking information
   const staking = useStaking({ isSingleChain: true });
 
-  // Get the current validator's information from the staking module
-  const stakeModule = staking.getAllDelegations();
-  const val = stakeModule[chainID]?.validators?.active?.[validator];
-
   const availableAmount = singleStake.getAvaiailableAmount(chainID);
-
-  // Calculate the commission rate for the validator
-  const getCommisionRate = () => {
-    return Number(get(val, 'commission.commission_rates.rate', 0)) * 100;
-  };
 
   // Handler for input change to set the amount
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) =>
@@ -67,7 +58,17 @@ const NewDelegationDialog: React.FC<PopupProps> = ({
 
   // Function to perform the delegation transaction
   const doTxDelegate = () => {
-    staking.txDelegateTx(validator, amount, chainID);
+    if (selectedOption) {
+      if (!amount || amount <= 0) {
+        dispatch(setError({ type: 'error', message: 'Invalid amount' }));
+        return;
+      }
+      staking.txDelegateTx(selectedOption?.address, amount, chainID);
+    } else {
+      dispatch(
+        setError({ type: 'error', message: 'Please select the validator' })
+      );
+    }
   };
 
   // Status of the delegation transaction
@@ -78,19 +79,16 @@ const NewDelegationDialog: React.FC<PopupProps> = ({
   );
 
   const handleValidatorChange = (option: ValidatorInfo | null) => {
-    setValidator(option?.address || '');
     setSelectedOption(option);
   };
 
+  const handleDialogClose = () => {
+    setSelectedOption(null);
+    onClose();
+  };
+
   return (
-    <CustomDialog
-      open={open}
-      onClose={() => {
-        setSelectedOption(null);
-        onClose();
-      }}
-      title="Delegate"
-    >
+    <CustomDialog open={open} onClose={handleDialogClose} title="Delegate">
       <div className="flex flex-col w-[800px] items-center gap-6">
         {/* Validator details */}
         <div className="flex flex-col gap-2 w-full">
@@ -103,19 +101,6 @@ const NewDelegationDialog: React.FC<PopupProps> = ({
               name="Select Validator"
             />
           </div>
-          <div className="flex justify-between w-full items-center gap-10">
-            <p
-              className={`truncate flex-1 secondary-text ${selectedOption ? '' : 'invisible'}`}
-            >
-              {selectedOption?.description}
-            </p>
-            <p
-              className={`flex secondary-text ${selectedOption ? '' : 'invisible'}`}
-            >
-              {selectedOption?.commission}% Commission
-            </p>
-          </div>
-          <div className="divider-line"></div>
         </div>
 
         {/* Address field for the amount */}
@@ -149,7 +134,6 @@ const NewDelegationDialog: React.FC<PopupProps> = ({
 
         {/* Delegate button */}
         <button
-          disabled={!amount}
           onClick={doTxDelegate}
           className="primary-btn cursor-pointer w-full"
         >

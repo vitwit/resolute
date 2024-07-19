@@ -1,6 +1,5 @@
 'use client';
 
-// import ValidatorTable from './ValidatorTable';
 import useSingleStaking from '@/custom-hooks/useSingleStaking';
 import StakingSummary from '../components/StakingSummary';
 import StakingUnDelegations from '../components/StakingUnDelegations';
@@ -12,8 +11,6 @@ import NewDelegationDialog from '../components/NewDelegationDialog';
 import PageHeader from '@/components/common/PageHeader';
 import CustomButton from '@/components/common/CustomButton';
 import { useState } from 'react';
-// import { RootState } from '@/store/store';
-// import { useAppSelector } from '@/custom-hooks/StateHooks';
 
 const SingleStakingDashboard = ({ chainID }: { chainID: string }) => {
   useInitStaking(chainID);
