@@ -1,6 +1,5 @@
 'use client';
 
-import PageLoading from '@/components/common/PageLoading';
 import React from 'react';
 import SummaryLoading from './components/loaders/SummaryLoading';
 import UnbondingLoading from './components/loaders/UnbondingLoading';
