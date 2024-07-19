@@ -115,9 +115,12 @@ function StakingDelegations({
                         alt="chain-logo"
                         draggable={false}
                       />
-                      <p className="text-[14px] font-normal leading-8 flex justify-center items-center capitalize">
+                      <Link
+                        href={`/staking/${staking.chainName(key).toLowerCase()}`}
+                        className="text-[14px] font-normal leading-8 flex justify-center items-center capitalize"
+                      >
                         {staking.chainName(key)}
-                      </p>
+                      </Link>
                     </div>
                     <div className="flex gap-4 ml-8">
                       <div className="flex gap-2 items-center">
@@ -378,7 +381,7 @@ const StakingActionsPopup: React.FC<PopupProps> = ({
         <DelegatePopup
           validator={validator}
           chainID={chainID}
-          openDelegatePopup={openDelegatePopup}
+          onClose={openDelegatePopup}
           openPopup={openDelegate}
         />
       )}

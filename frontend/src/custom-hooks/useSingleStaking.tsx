@@ -1,20 +1,12 @@
-import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "./StateHooks";
 import { RootState } from '@/store/store';
 import useGetChainInfo from "./useGetChainInfo";
-import { getAllValidators, getDelegations, getUnbonding, getValidator } from "@/store/features/staking/stakeSlice";
-import { getDelegatorTotalRewards } from "@/store/features/distribution/distributionSlice";
-import { getBalances } from "@/store/features/bank/bankSlice";
-// import useGetAssets from "./useGetAssets";
-// import { Interface } from "readline";
+import { getValidator } from "@/store/features/staking/stakeSlice";
 import useGetAssetsAmount from "./useGetAssetsAmount";
 
 const useSingleStaking = (chainID: string) => {
     const dispatch = useAppDispatch();
     const networks = useAppSelector((state: RootState) => state.wallet.networks);
-
-
-    const isWalletConnected = useAppSelector((state: RootState) => state.wallet.connected)
 
     const { getChainInfo, getDenomInfo,
         //  getValueFromToken, getTokenValueByChainId
@@ -61,31 +53,6 @@ const useSingleStaking = (chainID: string) => {
         const { decimals } = getDenomInfo(chainID);
         return Number((amount / 10 ** decimals))
     }
-
-    useEffect(() => {
-        const { address, baseURL, restURLs } = getChainInfo(chainID);
-        const { minimalDenom } = getDenomInfo(chainID);
-
-        // Fetch delegations
-        dispatch(getDelegations({ baseURLs: restURLs, address, chainID })).then();
-
-        // Fetch available balances
-        dispatch(getBalances({ baseURLs: restURLs, baseURL, address, chainID }));
-
-        // Fetch rewards
-        dispatch(getDelegatorTotalRewards({
-            baseURLs: restURLs,
-            baseURL,
-            address,
-            chainID,
-            denom: minimalDenom,
-        }));
-
-        // Fetch unbonding delegations
-        dispatch(getUnbonding({ baseURLs: restURLs, address, chainID }));
-
-        dispatch(getAllValidators({ baseURLs: restURLs, chainID }));
-    }, [isWalletConnected, chainID]);
 
     const fetchValidatorDetails = (valoperAddress: string, chainID: string) => {
         const { restURLs } = getChainInfo(chainID);

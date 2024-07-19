@@ -93,12 +93,7 @@ const ValidatorTable: React.FC<{ chainID: string }> = ({ chainID }) => {
 
   const { getAmountWithDecimal } = useSingleStaking(chainID);
   const [openDelegate, setOpenDelegate] = useState<boolean>(false);
-  const [selectedValidator, setSelectedValidator] = useState<Validator>();
-
-  const toggleDelegatePopup = useCallback(() => {
-    console.log({ openDelegate });
-    setOpenDelegate((prev) => !prev);
-  }, []);
+  const [selectedValidator, setSelectedValidator] = useState<string>('');
 
   const validatorRows = useMemo(() => {
     return Object.entries(filteredValidators || {}).map(([key, value]) => (
@@ -168,36 +163,38 @@ const ValidatorTable: React.FC<{ chainID: string }> = ({ chainID }) => {
   }, [filteredValidators, chainID]);
 
   const handleOpenDelegateDialog = (validator: Validator) => {
-    setSelectedValidator(validator);
+    setSelectedValidator(validator.operator_address);
     router.push(
       `?validator_address=${validator.operator_address}&action=delegate`
     );
   };
 
-  const handleCloseDelegateDialog = (validator: Validator) => {
-    setSelectedValidator(undefined);
+  const handleCloseDelegateDialog = () => {
+    setSelectedValidator('');
     router.push(`/staking/${chainName.toLowerCase()}`);
+    setOpenDelegate(false);
   };
 
   useEffect(() => {
-    if (paramValidatorAddress?.length && paramAction?.length) {
+    if (
+      paramValidatorAddress?.length &&
+      paramAction?.length &&
+      filteredValidators
+    ) {
       if (paramAction.toLowerCase() === 'delegate') {
-        const validatorInfo = filteredValidators?.[paramValidatorAddress];
-        setSelectedValidator(validatorInfo);
-        if (validatorInfo) {
-          toggleDelegatePopup();
-        }
+        setSelectedValidator(paramValidatorAddress);
+        setOpenDelegate(true);
       }
     }
-  }, [paramValidatorAddress, paramAction]);
+  }, [paramValidatorAddress, paramAction, filteredValidators]);
 
   return (
     <div className="flex flex-col gap-6 w-full">
       {openDelegate ? (
         <DelegatePopup
-          validator={selectedValidator?.operator_address || ''}
+          validator={selectedValidator || ''}
           chainID={chainID}
-          openDelegatePopup={toggleDelegatePopup}
+          onClose={handleCloseDelegateDialog}
           openPopup={openDelegate}
         />
       ) : null}

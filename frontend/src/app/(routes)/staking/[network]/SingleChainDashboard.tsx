@@ -7,10 +7,12 @@ import StakingUnDelegations from '../components/StakingUnDelegations';
 import StakingDelegations from '../components/StakingDelegations';
 import ValidatorTable from '../components/ValidatorTable';
 import { useAppSelector } from '@/custom-hooks/StateHooks';
+import useInitStaking from '@/custom-hooks/useInitStaking';
 // import { RootState } from '@/store/store';
 // import { useAppSelector } from '@/custom-hooks/StateHooks';
 
 const SingleStakingDashboard = ({ chainID }: { chainID: string }) => {
+  useInitStaking(chainID);
   const staking = useSingleStaking(chainID);
   const {
     totalStakedAmount,
@@ -32,9 +34,7 @@ const SingleStakingDashboard = ({ chainID }: { chainID: string }) => {
     <div className="flex flex-col items-start gap-10 w-full py-10">
       <div className="flex flex-col w-full gap-6">
         <div className="items-start">
-          <div className="text-[28px] font-bold leading-[normal]">
-            Staking
-          </div>
+          <div className="text-[28px] font-bold leading-[normal]">Staking</div>
           <div className="text-[rgba(255,255,255,0.50)] text-sm font-extralight leading-8 pb-2">
             Summary of Staked Assets: This includes the total value of staked
             assets, accumulated rewards, and available balance.

@@ -13,14 +13,14 @@ interface PopupProps {
   validator: string;
   chainID: string;
   openPopup: boolean;
-  openDelegatePopup: () => void;
+  onClose: () => void;
 }
 
 const DelegatePopup: React.FC<PopupProps> = ({
   validator,
   chainID,
   openPopup,
-  openDelegatePopup,
+  onClose,
 }) => {
   // Local state to manage the amount and the open status of the dialog
   const [amount, setAmount] = useState<number>(0);
@@ -68,7 +68,7 @@ const DelegatePopup: React.FC<PopupProps> = ({
     <CustomDialog
       open={open}
       onClose={() => {
-        openDelegatePopup();
+        onClose();
         setOpen(false);
       }}
       title="Delegate"
