@@ -17,20 +17,20 @@ interface PopupProps {
   chainID: string;
   open: boolean;
   onClose: () => void;
+  selectedValidator: ValidatorInfo | null;
+  handleValidatorChange: (option: ValidatorInfo | null) => void;
 }
 
 const NewDelegationDialog: React.FC<PopupProps> = ({
   chainID,
   open,
   onClose,
+  handleValidatorChange,
+  selectedValidator,
 }) => {
   const dispatch = useAppDispatch();
   const { getValidators } = useValidators();
   const { validatorsList } = getValidators({ chainID });
-
-  const [selectedOption, setSelectedOption] = useState<ValidatorInfo | null>(
-    null
-  );
 
   // Local state to manage the amount and the open status of the dialog
   const [amount, setAmount] = useState<number>(0);
@@ -58,12 +58,12 @@ const NewDelegationDialog: React.FC<PopupProps> = ({
 
   // Function to perform the delegation transaction
   const doTxDelegate = () => {
-    if (selectedOption) {
+    if (selectedValidator) {
       if (!amount || amount <= 0) {
         dispatch(setError({ type: 'error', message: 'Invalid amount' }));
         return;
       }
-      staking.txDelegateTx(selectedOption?.address, amount, chainID);
+      staking.txDelegateTx(selectedValidator?.address, amount, chainID);
     } else {
       dispatch(
         setError({ type: 'error', message: 'Please select the validator' })
@@ -78,12 +78,7 @@ const NewDelegationDialog: React.FC<PopupProps> = ({
     (state) => state.staking.chains?.[chainID]?.validators.status
   );
 
-  const handleValidatorChange = (option: ValidatorInfo | null) => {
-    setSelectedOption(option);
-  };
-
   const handleDialogClose = () => {
-    setSelectedOption(null);
     onClose();
   };
 
@@ -97,7 +92,7 @@ const NewDelegationDialog: React.FC<PopupProps> = ({
               dataLoading={validatorsLoading === TxStatus.PENDING}
               handleChange={handleValidatorChange}
               options={validatorsList}
-              selectedOption={selectedOption}
+              selectedValidator={selectedValidator}
               name="Select Validator"
             />
           </div>

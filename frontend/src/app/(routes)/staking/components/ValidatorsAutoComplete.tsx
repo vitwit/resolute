@@ -25,13 +25,13 @@ const listItemStyle = css`
 
 const ValidatorsAutoComplete = ({
   options,
-  selectedOption,
+  selectedValidator,
   handleChange,
   dataLoading,
   name,
 }: {
   options: ValidatorInfo[];
-  selectedOption: ValidatorInfo | null;
+  selectedValidator: ValidatorInfo | null;
   handleChange: (option: ValidatorInfo | null) => void;
   dataLoading: boolean;
   name: string;
@@ -77,11 +77,11 @@ const ValidatorsAutoComplete = ({
         ...params.InputProps,
         startAdornment: (
           <React.Fragment>
-            {selectedOption && (
+            {selectedValidator && (
               <ValidatorLogo
                 height={24}
                 width={24}
-                identity={selectedOption.identity}
+                identity={selectedValidator.identity}
               />
             )}
             {params.InputProps.startAdornment}
@@ -90,10 +90,10 @@ const ValidatorsAutoComplete = ({
         endAdornment: (
           <InputAdornment position="end">
             <div className="flex items-center gap-2">
-              {selectedOption && (
+              {selectedValidator && (
                 <div className="secondary-text !text-[12px] mr-2">
                   <span className="capitalize">
-                    {selectedOption.commission}% Commission
+                    {selectedValidator.commission}% Commission
                   </span>
                 </div>
               )}
@@ -129,7 +129,7 @@ const ValidatorsAutoComplete = ({
       renderOption={renderOption}
       renderInput={renderInput}
       onChange={(_, newValue) => handleChange(newValue)}
-      value={selectedOption}
+      value={selectedValidator}
       PaperComponent={({ children }) => (
         <Paper
           style={{

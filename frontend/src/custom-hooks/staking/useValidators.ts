@@ -37,7 +37,22 @@ const useValidators = () => {
 
     return { validatorsList };
   };
-  return { getValidators };
+
+  const getValidatorInfoByAddress = ({
+    address,
+    chainID,
+  }: {
+    address: string;
+    chainID: string;
+  }) => {
+    const { validatorsList } = getValidators({ chainID });
+    const validator = validatorsList.find(
+      (validator) => validator.address === address
+    );
+    return validator;
+  };
+
+  return { getValidators, getValidatorInfoByAddress };
 };
 
 export default useValidators;

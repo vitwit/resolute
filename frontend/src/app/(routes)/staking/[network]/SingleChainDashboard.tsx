@@ -7,10 +7,8 @@ import StakingDelegations from '../components/StakingDelegations';
 import ValidatorTable from '../components/ValidatorTable';
 import { useAppSelector } from '@/custom-hooks/StateHooks';
 import useInitStaking from '@/custom-hooks/useInitStaking';
-import NewDelegationDialog from '../components/NewDelegationDialog';
 import PageHeader from '@/components/common/PageHeader';
-import CustomButton from '@/components/common/CustomButton';
-import { useState } from 'react';
+import NewDelegationButton from './NewDelegationButton';
 
 const SingleStakingDashboard = ({ chainID }: { chainID: string }) => {
   useInitStaking(chainID);
@@ -22,7 +20,6 @@ const SingleStakingDashboard = ({ chainID }: { chainID: string }) => {
     availableAmount,
   } = staking.getStakingAssets();
   const delegations = staking.getAllDelegations(chainID);
-  const [newDelegationOpen, setNewDelegationOpen] = useState(false);
   const isAuthzMode = useAppSelector((state) => state.authz.authzModeEnabled);
   const stakingData = useAppSelector((state) => state.staking.chains);
   const authzStakingData = useAppSelector(
@@ -31,9 +28,6 @@ const SingleStakingDashboard = ({ chainID }: { chainID: string }) => {
   const hasUnbondings = isAuthzMode
     ? authzStakingData[chainID]?.unbonding?.hasUnbonding
     : stakingData[chainID]?.unbonding.hasUnbonding;
-  const hasDelegations =
-    stakingData?.[chainID]?.delegations?.delegations?.delegation_responses
-      ?.length;
 
   return (
     <div className="flex flex-col items-start gap-10 w-full py-10">
@@ -41,19 +35,12 @@ const SingleStakingDashboard = ({ chainID }: { chainID: string }) => {
         <div className="flex items-end gap-6">
           <div className="flex-1">
             <PageHeader
-              description="  Summary of Staked Assets: This includes the total value of staked
+              description="Summary of Staked Assets: This includes the total value of staked
         assets, accumulated rewards, and available balance."
               title="Staking"
             />
           </div>
-          {hasDelegations ? (
-            <CustomButton
-              btnText="New Delegation"
-              btnOnClick={() => {
-                setNewDelegationOpen(true);
-              }}
-            />
-          ) : null}
+          <NewDelegationButton chainID={chainID} />
         </div>
 
         <StakingSummary
@@ -77,13 +64,6 @@ const SingleStakingDashboard = ({ chainID }: { chainID: string }) => {
 
       {/* Validator */}
       <ValidatorTable chainID={chainID} />
-      <NewDelegationDialog
-        chainID={chainID}
-        onClose={() => {
-          setNewDelegationOpen(false);
-        }}
-        open={newDelegationOpen}
-      />
     </div>
   );
 };
