@@ -1,0 +1,23 @@
+.validators-table {
+  @apply text-[#ffffffad] flex flex-col flex-1;
+}
+
+.validators-table th {
+  @apply pb-4;
+}
+
+.validators-table td {
+  @apply text-[14px] text-[#ffffffad] py-4 px-6;
+}
+
+.validators-table tr {
+  @apply mb-2;
+}
+
+.validator-stats-card {
+  @apply bg-[#FFFFFF05] p-4 flex flex-col gap-2 items-center justify-center flex-1 rounded-2xl;
+}
+
+.validator-description {
+  @apply text-[#FFFFFF80] font-extralight text-[14px] leading-8;
+}
