@@ -85,7 +85,7 @@
 }
 
 .single-send-box {
-  @apply bg-[#FFFFFF05] rounded-2xl w-[550px];
+  @apply bg-[#FFFFFF05] rounded-2xl w-full;
 }
 
 .amount-input-field {

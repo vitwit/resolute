@@ -11,13 +11,12 @@ const StyledNetworkLogo = ({
   const id = useId();
 
   return (
-    <div className="div1 relative h-[160px] w-[160px]">
+    <div className="relative h-32 w-32 desktop:h-24 desktop:w-24 max:h-40 max:w-40">
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        width="160"
-        height="160"
         viewBox="0 0 160 160"
         fill="none"
+        className="w-full h-full"
       >
         <g filter={`url(#filter-${id})`}>
           <circle cx="80" cy="80" r="68" fill={`url(#gradient-${id})`} />
@@ -65,8 +64,8 @@ const StyledNetworkLogo = ({
           </linearGradient>
         </defs>
       </svg>
-      <div className="absolute top-[32%] left-[32%]">
-        <Image src={logo} width={64} height={64} alt="" />
+      <div className="absolute inset-1/4">
+        <Image src={logo} layout="fill" objectFit="contain" alt="" />
       </div>
     </div>
   );

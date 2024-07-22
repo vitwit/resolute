@@ -172,6 +172,9 @@ const SingleSend = ({ sortedAssets }: { sortedAssets: ParsedAsset[] }) => {
     dispatch(setChangeNetworkDialogOpen({ open: true, showSearch: false }));
   };
 
+  const sendTxLoading =
+    sendTxStatus === TxStatus.PENDING || ibcTxStatus === TxStatus.PENDING;
+
   useEffect(() => {
     if (selectedNetwork.chainName && isWalletConnected) {
       const chainID = nameToChainIDs[selectedNetwork.chainName];
@@ -183,8 +186,10 @@ const SingleSend = ({ sortedAssets }: { sortedAssets: ParsedAsset[] }) => {
   }, [selectedNetwork]);
 
   return (
-    <div className="flex-1 flex flex-col md:flex-row gap-10 justify-between items-center">
-      <div className="max-w-[550px]">
+    <div className="flex-1 flex flex-col-reverse desktop:flex-row gap-10 justify-between items-center">
+      <div
+        className={`max-w-[600px] desktop:max-w-[550px] ${sendTxLoading ? 'opacity-50' : ''}`}
+      >
         <div className="single-send-box">
           <Box
             sx={{
@@ -227,9 +232,7 @@ const SingleSend = ({ sortedAssets }: { sortedAssets: ParsedAsset[] }) => {
           </div>
         </div>
       </div>
-      {selectedAsset &&
-      (sendTxStatus === TxStatus.PENDING ||
-        ibcTxStatus === TxStatus.PENDING) ? (
+      {selectedAsset && sendTxLoading ? (
         <SingleSendLoading
           chainID={selectedAsset?.chainID}
           isIBC={isIBC}
@@ -272,7 +275,7 @@ const SingleSendLoading = ({
     'config.theme.primaryColor'
   );
   return (
-    <div className="space-y-2 w-full">
+    <div className="space-y-2 w-full max-w-[600px]">
       <TxnLoading
         fromAddress={fromAddress}
         toChainLogo={toChainLogo}

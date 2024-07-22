@@ -134,7 +134,7 @@ const TransactionStatusPopup = () => {
               </div>
               <div className="divider-line mt-4 mb-6"></div>
               <div className="space-y-6">
-                <div className="flex items-center justify-center">
+                <div className="flex items-center justify-center text-[#ffffffad]">
                   <TxnMessage
                     msgs={tx?.msgs || []}
                     currency={currency}
@@ -143,8 +143,8 @@ const TransactionStatusPopup = () => {
                 </div>
                 <div className="flex gap-6">
                   <div className="txn-status-data">
-                    <div>Fees</div>
-                    <div>
+                    <div className="text-small">Fees</div>
+                    <div className="text-[#ffffffad]">
                       {tx?.fee?.[0]
                         ? parseBalance(
                             tx?.fee,
@@ -156,14 +156,14 @@ const TransactionStatusPopup = () => {
                     </div>
                   </div>
                   <div className="txn-status-data">
-                    <div>Txn Messages</div>
-                    <div>#{tx?.msgs?.length}</div>
+                    <div className="text-small">Txn Messages</div>
+                    <div className="text-[#ffffffad]">#{tx?.msgs?.length}</div>
                   </div>
                 </div>
                 <div className="txn-status-data">
                   <div className="text-small">Txn Hash</div>
                   <div className="flex items-center gap-1">
-                    <div>
+                    <div className="text-[#ffffffad]">
                       {shortenMsg(tx?.transactionHash || '', 30) || '-'}
                     </div>
                     {tx?.transactionHash ? (
