@@ -23,23 +23,17 @@ const TxnLoading = (props: TxnLoadingProps) => {
   } = props;
   return (
     <div className="w-full flex items-center justify-between">
-      {/* <img src={ROCKET_LAUNCH_GIF} alt="Rocket Launch" /> */}
       <div className="flex flex-col items-center z-[99]">
         <StyledNetworkLogo color={fromChainColor} logo={fromChainLogo} />
         <div className="bg-[#FFFFFF14] rounded-full px-10 py-2 text-[14px] text-[#ffffffad]">
           {shortenAddress(fromAddress, 15)}
         </div>
       </div>
-      {/* <div
-        className="flex justify-center"
-        style={{ transform: 'translate(-80px, -20px)' }}
-      > */}
       <img
         className="rotate-90 translate-x-[-95px] translate-y-[-20px]"
         src={ROCKET_LAUNCH_GIF}
         alt="Rocket Launch"
       />
-      {/* </div> */}
       <div className="flex flex-col items-center">
         <StyledNetworkLogo color={toChainColor} logo={toChainLogo} />
         <div className="bg-[#FFFFFF14] rounded-full px-10 py-2 text-[14px] text-[#ffffffad]">

@@ -272,7 +272,7 @@ const SingleSendLoading = ({
     'config.theme.primaryColor'
   );
   return (
-    <div className="space-y-2 w-full px-10">
+    <div className="space-y-2 w-full">
       <TxnLoading
         fromAddress={fromAddress}
         toChainLogo={toChainLogo}
