@@ -162,7 +162,7 @@ export const networks: Network[] = [
       image:
         'https://raw.githubusercontent.com/leapwallet/assets/2289486990e1eaf9395270fffd1c41ba344ef602/images/logo.svg',
       theme: {
-        primaryColor: '#fff',
+        primaryColor: '#F24E29',
         gradient: 'linear-gradient(180deg, #F24E2960 0%, #12131C80 100%)',
       },
     },
@@ -238,7 +238,7 @@ export const networks: Network[] = [
       image:
         'https://raw.githubusercontent.com/leapwallet/assets/2289486990e1eaf9395270fffd1c41ba344ef602/images/logo.svg',
       theme: {
-        primaryColor: '#fff',
+        primaryColor: '#272B40',
         gradient: 'linear-gradient(180deg, #272B4060 0%, #12131C80 100%)',
       },
     },
@@ -631,7 +631,7 @@ export const networks: Network[] = [
       image:
         'https://raw.githubusercontent.com/leapwallet/assets/2289486990e1eaf9395270fffd1c41ba344ef602/images/logo.svg',
       theme: {
-        primaryColor: '#fff',
+        primaryColor: '#5A0DA6',
         gradient: 'linear-gradient(180deg, #5A0DA660 0%, #12131C80 100%)',
       },
     },
@@ -797,7 +797,7 @@ export const networks: Network[] = [
       image:
         'https://raw.githubusercontent.com/leapwallet/assets/2289486990e1eaf9395270fffd1c41ba344ef602/images/logo.svg',
       theme: {
-        primaryColor: '#fff',
+        primaryColor: '#4F4DB5',
         gradient: 'linear-gradient(180deg, #4F4DB560 0%, #12131C80 100%)',
       },
     },
@@ -1291,7 +1291,7 @@ export const networks: Network[] = [
       image:
         'https://raw.githubusercontent.com/cosmos/chain-registry/master/celestia/images/celestia.svg',
       theme: {
-        primaryColor: '#fff',
+        primaryColor: '#7A2BF9',
         gradient: 'linear-gradient(180deg, #7A2BF960 0%, #12131C80 100%)',
       },
     },
@@ -1691,7 +1691,7 @@ export const networks: Network[] = [
       image:
         'https://raw.githubusercontent.com/cosmos/chain-registry/master/archway/images/archway.png',
       theme: {
-        primaryColor: '#fff',
+        primaryColor: '#F24405',
         gradient: 'linear-gradient(180deg, #F2440560 0%, #12131C80 100%)',
       },
     },
