@@ -22,11 +22,29 @@ const MultisigInfoLoading = () => {
         {[1, 2, 3, 4].map((_, index) => (
           <div
             key={index}
-            className="w-[272px] h-[112px] animate-pulse bg-[#252525] rounded"
+            className="w-[274px] h-[92px] animate-pulse bg-[#252525] rounded"
           />
         ))}
       </div>
-      <div className="w-full h-[88px] animate-pulse bg-[#252525] rounded mt-2"></div>
+
+      <div className="mt-10">
+        <div className="flex justify-between w-full">
+          <div className="flex gap-10">
+            <p className="">Transactions</p>
+            <p className="">Members</p>
+          </div>
+          <button className="w-[146px] !h-8 animate-pulse bg-[#252525] rounded-full"></button>
+        </div>
+        <div className="divider-line w-full"></div>
+        <div className="flex gap-4 mt-6">
+          <p className="w-[120px] h-8 animate-pulse bg-[#252525] rounded" />
+          <p className="w-[120px] h-8 animate-pulse bg-[#252525] rounded" />
+          <p className="w-[120px] h-8 animate-pulse bg-[#252525] rounded" />
+          <p className="w-[120px] h-8 animate-pulse bg-[#252525] rounded" />
+        </div>
+
+        <div className="w-full h-[88px] animate-pulse bg-[#252525] rounded mt-6"></div>
+      </div>
     </div>
   );
 };
