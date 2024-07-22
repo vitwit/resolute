@@ -32,7 +32,6 @@ const SingleSend = ({ sortedAssets }: { sortedAssets: ParsedAsset[] }) => {
   const [isIBC, setIsIBC] = useState(false);
   const [chainLogo, setChainLogo] = useState(ALL_NETWORKS_ICON);
   const [chainGradient, setChainGradient] = useState('');
-  const [toAddress, setToAddress] = useState('');
 
   const isAuthzMode = useAppSelector((state) => state.authz.authzModeEnabled);
   const authzAddress = useAppSelector((state) => state.authz.authzAddress);
@@ -81,7 +80,6 @@ const SingleSend = ({ sortedAssets }: { sortedAssets: ParsedAsset[] }) => {
   };
 
   const clearForm = () => {
-    setToAddress('');
     reset();
   };
 
