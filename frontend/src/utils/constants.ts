@@ -357,3 +357,20 @@ export const IBC_SWAP_GRADIENT =
 export const IBC_SEND_ALERT = '*Avoid IBC transfer to centralized exchanges';
 export const VITWIT_VALIDATOR_DESCRIPTION =
   'Vitwit excels in providing top-notch infrastructure services for the Cosmos blockchain ecosystem. We specialize in setting up and managing validators, relayers, and offering expert advisory services.';
+export const TRANSFERS_TYPES: Record<
+  string,
+  { title: string; description: string }
+> = {
+  'multi-send': {
+    title: 'Multi Transfer',
+    description: 'Multi Transfer',
+  },
+  single: {
+    title: 'Single Transfer',
+    description: 'Single Transfer',
+  },
+  'ibc-swap': {
+    title: 'IBC Swap',
+    description: 'IBC Swap',
+  },
+};
