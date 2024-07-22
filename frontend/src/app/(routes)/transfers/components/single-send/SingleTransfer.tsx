@@ -1,22 +1,18 @@
 import React from 'react';
 import SingleSend from './SingleSend';
-import IBCSendAlert from './IBCSendAlert';
+import PageHeader from '@/components/common/PageHeader';
 
 const SingleTransfer = ({ sortedAssets }: { sortedAssets: ParsedAsset[] }) => {
   return (
-    <>
-      <IBCSendAlert />
-      <div className="flex flex-col md:flex-row gap-6 justify-between items-center h-full">
-        <div className="space-y-2 w-[600px] md:w-[400px]">
-          <div className="text-[20px] font-bold">Single Transfer</div>
-          <div className="divider-line"></div>
-          <div className="secondary-text">Single Transfer</div>
-        </div>
-        <div className="max-w-[600px]">
+    <div className="space-y-6 h-full flex flex-col py-10">
+      <PageHeader title="Single Transfer" description="Single Transfer" />
+      <div className="flex-1 flex flex-col md:flex-row gap-6 justify-between items-center">
+        <div className="max-w-[550px]">
           <SingleSend sortedAssets={sortedAssets} />
         </div>
+        <div className="space-y-2 w-[600px] md:w-[400px]"></div>
       </div>
-    </>
+    </div>
   );
 };
 
