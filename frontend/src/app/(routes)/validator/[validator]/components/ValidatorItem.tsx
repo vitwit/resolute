@@ -6,6 +6,7 @@ import React, { useEffect } from 'react';
 import NetworkItem from './NetworkItem';
 import useGetAllChainsInfo from '@/custom-hooks/useGetAllChainsInfo';
 import { Tooltip } from '@mui/material';
+import Link from 'next/link';
 
 const ValidatorItem = ({
   validatorInfo,
@@ -41,10 +42,6 @@ const ValidatorItem = ({
     }
   }, [operatorAddress]);
 
-  const handleDelegate = () => {
-    // TODO: open delegate dialog box and allow user to delegate from this page
-  };
-
   return (
     <tr className="hover:bg-[#FFFFFF14]">
       <td>
@@ -60,9 +57,12 @@ const ValidatorItem = ({
       <td>{'$ ' + totalStaked}</td>
       <td className="w-[7%]">
         {connected ? (
-          <button onClick={handleDelegate} className="primary-btn">
+          <Link
+            href={`/staking/${chainName.toLowerCase()}?validator_address=${operatorAddress}&action=delegate`}
+            className="primary-btn"
+          >
             Stake
-          </button>
+          </Link>
         ) : (
           <Tooltip title="Connect wallet to stake">
             <button className="primary-btn !opacity-50">Stake</button>
