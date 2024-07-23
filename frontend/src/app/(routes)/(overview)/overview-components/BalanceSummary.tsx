@@ -1,8 +1,8 @@
 import { useAppSelector } from '@/custom-hooks/StateHooks';
 import useGetAssetsAmount from '@/custom-hooks/useGetAssetsAmount';
-import { formatDollarAmount } from '@/utils/util';
 import React from 'react';
 import useGetAuthzAssetsAmount from '../../../../custom-hooks/useGetAuthzAssetsAmount';
+import NumberFormat from '@/components/common/NumberFormat';
 type AssetSummary = { icon: string; alt: string; type: string; amount: string };
 
 export default function BalanceSummary({ chainIDs }: { chainIDs: string[] }) {
@@ -16,12 +16,24 @@ export default function BalanceSummary({ chainIDs }: { chainIDs: string[] }) {
   const availableAmount = isAuthzMode ? authzAvailable : myAvailable;
   const rewardsAmount = isAuthzMode ? authzRewards : myRewards;
 
-  const available = formatDollarAmount(availableAmount);
-  const staked = formatDollarAmount(stakedAmount);
-  const rewards = formatDollarAmount(rewardsAmount);
-  const total = formatDollarAmount(
-    stakedAmount + availableAmount + rewardsAmount
-  );
+  const available = availableAmount.toLocaleString('en-US', {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2,
+  });
+  const staked = stakedAmount.toLocaleString('en-US', {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2,
+  });
+  const rewards = rewardsAmount.toLocaleString('en-US', {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2,
+  });
+
+  let total = availableAmount + stakedAmount + rewardsAmount;
+  total = total.toLocaleString('en-US', {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2,
+  })
 
   const assetsSummaryData: AssetSummary[] = [
     {
@@ -65,12 +77,7 @@ export default function BalanceSummary({ chainIDs }: { chainIDs: string[] }) {
             <div className="flex flex-col space-y-2 items-center">
               <div className="secondary-text">{data.type}</div>
               <div className="text-[18px] font-bold leading-[27px]">
-                {data.amount?.split('.')[0]}
-                {Number(data.amount) > 0 ? (
-                  <span className="text-[16px]">
-                    .{data.amount?.split('.')[1]}
-                  </span>
-                ) : null}
+                <NumberFormat value={data.amount} type='dollar' cls='text-[16px]' />
               </div>
             </div>
           </div>
