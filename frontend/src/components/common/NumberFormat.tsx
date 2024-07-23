@@ -9,7 +9,7 @@ function NumberFormat({ value, type, token, cls }: { value: string, type: string
         let n1 = value.split(' ')[0]
         n1 = n1.replace(/,/g, "");
 
-        let d = value.split(' ')[1]
+        const d = value.split(' ')[1]
         if (Number(n1) === 0) parsedAmount = '0';
         else if (Number(n1) < 0.01) parsedAmount = '< 0.01';
         else parsedAmount = formatNumber(Number(n1))

@@ -2,7 +2,7 @@ import React from 'react';
 
 const DashboardLoading = () => {
   return (
-    <div className="flex pt-10 gap-10">
+    <div className="flex gap-10">
       <div className="flex flex-1">
         <div className="flex-col w-full">
           {/* <div className="flex flex-col items-center gap-10 mb-20">

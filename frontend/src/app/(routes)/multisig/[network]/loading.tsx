@@ -1,8 +1,14 @@
 'use client';
 
-import PageLoading from '@/components/common/PageLoading';
 import React from 'react';
+import MultisigAccountsLoading from '../components/loaders/MultisigAccountsLoading';
+import TransactionsLoading from '../components/loaders/TransactionsLoading';
 
-const loading = () => <PageLoading />;
+const loading = () => (
+  <>
+    <MultisigAccountsLoading />
+    <TransactionsLoading />
+  </>
+);
 
 export default loading;
