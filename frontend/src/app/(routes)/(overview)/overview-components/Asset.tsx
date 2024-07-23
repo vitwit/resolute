@@ -1,4 +1,4 @@
-import { formatAmount, formatCoin, formatDollarAmount } from '@/utils/util';
+import { formatAmount } from '@/utils/util';
 import Link from 'next/link';
 import React, { RefObject, useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
@@ -14,6 +14,7 @@ import { capitalize } from 'lodash';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import { DelegationsPairs } from '@/types/distribution';
 import useAuthzStakingExecHelper from '@/custom-hooks/useAuthzStakingExecHelper';
+import NumberFormat from '@/components/common/NumberFormat';
 
 const Asset = ({
   asset,
@@ -156,18 +157,10 @@ const Asset = ({
       <th className=" px-4 py-4 w-1/4">
         <div className="flex flex-col items-start gap-1">
           <div className="text-[14px] font-normal leading-[21px]">
-            {formatCoin(asset.balance, asset.displayDenom).split('.')[0]}.
-            <span className="text-[12px]">
-              {
-                formatCoin(asset.balance, asset.displayDenom)
-                  ?.split('.')[1]
-                  ?.split(' ')[0]
-              }
-            </span>
-            {' ' +
-              formatCoin(asset.balance, asset.displayDenom)
-                ?.split('.')[1]
-                ?.split(' ')[1]}
+            <NumberFormat cls='' type='token' token={asset.displayDenom} value={asset.balance.toLocaleString('en-US', {
+              minimumFractionDigits: 0,
+              maximumFractionDigits: 2,
+            })} />
           </div>
           <div className="flex space-x-1 justify-center items-center">
             <Image
@@ -196,24 +189,10 @@ const Asset = ({
           <div className="text-[14px] font-normal leading-[normal] items-start flex">
             {asset.type === 'native' ? (
               <span>
-                {formatCoin(asset.staked, asset.displayDenom).split('.')[0]}
-                <span className="text-[12px]">
-                  {Number(
-                    formatCoin(asset.staked, asset.displayDenom).split(' ')[0]
-                  ) === 0
-                    ? ''
-                    : '.'}
-                  {
-                    formatCoin(asset.staked, asset.displayDenom)
-                      ?.split('.')[1]
-                      ?.split(' ')[0]
-                  }{' '}
-                  {
-                    formatCoin(asset.staked, asset.displayDenom)
-                      ?.split('.')[1]
-                      ?.split(' ')[1]
-                  }
-                </span>
+                <NumberFormat cls='' token={asset.displayDenom} type='token' value={asset.staked.toLocaleString('en-US', {
+                  minimumFractionDigits: 0,
+                  maximumFractionDigits: 2,
+                })} />
               </span>
             ) : (
               '-'
@@ -228,24 +207,11 @@ const Asset = ({
           <div className="text-[14px] font-normal leading-[normal] items-start flex">
             {asset.type === 'native' ? (
               <span>
-                {formatCoin(asset.rewards, asset.displayDenom).split('.')[0]}
-                <span className="text-[12px]">
-                  {Number(
-                    formatCoin(asset.rewards, asset.displayDenom).split(' ')[0]
-                  ) == 0
-                    ? ' '
-                    : '.'}
-                  {
-                    formatCoin(asset.rewards, asset.displayDenom)
-                      ?.split('.')[1]
-                      ?.split(' ')[0]
-                  }{' '}
-                  {
-                    formatCoin(asset.rewards, asset.displayDenom)
-                      ?.split('.')[1]
-                      ?.split(' ')[1]
-                  }
-                </span>
+                <NumberFormat cls='' token={asset.displayDenom} type='token' value={asset.rewards.toLocaleString('en-US', {
+                  minimumFractionDigits: 0,
+                  maximumFractionDigits: 2,
+                })} />
+
               </span>
             ) : (
               '-'
@@ -257,10 +223,10 @@ const Asset = ({
       <th>
         <div className="flex flex-col items-start gap-2">
           <div className="text-[14px] font-normal leading-[normal] flex items-baseline">
-            {formatDollarAmount(asset.usdPrice).split('.')[0]}.
-            <span className="text-[12px]">
-              {formatDollarAmount(asset.usdPrice).split('.')[1]}
-            </span>
+            <NumberFormat cls='' type='dollar' value={asset.usdPrice.toLocaleString('en-US', {
+              minimumFractionDigits: 0,
+              maximumFractionDigits: 2,
+            })} />
           </div>
           <div className="flex">
             <div
@@ -275,13 +241,12 @@ const Asset = ({
                   {' '}
                   {formatAmount(Math.abs(asset.inflation)).split('.')[1]}
                 </span>
-               {' '} %
+                {' '} %
               </p>
             </div>
             <Image
-              src={`/${
-                asset.inflation >= 0 ? 'up' : 'down'
-              }-arrow-filled-icon.svg`}
+              src={`/${asset.inflation >= 0 ? 'up' : 'down'
+                }-arrow-filled-icon.svg`}
               width={18}
               height={5}
               alt="down-arrow-filled-icon"
@@ -335,7 +300,7 @@ const Asset = ({
                   >
                     <div>
                       {asset.type !== 'ibc' &&
-                      txClaimStatus === TxStatus.PENDING ? (
+                        txClaimStatus === TxStatus.PENDING ? (
                         <>
                           {' '}
                           Claiming.... <CircularProgress size={16} />
@@ -363,7 +328,7 @@ const Asset = ({
                   >
                     <div>
                       {txRestakeStatus === TxStatus.PENDING &&
-                      asset.type !== 'ibc' ? (
+                        asset.type !== 'ibc' ? (
                         <>
                           Claiming and staking...
                           <CircularProgress size={16} />

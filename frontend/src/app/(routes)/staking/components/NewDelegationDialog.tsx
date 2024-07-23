@@ -5,26 +5,35 @@ import { useState } from 'react';
 import Image from 'next/image';
 import AddressField from './AddressField';
 import useStaking from '@/custom-hooks/useStaking';
-import { get } from 'lodash';
 import useSingleStaking from '@/custom-hooks/useSingleStaking';
-import ValidatorName from './ValidatorName';
+import useValidators from '@/custom-hooks/staking/useValidators';
+import { ValidatorInfo } from '@/types/staking';
+import ValidatorsAutoComplete from './ValidatorsAutoComplete';
+import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
+import { TxStatus } from '@/types/enums';
+import { setError } from '@/store/features/common/commonSlice';
 
 interface PopupProps {
-  validator: string;
   chainID: string;
-  openPopup: boolean;
+  open: boolean;
   onClose: () => void;
+  selectedValidator: ValidatorInfo | null;
+  handleValidatorChange: (option: ValidatorInfo | null) => void;
 }
 
-const DelegatePopup: React.FC<PopupProps> = ({
-  validator,
+const NewDelegationDialog: React.FC<PopupProps> = ({
   chainID,
-  openPopup,
+  open,
   onClose,
+  handleValidatorChange,
+  selectedValidator,
 }) => {
+  const dispatch = useAppDispatch();
+  const { getValidators } = useValidators();
+  const { validatorsList } = getValidators({ chainID });
+
   // Local state to manage the amount and the open status of the dialog
   const [amount, setAmount] = useState<number>(0);
-  const [open, setOpen] = useState(openPopup);
 
   // Custom hook to get single staking information based on chainID
   const singleStake = useSingleStaking(chainID);
@@ -36,16 +45,7 @@ const DelegatePopup: React.FC<PopupProps> = ({
   // Custom hook to get staking information
   const staking = useStaking({ isSingleChain: true });
 
-  // Get the current validator's information from the staking module
-  const stakeModule = staking.getAllDelegations();
-  const val = stakeModule[chainID]?.validators?.active?.[validator];
-
   const availableAmount = singleStake.getAvaiailableAmount(chainID);
-
-  // Calculate the commission rate for the validator
-  const getCommisionRate = () => {
-    return Number(get(val, 'commission.commission_rates.rate', 0)) * 100;
-  };
 
   // Handler for input change to set the amount
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) =>
@@ -58,40 +58,44 @@ const DelegatePopup: React.FC<PopupProps> = ({
 
   // Function to perform the delegation transaction
   const doTxDelegate = () => {
-    staking.txDelegateTx(validator, amount, chainID);
+    if (selectedValidator) {
+      if (!amount || amount <= 0) {
+        dispatch(setError({ type: 'error', message: 'Invalid amount' }));
+        return;
+      }
+      staking.txDelegateTx(selectedValidator?.address, amount, chainID);
+    } else {
+      dispatch(
+        setError({ type: 'error', message: 'Please select the validator' })
+      );
+    }
   };
 
   // Status of the delegation transaction
   const delegteStatus = staking.txAllChainStakeTxStatus[chainID]?.tx?.status;
 
+  const validatorsLoading = useAppSelector(
+    (state) => state.staking.chains?.[chainID]?.validators.status
+  );
+
+  const handleDialogClose = () => {
+    onClose();
+  };
+
   return (
-    <CustomDialog
-      open={open}
-      onClose={() => {
-        onClose();
-        setOpen(false);
-      }}
-      title="Delegate"
-    >
+    <CustomDialog open={open} onClose={handleDialogClose} title="Delegate">
       <div className="flex flex-col w-[800px] items-center gap-6">
         {/* Validator details */}
         <div className="flex flex-col gap-2 w-full">
           <div className="flex gap-2 items-center">
-            <ValidatorName
-              valoperAddress={validator}
-              chainID={chainID}
-              smallFont
+            <ValidatorsAutoComplete
+              dataLoading={validatorsLoading === TxStatus.PENDING}
+              handleChange={handleValidatorChange}
+              options={validatorsList}
+              selectedValidator={selectedValidator}
+              name="Select Validator"
             />
           </div>
-          <div className="flex justify-between w-full items-center gap-10">
-            <p className="truncate flex-1 secondary-text">
-              {get(val, 'description.details', '-')}
-            </p>
-            <p className="flex secondary-text">
-              {getCommisionRate()}% Commission
-            </p>
-          </div>
-          <div className="divider-line"></div>
         </div>
 
         {/* Address field for the amount */}
@@ -125,7 +129,6 @@ const DelegatePopup: React.FC<PopupProps> = ({
 
         {/* Delegate button */}
         <button
-          disabled={!amount}
           onClick={doTxDelegate}
           className="primary-btn cursor-pointer w-full"
         >
@@ -136,4 +139,4 @@ const DelegatePopup: React.FC<PopupProps> = ({
   );
 };
 
-export default DelegatePopup;
+export default NewDelegationDialog;
