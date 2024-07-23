@@ -117,6 +117,17 @@ export const formatDollarAmount = (amount: number): string => {
   );
 };
 
+export const formatAmountToString = (amount: number): string => {
+  if (amount === 0) return '0';
+  if (amount < 0.1) return '< 0.1';
+  return (
+    amount.toLocaleString('en-US', {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2,
+    })
+  );
+};
+
 export const formatAmount = (amount: number): string => {
   return amount.toLocaleString('en-US', {
     minimumFractionDigits: 0,
