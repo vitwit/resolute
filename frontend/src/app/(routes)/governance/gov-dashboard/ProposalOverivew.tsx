@@ -19,6 +19,7 @@ import {
 } from '@/store/features/gov/govSlice';
 import { getPoolInfo } from '@/store/features/staking/stakeSlice';
 import { Tooltip } from '@mui/material';
+import { useRemark } from 'react-remark';
 
 const ProposalOverview = ({
   chainID,
@@ -45,6 +46,7 @@ const ProposalOverview = ({
     proposalId,
     isActive,
   });
+  const [proposalMarkdown, setProposalMarkdown] = useRemark();
   const { endTime, proposalDescription, proposalTitle } = proposalInfo || {};
   const [depositDialogOpen, setDepositDialogOpen] = useState(false);
 
@@ -67,6 +69,10 @@ const ProposalOverview = ({
       Number(get(tallyResult, key, get(tallyResult, `${key}_count`)) || 0),
     0
   );
+
+  useEffect(() => {
+    setProposalMarkdown(proposalDescription.replace(/\\n/g, '\n'));
+  }, [proposalInfo.proposalTitle]);
 
   const fetchProposalData = () => {
     dispatch(
@@ -273,8 +279,14 @@ const ProposalOverview = ({
             <div className="flex gap-2 flex-col">
               <div className="text-b1">Summary</div>
               <div className="divider-line"></div>
-              <div className="secondary-text overflow-y-scroll h-[36vh]">
-                {proposalDescription}
+              <div
+                className="secondary-text overflow-y-scroll h-[36vh] proposal-description-markdown"
+                style={{
+                  padding: 8,
+                  whiteSpace: 'pre-line',
+                }}
+              >
+                {proposalMarkdown}
               </div>
             </div>
           </div>
