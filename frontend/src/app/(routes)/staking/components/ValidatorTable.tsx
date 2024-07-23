@@ -21,6 +21,7 @@ import SearchValidator from '../components/SearchValidator';
 import { shortenName } from '@/utils/util';
 import { useRouter, useSearchParams } from 'next/navigation';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
+import NumberFormat from '@/components/common/NumberFormat';
 
 interface ValStatusObj {
   [key: string]: string;
@@ -134,7 +135,10 @@ const ValidatorTable: React.FC<{ chainID: string }> = ({ chainID }) => {
           </td>
           <td className="">
             <div className="text-left text-b1">
-              {getAmountWithDecimal(Number(get(value, 'tokens')), chainID)}
+              <NumberFormat value={getAmountWithDecimal(Number(get(value, 'tokens')), chainID)} cls='' type='token'
+                token={''} />
+
+              {/* {getAmountWithDecimal(Number(get(value, 'tokens')), chainID)} */}
             </div>
           </td>
           <td className="">

@@ -86,7 +86,11 @@ const useSingleStaking = (chainID: string) => {
 
     const getAmountWithDecimal = (amount: number, chainID: string) => {
         const { decimals, displayDenom } = getDenomInfo(chainID);
-        return parseInt((amount / 10 ** decimals).toString()).toLocaleString() + ' ' + displayDenom;
+       
+        return (amount / 10 ** decimals).toLocaleString('en-US', {
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 2,
+          }) + ' ' + displayDenom;
     }
 
     const getDenomWithChainID = (chainID: string) => {
