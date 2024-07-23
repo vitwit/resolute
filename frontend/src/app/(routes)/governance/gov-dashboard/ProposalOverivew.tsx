@@ -53,17 +53,8 @@ const ProposalOverview = ({
   const dispatch = useAppDispatch();
   const router = useRouter();
 
-  const { getChainInfo, getDenomInfo } = useGetChainInfo();
+  const { getChainInfo } = useGetChainInfo();
   const { restURLs: baseURLs, baseURL, govV1 } = getChainInfo(chainID);
-
-  const proposalInfoState = useAppSelector(
-    (state: RootState) => state.gov.proposalDetails
-  );
-
-  const tallyParams = useAppSelector(
-    (state: RootState) =>
-      state.gov.chains[chainID]?.tallyParams.params.tally_params
-  );
 
   const tallyResult = useAppSelector(
     (state: RootState) =>
@@ -75,11 +66,6 @@ const ProposalOverview = ({
       sum +
       Number(get(tallyResult, key, get(tallyResult, `${key}_count`)) || 0),
     0
-  );
-
-  const { decimals, displayDenom } = getDenomInfo(chainID);
-  const poolInfo = useAppSelector(
-    (state: RootState) => state.staking.chains[chainID]?.pool
   );
 
   const fetchProposalData = () => {
@@ -196,13 +182,15 @@ const ProposalOverview = ({
                   )}
                 </div>
                 <div className="hover:bg-[#ffffff10] w-10 h-10 rounded-full flex items-center justify-center">
-                  <button className="flex items-center justify-center w-full h-full">
+                  <button
+                    className="flex items-center justify-center w-full h-full"
+                    onClick={() => onClose({ chainID, proposalId, isActive })}
+                  >
                     <Image
                       src="/close.svg"
                       width={24}
                       height={24}
                       alt="close-icon"
-                      onClick={() => onClose({ chainID, proposalId, isActive })}
                     />
                   </button>
                 </div>
@@ -261,8 +249,7 @@ const ProposalOverview = ({
                 {data.map((v, index) => (
                   <Tooltip key={v.label} title={`${v.label}: ${v.value}%`}>
                     <div
-                      key={v.label}
-                      className={`h-2 ${index === 0 ? '' : ''} ${index === data.length - 1 ? '' : ''}`}
+                      className={`h-2`}
                       style={{
                         width: `${v.value}%`,
                         background: v.color,
@@ -270,7 +257,12 @@ const ProposalOverview = ({
                         left:
                           index === 0
                             ? '0%'
-                            : `${data.slice(0, index).reduce((acc, item) => acc + parseFloat(item.value), 0)}%`,
+                            : `${data
+                                .slice(0, index)
+                                .reduce(
+                                  (acc, item) => acc + parseFloat(item.value),
+                                  0
+                                )}%`,
                       }}
                     ></div>
                   </Tooltip>
