@@ -181,6 +181,12 @@
 .amount-input-field {
   @apply bg-transparent w-full border-none focus:outline-none text-[40px] font-bold placeholder:text-[#FFFFFF33];
 }
+
+.amount-input-field::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
 .staking-alert {
   @apply flex flex-col items-start gap-2 px-6 py-4 rounded-2xl;
   background: rgba(255, 255, 255, 0.08);
@@ -217,4 +223,3 @@
   @apply flex-1 rounded-2xl p-6 flex flex-col justify-center items-center gap-4 h-[92px];
   background: rgba(255, 255, 255, 0.02);
 }
-

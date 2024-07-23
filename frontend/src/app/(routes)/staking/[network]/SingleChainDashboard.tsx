@@ -1,16 +1,17 @@
 'use client';
 
-// import ValidatorTable from './ValidatorTable';
 import useSingleStaking from '@/custom-hooks/useSingleStaking';
 import StakingSummary from '../components/StakingSummary';
 import StakingUnDelegations from '../components/StakingUnDelegations';
 import StakingDelegations from '../components/StakingDelegations';
 import ValidatorTable from '../components/ValidatorTable';
 import { useAppSelector } from '@/custom-hooks/StateHooks';
-// import { RootState } from '@/store/store';
-// import { useAppSelector } from '@/custom-hooks/StateHooks';
+import useInitStaking from '@/custom-hooks/useInitStaking';
+import PageHeader from '@/components/common/PageHeader';
+import NewDelegationButton from './NewDelegationButton';
 
 const SingleStakingDashboard = ({ chainID }: { chainID: string }) => {
+  useInitStaking(chainID);
   const staking = useSingleStaking(chainID);
   const {
     totalStakedAmount,
@@ -31,15 +32,15 @@ const SingleStakingDashboard = ({ chainID }: { chainID: string }) => {
   return (
     <div className="flex flex-col items-start gap-10 w-full py-10">
       <div className="flex flex-col w-full gap-6">
-        <div className="items-start">
-          <div className="text-[28px] font-bold leading-[normal]">
-            Staking
+        <div className="flex items-end gap-6">
+          <div className="flex-1">
+            <PageHeader
+              description="Summary of Staked Assets: This includes the total value of staked
+        assets, accumulated rewards, and available balance."
+              title="Staking"
+            />
           </div>
-          <div className="text-[rgba(255,255,255,0.50)] text-sm font-extralight leading-8 pb-2">
-            Summary of Staked Assets: This includes the total value of staked
-            assets, accumulated rewards, and available balance.
-          </div>
-          <div className="divider-line"></div>
+          <NewDelegationButton chainID={chainID} />
         </div>
 
         <StakingSummary
