@@ -92,7 +92,7 @@ const ConnectWallet = () => {
             </button>
           </div>
           <div className="text-center">
-            <div className="font-bold text-[28px] leading-normal">
+            <div className="text-h1">
               Connect Wallet
             </div>
             <div className="secondary-text">
@@ -114,7 +114,7 @@ const ConnectWallet = () => {
                   height={100}
                   alt={wallet.name}
                 />
-                <p className="text-[14px] leading-[24px]">{wallet.name}</p>
+                <p className="text-b1">{wallet.name}</p>
               </div>
             ))}
             <div className="p-6 h-[18px]"></div>
