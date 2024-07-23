@@ -147,7 +147,7 @@ body {
 }
 
 .text-h2 {
-  @apply text-[18px];
+  @apply text-[18px] text-[#ffffffad];
 }
 
 .text-b1 {
