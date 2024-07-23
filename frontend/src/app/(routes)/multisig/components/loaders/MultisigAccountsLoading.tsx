@@ -6,7 +6,7 @@ const MultisigAccountsLoading = () => {
     <div>
       <SectionHeader
         title={'Multisig Accounts'}
-        description="All multisig accounts you are part of."
+        description="All multisig accounts you are part of"
       />
       <div className="grid grid-cols-3 gap-10 px-6 py-0 mt-10">
         {[1, 2, 3].map((_, index) => (

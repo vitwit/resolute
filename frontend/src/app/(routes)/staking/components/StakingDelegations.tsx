@@ -11,6 +11,7 @@ import WithConnectionIllustration from '@/components/illustrations/withConnectio
 import ValidatorName from './ValidatorName';
 import DelegationsLoading from './loaders/DelegationsLoading';
 import Link from 'next/link';
+import NumberFormat from '@/components/common/NumberFormat';
 
 function StakingDelegations({
   delegations,
@@ -125,35 +126,18 @@ function StakingDelegations({
                     <div className="flex gap-4 ml-8">
                       <div className="flex gap-2 items-center">
                         <p className="text-xs font-bold leading-[normal]">
-                          {
-                            staking
-                              .getAmountObjectWithDecimal(
-                                Number(
-                                  get(value, 'delegations.totalStaked', 0)
-                                ),
-                                key
-                              )
-                              .amount?.split('.')[0]
-                          }
-                          .{' '}
-                          <span className="text-[10px]">
-                            {
-                              staking
-                                .getAmountObjectWithDecimal(
-                                  Number(
-                                    get(value, 'delegations.totalStaked', 0)
-                                  ),
-                                  key
-                                )
-                                .amount?.split('.')[1]
-                            }
-                          </span>{' '}
-                          {
-                            staking.getAmountObjectWithDecimal(
+                          <NumberFormat value={staking
+                            .getAmountObjectWithDecimal(
+                              Number(
+                                get(value, 'delegations.totalStaked', 0)
+                              ),
+                              key
+                            )
+                            .amount} cls='' type='token' token={staking.getAmountObjectWithDecimal(
                               Number(get(value, 'delegations.totalStaked', 0)),
                               key
-                            ).denom
-                          }
+                            ).denom} />
+
                         </p>
                         <p className="text-[rgba(255,255,255,0.50)] text-[12px] font-extralight leading-[18px]">
                           Total Staked
@@ -161,18 +145,7 @@ function StakingDelegations({
                       </div>
                       <div className="flex gap-2 items-center">
                         <p className="text-xs font-bold leading-[normal]">
-                          {getChainTotalRewards(key).split('.')[0]}.
-                          <span className="text-[10px]">
-                            {
-                              getChainTotalRewards(key)
-                                .split('.')[1]
-                                .split(' ')[0]
-                            }
-                          </span>
-                          {' ' +
-                            getChainTotalRewards(key)
-                              .split('.')[1]
-                              .split(' ')[1]}
+                          <NumberFormat value={getChainTotalRewards(key)} cls='' type='token' token={''} />
                         </p>
                         <p className="text-[rgba(255,255,255,0.50)] text-[12px] font-extralight leading-[18px]">
                           Total Rewards
@@ -234,59 +207,26 @@ function StakingDelegations({
                     <div className="flex flex-col items-start gap-2 w-1/4">
                       <p className="text-small">Staked Amount</p>
                       <p className="text-b1">
-                        {
-                          staking
-                            .getAmountObjectWithDecimal(
-                              Number(get(data, 'balance.amount')),
-                              key
-                            )
-                            .amount?.split('.')[0]
-                        }
-                        .{' '}
-                        <span className="text-[12px]">
-                          {
-                            staking
-                              .getAmountObjectWithDecimal(
-                                Number(get(data, 'balance.amount')),
-                                key
-                              )
-                              .amount?.split('.')[1]
-                          }
-                        </span>
-                        {' ' +
-                          staking.getAmountObjectWithDecimal(
+                        <NumberFormat value={staking
+                          .getAmountObjectWithDecimal(
                             Number(get(data, 'balance.amount')),
                             key
-                          ).denom}
+                          )
+                          .amount} cls='' type='token' token={staking.getAmountObjectWithDecimal(
+                            Number(get(data, 'balance.amount')),
+                            key
+                          ).denom} />
                       </p>
                     </div>
                     <div className="flex flex-col items-start gap-2 w-1/4">
                       <p className="text-small">Rewards</p>
                       <p className="text-b1">
-                        {
-                          getValRewards(
-                            get(data, 'delegation.validator_address'),
-                            key
-                          ).split('.')[0]
-                        }
-                        .
-                        <span className="text-[12px]">
-                          {
-                            getValRewards(
-                              get(data, 'delegation.validator_address'),
-                              key
-                            )
-                              .split('.')[1]
-                              .split(' ')[0]
-                          }
-                        </span>
-                        {' ' +
-                          getValRewards(
-                            get(data, 'delegation.validator_address'),
-                            key
-                          )
-                            .split('.')[1]
-                            .split(' ')[1]}
+                        <NumberFormat value={getValRewards(
+                          get(data, 'delegation.validator_address'),
+                          key
+                        )} cls='' type='token' token={''} />
+
+
                       </p>
                     </div>
                     <div className="flex flex-col items-start gap-2 w-1/4">

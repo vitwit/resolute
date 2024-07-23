@@ -1,8 +1,8 @@
 'use client';
 
-import PageLoading from '@/components/common/PageLoading';
 import React from 'react';
+import StakingLoading from '../components/StakingLoading';
 
-const loading = () => <PageLoading />;
+const loading = () => <StakingLoading />;
 
 export default loading;

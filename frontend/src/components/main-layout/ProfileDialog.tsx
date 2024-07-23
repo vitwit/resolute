@@ -83,17 +83,17 @@ const ProfileDialog = ({
         <div className="profile-section">
           <div className="space-y-6">
             <div className="space-y-2">
-              <div className="text-[20px] font-bold leading-[27px]">
+              <div className="text-h2 !font-bold">
                 Profile
               </div>
-              <div className="secondary-text">
+              <div className="text-b1">
                 Profile
               </div>
               <div className="divider-line"></div>
             </div>
             <div className="flex flex-col items-center gap-2 px-6 py-[10px]">
               <Image src={walletLogo} height={40} width={40} alt="" />
-              <div className="font-medium">{walletUserName}</div>
+              <div className="text-b1">{walletUserName}</div>
             </div>
             <div>
               <button onClick={handleLogout} className="primary-btn w-full">Logout</button>

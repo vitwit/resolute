@@ -1,4 +1,4 @@
-import { formatDollarAmount } from '@/utils/util';
+import NumberFormat from '@/components/common/NumberFormat';
 
 import React from 'react';
 
@@ -22,27 +22,38 @@ function StakingSummary({
       icon: '/staked-bal.png',
       alt: 'stake',
       type: 'Total Amount',
-      amount: formatDollarAmount(total),
+      amount: total.toLocaleString('en-US', {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 2,
+      }),
     },
     {
       icon: '/total-bal.png',
       alt: 'available',
       type: 'Staked Amount',
-      amount: formatDollarAmount(stakedAmount),
+      amount: stakedAmount.toLocaleString('en-US', {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 2,
+      }),
     },
     {
       icon: '/rewards.png',
       alt: 'rewards',
       type: 'Rewards',
-      amount: formatDollarAmount(rewardsAmount),
+      amount: rewardsAmount.toLocaleString('en-US', {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 2,
+      }),
     },
 
     {
       icon: '/avail-bal.png',
       alt: 'Avail-bal-icon',
       type: 'Available Balance',
-      amount: formatDollarAmount(availableAmount),
-      // amount: parseInt(stakedBal)+rewardsBal+availableBal,
+      amount: availableAmount.toLocaleString('en-US', {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 2,
+      }),
     },
   ];
 
@@ -54,21 +65,12 @@ function StakingSummary({
             <div className="flex flex-col items-center space-y-2">
               <div className="secondary-text">{data.type}</div>
               <div className="text-[18px] font-bold leading-[27px]">
-                {data?.amount?.split('.')[0]}
-                {Number(data.amount) > 0
-                  ? '.' +
-                    (
-                      <span className="text-[16px] font-bold">
-                        {data?.amount.split('.')[1]}
-                      </span>
-                    )
-                  : ''}
+                <NumberFormat type='dollar' value={data.amount} cls=''  />
               </div>
             </div>
           </div>
         ))}
       </div>
-      {/* <div className="divider-line"></div> */}
     </div>
   );
 }
