@@ -5,7 +5,7 @@ import React from 'react'
 function NumberFormat({ value, type, token, cls }: { value: string, type: string, token?: string, cls: string }) {
     let parsedAmount;
 
-    if (value.split(' ').length > 0) {
+    if (value.split(' ').length > 1) {
         let n1 = value.split(' ')[0]
         n1 = n1.replace(/,/g, "");
 
@@ -20,8 +20,6 @@ function NumberFormat({ value, type, token, cls }: { value: string, type: string
         else if (Number(value) < 0.01) parsedAmount = '< 0.01';
         else parsedAmount = formatNumber(Number(value))
     }
-
-
 
     return (
         <>
