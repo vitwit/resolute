@@ -9,6 +9,7 @@ import WithConnectionIllustration from '@/components/illustrations/withConnectio
 import ValidatorName from './ValidatorName';
 import { useAppSelector } from '@/custom-hooks/StateHooks';
 import { RootState } from '@/store/store';
+import NumberFormat from '@/components/common/NumberFormat';
 
 function StakingUnDelegations({
   undelegations,
@@ -63,7 +64,7 @@ function StakingUnDelegations({
       </div>
 
       {(staking.undelegationsLoading === 0 && !unbondingCount) ||
-      (isSingleChain && !unbondingCount) ? (
+        (isSingleChain && !unbondingCount) ? (
         <WithConnectionIllustration message="No Un Delegations" />
       ) : null}
 
@@ -114,30 +115,16 @@ function StakingUnDelegations({
                       <div className="flex flex-col items-start gap-2">
                         <p className="text-small">Amount</p>
                         <p className="text-b1">
-                          {
-                            staking
-                              .getAmountObjectWithDecimal(
-                                Number(get(e, 'balance')),
-                                key
-                              )
-                              .amount?.split('.')[0]
-                          }
-                          .
-                          <span className="text-[12px]">
-                            {
-                              staking
-                                .getAmountObjectWithDecimal(
-                                  Number(get(e, 'balance')),
-                                  key
-                                )
-                                .amount?.split('.')[1]
-                            }
-                          </span>
-                          {' ' +
-                            staking.getAmountObjectWithDecimal(
+                          <NumberFormat value={staking
+                            .getAmountObjectWithDecimal(
                               Number(get(e, 'balance')),
                               key
-                            ).denom}
+                            )
+                            .amount} cls='' type='token' token={staking.getAmountObjectWithDecimal(
+                              Number(get(e, 'balance')),
+                              key
+                            ).denom} />
+
                         </p>
                       </div>
                     </div>

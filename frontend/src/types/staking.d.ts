@@ -373,3 +373,11 @@ interface ValidatorProfileInfo {
   validatorStatus: string;
   validatorInfo: Validator;
 }
+
+interface ValidatorInfo {
+  address: string;
+  label: string; // moniker name
+  identity: string;
+  description: string;
+  commission: number;
+}
