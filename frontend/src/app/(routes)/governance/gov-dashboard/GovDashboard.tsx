@@ -19,13 +19,13 @@ import { CSSTransition } from 'react-transition-group';
 const GovDashboard = ({ chainIDs }: { chainIDs: string[] }) => {
   useInitGovernance({ chainIDs });
   const { getProposals } = useGetProposals();
-  const [showAll, setShowAll] = useState(false);
+  // const [showAll, setShowAll] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [showDeposits, setShowDeposits] = useState(false);
   const [filterDays, setFilterDays] = useState(0);
   const [showAnimation, toggleAnimation] = useState(false);
-  const propsData = getProposals({ chainIDs, showAll });
-  const proposalsData = getProposals({ chainIDs, showAll });
+  const propsData = getProposals({ chainIDs, showAll:true });
+  const proposalsData = getProposals({ chainIDs, showAll:true });
   const depositProposals = getProposals({chainIDs, deposits: true})
   const [filteredProposals, setFilteredProposals] = useState<ProposalsData[]>(
     []
@@ -121,10 +121,10 @@ const GovDashboard = ({ chainIDs }: { chainIDs: string[] }) => {
     }, 100);
   };
 
-  const handleShowAllProposals = (e: boolean) => {
-    setShowAll(e);
-    setSelectedProposal(null);
-  };
+  // const handleShowAllProposals = (e: boolean) => {
+  //   setShowAll(e);
+  //   setSelectedProposal(null);
+  // };
 
   return (
     <div className="gov-main">
@@ -139,7 +139,7 @@ const GovDashboard = ({ chainIDs }: { chainIDs: string[] }) => {
             <QuickFilters
               handleSearchQueryChange={handleSearchQueryChange}
               searchQuery={searchQuery}
-              handleShowAllProposals={handleShowAllProposals}
+              // handleShowAllProposals={handleShowAllProposals}
               handleFiltersChange={handleFiltersChange}
               filterDays={filterDays}
               selectedProposal={selectedProposal}
@@ -203,7 +203,7 @@ export default GovDashboard;
 const QuickFilters = ({
   handleSearchQueryChange,
   searchQuery,
-  handleShowAllProposals,
+  // handleShowAllProposals,
   handleFiltersChange,
   filterDays,
   selectedProposal,
@@ -211,7 +211,7 @@ const QuickFilters = ({
 }: {
   searchQuery: string;
   handleSearchQueryChange: HandleInputChangeEvent;
-  handleShowAllProposals: (arg: boolean) => void;
+  // handleShowAllProposals: (arg: boolean) => void;
   handleFiltersChange: (n: number) => void;
   filterDays: number;
   selectedProposal: SelectedProposal | null;
