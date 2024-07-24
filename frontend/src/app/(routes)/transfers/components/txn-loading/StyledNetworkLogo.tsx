@@ -11,7 +11,7 @@ const StyledNetworkLogo = ({
   const id = useId();
 
   return (
-    <div className="relative h-32 w-32 desktop:h-24 desktop:w-24 max:h-40 max:w-40">
+    <div className="relative h-40 w-40 md:h-32 md:w-32 max:h-40 max:w-40">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 160 160"
@@ -64,8 +64,14 @@ const StyledNetworkLogo = ({
           </linearGradient>
         </defs>
       </svg>
-      <div className="absolute inset-1/4">
-        <Image src={logo} layout="fill" objectFit="contain" alt="" />
+      <div className="absolute inset-[33%] md:inset-[28%] max:inset-[33%] w-[56px] h-[56px]">
+        <Image
+          className="w-[56px] h-[56px]"
+          src={logo}
+          layout="fill"
+          objectFit="contain"
+          alt=""
+        />
       </div>
     </div>
   );

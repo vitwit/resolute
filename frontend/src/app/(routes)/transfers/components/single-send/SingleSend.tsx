@@ -186,9 +186,9 @@ const SingleSend = ({ sortedAssets }: { sortedAssets: ParsedAsset[] }) => {
   }, [selectedNetwork]);
 
   return (
-    <div className="flex-1 flex flex-col-reverse desktop:flex-row gap-10 justify-between items-center">
+    <div className="flex-1 flex flex-col-reverse md:flex-row gap-10 justify-between items-center">
       <div
-        className={`max-w-[600px] desktop:max-w-[550px] ${sendTxLoading ? 'opacity-50' : ''}`}
+        className={`w-[600px] md:min-w-[550px] ${sendTxLoading ? 'opacity-50' : ''}`}
       >
         <div className="single-send-box">
           <Box
@@ -232,15 +232,13 @@ const SingleSend = ({ sortedAssets }: { sortedAssets: ParsedAsset[] }) => {
           </div>
         </div>
       </div>
-      {selectedAsset && sendTxLoading ? (
-        <SingleSendLoading
-          chainID={selectedAsset?.chainID}
-          isIBC={isIBC}
-          toAddress={getValues('address')}
-          amount={getValues('amount')}
-          displayDenom={selectedAsset?.displayDenom}
-        />
-      ) : null}
+      <SingleSendLoading
+        chainID={selectedAsset?.chainID || ''}
+        isIBC={isIBC}
+        toAddress={getValues('address')}
+        amount={getValues('amount')}
+        displayDenom={selectedAsset?.displayDenom || ''}
+      />
     </div>
   );
 };
@@ -274,8 +272,9 @@ const SingleSendLoading = ({
     allNetworks?.[destinationChainID],
     'config.theme.primaryColor'
   );
+  const isDataProvided = amount?.length && chainID?.length && toAddress?.length;
   return (
-    <div className="space-y-2 w-full max-w-[600px]">
+    <div className="space-y-8 w-full max-w-[600px] md:px-10">
       <TxnLoading
         fromAddress={fromAddress}
         toChainLogo={toChainLogo}
@@ -291,16 +290,23 @@ const SingleSendLoading = ({
             <Image src={ALERT_ICON} width={24} height={24} alt="" />
             <div className="text-[#FFC13C]">Important</div>
           </div>
-          <div className="text-[#FFFFFF80]">
-            Transaction pending<span className="dots-flashing"></span>
-          </div>
+          <div className="text-[#FFFFFFad]">Single Transfer</div>
         </div>
-        <div className="">
-          You are sending{' '}
-          <span className="font-medium">
-            {amount} {displayDenom}
-          </span>{' '}
-          to {shortenAddress(toAddress, 20)}
+        <div className="text-[#ffffff80]">
+          {isDataProvided ? (
+            <span>
+              {' '}
+              You are sending{' '}
+              <span className="font-medium">
+                {amount} {displayDenom}
+              </span>{' '}
+              to {shortenAddress(toAddress, 20)}
+            </span>
+          ) : (
+            <span>
+              Provide all the required fields to continue with the transaction.
+            </span>
+          )}
         </div>
       </div>
     </div>
