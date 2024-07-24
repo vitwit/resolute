@@ -32,3 +32,7 @@ export const ALERT_ICON = '/icons/alert-icon.svg';
 export const TIMER_ICON_YELLOW = 'timer-icon.svg';
 export const UPLOAD_ICON = '/icons/upload-icon.svg';
 export const ROCKET_LAUNCH_GIF = '/rocket-launch.gif';
+export const SWAP_ROUTE_ICON = '/icons/swap-route.svg';
+export const SWAP_ICON_FILLED = '/icons/swap-icon-filled.svg';
+export const GLOBE_ICON = '/icons/globe-icon.svg';
+export const CHECK_ICON_FILLED = '/icons/check-filled.svg';

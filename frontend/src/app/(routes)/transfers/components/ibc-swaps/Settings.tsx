@@ -33,7 +33,7 @@ const Settings = ({
         <div className="flex items-center justify-between w-full">
           <div className="text-b1 text-[#ffffff80]">Settings</div>
           <button onClick={handleClose} className="secondary-btn">
-            close
+            Close
           </button>
         </div>
         <div className="space-y-6">

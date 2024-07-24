@@ -100,4 +100,7 @@ export const customAutoCompleteStyles = {
     padding: '0px 16px',
     fontFamily: 'Libre Franklin',
   },
+  '& .Mui-disabled': {
+    '-webkit-text-fill-color': '#ffffffad !important',
+  },
 };

@@ -18,11 +18,13 @@ export default function ChainsList({
   handleChange,
   selectedChain,
   dataLoading,
+  disabled,
 }: {
   options: ChainConfig[];
   handleChange: (option: ChainOption | null) => void;
   selectedChain: ChainConfig | null;
   dataLoading: boolean;
+  disabled: boolean;
 }) {
   /* eslint-disable @typescript-eslint/no-explicit-any */
   const renderOption = (props: any, option: ChainOption) => (
@@ -68,7 +70,7 @@ export default function ChainsList({
       }}
       sx={{
         '& .MuiInputBase-input': {
-          color: 'white',
+          color: '#ffffffad',
           fontSize: '14px',
           fontWeight: 300,
           fontFamily: 'Libre Franklin',
@@ -78,7 +80,7 @@ export default function ChainsList({
           border: 'none',
         },
         '& .MuiSvgIcon-root': {
-          color: 'white',
+          color: '#ffffff80',
         },
       }}
     />
@@ -96,11 +98,12 @@ export default function ChainsList({
         renderInput={renderInput}
         onChange={(_, newValue) => handleChange(newValue)}
         value={selectedChain}
+        disabled={disabled}
         PaperComponent={({ children }) => (
           <Paper
             style={{
               background: '#FFFFFF14',
-              color: 'white',
+              color: '#ffffffad',
               borderRadius: '16px',
               backdropFilter: 'blur(15px)',
               marginTop: '8px',
