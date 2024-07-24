@@ -15,6 +15,7 @@ import { resetState as rewardsReset } from '@/store/features/distribution/distri
 import { resetCompleteState as stakingReset } from '@/store/features/staking/stakeSlice';
 import { resetState as authzReset } from '@/store/features/authz/authzSlice';
 import { resetState as feegrantReset } from '@/store/features/feegrant/feegrantSlice';
+import DialogConfirmExitSession from './DialogConfirmExitSession';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const Transition = forwardRef(function Transition(
@@ -32,6 +33,7 @@ const ProfileDialog = ({
   onClose: () => void;
 }) => {
   const [walletLogo, setWalletLogo] = useState('');
+  const [confirmExitOpen, setConfirmExitOpen] = useState(false);
 
   const walletUserName = useAppSelector((state) => state.wallet.name);
 
@@ -39,10 +41,13 @@ const ProfileDialog = ({
     setWalletLogo(getConnectWalletLogo());
   }, []);
 
-
   const dispatch = useAppDispatch();
 
   const handleLogout = () => {
+    setConfirmExitOpen(true); // Open confirmation dialog instead of logging out directly
+  };
+
+  const handleConfirmExitSession = () => {
     dispatch(resetWallet());
     dispatch(resetError());
     dispatch(resetTxAndHash());
@@ -52,59 +57,69 @@ const ProfileDialog = ({
     dispatch(authzReset());
     dispatch(feegrantReset());
     logout();
+    setConfirmExitOpen(false);
     onClose();
-  }
+  };
 
+  const handleCancelExitSession = () => {
+    setConfirmExitOpen(false);
+  };
 
   return (
-    <Dialog
-      open={open}
-      maxWidth="lg"
-      TransitionComponent={Transition}
-      sx={{
-        '& .MuiDialog-paper': {
-          position: 'absolute',
-          right: '30px',
-          left: 'auto',
-          height: 'calc(100% - 60px)',
-          margin: 0,
-          color: 'white',
-        },
-      }}
-      PaperProps={{
-        sx: {
-          borderRadius: '16px',
-          background: '#1c1c1d',
-        },
-      }}
-      onClose={onClose}
-    >
-      <DialogContent sx={{ padding: 0 }}>
-        <div className="profile-section">
-          <div className="space-y-6">
-            <div className="space-y-2">
-              <div className="text-h2 !font-bold">
-                Profile
+    <>
+      <Dialog
+        open={open}
+        maxWidth="lg"
+        TransitionComponent={Transition}
+        sx={{
+          '& .MuiDialog-paper': {
+            position: 'absolute',
+            right: '30px',
+            left: 'auto',
+            height: 'calc(100% - 60px)',
+            margin: 0,
+            color: 'white',
+          },
+        }}
+        PaperProps={{
+          sx: {
+            borderRadius: '16px',
+            background: '#1c1c1d',
+          },
+        }}
+        onClose={onClose}
+      >
+        <DialogContent sx={{ padding: 0 }}>
+          <div className="profile-section">
+            <div className="space-y-6">
+              <div className="space-y-2">
+                <div className="text-h2 !font-bold">Profile</div>
+                <div className="text-b1">Profile</div>
+                <div className="divider-line"></div>
               </div>
-              <div className="text-b1">
-                Profile
+              <div className="flex flex-col items-center gap-2 px-6 py-[10px]">
+                <Image src={walletLogo} height={40} width={40} alt="" />
+                <div className="text-b1">{walletUserName}</div>
               </div>
-              <div className="divider-line"></div>
+              <div>
+                <button onClick={handleLogout} className="primary-btn w-full">
+                  Logout
+                </button>
+              </div>
+              <button onClick={onClose} className="secondary-btn w-full">
+                Close Tab
+              </button>
             </div>
-            <div className="flex flex-col items-center gap-2 px-6 py-[10px]">
-              <Image src={walletLogo} height={40} width={40} alt="" />
-              <div className="text-b1">{walletUserName}</div>
-            </div>
-            <div>
-              <button onClick={handleLogout} className="primary-btn w-full">Logout</button>
-            </div>
-            <button onClick={onClose} className="secondary-btn w-full">
-              Close Tab
-            </button>
           </div>
-        </div>
-      </DialogContent>
-    </Dialog>
+        </DialogContent>
+      </Dialog>
+
+      <DialogConfirmExitSession
+        open={confirmExitOpen}
+        onClose={handleCancelExitSession}
+        onConfirm={handleConfirmExitSession}
+      />
+    </>
   );
 };
 

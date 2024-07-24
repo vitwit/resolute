@@ -16,9 +16,11 @@ const useGetProposals = () => {
   const getProposals = ({
     chainIDs,
     showAll = false,
+    deposits = false,
   }: {
     chainIDs: string[];
     showAll?: boolean;
+    deposits?:boolean
   }) => {
     const proposalsData: ProposalsData[] = [];
     chainIDs.forEach((chainID) => {
@@ -26,7 +28,7 @@ const useGetProposals = () => {
       const activeProposals = govState?.[chainID]?.active?.proposals || [];
       const depositProposals = govState?.[chainID]?.deposit?.proposals || [];
 
-      if (Array.isArray(activeProposals)) {
+      if (!deposits &&  Array.isArray(activeProposals)) {
         activeProposals?.forEach((proposal) => {
           const proposalTitle = get(
             proposal,
@@ -85,6 +87,38 @@ const useGetProposals = () => {
           });
         }
       }
+
+      if (deposits) {
+        const proposalsData: ProposalsData[] = [];
+        if (Array.isArray(depositProposals)) {
+          depositProposals?.forEach((proposal) => {
+            const proposalTitle = get(
+              proposal,
+              'content.title',
+              get(proposal, 'title', get(proposal, 'content.@type', ''))
+            );
+            const endTime = getTimeDifferenceToFutureDate(
+              get(proposal, 'deposit_end_time')
+            );
+            const proposalId = get(
+              proposal,
+              'proposal_id',
+              get(proposal, 'id', '')
+            );
+            proposalsData.push({
+              chainID,
+              chainName,
+              chainLogo,
+              isActive: false,
+              proposalInfo: {
+                endTime,
+                proposalId,
+                proposalTitle,
+              },
+            });
+          });
+        }
+      }
     });
     return proposalsData;
   };
@@ -102,13 +136,13 @@ const useGetProposals = () => {
     const depositProposals = govState?.[chainID]?.deposit?.proposals;
     const proposal = isActive
       ? activeProposals?.find(
-          (proposal) =>
-            get(proposal, 'proposal_id', get(proposal, 'id', '')) === proposalId
-        )
+        (proposal) =>
+          get(proposal, 'proposal_id', get(proposal, 'id', '')) === proposalId
+      )
       : depositProposals?.find(
-          (proposal) =>
-            get(proposal, 'proposal_id', get(proposal, 'id', '')) === proposalId
-        );
+        (proposal) =>
+          get(proposal, 'proposal_id', get(proposal, 'id', '')) === proposalId
+      );
     const proposalTitle = get(
       proposal,
       'content.title',

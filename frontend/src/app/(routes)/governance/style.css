@@ -161,3 +161,15 @@
     opacity 300ms,
     transform 300ms;
 }
+.yes-option {
+  @apply flex h-2 w-2 justify-center items-center gap-2 border rounded-full border-solid border-[#2BA472] bg-[#2CA472];
+}
+.no-option {
+  @apply h-2 w-2 rounded-full bg-[#D92200];
+}
+.abstain-option {
+  @apply h-2 w-2 rounded-full bg-[#FFC03D];
+}
+.veto-option {
+  @apply h-2 w-2 rounded-full bg-[#DA571E];
+}
