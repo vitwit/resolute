@@ -49,18 +49,18 @@ const ValidatorsAutoComplete = ({
       }}
       css={listItemStyle}
     >
-      <div className="flex items-start gap-2 w-full py-2 px-1">
+      <div className="flex items-start gap-2 w-full px-1">
         <ValidatorLogo height={24} width={24} identity={option.identity} />
         <div className="flex items-center justify-between flex-1">
           <div>
-            <div className="font-semibold truncate">
+            <div className="text-b1 truncate">
               {shortenName(option.label, 30)}
             </div>
             <div className="secondary-text">
               {shortenName(option?.description, 80)}
             </div>
           </div>
-          <div className="text-[#ffffff80] text-[12px] font-light">
+          <div className="text-[#ffffff80] text-[12px] font-extralight">
             {option.commission}% Commission
           </div>
         </div>
@@ -91,7 +91,7 @@ const ValidatorsAutoComplete = ({
           <InputAdornment position="end">
             <div className="flex items-center gap-2">
               {selectedValidator && (
-                <div className="secondary-text !text-[12px] mr-2">
+                <div className="secondary-text !leading-[21px] mr-2">
                   <span className="capitalize">
                     {selectedValidator.commission}% Commission
                   </span>
@@ -104,16 +104,16 @@ const ValidatorsAutoComplete = ({
       }}
       sx={{
         '& .MuiInputBase-input': {
-          color: 'white',
+          color: '#ffffffad',
           fontSize: '14px',
-          fontWeight: 300,
+          fontWeight: 400,
           fontFamily: 'Libre Franklin',
         },
         '& .MuiOutlinedInput-notchedOutline': {
           border: 'none',
         },
         '& .MuiSvgIcon-root': {
-          color: 'white',
+          color: '#ffffffad',
         },
       }}
     />
