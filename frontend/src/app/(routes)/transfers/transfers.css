@@ -140,3 +140,43 @@
   height: 40px;
   border-radius: 50%;
 }
+
+.dotted-line {
+  flex-grow: 1;
+  height: 1px;
+  background: repeating-linear-gradient(
+    to right,
+    #4453df,
+    #4453df 6px,
+    transparent 4px,
+    transparent 12px
+  );
+  margin: 0 10px; /* Adjust the margin as needed */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.tick-mark {
+  position: absolute;
+  top: -10px; /* Adjust as needed to center vertically */
+  width: 20px; /* Adjust size as needed */
+  height: 20px; /* Adjust size as needed */
+  @apply inset-1/3;
+}
+
+.custom-spin {
+  animation-name: custom-spin-animation;
+  animation-duration: 3000ms;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+}
+
+@keyframes custom-spin-animation {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
