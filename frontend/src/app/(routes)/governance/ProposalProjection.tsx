@@ -140,7 +140,7 @@ const ProposalProjection = ({
               <p className="text-[14px] font-bold leading-[21px]">
                 {Number(quorumRequired) > 0 ? (
                   <span className="">{quorumRequired}</span>
-                ) : null}
+                ) : null}{' '}
                 %
               </p>
               <p className="text-[rgba(255,255,255,0.50)] text-[12px] font-extralight leading-[18px]">
