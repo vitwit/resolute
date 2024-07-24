@@ -11,6 +11,7 @@ import { ERR_UNKNOWN } from '@/utils/errors';
 import { NewTransaction } from '@/utils/transaction';
 import { setTxAndHash } from '../common/commonSlice';
 import cloneDeep from 'lodash/cloneDeep';
+import { trackEvent } from '@/utils/util';
 
 interface Balance {
   list: Coin[];
@@ -134,8 +135,14 @@ export const multiTxns = createAsyncThunk(
             baseURLs: restURLs,
           })
         );
+
+        trackEvent('TRANSFER', 'MULTI_SEND', 'SUCCESS')
+
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
+
+        trackEvent('TRANSFER', 'MULTI_SEND', 'FAILED')
+
         return rejectWithValue(result?.rawLog);
       }
       /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
@@ -213,8 +220,13 @@ export const txBankSend = createAsyncThunk(
           );
         }
 
+        trackEvent('TRANSFER', 'SEND', 'SUCCESS')
+
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
+
+        trackEvent('TRANSFER', 'SEND', 'FAILED')
+
         return rejectWithValue(result?.rawLog);
       }
       /* eslint-disable-next-line @typescript-eslint/no-explicit-any */

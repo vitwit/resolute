@@ -6,6 +6,9 @@ import Script from 'next/script';
 import { OpenGraph } from 'next/dist/lib/metadata/types/opengraph-types';
 import dynamic from 'next/dynamic';
 import Loading from '@/components/main-layout/Loading';
+
+const TRACKING_ID = 'G-RTXGXXDNNS';
+
 const FixedLayout = dynamic(
   () => import('@/components/main-layout/FixedLayout'),
   { ssr: false, loading: () => <Loading /> }
@@ -51,7 +54,7 @@ export default function RootLayout({
           function gtag(){dataLayer.push(arguments);}
           gtag('js', new Date());
  
-          gtag('config', 'G-RTXGXXDNNS');
+          gtag('config', '${TRACKING_ID}');
         `}
         </Script>
       </body>
