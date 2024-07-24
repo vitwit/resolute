@@ -21,10 +21,12 @@ const GovDashboard = ({ chainIDs }: { chainIDs: string[] }) => {
   const { getProposals } = useGetProposals();
   const [showAll, setShowAll] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [showDeposits, setShowDeposits] = useState(false);
   const [filterDays, setFilterDays] = useState(0);
   const [showAnimation, toggleAnimation] = useState(false);
   const propsData = getProposals({ chainIDs, showAll });
   const proposalsData = getProposals({ chainIDs, showAll });
+  const depositProposals = getProposals({chainIDs, deposits: true})
   const [filteredProposals, setFilteredProposals] = useState<ProposalsData[]>(
     []
   );
@@ -107,6 +109,18 @@ const GovDashboard = ({ chainIDs }: { chainIDs: string[] }) => {
     }, 100);
   };
 
+  const handleShowDeposits = (showDeposits: boolean) => {
+
+    setShowDeposits(showDeposits)
+    if (debounceTimeout.current) {
+      clearTimeout(debounceTimeout.current);
+    }
+
+    debounceTimeout.current = window.setTimeout(() => {
+      setFilteredProposals(depositProposals);
+    }, 100);
+  };
+
   const handleShowAllProposals = (e: boolean) => {
     setShowAll(e);
     setSelectedProposal(null);
@@ -129,6 +143,7 @@ const GovDashboard = ({ chainIDs }: { chainIDs: string[] }) => {
               handleFiltersChange={handleFiltersChange}
               filterDays={filterDays}
               selectedProposal={selectedProposal}
+              handleShowDeposits={handleShowDeposits}
             />
           </div>
           <div className="flex flex-col flex-1 overflow-y-scroll gap-2 max-h-[70vh]">
@@ -136,7 +151,7 @@ const GovDashboard = ({ chainIDs }: { chainIDs: string[] }) => {
               <GovDashboardLoading />
             ) : (
               <>
-                {searchQuery?.length || filterDays ? (
+                {searchQuery?.length || filterDays || showDeposits ? (
                   <ProposalsList
                     proposals={filteredProposals}
                     handleViewProposal={handleViewProposal}
@@ -192,6 +207,7 @@ const QuickFilters = ({
   handleFiltersChange,
   filterDays,
   selectedProposal,
+  handleShowDeposits
 }: {
   searchQuery: string;
   handleSearchQueryChange: HandleInputChangeEvent;
@@ -199,6 +215,7 @@ const QuickFilters = ({
   handleFiltersChange: (n: number) => void;
   filterDays: number;
   selectedProposal: SelectedProposal | null;
+  handleShowDeposits: (arg: boolean) => void;
 }) => {
   return (
     <div className="flex justify-between w-full pb-4">
@@ -240,7 +257,8 @@ const QuickFilters = ({
           <SearchProposalInput
             handleSearchQueryChange={handleSearchQueryChange}
             searchQuery={searchQuery}
-            handleShowAllProposals={handleShowAllProposals}
+            // handleShowAllProposals={handleShowAllProposals}
+            handleShowDeposits={handleShowDeposits}
           />
         )}
       </div>
