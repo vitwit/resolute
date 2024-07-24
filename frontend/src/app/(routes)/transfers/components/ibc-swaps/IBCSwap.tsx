@@ -93,6 +93,7 @@ const IBCSwap = () => {
   const balanceStatus = useAppSelector(
     (state) => state.bank.balances?.[selectedSourceChain?.chainID || '']?.status
   );
+  const swapTxLoading = useAppSelector((state) => state.swaps.txStatus.status);
 
   const [selectedSourceChainAssets, setSelectedSourceChainAssets] = useState<
     AssetConfig[]
@@ -239,7 +240,8 @@ const IBCSwap = () => {
       selectedDestChain &&
       selectedSourceAsset &&
       selectedSourceChain &&
-      Number(amountIn)
+      Number(amountIn) &&
+      !(swapTxLoading === TxStatus.PENDING)
     ) {
       const amount = amountIn;
       const decimals = selectedSourceAsset?.decimals;
@@ -380,16 +382,22 @@ const IBCSwap = () => {
   };
 
   const quickSelectAmount = (value: string) => {
-    if (availableBalance?.parsedAmount && availableBalance?.displayDenom) {
+    if (
+      availableBalance?.parsedAmount &&
+      availableBalance?.displayDenom &&
+      !(swapTxLoading === TxStatus.PENDING)
+    ) {
       const amount = availableBalance.parsedAmount;
       if (value === 'half') {
         let halfAmount = Math.max(0, amount || 0) / 2;
         halfAmount = +halfAmount.toFixed(6);
         dispatch(setAmountIn(halfAmount.toString()));
+        setUserInputChange(true);
       } else {
         let maxAmount = Math.max(0, amount || 0);
         maxAmount = +maxAmount.toFixed(6);
         dispatch(setAmountIn(maxAmount.toString()));
+        setUserInputChange(true);
       }
     }
   };
@@ -578,6 +586,7 @@ const IBCSwap = () => {
                             handleChange={handleSelectSourceChain}
                             selectedChain={selectedSourceChain}
                             dataLoading={chainsLoading}
+                            disabled={swapTxLoading === TxStatus.PENDING}
                           />
                         </div>
                         <div className="flex-1">
@@ -586,6 +595,7 @@ const IBCSwap = () => {
                             handleChange={handleSelectSourceAsset}
                             selectedAsset={selectedSourceAsset}
                             assetsLoading={srcAssetsLoading}
+                            disabled={swapTxLoading === TxStatus.PENDING}
                           />
                         </div>
                       </div>
@@ -679,6 +689,7 @@ const IBCSwap = () => {
                           handleChange={handleSelectDestChain}
                           selectedChain={selectedDestChain}
                           dataLoading={chainsLoading}
+                          disabled={swapTxLoading === TxStatus.PENDING}
                         />
                       </div>
                       <div className="flex-1">
@@ -687,6 +698,7 @@ const IBCSwap = () => {
                           handleChange={handleSelectDestAsset}
                           selectedAsset={selectedDestAsset}
                           assetsLoading={destAssetLoading}
+                          disabled={swapTxLoading === TxStatus.PENDING}
                         />
                       </div>
                     </div>
@@ -883,6 +895,7 @@ const AmountInputField = ({
   amount: string;
   handleAmountChange?: HandleAmountChangeFunc;
 }) => {
+  const swapTxLoading = useAppSelector((state) => state.swaps.txStatus.status);
   return (
     <input
       className="amount-input-field !text-[28px]"
@@ -890,6 +903,7 @@ const AmountInputField = ({
       value={amount}
       placeholder="0"
       required
+      disabled={swapTxLoading === TxStatus.PENDING}
     />
   );
 };
