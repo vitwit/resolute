@@ -52,11 +52,11 @@ export const swapTextFieldStyles = {
 
 export const customTextFieldStyles = {
   '& .MuiInputBase-input': {
-    color: 'white',
+    color: '#ffffffad',
     fontSize: '14px',
     fontWeight: 200,
     fontFamily: 'Libre Franklin',
-    lineHeight: '19px',
+    lineHeight: '21px',
   },
   '& .MuiOutlinedInput-notchedOutline': {
     border: 'none',
