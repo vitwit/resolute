@@ -221,6 +221,14 @@ const useGetChainInfo = () => {
     };
   };
 
+  const getNetworkTheme = (chainID: string) => {
+    const theme = allNetworks?.[chainID]?.config?.theme;
+    return {
+      primaryColor: theme?.primaryColor || '',
+      gradient: theme?.gradient || '',
+    };
+  };
+
   return {
     getDenomInfo,
     getChainInfo,
@@ -233,6 +241,7 @@ const useGetChainInfo = () => {
     getChainNamesAndLogos,
     getValueFromToken,
     getTokenValueByChainId,
+    getNetworkTheme,
   };
 };
 
