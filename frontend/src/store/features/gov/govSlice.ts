@@ -26,6 +26,7 @@ import { signAndBroadcast } from '@/utils/signing';
 import { setError, setTxAndHash } from '../common/commonSlice';
 import { GovDepositMsg, GovVoteMsg } from '@/txns/gov';
 import { NewTransaction } from '@/utils/transaction';
+import { trackEvent } from '@/utils/util';
 
 const PROPSAL_STATUS_DEPOSIT = 1;
 const PROPOSAL_STATUS_ACTIVE = 2;
@@ -413,8 +414,10 @@ export const txVote = createAsyncThunk(
           })
         );
 
+        trackEvent('GOV', 'SUCCESS', 'VOTE')
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
+        trackEvent('GOV', 'FAILED', 'VOTE')
         dispatch(
           setError({
             type: 'error',
@@ -482,9 +485,15 @@ export const txDeposit = createAsyncThunk(
       );
 
       if (code === 0) {
+        trackEvent('GOV', 'SUCCESS', 'DEPOSIT')
+
+
         dispatch(setTxAndHash({ tx: tx, hash: transactionHash }));
         return fulfillWithValue({ txHash: transactionHash });
       } else {
+        trackEvent('GOV', 'FAILED', 'DEPOSIT')
+
+
         dispatch(setError({ type: 'error', message: rawLog || '' }));
         return rejectWithValue(rawLog);
       }

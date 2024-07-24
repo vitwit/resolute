@@ -6,11 +6,13 @@ import React, { useState } from 'react';
 const SearchProposalInput = ({
   searchQuery,
   handleSearchQueryChange,
-  handleShowAllProposals,
+  // handleShowAllProposals,
+  handleShowDeposits,
 }: {
   searchQuery: string;
   handleSearchQueryChange: HandleInputChangeEvent;
-  handleShowAllProposals: (arg: boolean) => void;
+  // handleShowAllProposals: (arg: boolean) => void;
+  handleShowDeposits: (arg: boolean) => void;
 }) => {
   const [check, SetCheck] = useState(false);
   return (
@@ -30,7 +32,7 @@ const SearchProposalInput = ({
         <div
           className="flex items-center gap-1 cursor-pointer"
           onClick={() => {
-            handleShowAllProposals(!check);
+            handleShowDeposits(!check);
             SetCheck(!check);
           }}
         >

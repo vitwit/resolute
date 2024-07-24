@@ -30,6 +30,7 @@ import {
   getDelegatorTotalRewards,
 } from '../distribution/distributionSlice';
 import { getAuthzBalances, getBalances } from '../bank/bankSlice';
+import { trackEvent } from '@/utils/util';
 
 interface Chain {
   validators: Validators;
@@ -348,8 +349,13 @@ export const txDelegate = createAsyncThunk(
           );
         }
 
+        trackEvent('STAKING', 'SUCCESS', 'DELEGATE')
+
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
+        trackEvent('STAKING', 'FAILED', 'DELEGATE')
+
+
         return rejectWithValue(result?.rawLog);
       }
     } catch (error) {
@@ -432,8 +438,13 @@ export const txReDelegate = createAsyncThunk(
           );
         }
 
+        trackEvent('STAKING', 'SUCCESS', 'REDELEGATE')
+
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
+        trackEvent('STAKING', 'FAILED', 'REDELEGATE')
+
+
         return rejectWithValue(result?.rawLog);
       }
     } catch (error) {
@@ -519,8 +530,14 @@ export const txUnDelegate = createAsyncThunk(
             })
           );
         }
+
+        trackEvent('STAKING', 'SUCCESS', 'UNDELEGATE')
+
+
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
+        trackEvent('STAKING', 'FAILED', 'UNDELEGATE')
+
         return rejectWithValue(result?.rawLog);
       }
     } catch (error) {
@@ -602,8 +619,12 @@ export const txCancelUnbonding = createAsyncThunk(
           dispatch(getUnbonding(inputData));
         }
 
+        trackEvent('STAKING', 'SUCCESS', 'CANCEL_UNBOND')
+
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
+        trackEvent('STAKING', 'FAILED', 'CANCEL_UNBOND')
+
         return rejectWithValue(result?.rawLog);
       }
     } catch (error) {

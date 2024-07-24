@@ -157,10 +157,15 @@ const Asset = ({
       <th className=" px-4 py-4 w-1/4">
         <div className="flex flex-col items-start gap-1">
           <div className="text-[14px] font-normal leading-[21px]">
-            <NumberFormat cls='' type='token' token={asset.displayDenom} value={asset.balance.toLocaleString('en-US', {
-              minimumFractionDigits: 0,
-              maximumFractionDigits: 2,
-            })} />
+            <NumberFormat
+              cls=""
+              type="token"
+              token={asset.displayDenom}
+              value={asset.balance.toLocaleString('en-US', {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 2,
+              })}
+            />
           </div>
           <div className="flex space-x-1 justify-center items-center">
             <Image
@@ -186,13 +191,18 @@ const Asset = ({
       </th>
       <th>
         <div className="flex flex-col items-start gap-2">
-          <div className="text-[14px] font-normal leading-[normal] items-start flex">
+          <div className="text-[14px] font-normal leading-[21px] items-start flex">
             {asset.type === 'native' ? (
               <span>
-                <NumberFormat cls='' token={asset.displayDenom} type='token' value={asset.staked.toLocaleString('en-US', {
-                  minimumFractionDigits: 0,
-                  maximumFractionDigits: 2,
-                })} />
+                <NumberFormat
+                  cls=""
+                  token={asset.displayDenom}
+                  type="token"
+                  value={asset.staked.toLocaleString('en-US', {
+                    minimumFractionDigits: 0,
+                    maximumFractionDigits: 2,
+                  })}
+                />
               </span>
             ) : (
               '-'
@@ -204,14 +214,18 @@ const Asset = ({
       </th>
       <th>
         <div className="flex flex-col items-start gap-2">
-          <div className="text-[14px] font-normal leading-[normal] items-start flex">
+          <div className="text-[14px] font-normal leading-[21px] items-start flex">
             {asset.type === 'native' ? (
               <span>
-                <NumberFormat cls='' token={asset.displayDenom} type='token' value={asset.rewards.toLocaleString('en-US', {
-                  minimumFractionDigits: 0,
-                  maximumFractionDigits: 2,
-                })} />
-
+                <NumberFormat
+                  cls=""
+                  token={asset.displayDenom}
+                  type="token"
+                  value={asset.rewards.toLocaleString('en-US', {
+                    minimumFractionDigits: 0,
+                    maximumFractionDigits: 2,
+                  })}
+                />
               </span>
             ) : (
               '-'
@@ -222,31 +236,31 @@ const Asset = ({
       </th>
       <th>
         <div className="flex flex-col items-start gap-2">
-          <div className="text-[14px] font-normal leading-[normal] flex items-baseline">
-            <NumberFormat cls='' type='dollar' value={asset.usdPrice.toLocaleString('en-US', {
-              minimumFractionDigits: 0,
-              maximumFractionDigits: 2,
-            })} />
+          <div className="text-[14px] font-normal leading-[21px] flex items-baseline">
+            <NumberFormat
+              cls=""
+              type="dollar"
+              value={asset.usdPrice.toLocaleString('en-US', {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 2,
+              })}
+            />
           </div>
           <div className="flex">
             <div
               className={
-                'text-sm font-normal leading-[normal] ' +
+                'text-sm font-normal leading-[21px] ' +
                 (asset.inflation >= 0 ? 'text-[#238636]' : 'text-[#F1575780]')
               }
             >
-              <p className="text-sm font-extralight leading-[normal]">
-                {formatAmount(Math.abs(asset.inflation)).split('.')[0]}.
-                <span className="text-[12px]">
-                  {' '}
-                  {formatAmount(Math.abs(asset.inflation)).split('.')[1]}
-                </span>
-                {' '} %
+              <p className="text-sm font-extralight leading-[21px]">
+                {formatAmount(Math.abs(asset.inflation))}%
               </p>
             </div>
             <Image
-              src={`/${asset.inflation >= 0 ? 'up' : 'down'
-                }-arrow-filled-icon.svg`}
+              src={`/${
+                asset.inflation >= 0 ? 'up' : 'down'
+              }-arrow-filled-icon.svg`}
               width={18}
               height={5}
               alt="down-arrow-filled-icon"
@@ -300,7 +314,7 @@ const Asset = ({
                   >
                     <div>
                       {asset.type !== 'ibc' &&
-                        txClaimStatus === TxStatus.PENDING ? (
+                      txClaimStatus === TxStatus.PENDING ? (
                         <>
                           {' '}
                           Claiming.... <CircularProgress size={16} />
@@ -328,7 +342,7 @@ const Asset = ({
                   >
                     <div>
                       {txRestakeStatus === TxStatus.PENDING &&
-                        asset.type !== 'ibc' ? (
+                      asset.type !== 'ibc' ? (
                         <>
                           Claiming and staking...
                           <CircularProgress size={16} />
