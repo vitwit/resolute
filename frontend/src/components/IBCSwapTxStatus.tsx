@@ -1,5 +1,15 @@
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
-import { resetTx, resetTxDestSuccess } from '@/store/features/swaps/swapsSlice';
+import {
+  resetTx,
+  resetTxDestSuccess,
+  setAmountIn,
+  setAmountOut,
+  setDestAsset,
+  setDestChain,
+  setSourceAsset,
+  setSourceChain,
+  setToAddress,
+} from '@/store/features/swaps/swapsSlice';
 import { TxStatus } from '@/types/enums';
 import {
   Alert,
@@ -23,6 +33,32 @@ const IBCSwapTxStatus = () => {
   const txHash = useAppSelector((state) => state.swaps.txSuccess.txHash);
   const explorerUrl = useAppSelector((state) => state.swaps.explorerEndpoint);
   const txDestStatus = useAppSelector((state) => state.swaps.txDestSuccess);
+
+  const resetIBCSwap = () => {
+    dispatch(setSourceChain(null));
+    dispatch(setSourceAsset(null));
+    dispatch(setDestChain(null));
+    dispatch(setDestAsset(null));
+    dispatch(setAmountIn(''));
+    dispatch(setAmountOut(''));
+    dispatch(setToAddress(''));
+    setTxSourceSuccess(false);
+    setTxDestSuccess(false);
+    dispatch(resetTx());
+    dispatch(resetTxDestSuccess());
+  };
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+
+    if (showTxSourceSuccess && showTxDestSuccess) {
+      timer = setTimeout(() => {
+        resetIBCSwap();
+      }, 2000);
+    }
+
+    return () => clearTimeout(timer);
+  }, [showTxSourceSuccess, showTxDestSuccess]);
 
   useEffect(() => {
     if (txHash?.length) {

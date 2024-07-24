@@ -4,7 +4,7 @@ import React from 'react';
 
 const EmptyNetwork = () => {
   return (
-    <div className="network-image-container">
+    <div className="network-image-container px-[10px]">
       <div
         className="blur-background"
         style={{

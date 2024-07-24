@@ -809,7 +809,13 @@ const IBCSwap = () => {
         </div>
       </div>
       <div className="space-y-2 w-full max-w-[600px]">
-        { true ? <IBCSwapLoading /> : null}
+        <IBCSwapLoading
+          toggleRoutePreview={() => {
+            if (swapRoute) {
+              setShowRoute((prev) => !prev);
+            }
+          }}
+        />
       </div>
     </div>
   );
