@@ -17,6 +17,15 @@ import { MultisigAddressPubkey } from '@/types/multisig';
 import { fromBech32 } from '@cosmjs/encoding';
 import { SUPPORTED_WALLETS } from './constants';
 import { FAILED_TO_FETCH } from './errors';
+import ReactGA from 'react-ga';
+
+export const trackEvent = (category: string, action: string, label: string) => {
+  ReactGA.event({
+    category: category,
+    action: action,
+    label: label
+  });
+};
 
 export const convertPaginationToParams = (
   pagination?: KeyLimitPagination
@@ -329,8 +338,8 @@ export function formatUnbondingPeriod(
 ): string {
   return stakingParams?.unbonding_time
     ? Math.floor(
-        parseInt(stakingParams?.unbonding_time || '', 10) / (3600 * 24)
-      ).toString()
+      parseInt(stakingParams?.unbonding_time || '', 10) / (3600 * 24)
+    ).toString()
     : '-';
 }
 
