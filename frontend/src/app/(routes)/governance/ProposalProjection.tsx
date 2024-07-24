@@ -117,7 +117,7 @@ const ProposalProjection = ({
               {status === REJECTED ? (
                 <div className="text-[#E57575] flex flex-col justify-center items-center gap-4">
                   <div className="text-[18px] font-bold">{status}</div>
-                  <div>
+                  <div className="text-[14px] leading-[21px]">
                     <li>{reason}</li>
                   </div>
                 </div>
@@ -127,12 +127,9 @@ const ProposalProjection = ({
           <div className="flex gap-4 w-full">
             <div className="flex justify-center items-center gap-2 px-4 py-2 rounded-[100px] bg-[#FFFFFF05] w-[158px]">
               <p className="text-[14px] font-bold leading-[21px]">
-                {quorumPercent.split('.')[0]}
                 {Number(quorumPercent) > 0 ? (
-                  <span className="text-xs leading-[18px]">
-                    .{quorumPercent.split('.')[1]}
-                  </span>
-                ) : null}
+                  <span className="">{quorumPercent}</span>
+                ) : null}{' '}
                 %
               </p>
               <p className="text-[rgba(255,255,255,0.50)] text-[12px] font-extralight leading-[18px]">
@@ -141,12 +138,9 @@ const ProposalProjection = ({
             </div>
             <div className="flex justify-center items-center gap-2 px-4 py-2 rounded-[100px] bg-[#FFFFFF05] w-[158px]">
               <p className="text-[14px] font-bold leading-[21px]">
-                {quorumRequired.split('.')[0]}
                 {Number(quorumRequired) > 0 ? (
-                  <span className="text-xs leading-[18px]">
-                    .{quorumRequired.split('.')[1]}
-                  </span>
-                ) : null}
+                  <span className="">{quorumRequired}</span>
+                ) : null}{' '}
                 %
               </p>
               <p className="text-[rgba(255,255,255,0.50)] text-[12px] font-extralight leading-[18px]">
