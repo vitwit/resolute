@@ -17,6 +17,7 @@ import useAccount from '@/custom-hooks/useAccount';
 import useSwaps from '@/custom-hooks/useSwaps';
 import {
   resetTx,
+  resetTxDestSuccess,
   setAmountIn,
   setAmountOut,
   setDestAsset,
@@ -404,6 +405,15 @@ const IBCSwap = () => {
 
   useEffect(() => {
     dispatch(resetTx());
+    dispatch(setSourceChain(null));
+    dispatch(setSourceAsset(null));
+    dispatch(setDestChain(null));
+    dispatch(setDestAsset(null));
+    dispatch(setAmountIn(''));
+    dispatch(setAmountOut(''));
+    dispatch(setToAddress(''));
+    dispatch(resetTx());
+    dispatch(resetTxDestSuccess());
   }, []);
 
   const validateAllInputs = () => {
