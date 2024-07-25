@@ -54,12 +54,12 @@ const DialogVerifyAccount = ({ walletAddress }: { walletAddress: string }) => {
             <div className="flex flex-col items-center gap-6">
               <Image
                 src={VERIFY_ILLUSTRATION}
-                width={100}
-                height={100}
+                width={60}
+                height={60}
                 alt="Verify Ownership"
               />
               <div className="flex items-center flex-col gap-2">
-                <div className="text-h1 !font-semibold">Ownership</div>
+                <div className="text-h2 !font-bold">Ownership</div>
                 <div className="text-b1-light">
                   Please verify your account ownership to proceed.
                 </div>
