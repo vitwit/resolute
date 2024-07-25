@@ -114,6 +114,7 @@ const initialState: MultisigState = {
     },
   },
   txns: {
+    Count: [],
     list: [],
     status: TxStatus.INIT,
     error: '',
