@@ -102,6 +102,46 @@ func (h *Handler) GetTransactions(c echo.Context) error {
 		})
 	}
 
+	//count of transaction status
+
+	var rows1 *sql.Rows
+	rows1, err = h.DB.Query(`SELECT CASE WHEN t.status = 'FAILED' THEN 'failed' WHEN t.status = 'SUCCESS' THEN 'completed' WHEN jsonb_array_length(t.signatures) >= a.threshold THEN 'to-broadcast' ELSE 'to-sign' END AS computed_status, COUNT(*) AS count FROM transactions t JOIN multisig_accounts a ON t.multisig_address = a.address WHERE t.multisig_address = $1 GROUP BY computed_status`, address)
+
+	if err != nil {
+		if rows1 != nil && sql.ErrNoRows == rows1.Err() {
+			return c.JSON(http.StatusBadRequest, model.ErrorResponse{
+				Status:  "error",
+				Message: fmt.Sprintf("no transactions with address %s", address),
+				Log:     rows1.Err().Error(),
+			})
+		}
+
+		return c.JSON(http.StatusInternalServerError, model.ErrorResponse{
+			Status:  "error",
+			Message: "failed to query transaction",
+			Log:     err.Error(),
+		})
+	}
+	defer rows1.Close()
+
+	txCount := make([]schema.TransactionCount, 0)
+	for rows1.Next() {
+		var txC schema.TransactionCount
+		if err := rows1.Scan(
+			&txC.ComputedStatus,
+			&txC.Count,
+		); err != nil {
+			return c.JSON(http.StatusInternalServerError, model.ErrorResponse{
+				Status:  "error",
+				Message: "failed to decode transaction",
+				Log:     err.Error(),
+			})
+		}
+		txCount = append(txCount, txC)
+	}
+
+	//ends here
+
 	status := utils.GetStatus(c.QueryParam("status"))
 	var rows *sql.Rows
 	if status == model.Pending {
@@ -160,6 +200,7 @@ func (h *Handler) GetTransactions(c echo.Context) error {
 	return c.JSON(http.StatusOK, model.SuccessResponse{
 		Data:   transactions,
 		Status: "success",
+		Count:  txCount,
 	})
 }
 

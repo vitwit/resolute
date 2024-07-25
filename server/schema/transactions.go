@@ -19,6 +19,11 @@ type Transaction struct {
 	CreatedAt       time.Time        `pg:"created_at,use_zero" json:"created_at"`
 }
 
+type TransactionCount struct {
+	ComputedStatus string `pg:"computed_status" json:"computed_status"`
+	Count          int    `pg:"count" json:"count"`
+}
+
 type AllTransactionResult struct {
 	ID              int              `pg:"id,pk" json:"id"`
 	MultisigAddress string           `pg:"multisig_address,use_zero" json:"multisig_address"`
