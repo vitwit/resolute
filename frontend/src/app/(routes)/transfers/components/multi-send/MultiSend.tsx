@@ -112,9 +112,9 @@ const MultiSend = ({ chainID }: { chainID: string }) => {
   }, [selectedNetwork, isWalletConnected]);
 
   return (
-    <div className="flex-1 flex flex-col-reverse desktop:flex-row gap-10 justify-between items-center">
+    <div className="flex-1 flex flex-col-reverse md:flex-row gap-10 justify-between items-center">
       <div
-        className={`max-w-[600px] desktop:max-w-[550px] w-full ${txnLoading ? 'opacity-50' : ''}`}
+        className={`w-[600px] md:min-w-[550px] ${txnLoading ? 'opacity-50' : ''}`}
       >
         <div className="single-send-box">
           <Box
@@ -163,9 +163,7 @@ const MultiSend = ({ chainID }: { chainID: string }) => {
           </div>
         </div>
       </div>
-      {msgs.length && txnLoading ? (
-        <MultiSendLoading chainID={chainID} msgs={msgs} />
-      ) : null}
+      <MultiSendLoading chainID={chainID} msgs={msgs} />
     </div>
   );
 };
@@ -185,14 +183,16 @@ const MultiSendLoading = ({
   const chainColor = get(allNetworks?.[chainID], 'config.theme.primaryColor');
 
   const { getOriginDenomInfo } = useGetChainInfo();
-  const originDenomInfo = getOriginDenomInfo(
-    msgs[0].value?.amount?.[0]?.denom || ''
-  );
-  const totalAmount = getTotalAmount(originDenomInfo, msgs);
+  const originDenomInfo = msgs?.length
+    ? getOriginDenomInfo(msgs?.[0].value?.amount?.[0]?.denom || '')
+    : null;
+  const totalAmount = originDenomInfo
+    ? getTotalAmount(originDenomInfo, msgs)
+    : 0;
   const firstAddress = msgs?.[0]?.value?.toAddress || '';
 
   return (
-    <div className="space-y-2 w-full max-w-[600px]">
+    <div className="space-y-8 w-full max-w-[600px] md:px-10">
       <TxnLoading
         fromAddress={fromAddress}
         toChainLogo={chainLogo}
@@ -204,20 +204,34 @@ const MultiSendLoading = ({
       />
       <div className="px-6 py-4 rounded-2xl bg-[#FFFFFF14] text-[14px] space-y-2">
         <div className="flex items-center gap-2">
-          <div className="flex items-center">
+          <div className="flex items-center gap-[2px]">
             <Image src={ALERT_ICON} width={24} height={24} alt="" />
             <div className="text-[#FFC13C]">Important</div>
           </div>
-          <div className="text-[#FFFFFF80]">
-            Transaction pending<span className="dots-flashing"></span>
-          </div>
+          <div className="text-[#FFFFFFad]">Multi Transfer</div>
         </div>
-        <div className="">
-          You are sending{' '}
-          <span className="font-medium">
-            {totalAmount} {originDenomInfo.originDenom}
-          </span>{' '}
-          to <span className="font-medium">{msgs.length} addresses</span>
+        <div className="flex gap-[26px]">
+          <div></div>
+          <div className="text-[#ffffff80]">
+            {msgs?.length ? (
+              <span>
+                You are sending{' '}
+                {totalAmount ? (
+                  <span className="font-medium">
+                    {totalAmount} {originDenomInfo?.originDenom}
+                  </span>
+                ) : (
+                  <span>tokens</span>
+                )}{' '}
+                to <span className="font-medium">{msgs.length} addresses</span>
+              </span>
+            ) : (
+              <>
+                Provide all the required fields to continue with the
+                transaction.
+              </>
+            )}
+          </div>
         </div>
       </div>
     </div>

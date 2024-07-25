@@ -29,7 +29,7 @@ const SwapSummary = () => {
         </>
       ) : (
         <>
-          Provide all the required information to continue with the transaction.
+          Provide all the required fields to continue with the transaction.
         </>
       )}
     </div>
