@@ -24,7 +24,12 @@ const SendForm = (props: SendFormProps) => {
   const dispatch = useAppDispatch();
   const { getAllAssets, getParsedAsset } = useGetAllAssets();
   const { allAssets } = getAllAssets(chainID, true);
-  const { handleSubmit, control, reset } = useForm({
+  const {
+    handleSubmit,
+    control,
+    reset,
+    formState: { errors },
+  } = useForm({
     defaultValues: {
       amount: '',
       recipient: '',
@@ -126,6 +131,7 @@ const SendForm = (props: SendFormProps) => {
                     sx={{
                       ...customMUITextFieldStyles,
                     }}
+                    required
                     placeholder="Address"
                     fullWidth
                     InputProps={{
@@ -169,6 +175,9 @@ const SendForm = (props: SendFormProps) => {
                           <Controller
                             name="selectedAsset"
                             control={control}
+                            rules={{
+                              required: 'Please select asset',
+                            }}
                             render={({ field }) => (
                               <Select
                                 {...field}
@@ -210,6 +219,9 @@ const SendForm = (props: SendFormProps) => {
                   />
                 )}
               />
+              <div className="text-end text-[12px] h-[18px] text-[#ff5656]">
+                {errors?.selectedAsset?.message}
+              </div>
             </div>
           </div>
         </div>
