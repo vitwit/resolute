@@ -42,12 +42,12 @@ const DialogConfirmExitSession = ({
             <div className="flex flex-col items-center gap-6">
               <Image
                 src={LOGOUT_ICON}
-                width={100}
-                height={100}
+                width={60}
+                height={60}
                 alt="Verify Ownership"
               />
               <div className="flex items-center flex-col gap-2">
-                <div className="text-h1">Logout</div>
+                <div className="text-[18px] font-bold">Logout</div>
                 <div className="text-b1-light">
                   Are you sure you want to logout?
                 </div>

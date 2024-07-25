@@ -3,19 +3,19 @@ import Image from 'next/image';
 
 const Footer = () => {
   return (
-    <div className="footer-bg">
+    <div className="footer-bg mt-8">
       <div className="flex justify-between w-full">
         <div>
           <Image
             src="/resolute-logo.png"
-            width={205}
+            width={180}
             height={55}
             alt="resolute-logo"
           />
         </div>
         <div className="flex gap-4 justify-end">
           <a
-            href="https://t.me/yourtelegramchannel"
+            href="https://t.me/+3bXmS6GE4HRjYmU1"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -28,7 +28,7 @@ const Footer = () => {
             />
           </a>
           <a
-            href="https://t.me/yourtelegramchannel"
+            href="https://twitter.com/vitwit_"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -41,7 +41,7 @@ const Footer = () => {
             />
           </a>
           <a
-            href="https://t.me/yourtelegramchannel"
+            href="https://discord.com/invite/3DFmK7dG"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -55,7 +55,7 @@ const Footer = () => {
         ecosystem and validator operations​ (Vitwit)​.
       </div>
       <div className="secondary-text text-center w-full">
-        All right reserved at Vitwit 2024
+        All right reserved at @ Vitwit 2024
       </div>
     </div>
   );

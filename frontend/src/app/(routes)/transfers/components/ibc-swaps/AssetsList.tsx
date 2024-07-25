@@ -13,11 +13,13 @@ export default function AssetsAutocomplete({
   handleChange,
   selectedAsset,
   assetsLoading,
+  disabled,
 }: {
   options: AssetConfig[];
   handleChange: (option: AssetConfig | null) => void;
   selectedAsset: AssetConfig | null;
   assetsLoading: boolean;
+  disabled: boolean;
 }) {
   /* eslint-disable @typescript-eslint/no-explicit-any */
   const renderOption = (props: any, option: AssetConfig) => (
@@ -63,7 +65,7 @@ export default function AssetsAutocomplete({
       }}
       sx={{
         '& .MuiInputBase-input': {
-          color: 'white',
+          color: '#ffffffad',
           fontSize: '14px',
           fontWeight: 300,
           fontFamily: 'Libre Franklin',
@@ -72,7 +74,7 @@ export default function AssetsAutocomplete({
           border: 'none',
         },
         '& .MuiSvgIcon-root': {
-          color: 'white',
+          color: '#ffffff80',
         },
       }}
     />
@@ -82,7 +84,7 @@ export default function AssetsAutocomplete({
     <Autocomplete
       disablePortal
       fullWidth
-      id="chain-autocomplete"
+      id="assets-autocomplete"
       options={options}
       getOptionLabel={(option: AssetConfig) => option.symbol}
       renderOption={renderOption}
@@ -90,11 +92,12 @@ export default function AssetsAutocomplete({
       noOptionsText={<NoOptions text="No Assets" />}
       onChange={(_, newValue) => handleChange(newValue)}
       value={selectedAsset}
+      disabled={disabled}
       PaperComponent={({ children }) => (
         <Paper
           style={{
             background: '#FFFFFF14',
-            color: 'white',
+            color: '#ffffffad',
             borderRadius: '16px',
             backdropFilter: 'blur(15px)',
             marginTop: '8px',

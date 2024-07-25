@@ -17,6 +17,7 @@ import { MultisigAddressPubkey } from '@/types/multisig';
 import { fromBech32 } from '@cosmjs/encoding';
 import { SUPPORTED_WALLETS } from './constants';
 import { FAILED_TO_FETCH } from './errors';
+import { FastAverageColor } from 'fast-average-color';
 import ReactGA from 'react-ga';
 
 export const trackEvent = (category: string, action: string, label: string) => {
@@ -575,3 +576,8 @@ export const addChainIDParam = (uri: string, chainID: string) => {
   }
   return updatedURI;
 };
+
+export const getFAC = () => {
+  const fac = new FastAverageColor();
+  return fac;
+}

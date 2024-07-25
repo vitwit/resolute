@@ -16,7 +16,6 @@ const MemoField = ({ control }: { control: any }) => {
           {...field}
           fullWidth
           type="text"
-          autoFocus={true}
           sx={customTextFieldStyles}
         />
       )}

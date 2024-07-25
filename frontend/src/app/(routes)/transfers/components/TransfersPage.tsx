@@ -7,7 +7,9 @@ import MultiSendPage from './multi-send/MultiSendPage';
 import IBCSwapPage from './ibc-swaps/IBCSwapPage';
 import { setConnectWalletOpen } from '@/store/features/wallet/walletSlice';
 import EmptyScreen from '@/components/common/EmptyScreen';
-import SingleTransfer from './single-send/SingleTransfer';
+import PageHeader from '@/components/common/PageHeader';
+import { TRANSFERS_TYPES } from '@/utils/constants';
+import SingleSend from './single-send/SingleSend';
 
 const TransfersPage = ({ chainIDs }: { chainIDs: string[] }) => {
   const [sortedAssets, authzSortedAssets] = useSortedAssets(chainIDs, {
@@ -39,11 +41,15 @@ const TransfersPage = ({ chainIDs }: { chainIDs: string[] }) => {
   }, [paramsTransferType]);
 
   return (
-    <div className="h-full">
+    <div className="space-y-6 h-full flex flex-col py-10">
+      <PageHeader
+        title={TRANSFERS_TYPES?.[transferType].title}
+        description={TRANSFERS_TYPES?.[transferType].title}
+      />
       {isWalletConnected ? (
-        <div className="h-full">
+        <>
           {transferType === 'single' ? (
-            <SingleTransfer
+            <SingleSend
               sortedAssets={isAuthzMode ? authzSortedAssets : sortedAssets}
             />
           ) : null}
@@ -51,18 +57,16 @@ const TransfersPage = ({ chainIDs }: { chainIDs: string[] }) => {
             <MultiSendPage chainID={chainIDs[0]} />
           ) : null}
           {transferType === 'ibc-swap' ? <IBCSwapPage /> : null}
-        </div>
+        </>
       ) : (
-        <div className="py-10 h-full flex flex-col">
-          <div className="flex-1 flex items-center justify-center mt-16">
-            <EmptyScreen
-              title="Connect your wallet"
-              description="Connect your wallet to access your account on Resolute"
-              hasActionBtn={true}
-              btnText={'Connect Wallet'}
-              btnOnClick={connectWalletOpen}
-            />
-          </div>
+        <div className="flex-1 flex items-center justify-center">
+          <EmptyScreen
+            title="Connect your wallet"
+            description="Connect your wallet to access your account on Resolute"
+            hasActionBtn={true}
+            btnText={'Connect Wallet'}
+            btnOnClick={connectWalletOpen}
+          />
         </div>
       )}
     </div>

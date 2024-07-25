@@ -26,6 +26,7 @@ import useShortCuts from '@/custom-hooks/useShortCuts';
 import TransactionStatusPopup from '../txn-status-popups/TransactionStatusPopup';
 import IBCSwapTxStatus from '../IBCSwapTxStatus';
 import useFetchPriceInfo from '@/custom-hooks/useFetchPriceInfo';
+import Footer from '../common/Footer';
 
 const FixedLayout = ({ children }: { children: React.ReactNode }) => {
   const dispatch = useAppDispatch();
@@ -99,8 +100,14 @@ const FixedLayout = ({ children }: { children: React.ReactNode }) => {
       <main className="main">
         <div className="main-container">
           <SideBar />
-          <section className="dynamic-section">{children}</section>
+          <section className="dynamic-section">
+            {children}
+            <footer>
+              <Footer />
+            </footer>
+          </section>
         </div>
+
       </main>
       <TransactionStatusPopup />
       <IBCSwapTxStatus />

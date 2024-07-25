@@ -12,10 +12,14 @@ import useAuthzExecHelper from '@/custom-hooks/useAuthzExecHelper';
 import { setIBCSendAlert, txBankSend } from '@/store/features/bank/bankSlice';
 import { txTransfer } from '@/store/features/ibc/ibcSlice';
 import Image from 'next/image';
-import { shortenName } from '@/utils/util';
+import { shortenAddress, shortenName } from '@/utils/util';
 import { Box } from '@mui/material';
 import { ALL_NETWORKS_ICON } from '@/utils/constants';
 import AssetsDropDown from './AssetsDropDown';
+import TxnLoading from '../txn-loading/TxnLoading';
+import { get } from 'lodash';
+import { TxStatus } from '@/types/enums';
+import { ALERT_ICON } from '@/constants/image-names';
 
 const SingleSend = ({ sortedAssets }: { sortedAssets: ParsedAsset[] }) => {
   const dispatch = useAppDispatch();
@@ -38,6 +42,8 @@ const SingleSend = ({ sortedAssets }: { sortedAssets: ParsedAsset[] }) => {
   const nameToChainIDs = useAppSelector((state) => state.wallet.nameToChainIDs);
   const isWalletConnected = useAppSelector((state) => state.wallet.connected);
   const balancesLoading = useAppSelector((state) => state.bank.balancesLoading);
+  const sendTxStatus = useAppSelector((state) => state.bank.tx.status);
+  const ibcTxStatus = useAppSelector((state) => state.ibc.txStatus);
 
   const feeAmount = selectedAsset
     ? getChainInfo(selectedAsset.chainID).feeAmount
@@ -103,7 +109,6 @@ const SingleSend = ({ sortedAssets }: { sortedAssets: ParsedAsset[] }) => {
     }
 
     const { rpc } = getVoteTxInputs(selectedAsset.chainID);
-
     if (isNativeTransaction(selectedAsset.chainID, data.address)) {
       const txInputs = txSendInputs(
         selectedAsset.chainID,
@@ -167,6 +172,9 @@ const SingleSend = ({ sortedAssets }: { sortedAssets: ParsedAsset[] }) => {
     dispatch(setChangeNetworkDialogOpen({ open: true, showSearch: false }));
   };
 
+  const sendTxLoading =
+    sendTxStatus === TxStatus.PENDING || ibcTxStatus === TxStatus.PENDING;
+
   useEffect(() => {
     if (selectedNetwork.chainName && isWalletConnected) {
       const chainID = nameToChainIDs[selectedNetwork.chainName];
@@ -178,48 +186,129 @@ const SingleSend = ({ sortedAssets }: { sortedAssets: ParsedAsset[] }) => {
   }, [selectedNetwork]);
 
   return (
-    <div className="single-send-box">
-      <Box
-        sx={{
-          background:
-            chainGradient ||
-            'linear-gradient(180deg, #72727360 0%, #12131C80 100%)',
-        }}
-        className="select-network"
+    <div className="flex-1 flex flex-col-reverse md:flex-row gap-10 justify-between items-center">
+      <div
+        className={`w-[600px] md:min-w-[550px] ${sendTxLoading ? 'opacity-50' : ''}`}
       >
-        <div
-          onClick={() => changeNetwork()}
-          className="flex items-center gap-2 cursor-pointer w-fit"
-        >
-          <Image src={chainLogo} height={40} width={40} alt="" />
-          <div className="text-[20px] font-bold capitalize">
-            {shortenName(selectedNetwork.chainName, 15) || 'All Networks'}
+        <div className="single-send-box">
+          <Box
+            sx={{
+              background:
+                chainGradient ||
+                'linear-gradient(180deg, #72727360 0%, #12131C80 100%)',
+            }}
+            className="select-network"
+          >
+            <div
+              onClick={() => changeNetwork()}
+              className="flex items-center gap-2 cursor-pointer w-fit"
+            >
+              <Image src={chainLogo} height={40} width={40} alt="" />
+              <div className="text-[20px] font-bold capitalize">
+                {shortenName(selectedNetwork.chainName, 15) || 'All Networks'}
+              </div>
+              <Image src="/drop-down-icon.svg" height={24} width={24} alt="" />
+            </div>
+          </Box>
+          <div className="py-10 pt-12 px-6 flex gap-10 flex-col justify-between h-[630px]">
+            <div>
+              <AssetsDropDown
+                selectedAsset={selectedAsset}
+                sortedAssets={sortedAssets}
+                handleAssetChange={handleAssetChange}
+                loading={!!balancesLoading}
+              />
+            </div>
+            <SingleSendForm
+              control={control}
+              handleSubmit={handleSubmit}
+              onSubmit={onSubmit}
+              feeAmount={feeAmount}
+              setValue={setValue}
+              selectedAsset={selectedAsset}
+              isIBC={isIBC}
+              checkIfIBCTransaction={checkIfIBCTransaction}
+            />
           </div>
-          <Image src="/drop-down-icon.svg" height={24} width={24} alt="" />
         </div>
-      </Box>
-      <div className="py-10 pt-12 px-6 flex gap-10 flex-col justify-between h-[630px]">
-        <div>
-          <AssetsDropDown
-            selectedAsset={selectedAsset}
-            sortedAssets={sortedAssets}
-            handleAssetChange={handleAssetChange}
-            loading={!!balancesLoading}
-          />
-        </div>
-        <SingleSendForm
-          control={control}
-          handleSubmit={handleSubmit}
-          onSubmit={onSubmit}
-          feeAmount={feeAmount}
-          setValue={setValue}
-          selectedAsset={selectedAsset}
-          isIBC={isIBC}
-          checkIfIBCTransaction={checkIfIBCTransaction}
-        />
       </div>
+      <SingleSendLoading
+        chainID={selectedAsset?.chainID || ''}
+        isIBC={isIBC}
+        toAddress={getValues('address')}
+        amount={getValues('amount')}
+        displayDenom={selectedAsset?.displayDenom || ''}
+      />
     </div>
   );
 };
 
 export default SingleSend;
+
+const SingleSendLoading = ({
+  chainID,
+  isIBC,
+  toAddress,
+  amount,
+  displayDenom,
+}: {
+  chainID: string;
+  isIBC: boolean;
+  toAddress: string;
+  amount: string;
+  displayDenom: string;
+}) => {
+  const { getChainInfo, getChainIDFromAddress } = useGetChainInfo();
+  const destinationChainID = isIBC ? getChainIDFromAddress(toAddress) : chainID;
+  const { address: fromAddress, chainLogo: fromChainLogo } =
+    getChainInfo(chainID);
+  const allNetworks = useAppSelector((state) => state.common.allNetworksInfo);
+  const { chainLogo: toChainLogo } = getChainInfo(destinationChainID);
+  const fromChainColor = get(
+    allNetworks?.[chainID],
+    'config.theme.primaryColor'
+  );
+  const toChainColor = get(
+    allNetworks?.[destinationChainID],
+    'config.theme.primaryColor'
+  );
+  const isDataProvided = amount?.length && chainID?.length && toAddress?.length;
+  return (
+    <div className="space-y-8 w-full max-w-[600px] md:px-10">
+      <TxnLoading
+        fromAddress={fromAddress}
+        toChainLogo={toChainLogo}
+        fromChainColor={fromChainColor}
+        toChainColor={toChainColor}
+        fromChainLogo={fromChainLogo}
+        toAddress={toAddress}
+        msgsCount={1}
+      />
+      <div className="px-6 py-4 rounded-2xl bg-[#FFFFFF14] text-[14px] space-y-2">
+        <div className="flex items-center gap-2">
+          <div className="flex items-center">
+            <Image src={ALERT_ICON} width={24} height={24} alt="" />
+            <div className="text-[#FFC13C]">Important</div>
+          </div>
+          <div className="text-[#FFFFFFad]">Single Transfer</div>
+        </div>
+        <div className="text-[#ffffff80]">
+          {isDataProvided ? (
+            <span>
+              {' '}
+              You are sending{' '}
+              <span className="font-medium">
+                {amount} {displayDenom}
+              </span>{' '}
+              to {shortenAddress(toAddress, 20)}
+            </span>
+          ) : (
+            <span>
+              Provide all the required fields to continue with the transaction.
+            </span>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};

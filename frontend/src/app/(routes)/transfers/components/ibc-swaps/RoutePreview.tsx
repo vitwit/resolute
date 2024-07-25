@@ -21,7 +21,7 @@ const RoutePreview = ({
       <div className="flex items-center justify-between w-full">
         <div className="text-b1 text-[#ffffff80]">Route Preview</div>
         <button onClick={onClose} className="secondary-btn">
-          close
+          Close
         </button>
       </div>
       <div className="bg-[#ffffff06] flex-1 p-6 h-full w-full rounded-2xl border-[1px] border-[#ffffff13]">
