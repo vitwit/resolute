@@ -37,6 +37,7 @@ const Transactions = ({
     dispatch(getTxns({ address: multisigAddress, status: status }));
   };
 
+  const txnsCount = useAppSelector((state) => state.multisig.txns.Count)
   const txnsStatus = useAppSelector((state) => state.multisig.txns.status);
   const deleteTxnRes = useAppSelector((state) => state.multisig.deleteTxnRes);
   const signTxStatus = useAppSelector(
@@ -127,6 +128,7 @@ const Transactions = ({
       <div className="space-y-6">
         <TransactionsFilters
           txnsType={txnsType}
+          txnsCount={txnsCount}
           handleTxnsTypeChange={handleTxnsTypeChange}
         />
         {txnsStatus === TxStatus.PENDING ? (
@@ -157,16 +159,32 @@ export default Transactions;
 const TransactionsFilters = ({
   handleTxnsTypeChange,
   txnsType,
+  txnsCount,
 }: {
   txnsType: string;
   handleTxnsTypeChange: (type: string) => void;
+   /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+  txnsCount: any;
 }) => {
+
+  const getCount = (option: string) => {
+    let count = 0;
+     /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+    txnsCount && txnsCount.forEach((t: any) => {
+      if (t?.computed_status?.toLowerCase() === option.toLowerCase()) {
+        count = t?.count
+      }
+    })
+
+    return count
+  }
+
   return (
     <div className="flex gap-4 flex-wrap">
       {TXNS_TYPES.map((type) => (
         <TransactionFilterItem
           key={type.option}
-          name={type.value}
+          name={`${type.value} (${getCount(type.option)})`}
           isSelected={type.option === txnsType}
           onClick={() => handleTxnsTypeChange(type.option)}
         />

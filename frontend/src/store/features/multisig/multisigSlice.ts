@@ -748,6 +748,7 @@ export const multisigSlice = createSlice({
         state.txns.status = TxStatus.IDLE;
         state.txns.error = '';
         state.txns.list = action.payload?.data || [];
+        state.txns.Count  = action.payload?.count || []
       })
       .addCase(getTxns.rejected, (state, action) => {
         state.txns.status = TxStatus.REJECTED;

@@ -198,10 +198,16 @@ interface Txn {
   threshold?: number;
 }
 
+interface TxnCount {
+  computed_status: string;
+  count: number;
+}
+
 interface Txns {
   list: Txn[];
   status: TxStatus;
   error: string;
+  Count: TxnCount[]
 }
 
 interface SignTxInputs {
