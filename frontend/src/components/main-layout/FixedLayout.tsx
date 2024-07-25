@@ -107,7 +107,6 @@ const FixedLayout = ({ children }: { children: React.ReactNode }) => {
             </footer>
           </section>
         </div>
-
       </main>
       <TransactionStatusPopup />
       <IBCSwapTxStatus />

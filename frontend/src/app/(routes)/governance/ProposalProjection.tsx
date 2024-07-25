@@ -93,7 +93,7 @@ const ProposalProjection = ({
   return (
     <div className="flex flex-col gap-6 p-6 rounded-2xl bg-[#FFFFFF05] min-w-[380px]">
       <div className="flex flex-col gap-2">
-        <p className="text-b1">Proposal Projection</p>
+        <p className="text-h2">Proposal Projection</p>
         <div className="divider-line"></div>
       </div>
       {proposalTallyStatus === TxStatus.PENDING ||

@@ -272,10 +272,10 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
                         <div className="flex gap-1 items-center">
                           {isStatusVoting ? (
                             <>
-                              <p className="text-[rgba(255,255,255,0.50)] text-xs font-extralight leading-[normal]">
+                              <p className="text-[rgba(255,255,255,0.50)] text-xs font-extralight leading-[18px]">
                                 Voting
                               </p>
-                              <p className="text-sm font-normal leading-[normal]">
+                              <p className="text-sm font-normal leading-[21px]">
                                 ends in{' '}
                                 {getTimeDifferenceToFutureDate(
                                   get(proposalInfo, 'voting_end_time')
@@ -284,10 +284,10 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
                             </>
                           ) : (
                             <>
-                              <p className="text-[rgba(255,255,255,0.50)] text-xs font-extralight leading-[normal]">
+                              <p className="text-[rgba(255,255,255,0.50)] text-xs font-extralight leading-[18px]">
                                 Deposit
                               </p>
-                              <p className="text-sm font-normal leading-[normal]">
+                              <p className="text-sm font-normal leading-[21px]">
                                 ends in{' '}
                                 {getTimeDifferenceToFutureDate(
                                   get(proposalInfo, 'deposit_end_time')
@@ -297,7 +297,7 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
                           )}
                         </div>
                         <div className="flex gap-1 items-center">
-                          <p className="text-[rgba(255,255,255,0.50)] text-xs font-extralight leading-[normal]">
+                          <p className="text-[rgba(255,255,255,0.50)] text-xs font-extralight leading-[18px]">
                             on
                           </p>
                           <Image
@@ -307,7 +307,7 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
                             alt="Network-logo"
                             draggable={false}
                           />
-                          <p className="text-sm font-normal leading-[normal] capitalize">
+                          <p className="text-sm font-normal leading-[21px] capitalize">
                             {chainName}
                           </p>
                         </div>
@@ -441,7 +441,7 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
                   ) : (
                     <div className="flex flex-col gap-6 p-6 rounded-2xl bg-[#FFFFFF05]">
                       <div className="flex flex-col gap-2">
-                        <p className="text-sm font-normal leading-[21px]">
+                        <p className="text-h2">
                           Current Status
                         </p>
                         <div className="divider-line"></div>
@@ -485,7 +485,7 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
 
                 <div className="flex flex-col gap-6 p-6 rounded-2xl bg-[#FFFFFF05]">
                   <div className="flex flex-col gap-2">
-                    <p className="text-b1">Proposal Timeline</p>
+                    <p className="text-h2">Proposal Timeline</p>
                     <div className="divider-line"></div>
                   </div>
                   <div className="">
