@@ -126,7 +126,7 @@ const ProposalItem = ({
         {selectedProposal ? null : (
           <div className="flex items-end justify-end">
             <button
-              onClick={() => {
+              onClick={(e) => {
                 if (!isWalletConnected) {
                   dispatch(
                     setError({
@@ -141,6 +141,7 @@ const ProposalItem = ({
                 } else {
                   setDepositDialogOpen(true);
                 }
+                e.stopPropagation();
               }}
               className="primary-btn w-20"
             >
