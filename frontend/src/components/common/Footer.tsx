@@ -3,12 +3,12 @@ import Image from 'next/image';
 
 const Footer = () => {
   return (
-    <div className="footer-bg">
+    <div className="footer-bg mt-8">
       <div className="flex justify-between w-full">
         <div>
           <Image
             src="/resolute-logo.png"
-            width={205}
+            width={180}
             height={55}
             alt="resolute-logo"
           />
@@ -55,7 +55,7 @@ const Footer = () => {
         ecosystem and validator operations​ (Vitwit)​.
       </div>
       <div className="secondary-text text-center w-full">
-        All right reserved at Vitwit 2024
+        All right reserved at @ Vitwit 2024
       </div>
     </div>
   );
