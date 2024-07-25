@@ -30,7 +30,7 @@ const DashboardLoading = () => {
       </div> */}
 
           {/* <AssetsTable chainIDs={chainIDs} /> Skeleton*/}
-          <div className="flex flex-col items-start gap-2 w-[736px] p-6">
+          <div className="flex flex-col items-start gap-2 w-[690px] p-6">
             <table className="relative w-full">
               <thead className="w-full">
                 <tr>

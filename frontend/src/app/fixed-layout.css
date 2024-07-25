@@ -41,7 +41,7 @@
 }
 
 .dynamic-section {
-  @apply ml-[240px] mt-[60px] w-full px-10;
+  @apply ml-[240px] mt-[60px] w-full;
   background: radial-gradient(
     50% 50% at 50% 50%,
     rgba(68, 83, 223, 0.2) 0%,
