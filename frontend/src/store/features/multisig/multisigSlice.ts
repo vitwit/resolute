@@ -287,10 +287,10 @@ export const createTxn = createAsyncThunk(
         data.data
       );
       return response.data;
-    } catch (error) {
-      if (error instanceof AxiosError)
-        return rejectWithValue({ message: error.message });
-      return rejectWithValue({ message: ERR_UNKNOWN });
+      /* eslint-disable @typescript-eslint/no-explicit-any */
+    } catch (error: any) {
+      const errMsg = error?.response?.data?.message || ERR_UNKNOWN;
+      return rejectWithValue({ message: errMsg });
     }
   }
 );

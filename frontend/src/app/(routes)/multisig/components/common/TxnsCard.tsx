@@ -8,6 +8,7 @@ import {
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import {
+  createTxn,
   deleteTxn,
   setVerifyDialogOpen,
 } from '@/store/features/multisig/multisigSlice';
@@ -26,6 +27,8 @@ import CustomDialog from '@/components/common/CustomDialog';
 import BroadCastTxn from './BroadCastTxn';
 import SignTxn from './SignTxn';
 import useVerifyAccount from '@/custom-hooks/useVerifyAccount';
+import { fee } from '@/txns/execute';
+import DialogRepeatTxn from '../DialogRepeatTxn';
 
 export const TxnsCard = ({
   txn,
@@ -35,6 +38,7 @@ export const TxnsCard = ({
   chainID,
   isHistory,
   onViewError,
+  allowRepeat,
 }: {
   txn: Txn;
   currency: Currency;
@@ -43,6 +47,7 @@ export const TxnsCard = ({
   chainID: string;
   isHistory: boolean;
   onViewError?: (errMsg: string) => void;
+  allowRepeat?: boolean;
 }) => {
   const dispatch = useAppDispatch();
   const { getChainInfo } = useGetChainInfo();
@@ -54,6 +59,7 @@ export const TxnsCard = ({
 
   const [showAll, setShowAll] = useState(false);
   const [viewRawOpen, setViewRawOpen] = useState(false);
+  const [repeatTxnOpen, setRepeatTxnOpen] = useState(false);
   const { messages } = txn;
   const pubKeys = txn.pubkeys || [];
   const isMember = isMultisigMember(pubKeys, walletAddress);
@@ -92,6 +98,52 @@ export const TxnsCard = ({
         },
       })
     );
+  };
+
+  const onRepeatTxn = (data: TxnBuilderForm) => {
+    const feeObj = fee(
+      currency.coinMinimalDenom,
+      data.fees.toString(),
+      data.gas
+    );
+    const authToken = getAuthToken(COSMOS_CHAIN_ID);
+    dispatch(
+      createTxn({
+        data: {
+          address: multisigAddress,
+          chain_id: chainID,
+          messages: data.msgs,
+          fee: feeObj,
+          memo: data.memo,
+          gas: data.gas,
+        },
+        queryParams: {
+          address: walletAddress,
+          signature: authToken?.signature || '',
+        },
+      })
+    );
+  };
+
+  const handleRepeatTx = () => {
+    if (isAccountVerified()) {
+      setRepeatTxnOpen(true);
+    } else {
+      dispatch(setVerifyDialogOpen(true));
+    }
+  };
+
+  const confirmRepeatTxn = () => {
+    const gas = txn.fee.gas;
+    const msgs = txn.messages;
+    const memo = txn.memo;
+    const fees = txn.fee.amount;
+    onRepeatTxn({
+      fees: Number(fees[0].amount),
+      memo,
+      gas: Number(gas),
+      msgs,
+    });
   };
 
   useEffect(() => {
@@ -187,7 +239,7 @@ export const TxnsCard = ({
           <div className="flex gap-[2px] items-end">
             <span className="text-b1">{txn.signatures.length}</span>
             <span className="text-small-light">/</span>
-            <span className="text-small-light">{pubKeys.length}</span>
+            <span className="text-small-light">{threshold}</span>
           </div>
         </div>
       )}
@@ -230,6 +282,8 @@ export const TxnsCard = ({
           setOptionsOpen={(value: boolean) => setOptionsOpen(value)}
           hanldeDeleteTxn={hanldeDeleteTxn}
           onViewRaw={() => setViewRawOpen(true)}
+          allowRepeat={!!allowRepeat}
+          onRepeat={handleRepeatTx}
         />
       ) : null}
       <DialogConfirmDelete
@@ -253,6 +307,11 @@ export const TxnsCard = ({
           )}
         </div>
       </CustomDialog>
+      <DialogRepeatTxn
+        open={repeatTxnOpen}
+        onClose={() => setRepeatTxnOpen(false)}
+        confirmRepeat={confirmRepeatTxn}
+      />
     </div>
   );
 };

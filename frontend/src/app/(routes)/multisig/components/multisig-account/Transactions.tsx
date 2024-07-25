@@ -120,8 +120,17 @@ const Transactions = ({
     }
   }, [signTxStatus.status, updateTxStatus.status]);
 
-  // To refetch txns after singing or broadcasting txn
+  // To reset state after singing or broadcasting txn
   useFetchTxns();
+
+  const createRes = useAppSelector((state) => state.multisig.createTxnRes);
+
+  useEffect(() => {
+    if (createRes?.status === 'idle') {
+      setTxnsType('to-sign');
+      fetchTxns('current');
+    }
+  }, [createRes]);
 
   return (
     <div className="space-y-6">
@@ -247,6 +256,7 @@ const TransactionsList = ({
           chainID={chainID}
           isHistory={isHistory}
           onViewError={onViewError}
+          allowRepeat={txnsType === 'completed'}
         />
       ))}
       <DialogTxnFailed
