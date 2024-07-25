@@ -15,7 +15,7 @@ const Footer = () => {
         </div>
         <div className="flex gap-4 justify-end">
           <a
-            href="https://t.me/yourtelegramchannel"
+            href="https://t.me/+3bXmS6GE4HRjYmU1"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -28,7 +28,7 @@ const Footer = () => {
             />
           </a>
           <a
-            href="https://t.me/yourtelegramchannel"
+            href="https://twitter.com/vitwit_"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -41,7 +41,7 @@ const Footer = () => {
             />
           </a>
           <a
-            href="https://t.me/yourtelegramchannel"
+            href="https://discord.com/invite/3DFmK7dG"
             target="_blank"
             rel="noopener noreferrer"
           >

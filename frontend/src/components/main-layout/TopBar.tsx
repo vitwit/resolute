@@ -49,7 +49,7 @@ const TopBar = () => {
         </div>
         <div className="flex items-center gap-4">
           <a
-            href="https://t.me/yourtelegramchannel"
+            href="https://t.me/+3bXmS6GE4HRjYmU1"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -61,7 +61,7 @@ const TopBar = () => {
             />
           </a>
           <a
-            href="https://t.me/yourtelegramchannel"
+            href="https://twitter.com/vitwit_"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -73,7 +73,7 @@ const TopBar = () => {
             />
           </a>
           <a
-            href="https://t.me/yourtelegramchannel"
+            href="https://discord.com/invite/3DFmK7dG"
             target="_blank"
             rel="noopener noreferrer"
           >
