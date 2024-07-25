@@ -17,7 +17,6 @@ import {
 import { useEffect, useState } from 'react';
 import MultisigAccountHeader from './MultisigAccountHeader';
 import Copy from '@/components/common/Copy';
-import { formatStakedAmount } from '@/utils/util';
 import { checkForIBCTokens, parseBalance } from '@/utils/denom';
 import Transactions from './Transactions';
 import Loader from '../common/Loader';
@@ -32,6 +31,7 @@ import { Dialog, DialogContent } from '@mui/material';
 import { dialogBoxPaperPropStyles } from '@/utils/commonStyles';
 import SectionHeader from '@/components/common/SectionHeader';
 import useGetAllAssets from '@/custom-hooks/multisig/useGetAllAssets';
+import NumberFormat from '@/components/common/NumberFormat';
 
 const MultisigAccount = ({
   chainName,
@@ -216,6 +216,11 @@ const MultisigAccountInfo = ({
       denom: coinMinimalDenom,
     },
   ];
+  const stakedBalance = parseBalance(
+    stakedTokens,
+    currency.coinDecimals,
+    currency.coinMinimalDenom
+  );
   const { txnCounts = {} } = multisigAccounts;
   const actionsRequired = txnCounts?.[multisigAccount?.account?.address] || 0;
 
@@ -231,8 +236,9 @@ const MultisigAccountInfo = ({
       <MultisigAccountStats
         actionsRequired={actionsRequired}
         created={getTimeDifferenceToFutureDate(createdTime, true) || '-'}
-        stakedBalance={formatStakedAmount(stakedTokens, currency)}
-        availableBalance={`${availableBalance} ${currency.coinDenom}`}
+        stakedBalance={stakedBalance}
+        availableBalance={availableBalance}
+        displayDenom={currency.coinDenom}
         hasIBCTokens={hasIBCTokens}
         chainID={chainID}
       />
@@ -247,20 +253,18 @@ const MultisigAccountStats = ({
   availableBalance,
   hasIBCTokens,
   chainID,
+  displayDenom,
 }: {
   actionsRequired: number;
   created: string;
-  stakedBalance: string;
-  availableBalance: string;
+  stakedBalance: number;
+  availableBalance: number;
   hasIBCTokens: boolean;
   chainID: string;
+  displayDenom: string;
 }) => {
   const [viewIBC, setViewIBC] = useState(false);
   const stats = [
-    {
-      name: 'Staked Balance',
-      value: stakedBalance,
-    },
     {
       name: 'Actions Required',
       value: actionsRequired,
@@ -272,13 +276,52 @@ const MultisigAccountStats = ({
   ];
   return (
     <div className="flex gap-4 flex-wrap">
-      <MultisigAccountStatsCard
-        key={'Available Balance'}
-        name={'Available Balance'}
-        value={availableBalance}
-        action={() => setViewIBC(true)}
-        actionName={hasIBCTokens ? 'View IBC' : ''}
-      />
+      <div className="stats-card">
+        <div className="text-[14px] font-extralight text-[#ffffff80]">
+          Available Balance
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="text-[18px] text-[#ffffffad] font-bold">
+            <NumberFormat
+              cls=""
+              value={
+                availableBalance < 0.01
+                  ? availableBalance.toString()
+                  : availableBalance.toFixed(2).toString()
+              }
+              type="token"
+              token={displayDenom}
+            />
+          </div>
+          {hasIBCTokens ? (
+            <button
+              className="secondary-btn !font-bold"
+              onClick={() => setViewIBC(true)}
+            >
+              View IBC
+            </button>
+          ) : null}
+        </div>
+      </div>
+      <div className="stats-card">
+        <div className="text-[14px] font-extralight text-[#ffffff80]">
+          Staked Balance
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="text-[18px] text-[#ffffffad] font-bold">
+            <NumberFormat
+              cls=""
+              value={
+                stakedBalance < 0.01
+                  ? stakedBalance.toString()
+                  : stakedBalance.toFixed(2).toString()
+              }
+              type="token"
+              token={displayDenom}
+            />
+          </div>
+        </div>
+      </div>
       {stats.map((stat) => (
         <MultisigAccountStatsCard
           key={stat.name}
@@ -427,7 +470,7 @@ const DialogMultisigAssets = ({
             title="IBC Assets"
             description="IBC assets available on this multisig account"
           />
-          <div className="grid grid-cols-4 gap-6">
+          <div className="flex gap-6">
             {allAssets.length === 0 ? (
               <div className="text-center">No IBC assets found</div>
             ) : (
@@ -436,8 +479,18 @@ const DialogMultisigAssets = ({
                   key={asset.minimalDenom}
                   className="flex gap-1 items-center p-4 bg-[#FFFFFF05] rounded-2xl text-[14px] text-[#ffffffad]"
                 >
-                  <div>{asset.amountInDenom}</div>
-                  <div>{asset.displayDenom}</div>
+                  <div>
+                    <NumberFormat
+                      cls=""
+                      value={
+                        asset.amountInDenom < 0.01
+                          ? asset.amountInDenom.toString()
+                          : asset.amountInDenom.toFixed(2).toString()
+                      }
+                      type="token"
+                      token={asset.displayDenom}
+                    />
+                  </div>
                 </div>
               ))
             )}
