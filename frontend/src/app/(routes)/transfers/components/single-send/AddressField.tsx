@@ -23,7 +23,6 @@ const AddressField = ({
           required
           fullWidth
           type="text"
-          autoFocus={true}
           sx={customTextFieldStyles}
           onBlur={() => {
             checkIfIBCTransaction?.();

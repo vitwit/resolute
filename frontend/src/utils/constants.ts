@@ -354,6 +354,23 @@ export const MULTISIG_DESCRIPTION =
   'A multisig account is an account that requires multiple signatures to sign transactions';
 export const IBC_SWAP_GRADIENT =
   'linear-gradient(180deg, #5A0DA660 0%, #12131C80 100%)';
-export const IBC_SEND_ALERT =
-  'This looks like a IBC transaction. Avoid IBC transfers to centralized exchanges. Your assets may be lost.';
-export const VITWIT_VALIDATOR_DESCRIPTION = 'Vitwit excels in providing top-notch infrastructure services for the Cosmos blockchain ecosystem. We specialize in setting up and managing validators, relayers, and offering expert advisory services.'
+export const IBC_SEND_ALERT = '*Avoid IBC transfer to centralized exchanges';
+export const VITWIT_VALIDATOR_DESCRIPTION =
+  'Vitwit excels in providing top-notch infrastructure services for the Cosmos blockchain ecosystem. We specialize in setting up and managing validators, relayers, and offering expert advisory services.';
+export const TRANSFERS_TYPES: Record<
+  string,
+  { title: string; description: string }
+> = {
+  'multi-send': {
+    title: 'Multi Transfer',
+    description: 'Multi Transfer',
+  },
+  single: {
+    title: 'Single Transfer',
+    description: 'Single Transfer',
+  },
+  'ibc-swap': {
+    title: 'IBC Swap',
+    description: 'IBC Swap',
+  },
+};

@@ -9,7 +9,7 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        customTextColor: '#ffffffad', 
+        customTextColor: '#ffffffad',
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
@@ -20,7 +20,9 @@ const config: Config = {
     screens: {
       lg: '1600px',
       md: '1350px',
-      sm: '1150px'
+      sm: '1150px',
+      max: '1512px',
+      desktop: '1480px',
     },
   },
   plugins: [],

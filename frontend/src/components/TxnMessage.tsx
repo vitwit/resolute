@@ -150,7 +150,7 @@ const TxnMessage = ({
               <span>
                 <div className="common-copy max-w-[176px] inline font-normal">
                   <span className="truncate">
-                    {msgs[0]?.value?.receiver || '-'}
+                    {shortenAddress(msgs[0]?.value?.receiver || '', 15) || '-'}
                   </span>
                 </div>
               </span>

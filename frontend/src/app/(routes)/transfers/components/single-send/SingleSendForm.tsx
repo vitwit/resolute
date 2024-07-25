@@ -6,6 +6,7 @@ import { UseFormSetValue } from 'react-hook-form';
 import CustomSubmitButton from '@/components/CustomButton';
 import { useAppSelector } from '@/custom-hooks/StateHooks';
 import { TxStatus } from '@/types/enums';
+import { IBC_SEND_ALERT } from '@/utils/constants';
 
 type OnSubmit = (data: {
   amount: number | undefined;
@@ -59,12 +60,19 @@ const SingleSendForm = ({
       onSubmit={handleSubmit(onSubmit)}
       className="h-full flex flex-col gap-10 justify-between"
     >
-      <div className="space-y-2">
-        <div className="form-label-text">Enter recipient address</div>
-        <AddressField
-          control={control}
-          checkIfIBCTransaction={checkIfIBCTransaction}
-        />
+      <div className="relative">
+        <div className="space-y-2">
+          <div className="form-label-text">Enter recipient address</div>
+          <AddressField
+            control={control}
+            checkIfIBCTransaction={checkIfIBCTransaction}
+          />
+        </div>
+        {isIBC ? (
+          <div className="absolute right-0 text-[14px] text-[#ffc13cd2]">
+            {IBC_SEND_ALERT}
+          </div>
+        ) : null}
       </div>
       <div>
         <AmountInputWrapper
