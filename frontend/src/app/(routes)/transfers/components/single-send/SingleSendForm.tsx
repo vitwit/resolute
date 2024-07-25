@@ -69,12 +69,13 @@ const SingleSendForm = ({
           />
         </div>
         {isIBC ? (
-          <div className="absolute right-0 text-[14px] text-[#ffc13cd2]">
+          <div className="absolute right-0 mt-1 text-[12px] font-extralight text-[#ffc13cd2]">
             {IBC_SEND_ALERT}
           </div>
         ) : null}
       </div>
-      <div>
+      <div className="space-y-2">
+        <div className="form-label-text">Enter Amount</div>
         <AmountInputWrapper
           control={control}
           quickSelectAmount={quickSelectAmount}

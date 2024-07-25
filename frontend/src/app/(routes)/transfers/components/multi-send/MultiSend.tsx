@@ -10,7 +10,7 @@ import {
 } from '@/store/features/common/commonSlice';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import { Box } from '@mui/material';
-import { ALL_NETWORKS_ICON } from '@/utils/constants';
+import { ALL_NETWORKS_GRADIENT, ALL_NETWORKS_ICON } from '@/utils/constants';
 import Image from 'next/image';
 import { shortenName } from '@/utils/util';
 import Messages from '../Messages';
@@ -112,16 +112,14 @@ const MultiSend = ({ chainID }: { chainID: string }) => {
   }, [selectedNetwork, isWalletConnected]);
 
   return (
-    <div className="flex-1 flex flex-col-reverse md:flex-row gap-10 justify-between items-center">
+    <div className="flex flex-col-reverse md:flex-row gap-10 justify-between items-center">
       <div
         className={`w-[600px] md:min-w-[550px] ${txnLoading ? 'opacity-50' : ''}`}
       >
         <div className="single-send-box">
           <Box
             sx={{
-              background:
-                chainGradient ||
-                'linear-gradient(180deg, #72727360 0%, #12131C80 100%)',
+              background: chainGradient || ALL_NETWORKS_GRADIENT,
             }}
             className="select-network"
           >
@@ -129,8 +127,8 @@ const MultiSend = ({ chainID }: { chainID: string }) => {
               onClick={() => changeNetwork()}
               className="flex items-center gap-2 cursor-pointer w-fit"
             >
-              <Image src={chainLogo} height={40} width={40} alt="" />
-              <div className="text-[20px] font-bold capitalize">
+              <Image className='rounded-full' src={chainLogo} height={40} width={40} alt="" />
+              <div className="text-[18px] font-bold capitalize">
                 {shortenName(selectedNetwork.chainName, 15) || 'All Networks'}
               </div>
               <Image src="/drop-down-icon.svg" height={24} width={24} alt="" />

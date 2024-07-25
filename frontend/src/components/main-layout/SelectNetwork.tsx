@@ -1,6 +1,10 @@
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { setChangeNetworkDialogOpen } from '@/store/features/common/commonSlice';
-import { ALL_NETWORKS_ICON, COSMOS_CHAIN_ID } from '@/utils/constants';
+import {
+  ALL_NETWORKS_GRADIENT,
+  ALL_NETWORKS_ICON,
+  COSMOS_CHAIN_ID,
+} from '@/utils/constants';
 import { copyToClipboard } from '@/utils/copyToClipboard';
 import { shortenMsg, shortenName } from '@/utils/util';
 import { Box, Tooltip } from '@mui/material';
@@ -52,15 +56,13 @@ const SelectNetwork = () => {
       <div className="flex gap-2 items-center h-11">
         <Box
           sx={{
-            background:
-              chainGradient ||
-              'linear-gradient(180deg, #7A7E9C 0.5%, #09090A 100%)',
+            background: chainGradient || ALL_NETWORKS_GRADIENT,
             height: '40px',
             width: '40px',
           }}
           className="network-icon-bg"
         >
-          <Image src={chainLogo} height={24} width={24} alt="" />
+          <Image className='rounded-full' src={chainLogo} height={24} width={24} alt="" />
         </Box>
         <div>
           <div className="flex items-center gap-2 cursor-pointer">

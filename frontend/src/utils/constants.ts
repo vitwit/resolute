@@ -374,3 +374,5 @@ export const TRANSFERS_TYPES: Record<
     description: 'IBC Swap',
   },
 };
+export const ALL_NETWORKS_GRADIENT =
+  'linear-gradient(180deg, #6155B2 0.5%, #12131C80 100%)';

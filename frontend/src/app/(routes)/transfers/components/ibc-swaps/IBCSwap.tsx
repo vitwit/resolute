@@ -494,7 +494,7 @@ const IBCSwap = () => {
   const [showRoute, setShowRoute] = useState(false);
 
   return (
-    <div className="flex-1 flex flex-col-reverse md:flex-row gap-10 justify-between items-center">
+    <div className="flex flex-col-reverse md:flex-row gap-10 justify-between items-center">
       <div className="max-w-[550px]">
         <div className="flex justify-center p-6 w-[550px] bg-[#FFFFFF05] rounded-2xl">
           {settingsOpen ? (
@@ -796,12 +796,6 @@ const IBCSwap = () => {
                     </div>
                   </div>
                 </div>
-                {/* {showRoute && swapRoute ? (
-              <RoutePreview
-                swapRoute={swapRoute}
-                onClose={() => setShowRoute(false)}
-              />
-            ) : null} */}
               </div>
               <div className="w-full">
                 <button
