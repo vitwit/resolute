@@ -140,14 +140,11 @@ const ProfileDialog = ({
                   />
                 </div>
               </div>
-              <div>
+              <div className="pt-3">
                 <button onClick={handleLogout} className="primary-btn w-full">
                   Logout
                 </button>
               </div>
-              <button onClick={onClose} className="secondary-btn w-full">
-                Close Tab
-              </button>
             </div>
           </div>
         </DialogContent>
