@@ -1,5 +1,9 @@
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
-import { getConnectWalletLogo } from '@/utils/util';
+import {
+  getConnectWalletLogo,
+  shortenAddress,
+  shortenName,
+} from '@/utils/util';
 import { Dialog, DialogContent, Slide, SlideProps } from '@mui/material';
 import Image from 'next/image';
 import React, { forwardRef, useEffect, useState } from 'react';
@@ -16,6 +20,9 @@ import { resetCompleteState as stakingReset } from '@/store/features/staking/sta
 import { resetState as authzReset } from '@/store/features/authz/authzSlice';
 import { resetState as feegrantReset } from '@/store/features/feegrant/feegrantSlice';
 import DialogConfirmExitSession from './DialogConfirmExitSession';
+import useGetAccountInfo from '@/custom-hooks/useGetAccountInfo';
+import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
+import Copy from '../common/Copy';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const Transition = forwardRef(function Transition(
@@ -32,6 +39,16 @@ const ProfileDialog = ({
   open: boolean;
   onClose: () => void;
 }) => {
+  const selectedNetwork = useAppSelector(
+    (state) => state.common.selectedNetwork
+  );
+  const nameToChainIDs = useAppSelector((state) => state.common.nameToChainIDs);
+
+  const chainID = nameToChainIDs?.[selectedNetwork?.chainName?.toLowerCase()];
+
+  const { getChainInfo } = useGetChainInfo();
+  const networkInfo = chainID?.length ? getChainInfo(chainID) : null;
+  const [chainInfo] = useGetAccountInfo(chainID);
   const [walletLogo, setWalletLogo] = useState('');
   const [confirmExitOpen, setConfirmExitOpen] = useState(false);
 
@@ -109,37 +126,37 @@ const ProfileDialog = ({
                 <Image src={walletLogo} height={40} width={40} alt="" />
                 <div className="text-b1">{walletUserName}</div>
               </div>
-              <div className="grid grid-cols-2 gap-6">
-                <div className="profile-grid">
-                  <p className="text-small-light">Address</p>
-                  <div className="flex gap-2 items-center">
-                    <p className="text-b1">cosmo8jk80....</p>
-                    <Image
-                      src="/copy.svg"
-                      width={18}
-                      height={18}
-                      alt="copy-icon"
-                    />
-                  </div>
-                </div>
-                <div className="profile-grid">
-                  <p className="text-small-light">Sequence</p>
+              <>
+                {chainID?.length && networkInfo && chainInfo ? (
+                  <>
+                    <div className="grid grid-cols-2 gap-6">
+                      <div className="profile-grid">
+                        <p className="text-small-light">Address</p>
+                        <div className="flex gap-2 items-center">
+                          <p className="text-b1">
+                            {shortenAddress(networkInfo.address, 15)}
+                          </p>
+                          <Copy content={networkInfo.address} />
+                        </div>
+                      </div>
+                      <div className="profile-grid">
+                        <p className="text-small-light">Sequence</p>
 
-                  <p className="text-b1">1234</p>
-                </div>
-              </div>
-              <div className="profile-grid w-full">
-                <p className="text-small-light">Pubkey</p>
-                <div className="flex gap-2 items-center">
-                  <p className="text-b1">12jhdu38ndi83w7y39</p>
-                  <Image
-                    src="/copy.svg"
-                    width={18}
-                    height={18}
-                    alt="copy-icon"
-                  />
-                </div>
-              </div>
+                        <p className="text-b1">{chainInfo?.sequence}</p>
+                      </div>
+                    </div>
+                    <div className="profile-grid w-full">
+                      <p className="text-small-light">Pubkey</p>
+                      <div className="flex gap-2 items-center">
+                        <p className="text-b1">
+                          {shortenName(chainInfo?.pubkey, 25)}
+                        </p>
+                        <Copy content={chainInfo?.pubkey} />
+                      </div>
+                    </div>
+                  </>
+                ) : null}
+              </>
               <div className="pt-3">
                 <button onClick={handleLogout} className="primary-btn w-full">
                   Logout

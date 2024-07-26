@@ -29,6 +29,19 @@ const Footer = () => {
             />
           </a>
           <a
+            href="https://github.com/vitwit/resolute"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Image
+              src="/github-logo.png"
+              width={24}
+              height={24}
+              alt="github-logo"
+              className="w-6 h-6"
+            />
+          </a>
+          <a
             href="https://twitter.com/vitwit_"
             target="_blank"
             rel="noopener noreferrer"
@@ -42,11 +55,30 @@ const Footer = () => {
             />
           </a>
           <a
+            href="https://www.youtube.com/@vitwit8623"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Image
+              src="/youtube-logo.png"
+              width={24}
+              height={24}
+              alt="youtube-logo"
+              className="w-6 h-6"
+            />
+          </a>
+          <a
             href="https://discord.com/invite/3DFmK7dG"
             target="_blank"
             rel="noopener noreferrer"
           >
-            <p className="text-b1">Join our community</p>
+             <Image
+              src="/discord-logo.jpg"
+              width={24}
+              height={24}
+              alt="discord-logo"
+              className="w-6 h-6"
+            />
           </a>
         </div>
       </div>
@@ -55,8 +87,9 @@ const Footer = () => {
         blockchain, and cloud solutions, with a focus on <br /> the Cosmos
         ecosystem and validator operations​ (Vitwit)​.
       </div>
+      <div className='divider-line'></div>
       <div className="text-[12px] font-extralight text-center w-full">
-        All right reserved at @ Vitwit 2024
+        All rights reserved at @ Vitwit 2024
       </div>
     </div>
   );
