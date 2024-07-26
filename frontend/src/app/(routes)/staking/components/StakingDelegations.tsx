@@ -118,34 +118,47 @@ function StakingDelegations({
                       />
                       <Link
                         href={`/staking/${staking.chainName(key).toLowerCase()}`}
-                        className="text-[14px] font-normal leading-8 flex justify-center items-center capitalize"
+                        className="text-[14px] font-normal flex justify-center items-center capitalize"
                       >
                         {staking.chainName(key)}
                       </Link>
                     </div>
                     <div className="flex gap-4 ml-8">
                       <div className="flex gap-2 items-center">
-                        <p className="text-xs font-bold leading-[normal]">
-                          <NumberFormat value={staking
-                            .getAmountObjectWithDecimal(
-                              Number(
-                                get(value, 'delegations.totalStaked', 0)
-                              ),
-                              key
-                            )
-                            .amount} cls='' type='token' token={staking.getAmountObjectWithDecimal(
-                              Number(get(value, 'delegations.totalStaked', 0)),
-                              key
-                            ).denom} />
-
+                        <p className="text-xs font-bold leading-[18px]">
+                          <NumberFormat
+                            value={
+                              staking.getAmountObjectWithDecimal(
+                                Number(
+                                  get(value, 'delegations.totalStaked', 0)
+                                ),
+                                key
+                              ).amount
+                            }
+                            cls=""
+                            type="token"
+                            token={
+                              staking.getAmountObjectWithDecimal(
+                                Number(
+                                  get(value, 'delegations.totalStaked', 0)
+                                ),
+                                key
+                              ).denom
+                            }
+                          />
                         </p>
                         <p className="text-[rgba(255,255,255,0.50)] text-[12px] font-extralight leading-[18px]">
                           Total Staked
                         </p>
                       </div>
                       <div className="flex gap-2 items-center">
-                        <p className="text-xs font-bold leading-[normal]">
-                          <NumberFormat value={getChainTotalRewards(key)} cls='' type='token' token={''} />
+                        <p className="text-xs font-bold leading-[18px]">
+                          <NumberFormat
+                            value={getChainTotalRewards(key)}
+                            cls=""
+                            type="token"
+                            token={''}
+                          />
                         </p>
                         <p className="text-[rgba(255,255,255,0.50)] text-[12px] font-extralight leading-[18px]">
                           Total Rewards
@@ -207,26 +220,36 @@ function StakingDelegations({
                     <div className="flex flex-col items-start gap-2 w-1/4">
                       <p className="text-small">Staked Amount</p>
                       <p className="text-b1">
-                        <NumberFormat value={staking
-                          .getAmountObjectWithDecimal(
-                            Number(get(data, 'balance.amount')),
-                            key
-                          )
-                          .amount} cls='' type='token' token={staking.getAmountObjectWithDecimal(
-                            Number(get(data, 'balance.amount')),
-                            key
-                          ).denom} />
+                        <NumberFormat
+                          value={
+                            staking.getAmountObjectWithDecimal(
+                              Number(get(data, 'balance.amount')),
+                              key
+                            ).amount
+                          }
+                          cls=""
+                          type="token"
+                          token={
+                            staking.getAmountObjectWithDecimal(
+                              Number(get(data, 'balance.amount')),
+                              key
+                            ).denom
+                          }
+                        />
                       </p>
                     </div>
                     <div className="flex flex-col items-start gap-2 w-1/4">
                       <p className="text-small">Rewards</p>
                       <p className="text-b1">
-                        <NumberFormat value={getValRewards(
-                          get(data, 'delegation.validator_address'),
-                          key
-                        )} cls='' type='token' token={''} />
-
-
+                        <NumberFormat
+                          value={getValRewards(
+                            get(data, 'delegation.validator_address'),
+                            key
+                          )}
+                          cls=""
+                          type="token"
+                          token={''}
+                        />
                       </p>
                     </div>
                     <div className="flex flex-col items-start gap-2 w-1/4">

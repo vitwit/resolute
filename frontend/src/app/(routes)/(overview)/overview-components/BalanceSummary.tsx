@@ -33,7 +33,7 @@ export default function BalanceSummary({ chainIDs }: { chainIDs: string[] }) {
   total = total.toLocaleString('en-US', {
     minimumFractionDigits: 0,
     maximumFractionDigits: 2,
-  })
+  });
 
   const assetsSummaryData: AssetSummary[] = [
     {
@@ -77,7 +77,7 @@ export default function BalanceSummary({ chainIDs }: { chainIDs: string[] }) {
             <div className="flex flex-col space-y-2 items-center">
               <div className="secondary-text">{data.type}</div>
               <div className="text-[18px] font-bold leading-[27px]">
-                <NumberFormat value={data.amount} type='dollar' cls='text-[16px]' />
+                <NumberFormat value={data.amount} type="dollar" cls="" />
               </div>
             </div>
           </div>

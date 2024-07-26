@@ -14,7 +14,7 @@ const page = ({
 }) => {
   const { network: paramChain } = params;
 
-  return <SingleChain paramChain={paramChain}   />
+  return <SingleChain paramChain={paramChain} />;
   // return <ChainStaking paramChain={paramChain} queryParams={searchParams} />;
 };
 

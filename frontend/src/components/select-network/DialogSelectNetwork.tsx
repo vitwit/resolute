@@ -134,7 +134,7 @@ const DialogSelectNetwork = () => {
               />
             </div>
             <h3 className={`text-[14px] leading-normal opacity-100`}>
-              <span className={`font-light`}>All Networks</span>
+              <span className="">All Networks</span>
             </h3>
           </Link>
           <div className="space-y-6">

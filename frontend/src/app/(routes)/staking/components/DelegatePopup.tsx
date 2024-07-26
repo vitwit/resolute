@@ -118,7 +118,7 @@ const DelegatePopup: React.FC<PopupProps> = ({
               Staking will lock your funds for 21 days.
             </p>
           </div>
-          <div className="text-b1 pl-6">
+          <div className="text-b1 pl-7">
             To make your staked assets liquid, undelegation will take 21 days.
           </div>
         </div>

@@ -65,7 +65,7 @@ function StakingSummary({
             <div className="flex flex-col items-center space-y-2">
               <div className="secondary-text">{data.type}</div>
               <div className="text-[18px] font-bold leading-[27px]">
-                <NumberFormat type='dollar' value={data.amount} cls=''  />
+                <NumberFormat type="dollar" value={data.amount} cls="" />
               </div>
             </div>
           </div>
