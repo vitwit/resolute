@@ -20,17 +20,15 @@ const SwapSummary = () => {
         <>
           You are swapping{' '}
           <span className="font-medium">
-            {amountIn} {selectedSourceAsset?.symbol}
+            {Number(amountIn) ? amountIn : ''} {selectedSourceAsset?.symbol}
           </span>{' '}
           to{' '}
           <span className="font-medium">
-            {amountOut} {selectedDestAsset?.symbol}
+            {Number(amountOut) ? amountOut : ''} {selectedDestAsset?.symbol}
           </span>
         </>
       ) : (
-        <>
-          Provide all the required fields to continue with the transaction.
-        </>
+        <>Provide all the required fields to continue with the transaction.</>
       )}
     </div>
   );

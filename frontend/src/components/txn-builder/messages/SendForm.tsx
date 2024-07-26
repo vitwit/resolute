@@ -1,6 +1,6 @@
 import { customMUITextFieldStyles } from '@/app/(routes)/multiops/styles';
 import { InputAdornment, TextField, Select, MenuItem } from '@mui/material';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { Decimal } from '@cosmjs/math';
 import FileUpload from '../components/FileUpload';
@@ -9,6 +9,7 @@ import useGetAllAssets from '@/custom-hooks/multisig/useGetAllAssets';
 import { customSelectStyles } from '../styles';
 import { useAppDispatch } from '@/custom-hooks/StateHooks';
 import { setError } from '@/store/features/common/commonSlice';
+import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 
 interface SendFormProps {
   fromAddress: string;
@@ -22,6 +23,8 @@ interface SendFormProps {
 const SendForm = (props: SendFormProps) => {
   const { fromAddress, onSend, cancelAddMsg, chainID } = props;
   const dispatch = useAppDispatch();
+  const { getDenomInfo } = useGetChainInfo();
+  const { displayDenom: nativeDisplayDenom } = getDenomInfo(chainID);
   const { getAllAssets, getParsedAsset } = useGetAllAssets();
   const { allAssets } = getAllAssets(chainID, true);
   const {
@@ -29,6 +32,8 @@ const SendForm = (props: SendFormProps) => {
     control,
     reset,
     formState: { errors },
+    setValue,
+    getValues,
   } = useForm({
     defaultValues: {
       amount: '',
@@ -100,6 +105,19 @@ const SendForm = (props: SendFormProps) => {
   const onRemoveFileUploadTxns = () => {
     setFileUploadTxns([]);
   };
+
+  useEffect(() => {
+    if (allAssets.length && !getValues('selectedAsset').length) {
+      const nativeAsset = allAssets.find(
+        (asset) => asset.displayDenom === nativeDisplayDenom
+      );
+      if (nativeAsset) {
+        setValue('selectedAsset', nativeAsset?.displayDenom || '');
+      } else {
+        setValue('selectedAsset', allAssets?.[0]?.displayDenom || '');
+      }
+    }
+  }, [allAssets]);
 
   return (
     <form
@@ -186,7 +204,12 @@ const SendForm = (props: SendFormProps) => {
                                   field.onChange(event);
                                 }}
                                 displayEmpty
-                                sx={customSelectStyles}
+                                sx={{
+                                  ...customSelectStyles,
+                                  '& .MuiSelect-select': {
+                                    color: '#ffffffad',
+                                  },
+                                }}
                                 MenuProps={{
                                   PaperProps: {
                                     sx: {

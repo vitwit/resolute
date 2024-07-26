@@ -14,7 +14,7 @@ import { txTransfer } from '@/store/features/ibc/ibcSlice';
 import Image from 'next/image';
 import { shortenAddress, shortenName } from '@/utils/util';
 import { Box } from '@mui/material';
-import { ALL_NETWORKS_ICON } from '@/utils/constants';
+import { ALL_NETWORKS_GRADIENT, ALL_NETWORKS_ICON } from '@/utils/constants';
 import AssetsDropDown from './AssetsDropDown';
 import TxnLoading from '../txn-loading/TxnLoading';
 import { get } from 'lodash';
@@ -186,16 +186,14 @@ const SingleSend = ({ sortedAssets }: { sortedAssets: ParsedAsset[] }) => {
   }, [selectedNetwork]);
 
   return (
-    <div className="flex-1 flex flex-col-reverse md:flex-row gap-10 justify-between items-center">
+    <div className="flex flex-col-reverse md:flex-row gap-10 justify-between items-center">
       <div
         className={`w-[600px] md:min-w-[550px] ${sendTxLoading ? 'opacity-50' : ''}`}
       >
         <div className="single-send-box">
           <Box
             sx={{
-              background:
-                chainGradient ||
-                'linear-gradient(180deg, #72727360 0%, #12131C80 100%)',
+              background: chainGradient || ALL_NETWORKS_GRADIENT,
             }}
             className="select-network"
           >
@@ -203,8 +201,14 @@ const SingleSend = ({ sortedAssets }: { sortedAssets: ParsedAsset[] }) => {
               onClick={() => changeNetwork()}
               className="flex items-center gap-2 cursor-pointer w-fit"
             >
-              <Image src={chainLogo} height={40} width={40} alt="" />
-              <div className="text-[20px] font-bold capitalize">
+              <Image
+                className="rounded-full"
+                src={chainLogo}
+                height={40}
+                width={40}
+                alt=""
+              />
+              <div className="text-[18px] font-bold capitalize">
                 {shortenName(selectedNetwork.chainName, 15) || 'All Networks'}
               </div>
               <Image src="/drop-down-icon.svg" height={24} width={24} alt="" />
@@ -286,27 +290,31 @@ const SingleSendLoading = ({
       />
       <div className="px-6 py-4 rounded-2xl bg-[#FFFFFF14] text-[14px] space-y-2">
         <div className="flex items-center gap-2">
-          <div className="flex items-center">
+          <div className="flex items-center gap-[2px]">
             <Image src={ALERT_ICON} width={24} height={24} alt="" />
             <div className="text-[#FFC13C]">Important</div>
           </div>
           <div className="text-[#FFFFFFad]">Single Transfer</div>
         </div>
-        <div className="text-[#ffffff80]">
-          {isDataProvided ? (
-            <span>
-              {' '}
-              You are sending{' '}
-              <span className="font-medium">
-                {amount} {displayDenom}
-              </span>{' '}
-              to {shortenAddress(toAddress, 20)}
-            </span>
-          ) : (
-            <span>
-              Provide all the required fields to continue with the transaction.
-            </span>
-          )}
+        <div className="flex gap-[26px]">
+          <div></div>
+          <div className="text-[#ffffff80]">
+            {isDataProvided ? (
+              <span>
+                {' '}
+                You are sending{' '}
+                <span className="font-medium">
+                  {amount} {displayDenom}
+                </span>{' '}
+                to {shortenAddress(toAddress, 20)}
+              </span>
+            ) : (
+              <span>
+                Provide all the required fields to continue with the
+                transaction.
+              </span>
+            )}
+          </div>
         </div>
       </div>
     </div>

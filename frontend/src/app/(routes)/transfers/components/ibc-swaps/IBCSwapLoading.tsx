@@ -4,6 +4,7 @@ import Image from 'next/image';
 import {
   ALERT_ICON,
   CHECK_ICON_FILLED,
+  CROSS_ICON,
   SWAP_ROUTE_ICON,
 } from '@/constants/image-names';
 import NetworkSelected from './swap-loading/NetworkSelected';
@@ -25,7 +26,9 @@ const IBCSwapLoading = ({
 
   const [showTxSourceSuccess, setTxSourceSuccess] = useState(false);
   const [showTxDestSuccess, setTxDestSuccess] = useState(false);
+  const [swapTxError, setSwapTxError] = useState(false);
   const txLoadRes = useAppSelector((state) => state.swaps.txStatus.status);
+  const txError = useAppSelector((state) => state.swaps.txStatus.error);
   const txHash = useAppSelector((state) => state.swaps.txSuccess.txHash);
   const txDestStatus = useAppSelector((state) => state.swaps.txDestSuccess);
   const selectedSourceAsset = useAppSelector(
@@ -49,13 +52,20 @@ const IBCSwapLoading = ({
     }
   }, [txDestStatus]);
 
+  useEffect(() => {
+    if (txError?.length) {
+      setSwapTxError(true);
+      setTimeout(() => setSwapTxError(false), 2000);
+    }
+  }, [txError]);
+
   return (
     <div className="px-10 space-y-10">
       <div className="space-y-5">
         <div className="flex items-center justify-between relative">
           {selectedSourceChain ? (
             <div
-              className={`relative opacity-50 ${txLoadRes === TxStatus.PENDING && !showTxSourceSuccess ? 'custom-opacity-animation !opacity-100' : ''} ${showTxSourceSuccess ? '!opacity-100' : ''}`}
+              className={`relative opacity-50 ${txLoadRes === TxStatus.PENDING && !showTxSourceSuccess ? 'custom-opacity-animation' : ''} ${showTxSourceSuccess ? '!opacity-100' : ''}`}
             >
               <NetworkSelected
                 chainConfig={selectedSourceChain}
@@ -63,7 +73,7 @@ const IBCSwapLoading = ({
               />
               {selectedSourceAsset ? (
                 <Image
-                  className="absolute bottom-0 right-3 z-[99]"
+                  className="absolute bottom-0 right-3 z-[99] rounded-full"
                   src={selectedSourceAsset?.logoURI}
                   width={24}
                   height={24}
@@ -95,13 +105,20 @@ const IBCSwapLoading = ({
           <div
             className={`dotted-line relative opacity-50 ${txLoadRes === TxStatus.PENDING && !showTxDestSuccess && showTxSourceSuccess ? 'custom-scroll !opacity-100' : ''} ${showTxDestSuccess ? '!opacity-100' : ''}`}
           >
-            {showTxDestSuccess && (
-              <img src={CHECK_ICON_FILLED} alt="Tick" className="tick-mark" />
+            {showTxDestSuccess && !swapTxError && (
+              <img
+                src={CHECK_ICON_FILLED}
+                alt="Success"
+                className="tick-mark"
+              />
+            )}
+            {swapTxError && !showTxDestSuccess && (
+              <img src={CROSS_ICON} alt="Failed" className="tick-mark" />
             )}
           </div>
           {selectedDestChain ? (
             <div
-              className={`opacity-50 ${txLoadRes === TxStatus.PENDING && !showTxDestSuccess && showTxSourceSuccess ? 'custom-opacity-animation' : '!opacity-100'}`}
+              className={`opacity-50 ${txLoadRes === TxStatus.PENDING && !showTxDestSuccess && showTxSourceSuccess ? 'custom-opacity-animation' : ''} ${showTxDestSuccess ? '!opacity-100' : ''}`}
             >
               <NetworkSelected
                 chainConfig={selectedDestChain}
@@ -109,7 +126,7 @@ const IBCSwapLoading = ({
               />
               {selectedDestAsset ? (
                 <Image
-                  className="absolute bottom-0 right-3 z-[99]"
+                  className="absolute bottom-0 right-3 z-[99] rounded-full"
                   src={selectedDestAsset?.logoURI}
                   width={24}
                   height={24}

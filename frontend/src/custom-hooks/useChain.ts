@@ -1,3 +1,4 @@
+import { capitalizeFirstLetter } from '@/utils/util';
 import { chains } from 'chain-registry';
 
 const useChain = () => {
@@ -44,9 +45,9 @@ const useChain = () => {
       };
     }
     const filteredChain = chains.filter((chain) => chain.chain_id === chainID);
-    const chainData = filteredChain[0];
+    const chainData = filteredChain?.[0];
     return {
-      chainName: chainData.chain_name,
+      chainName: chainData?.chain_name || capitalizeFirstLetter(chainID),
     };
   };
 
@@ -57,13 +58,13 @@ const useChain = () => {
       };
     }
     const filteredChain = chains.filter((chain) => chain.chain_id === chainID);
-    const chainData = filteredChain[0];
+    const chainData = filteredChain?.[0];
     return {
       chainLogo:
-        chainData.logo_URIs?.svg ||
-        chainData.logo_URIs?.jpeg ||
-        chainData.logo_URIs?.jpeg ||
-        chainData.logo_URIs?.png ||
+        chainData?.logo_URIs?.svg ||
+        chainData?.logo_URIs?.jpeg ||
+        chainData?.logo_URIs?.jpeg ||
+        chainData?.logo_URIs?.png ||
         '',
     };
   };

@@ -131,6 +131,15 @@ const DialogVote = ({
                     : 'transparent',
                 borderColor: '',
               }}
+              onMouseEnter={(e) =>
+                (e.currentTarget.style.backgroundColor = option.selectedColor)
+              }
+              onMouseLeave={(e) =>
+                (e.currentTarget.style.backgroundColor =
+                  voteOption === option.label
+                    ? option.selectedColor
+                    : 'transparent')
+              }
               disabled={
                 loading === TxStatus.PENDING ||
                 (isAuthzMode && authzLoading === TxStatus.PENDING)

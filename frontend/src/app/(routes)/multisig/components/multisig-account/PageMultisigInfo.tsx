@@ -25,7 +25,7 @@ const PageMultisigInfo = ({
   };
 
   return (
-    <div className="py-10 h-full flex flex-col">
+    <div className="py-10 h-full flex flex-col min-h-[100vh]">
       {validChain ? (
         <>
           {isWalletConnected ? (
