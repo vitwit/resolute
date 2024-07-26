@@ -67,7 +67,7 @@ export default function BalanceSummary({ chainIDs }: { chainIDs: string[] }) {
       <div className="flex flex-col gap-1">
         <div className="text-h2">Portfolio</div>
         <div className="flex flex-col gap-2">
-          <div className="secondary-text">Summary of assets information </div>
+          <div className="secondary-text">Summary of your digital assets</div>
           <div className="divider-line"></div>
         </div>
       </div>

@@ -55,8 +55,7 @@ const StakingDashboard = () => {
                 ) : (
                   <p>
                     Here&apos;s an overview of your staked assets, including
-                    delegation and undelegation details, and your total staked
-                    balance.
+                    delegation and undelegation details
                   </p>
                 )}
               </div>
