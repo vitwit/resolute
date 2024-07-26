@@ -98,7 +98,8 @@ const DialogSelectNetwork = () => {
                 Select Network
               </div>
               <div className="secondary-text">
-                List of the networks supported on Resolute
+                Select a network from the list of supported networks on
+                Resolute
               </div>
             </div>
             <div className="flex gap-6 items-center">
@@ -134,7 +135,7 @@ const DialogSelectNetwork = () => {
               />
             </div>
             <h3 className={`text-[14px] leading-normal opacity-100`}>
-              <span className={`font-light`}>All Networks</span>
+              <span className="">All Networks</span>
             </h3>
           </Link>
           <div className="space-y-6">

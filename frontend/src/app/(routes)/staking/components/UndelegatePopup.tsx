@@ -28,15 +28,18 @@ const UndelegatePopup: React.FC<PopupProps> = ({
 
   // Custom hook to get single staking information based on chainID
   /* eslint-disable @typescript-eslint/no-explicit-any */
-  const singleStake:any = useSingleStaking(chainID);
+  const singleStake: any = useSingleStaking(chainID);
 
   // Get the total staked amount and denomination
   // const { totalStakedAmount } = singleStake.getStakingAssets();
-  const totalStakedAmount = singleStake.totalValStakedAssets(chainID, validator)
+  const totalStakedAmount = singleStake.totalValStakedAssets(
+    chainID,
+    validator
+  );
   const denom = singleStake.getDenomWithChainID(chainID);
 
   // Custom hook to get staking information
-  const staking = useStaking({isSingleChain: true});
+  const staking = useStaking({ isSingleChain: true });
 
   // Get the current validator's information from the staking module
   const stakeModule = staking.getAllDelegations();
@@ -72,6 +75,7 @@ const UndelegatePopup: React.FC<PopupProps> = ({
         setOpen(false);
       }}
       title="Undelegate"
+      description="Undelegate lets you withdraw staked tokens from a validator, usually after an unbonding period"
     >
       <div className="flex flex-col w-[800px] items-center gap-6">
         {/* Validator details */}
@@ -118,7 +122,7 @@ const UndelegatePopup: React.FC<PopupProps> = ({
               Staking will lock your funds for 21 days.
             </p>
           </div>
-          <div className="text-b1 pl-6">
+          <div className="text-b1 pl-7">
             To make your staked assets liquid, undelegation will take 21 days.
           </div>
         </div>

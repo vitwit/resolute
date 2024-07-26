@@ -367,15 +367,16 @@ export const TRANSFERS_TYPES: Record<
 > = {
   'multi-send': {
     title: 'Multi Transfer',
-    description: 'Multi Transfer',
+    description: 'Transfer tokens to multiple addressess within a network',
   },
   single: {
     title: 'Single Transfer',
-    description: 'Single Transfer',
+    description: 'Transfer tokens within or across different networks',
   },
   'ibc-swap': {
     title: 'IBC Swap',
-    description: 'IBC Swap',
+    description:
+      'Exchange of assets between different networks using the Inter-Blockchain Communication protocol',
   },
 };
 export const ALL_NETWORKS_GRADIENT =

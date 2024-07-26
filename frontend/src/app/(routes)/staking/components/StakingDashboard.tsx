@@ -46,7 +46,7 @@ const StakingDashboard = () => {
   };
 
   return (
-    <div className="flex flex-col items-start w-full py-10">
+    <div className="flex flex-col items-start w-full py-10 min-h-[calc(100vh-64px)]">
       <div
         className={`flex flex-col w-full ${isWalletConnected ? 'gap-6' : ''}`}
       >
@@ -60,8 +60,7 @@ const StakingDashboard = () => {
                 ) : (
                   <p>
                     Here&apos;s an overview of your staked assets, including
-                    delegation and undelegation details, and your total staked
-                    balance.
+                    delegation and undelegation details
                   </p>
                 )}
               </div>

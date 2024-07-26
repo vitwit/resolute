@@ -52,7 +52,7 @@ const DepositCollected = ({
   return (
     <div className="flex flex-col gap-6 p-6 rounded-2xl bg-[#FFFFFF05] min-w-[380px]">
       <div className="space-y-2">
-        <p className="text-b1">Deposit Collected</p>
+        <p className="text-h2">Deposit Collected</p>
         <div className="divider-line"></div>
       </div>
       {minDeposit ? (

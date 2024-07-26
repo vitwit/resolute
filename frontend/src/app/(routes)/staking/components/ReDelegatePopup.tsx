@@ -86,6 +86,7 @@ const ReDelegatePopup: React.FC<PopupProps> = ({
           openReDelegatePopup();
         }}
         title="Re-Delegate"
+        description="Redelegate lets you move staked tokens from one validator to another without unstaking"
       >
         <div className="flex flex-col w-[800px] items-center gap-6">
           {/* Validator details */}
@@ -204,7 +205,7 @@ const ReDelegatePopup: React.FC<PopupProps> = ({
                 Staking will lock your funds for 21 days
               </p>
             </div>
-            <div className="text-b1 pl-6">
+            <div className="text-b1 pl-7">
               No staking rewards, cancellation of unbonding, or fund withdrawals
               until 21+ days post-undelegation.
             </div>

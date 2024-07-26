@@ -96,7 +96,13 @@ const TransactionStatusPopup = () => {
       }}
     >
       <DialogContent sx={{ padding: 0 }}>
-        <div className="w-[600px] pt-20">
+        <div className="w-[550px] py-20 relative">
+          <button
+            className="absolute top-6 right-6 hover:bg-[#ffffff10] w-8 h-8 rounded-full flex items-center justify-center"
+            onClick={handleClose}
+          >
+            <Image src="close.svg" width={20} height={20} alt="close-icon" />
+          </button>
           <div className="p-10 flex justify-center items-center flex-col gap-20">
             <div>
               <Image

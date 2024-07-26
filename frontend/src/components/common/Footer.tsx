@@ -50,12 +50,12 @@ const Footer = () => {
           </a>
         </div>
       </div>
-      <div className="secondary-text">
+      <div className="text-[12px] font-extralight">
         Vitwit, founded in 2015 in Hyderabad, India, specializes in AI,
         blockchain, and cloud solutions, with a focus on <br /> the Cosmos
         ecosystem and validator operations​ (Vitwit)​.
       </div>
-      <div className="secondary-text text-center w-full">
+      <div className="text-[12px] font-extralight text-center w-full">
         All right reserved at @ Vitwit 2024
       </div>
     </div>
