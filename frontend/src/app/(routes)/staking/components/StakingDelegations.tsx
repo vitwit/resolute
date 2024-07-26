@@ -72,7 +72,10 @@ function StakingDelegations({
         <div className="flex justify-between">
           <div className="flex flex-col">
             <div className="text-h2 mb-1">Delegations</div>
-            <div className="secondary-text">Summary of staked assets</div>
+            <div className="secondary-text">
+              A delegation pool gathers and adds your stake to the native stake
+              pool of the validator for you
+            </div>
           </div>
           <div className="flex gap-4 items-end">
             <div className="flex items-center gap-2">

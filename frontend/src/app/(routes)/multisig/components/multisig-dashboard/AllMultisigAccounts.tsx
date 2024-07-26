@@ -31,7 +31,7 @@ const AllMultisigAccounts = ({
           {txnsState?.length ? (
             <SectionHeader
               title={'Multisig Accounts'}
-              description="All multisig accounts you are part of."
+              description="Accounts in multisig acquire multiple signatures to approve and execute transactions"
             />
           ) : null}
           {accounts?.length ? (

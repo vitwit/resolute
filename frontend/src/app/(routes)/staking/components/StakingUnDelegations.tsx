@@ -58,7 +58,7 @@ function StakingUnDelegations({
         <div className="text-h2">Unbonding</div>
         <div className="secondary-text pb-2">
           Unbonding delegations will be locked until their locked time, after
-          which they will be available in your balance.
+          which they will be available in your balance
         </div>
         <div className="horizontal-line"></div>
       </div>

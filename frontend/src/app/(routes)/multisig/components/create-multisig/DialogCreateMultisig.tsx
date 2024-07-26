@@ -391,6 +391,7 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
       title={importMultisig ? 'Import Multisig' : 'Create Multisig'}
       onClose={handleClose}
       styles="w-[800px] !text-[#ffffffad]"
+      description="create a new multisig account here by adding required number of signatures for transaction approval"
     >
       <div className="w-full">
         {page === 1 ? (

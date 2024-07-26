@@ -13,6 +13,7 @@ interface CustomDialogProps {
   onClose: () => void;
   title: string;
   styles?: string;
+  description?: string;
 }
 
 /**
@@ -22,6 +23,7 @@ interface CustomDialogProps {
  * @param {boolean} props.open - Whether the dialog is open or closed.
  * @param {function} props.onClose - Callback function to close the dialog.
  * @param {string} props.title - The title of the dialog.
+ * @param {string} props.description - The description of the dialog.
  * @param {string} [props.styles] - (Optional) Additional tailwindcss styles for the dialog container.
  * @returns {React.ReactNode} - React element representing the CustomDialog component.
  */
@@ -32,6 +34,7 @@ const CustomDialog = ({
   open,
   title,
   styles,
+  description,
 }: CustomDialogProps) => {
   return (
     <Dialog
@@ -54,8 +57,9 @@ const CustomDialog = ({
               Close
             </button>
           </div>
-          <div className="text-h1 w-full text-center px-6">
-            {title}
+          <div className="flex items-center flex-col gap-2">
+            <div className="text-h1 w-full text-center px-6">{title}</div>
+            <div className="text-b1-light text-center w-full">{description}</div>
           </div>
           <div className="px-6">{children}</div>
           <div className="h-10"></div>
