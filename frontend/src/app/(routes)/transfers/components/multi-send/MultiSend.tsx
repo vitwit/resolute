@@ -199,6 +199,7 @@ const MultiSendLoading = ({
         fromChainLogo={chainLogo}
         toAddress={firstAddress}
         msgsCount={msgs.length}
+        isSingle={false}
       />
       <div className="px-6 py-4 rounded-2xl bg-[#FFFFFF14] text-[14px] space-y-2">
         <div className="flex items-center gap-2">

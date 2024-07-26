@@ -38,7 +38,11 @@ import { shortenAddress } from '@/utils/util';
 import { setError } from '@/store/features/common/commonSlice';
 import RoutePreview from './RoutePreview';
 import { FLIP_ICON, ROUTE_ICON, SETTINGS_ICON } from '@/constants/image-names';
-import { IBC_SWAP_GRADIENT, SWAP_ROUTE_ERROR } from '@/utils/constants';
+import {
+  ALL_NETWORKS_GRADIENT,
+  ALL_NETWORKS_ICON,
+  SWAP_ROUTE_ERROR,
+} from '@/utils/constants';
 import { customTextFieldStyles } from '../../styles';
 import Settings from './Settings';
 import IBCSwapLoading from './IBCSwapLoading';
@@ -559,8 +563,8 @@ const IBCSwap = () => {
                       sx={{
                         background: selectedSourceChain
                           ? allNetworks?.[selectedSourceChain?.chainID]?.config
-                              .theme.gradient || IBC_SWAP_GRADIENT
-                          : IBC_SWAP_GRADIENT,
+                              .theme.gradient || ALL_NETWORKS_GRADIENT
+                          : ALL_NETWORKS_GRADIENT,
                         paddingY: '8px',
                         paddingX: '16px',
                         height: '72px',
@@ -570,10 +574,17 @@ const IBCSwap = () => {
                       {selectedSourceChain?.logoURI ? (
                         <Avatar
                           src={selectedSourceChain?.logoURI || ''}
-                          sx={{ width: '40px', height: '40px' }}
+                          sx={{ width: '32px', height: '32px' }}
                         />
                       ) : (
-                        <div className="h-10 w-10"></div>
+                        <div className="h-8 w-8">
+                          <Image
+                            src={ALL_NETWORKS_ICON}
+                            height={32}
+                            width={32}
+                            alt=""
+                          />
+                        </div>
                       )}
                       {fromAddress ? (
                         <div className="bg-[#ffffff14] text-[14px] px-3 py-1 rounded-full font-light">
@@ -663,8 +674,8 @@ const IBCSwap = () => {
                     sx={{
                       background: selectedDestChain
                         ? allNetworks?.[selectedDestChain?.chainID]?.config
-                            .theme.gradient || IBC_SWAP_GRADIENT
-                        : IBC_SWAP_GRADIENT,
+                            .theme.gradient || ALL_NETWORKS_GRADIENT
+                        : ALL_NETWORKS_GRADIENT,
                       paddingY: '8px',
                       paddingX: '16px',
                       height: '72px',
@@ -677,7 +688,14 @@ const IBCSwap = () => {
                         sx={{ width: '40px', height: '40px' }}
                       />
                     ) : (
-                      <div className="h-10 w-10"></div>
+                      <div className="h-8 w-8">
+                        <Image
+                          src={ALL_NETWORKS_ICON}
+                          height={32}
+                          width={32}
+                          alt=""
+                        />
+                      </div>
                     )}
                     {toAddress ? (
                       <div className="bg-[#ffffff14] text-[14px] px-3 py-1 rounded-full font-light">

@@ -1,5 +1,6 @@
 import React from 'react';
 import Image from 'next/image';
+import { RESOLUTE_LOGO } from '@/constants/image-names';
 
 const Footer = () => {
   return (
@@ -7,7 +8,7 @@ const Footer = () => {
       <div className="flex justify-between w-full">
         <div>
           <Image
-            src="/resolute-logo.png"
+            src={RESOLUTE_LOGO}
             width={180}
             height={55}
             alt="resolute-logo"
