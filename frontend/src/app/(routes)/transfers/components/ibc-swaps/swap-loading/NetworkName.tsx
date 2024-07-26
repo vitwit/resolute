@@ -16,7 +16,7 @@ const NetworkName = ({
     shortenName(chainName, 9) || (isSource ? 'Source' : 'Destination');
   return (
     <Tooltip title={capitalizeFirstLetter(chainName)} placement="bottom">
-      <div className="bg-[#FFFFFF14] w-[120px] rounded-full py-2 px-4 text-[#ffffffad] text-center capitalize">
+      <div className="bg-[#FFFFFF14] w-[120px] rounded-full flex items-center justify-center text-[#ffffffad] text-center capitalize h-8 text-[14px]">
         {networkName}
       </div>
     </Tooltip>

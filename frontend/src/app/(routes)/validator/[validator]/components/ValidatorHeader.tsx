@@ -58,8 +58,10 @@ const ValidatorHeader = (props: ValidatorHeaderProps) => {
               </Link>
             ) : null}
           </div>
-          <div className="validator-description">
-            {isWitval ? VITWIT_VALIDATOR_DESCRIPTION : description || '-'}
+          <div className="validator-description ml-10">
+            {isWitval
+              ? VITWIT_VALIDATOR_DESCRIPTION
+              : description || 'No description available'}
           </div>
         </div>
         <div className="divider-line"></div>

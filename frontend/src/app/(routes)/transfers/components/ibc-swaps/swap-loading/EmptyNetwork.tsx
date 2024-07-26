@@ -8,11 +8,17 @@ const EmptyNetwork = () => {
       <div
         className="blur-background"
         style={{
-          backgroundColor: '#7F5CED',
+          backgroundColor: '#7F5CED20',
         }}
       ></div>
-      <div className="circle-background">
-        <Image src={GLOBE_ICON} width={32} height={32} alt="" />
+      <div className="circle-background opacity-50 globe-container">
+        <Image
+          className="animate-rotate-x"
+          src={GLOBE_ICON}
+          width={32}
+          height={32}
+          alt=""
+        />
       </div>
     </div>
   );
