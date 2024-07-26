@@ -115,7 +115,7 @@ const ProfileDialog = ({
                   <div className="flex gap-2 items-center">
                     <p className="text-b1">cosmo8jk80....</p>
                     <Image
-                      src="/copy-icon.svg"
+                      src="/copy.svg"
                       width={18}
                       height={18}
                       alt="copy-icon"
@@ -125,7 +125,7 @@ const ProfileDialog = ({
                 <div className="profile-grid">
                   <p className="text-small-light">Sequence</p>
 
-                  <p className="text-b1">cosmo8jk80....</p>
+                  <p className="text-b1">1234</p>
                 </div>
               </div>
               <div className="profile-grid w-full">
@@ -133,7 +133,7 @@ const ProfileDialog = ({
                 <div className="flex gap-2 items-center">
                   <p className="text-b1">12jhdu38ndi83w7y39</p>
                   <Image
-                    src="/copy-icon.svg"
+                    src="/copy.svg"
                     width={18}
                     height={18}
                     alt="copy-icon"
