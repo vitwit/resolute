@@ -42,12 +42,19 @@ const ValidatorProfile = ({ moniker }: { moniker: string }) => {
     totalDelegators: totalOasisDelegator,
   } = getOasisValidatorInfo();
 
-  totalStaked += totalPolygonStaked || 0;
-  totalStaked += totalOasisStaked || 0;
-  totalDelegators += totalPolygonDelegators;
-  totalDelegators += totalOasisDelegator;
+  const isVitwitValidator = VITWIT_VALIDATOR_NAMES.includes(
+    moniker.toLowerCase()
+  );
+
+  if (isVitwitValidator) {
+    totalStaked += totalPolygonStaked || 0;
+    totalStaked += totalOasisStaked || 0;
+    totalDelegators += totalPolygonDelegators;
+    totalDelegators += totalOasisDelegator;
+  }
+
   return (
-    <div className="py-10 space-y-10">
+    <div className="py-10 space-y-10 min-h-[100vh]">
       <ValidatorHeader
         activeNetworks={activeNetworks}
         avgCommission={avgCommission}

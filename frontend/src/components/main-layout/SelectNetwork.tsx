@@ -62,13 +62,7 @@ const SelectNetwork = () => {
           }}
           className="network-icon-bg"
         >
-          <Image
-            className="rounded-full"
-            src={chainLogo}
-            height={24}
-            width={24}
-            alt=""
-          />
+          <Image className='rounded-full' src={chainLogo} height={24} width={24} alt="" />
         </Box>
         <div>
           <div
