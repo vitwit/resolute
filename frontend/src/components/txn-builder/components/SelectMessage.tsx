@@ -32,7 +32,7 @@ const SelectMessage = ({
       <div className="space-y-6">
         <SectionHeader
           title="Transaction Messages"
-          description="Select and add the transaction messages"
+          description="Select and add the transaction messages you want to include"
         />
         <div className="flex gap-x-3 gap-y-3 flex-wrap">
           {TXN_BUILDER_MSGS.map((msg: TxnMsgType) => (

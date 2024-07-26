@@ -86,6 +86,7 @@ const ReDelegatePopup: React.FC<PopupProps> = ({
           openReDelegatePopup();
         }}
         title="Re-Delegate"
+        description="Redelegate lets you move staked tokens from one validator to another without unstaking"
       >
         <div className="flex flex-col w-[800px] items-center gap-6">
           {/* Validator details */}

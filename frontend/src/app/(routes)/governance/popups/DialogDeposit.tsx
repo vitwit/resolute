@@ -161,6 +161,7 @@ const DialogDeposit = ({
       title="Deposit"
       onClose={onClose}
       styles="w-[800px]"
+      description="Enter Your Deposit Details"
     >
       <div className="space-y-10">
         <div className="space-y-2">

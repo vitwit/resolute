@@ -92,11 +92,9 @@ const ConnectWallet = () => {
             </button>
           </div>
           <div className="text-center">
-            <div className="text-h1">
-              Connect Wallet
-            </div>
+            <div className="text-h1">Connect Wallet</div>
             <div className="secondary-text">
-              Connect your wallet now to access all the modules on Resolute
+              Connect Your Wallet to interact with resolute
             </div>
           </div>
           <div className="grid grid-cols-3 gap-10 px-10">

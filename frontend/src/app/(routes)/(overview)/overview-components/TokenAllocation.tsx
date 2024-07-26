@@ -79,9 +79,9 @@ const TokenAllocation = () => {
   return (
     <div className="flex flex-col p-6 rounded-2xl bg-[#ffffff05] w-[418px] gap-6">
       <div className="flex gap-1 flex-col w-full">
-        <div className="text-h2">Token Allocation</div>
+        <div className="text-h2">Token Distribution</div>
         <div className="flex flex-col gap-2">
-          <div className="secondary-text">Token Allocation</div>
+          <div className="secondary-text">Distribution of tokens across various networks</div>
           <div className="divider-line"></div>
         </div>
       </div>
