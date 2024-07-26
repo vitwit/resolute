@@ -77,7 +77,13 @@ const TopBar = () => {
             target="_blank"
             rel="noopener noreferrer"
           >
-            <p className="text-b1">Join our community</p>
+            <Image
+              src="/discord-logo.jpg"
+              width={24}
+              height={24}
+              alt="discord-logo"
+              className="w-6 h-6"
+            />
           </a>
           {walletConnected && (
             <div
