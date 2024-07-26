@@ -91,24 +91,60 @@ const ProfileDialog = ({
       >
         <DialogContent sx={{ padding: 0 }}>
           <div className="profile-section">
+            <button
+              className="absolute top-6 right-6 hover:bg-[#ffffff10] w-8 h-8 rounded-full flex items-center justify-center"
+              onClick={onClose}
+            >
+              <Image src="/close.svg" width={20} height={20} alt="close-icon" />
+            </button>
             <div className="space-y-6">
               <div className="space-y-2">
-                <div className="text-h2 !font-bold">Profile</div>
-                <div className="text-b1">View your account information here</div>
+                <div className="text-h2 !font-bold pt-8">Profile</div>
+                <div className="text-b1">
+                  View your account information here
+                </div>
                 <div className="divider-line"></div>
               </div>
               <div className="flex flex-col items-center gap-2 px-6 py-[10px]">
                 <Image src={walletLogo} height={40} width={40} alt="" />
                 <div className="text-b1">{walletUserName}</div>
               </div>
-              <div>
+              <div className="grid grid-cols-2 gap-6">
+                <div className="profile-grid">
+                  <p className="text-small-light">Address</p>
+                  <div className="flex gap-2 items-center">
+                    <p className="text-b1">cosmo8jk80....</p>
+                    <Image
+                      src="/copy.svg"
+                      width={18}
+                      height={18}
+                      alt="copy-icon"
+                    />
+                  </div>
+                </div>
+                <div className="profile-grid">
+                  <p className="text-small-light">Sequence</p>
+
+                  <p className="text-b1">1234</p>
+                </div>
+              </div>
+              <div className="profile-grid w-full">
+                <p className="text-small-light">Pubkey</p>
+                <div className="flex gap-2 items-center">
+                  <p className="text-b1">12jhdu38ndi83w7y39</p>
+                  <Image
+                    src="/copy.svg"
+                    width={18}
+                    height={18}
+                    alt="copy-icon"
+                  />
+                </div>
+              </div>
+              <div className="pt-3">
                 <button onClick={handleLogout} className="primary-btn w-full">
                   Logout
                 </button>
               </div>
-              <button onClick={onClose} className="secondary-btn w-full">
-                Close Tab
-              </button>
             </div>
           </div>
         </DialogContent>
