@@ -62,14 +62,20 @@ const SelectNetwork = () => {
           }}
           className="network-icon-bg"
         >
-          <Image className='rounded-full' src={chainLogo} height={24} width={24} alt="" />
+          <Image
+            className="rounded-full"
+            src={chainLogo}
+            height={24}
+            width={24}
+            alt=""
+          />
         </Box>
         <div>
-          <div className="flex items-center gap-2 cursor-pointer">
-            <div
-              onClick={openChangeNetwork}
-              className="text-[16px] h-6 font-bold text-[#ffffffad] capitalize cursor-pointer"
-            >
+          <div
+            className="flex items-center gap-2 cursor-pointer"
+            onClick={openChangeNetwork}
+          >
+            <div className="text-[16px] h-6 font-bold text-[#ffffffad] capitalize">
               {shortenName(selectedNetwork.chainName, 15) || 'All Networks'}
             </div>
             <Image
