@@ -94,7 +94,7 @@ const ProfileDialog = ({
             <div className="space-y-6">
               <div className="space-y-2">
                 <div className="text-h2 !font-bold">Profile</div>
-                <div className="text-b1">Profile</div>
+                <div className="text-b1">View your account information here</div>
                 <div className="divider-line"></div>
               </div>
               <div className="flex flex-col items-center gap-2 px-6 py-[10px]">

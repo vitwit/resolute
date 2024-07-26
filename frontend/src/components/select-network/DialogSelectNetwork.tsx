@@ -98,7 +98,8 @@ const DialogSelectNetwork = () => {
                 Select Network
               </div>
               <div className="secondary-text">
-                List of the networks supported on Resolute
+                Select a network from the list of supported networks on
+                Resolute
               </div>
             </div>
             <div className="flex gap-6 items-center">
