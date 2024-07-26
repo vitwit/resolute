@@ -68,7 +68,7 @@ body {
 }
 
 .form-label-text {
-  @apply text-[var(--secondary-text-color)] font-light text-[12px] leading-[24px];
+  @apply text-[var(--secondary-text-color)] font-extralight text-[12px] leading-[24px];
 }
 
 .dots-flashing:after {

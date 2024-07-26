@@ -41,7 +41,7 @@ const TransfersPage = ({ chainIDs }: { chainIDs: string[] }) => {
   }, [paramsTransferType]);
 
   return (
-    <div className="space-y-6 h-full flex flex-col py-10">
+    <div className="space-y-10 flex flex-col py-10">
       <PageHeader
         title={TRANSFERS_TYPES?.[transferType].title}
         description={TRANSFERS_TYPES?.[transferType].description}
@@ -59,7 +59,7 @@ const TransfersPage = ({ chainIDs }: { chainIDs: string[] }) => {
           {transferType === 'ibc-swap' ? <IBCSwapPage /> : null}
         </>
       ) : (
-        <div className="flex-1 flex items-center justify-center">
+        <div className="flex-1 flex items-center justify-center min-h-[80vh]">
           <EmptyScreen
             title="Connect your wallet"
             description="Connect your wallet to access your account on Resolute"

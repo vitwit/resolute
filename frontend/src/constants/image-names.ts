@@ -37,3 +37,4 @@ export const SWAP_ROUTE_ICON = '/icons/swap-route.svg';
 export const SWAP_ICON_FILLED = '/icons/swap-icon-filled.svg';
 export const GLOBE_ICON = '/icons/globe-icon.svg';
 export const CHECK_ICON_FILLED = '/icons/check-filled.svg';
+export const CROSS_ICON = '/icons/cross-icon.svg';

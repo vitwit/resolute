@@ -66,7 +66,7 @@ const StyledNetworkLogo = ({
       </svg>
       <div className="absolute inset-[33%] md:inset-[28%] max:inset-[33%] w-[56px] h-[56px]">
         <Image
-          className="w-[56px] h-[56px]"
+          className="w-[56px] h-[56px] rounded-full"
           src={logo}
           layout="fill"
           objectFit="contain"

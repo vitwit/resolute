@@ -375,3 +375,5 @@ export const TRANSFERS_TYPES: Record<
       'Exchange of assets between different networks using the Inter-Blockchain Communication protocol',
   },
 };
+export const ALL_NETWORKS_GRADIENT =
+  'linear-gradient(180deg, #6155B2 0.5%, #12131C80 100%)';
