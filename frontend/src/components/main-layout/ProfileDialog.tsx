@@ -45,6 +45,7 @@ const ProfileDialog = ({
   const nameToChainIDs = useAppSelector((state) => state.common.nameToChainIDs);
 
   const chainID = nameToChainIDs?.[selectedNetwork?.chainName?.toLowerCase()];
+  const isWalletConnected = useAppSelector((state) => state.wallet.connected);
 
   const { getChainInfo } = useGetChainInfo();
   const networkInfo = chainID?.length ? getChainInfo(chainID) : null;
@@ -55,8 +56,10 @@ const ProfileDialog = ({
   const walletUserName = useAppSelector((state) => state.wallet.name);
 
   useEffect(() => {
-    setWalletLogo(getConnectWalletLogo());
-  }, []);
+    if (isWalletConnected) {
+      setWalletLogo(getConnectWalletLogo());
+    }
+  }, [isWalletConnected]);
 
   const dispatch = useAppDispatch();
 
