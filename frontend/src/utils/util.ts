@@ -160,7 +160,10 @@ export function formatNumber(number: number): string {
   const suffixes = ['', 'K', 'M', 'B', 'T'];
   const tier = (Math.log10(Math.abs(number)) / 3) | 0;
 
-  if (tier === 0) return number.toString();
+  if (tier === 0) return number.toLocaleString('en-US', {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2,
+  });
 
   const suffix = suffixes[tier];
   const scale = Math.pow(10, tier * 3);
@@ -169,7 +172,10 @@ export function formatNumber(number: number): string {
 
   const formattedNumber = parseFloat(scaledNumber.toFixed(2));
 
-  return formattedNumber.toString() + suffix;
+  return formattedNumber.toLocaleString('en-US', {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2,
+  }); + suffix;
 }
 
 export const getDaysLeftString = (daysLeft: number): string => {
@@ -337,8 +343,8 @@ export function formatUnbondingPeriod(
 ): string {
   return stakingParams?.unbonding_time
     ? Math.floor(
-        parseInt(stakingParams?.unbonding_time || '', 10) / (3600 * 24)
-      ).toString()
+      parseInt(stakingParams?.unbonding_time || '', 10) / (3600 * 24)
+    ).toString()
     : '-';
 }
 
