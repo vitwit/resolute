@@ -67,10 +67,12 @@ const StakingDashboard = () => {
               <div className="divider-line"></div>
             </div>
           </div>
-          <CustomButton
-            btnText="New Delegation"
-            btnOnClick={() => setNewDelegation(true)}
-          />
+          {isWalletConnected && (
+            <CustomButton
+              btnText="New Delegation"
+              btnOnClick={() => setNewDelegation(true)}
+            />
+          )}
         </div>
 
         {isWalletConnected ? (
@@ -96,13 +98,15 @@ const StakingDashboard = () => {
             ) : null}
           </>
         ) : (
-          <EmptyScreen
-            title="Connect your wallet"
-            description="Connect your wallet to access your account on Resolute"
-            hasActionBtn={true}
-            btnText={'Connect Wallet'}
-            btnOnClick={connectWalletOpen}
-          />
+          <div className="mt-20">
+            <EmptyScreen
+              title="Connect your wallet"
+              description="Connect your wallet to access your account on Resolute"
+              hasActionBtn={true}
+              btnText={'Connect Wallet'}
+              btnOnClick={connectWalletOpen}
+            />
+          </div>
         )}
       </div>
       <NewDelegation
@@ -146,7 +150,7 @@ const NewDelegation = ({
           </div>
           <div className="flex flex-col items-center gap-10">
             <div className="flex flex-col items-center gap-2">
-              <div className="text-[18px] font-semibold">New Delegation</div>
+              <div className="text-h2">New Delegation</div>
               <div className="text-[14px] text-[#ffffff80]">
                 Please select a network on the left for new delegation.
               </div>
