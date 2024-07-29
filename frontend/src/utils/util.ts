@@ -156,11 +156,15 @@ export const formatCoin = (amount: number, denom: string): string => {
 };
 
 export function formatNumber(number: number): string {
-  if (number <= 999) return number + '';
+  if (number <= 999) return number?.toLocaleString('en-US', {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2,
+  }) + '';
+  
   const suffixes = ['', 'K', 'M', 'B', 'T'];
   const tier = (Math.log10(Math.abs(number)) / 3) | 0;
 
-  if (tier === 0) return number.toLocaleString('en-US', {
+  if (tier === 0) return number?.toLocaleString('en-US', {
     minimumFractionDigits: 0,
     maximumFractionDigits: 2,
   });
@@ -172,7 +176,7 @@ export function formatNumber(number: number): string {
 
   const formattedNumber = parseFloat(scaledNumber.toFixed(2));
 
-  return formattedNumber.toLocaleString('en-US', {
+  return formattedNumber?.toLocaleString('en-US', {
     minimumFractionDigits: 0,
     maximumFractionDigits: 2,
   }); + suffix;
