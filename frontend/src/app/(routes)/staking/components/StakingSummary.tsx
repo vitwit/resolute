@@ -22,38 +22,26 @@ function StakingSummary({
       icon: '/staked-bal.png',
       alt: 'stake',
       type: 'Total Amount',
-      amount: total.toLocaleString('en-US', {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 2,
-      }),
+      amount: total?.toString(),
     },
     {
       icon: '/total-bal.png',
       alt: 'available',
       type: 'Staked Amount',
-      amount: stakedAmount.toLocaleString('en-US', {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 2,
-      }),
+      amount: stakedAmount?.toString(),
     },
     {
       icon: '/rewards.png',
       alt: 'rewards',
       type: 'Rewards',
-      amount: rewardsAmount.toLocaleString('en-US', {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 2,
-      }),
+      amount: rewardsAmount?.toString(),
     },
 
     {
       icon: '/avail-bal.png',
       alt: 'Avail-bal-icon',
       type: 'Available Balance',
-      amount: availableAmount.toLocaleString('en-US', {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 2,
-      }),
+      amount: availableAmount?.toString(),
     },
   ];
 
