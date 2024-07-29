@@ -101,7 +101,9 @@ const FixedLayout = ({ children }: { children: React.ReactNode }) => {
         <div className="main-container">
           <SideBar />
           <section className="dynamic-section">
-            <section className='px-10'>{children}</section>
+            <div className="section-background"></div>
+
+            <section className="px-10">{children}</section>
             <footer>
               <Footer />
             </footer>
