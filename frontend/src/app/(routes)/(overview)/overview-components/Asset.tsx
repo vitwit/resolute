@@ -154,7 +154,7 @@ const Asset = ({
 
   return (
     <tr className="hover:bg-[#FFFFFF14] space-y-2">
-      <th className=" px-4 py-4 w-1/4">
+      <th className="px-4 py-4 w-1/4">
         <div className="flex flex-col items-start gap-1">
           <div className="text-[14px] font-normal leading-[21px]">
             <NumberFormat
@@ -190,7 +190,7 @@ const Asset = ({
         </div>
       </th>
       <th>
-        <div className="flex flex-col items-start gap-2">
+        <div className="flex flex-col items-start gap-2 px-4">
           <div className="text-[14px] font-normal leading-[21px] items-start flex">
             {asset.type === 'native' ? (
               <span>
@@ -213,7 +213,7 @@ const Asset = ({
         </div>
       </th>
       <th>
-        <div className="flex flex-col items-start gap-2">
+        <div className="flex flex-col items-start gap-2 px-4">
           <div className="text-[14px] font-normal leading-[21px] items-start flex">
             {asset.type === 'native' ? (
               <span>
@@ -235,7 +235,7 @@ const Asset = ({
         </div>
       </th>
       <th>
-        <div className="flex flex-col items-start gap-2">
+        <div className="flex flex-col items-start gap-2 px-4">
           <div className="text-[14px] font-normal leading-[21px] flex items-baseline">
             <NumberFormat
               cls=""
