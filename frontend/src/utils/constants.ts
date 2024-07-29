@@ -352,8 +352,12 @@ export const IBC_SWAP_DESCRIPTION =
   'Swap tokens across various interchain networks';
 export const MULTISIG_DESCRIPTION =
   'A multisig account is an account that requires multiple signatures to sign transactions';
-export const IBC_SWAP_GRADIENT =
-  'linear-gradient(180deg, #5A0DA660 0%, #12131C80 100%)';
+export const IBC_SWAP_GRADIENT = `linear-gradient(
+    180deg,
+    rgba(68, 83, 223, 0.1) 12.5%,
+    rgba(127, 92, 237, 0.1) 87.5%
+  )`;
+
 export const IBC_SEND_ALERT = '*Avoid IBC transfer to centralized exchanges';
 export const VITWIT_VALIDATOR_DESCRIPTION =
   'Vitwit excels in providing top-notch infrastructure services for the Cosmos blockchain ecosystem. We specialize in setting up and managing validators, relayers, and offering expert advisory services.';
@@ -363,16 +367,17 @@ export const TRANSFERS_TYPES: Record<
 > = {
   'multi-send': {
     title: 'Multi Transfer',
-    description: 'Multi Transfer',
+    description: 'Transfer tokens to multiple addressess within a network',
   },
   single: {
     title: 'Single Transfer',
-    description: 'Single Transfer',
+    description: 'Transfer tokens within or across different networks',
   },
   'ibc-swap': {
     title: 'IBC Swap',
-    description: 'IBC Swap',
+    description:
+      'Exchange of assets between different networks using the Inter-Blockchain Communication protocol',
   },
 };
 export const ALL_NETWORKS_GRADIENT =
-  'linear-gradient(180deg, #6155B2 0.5%, #12131C80 100%)';
+  'linear-gradient(180deg, #6155b275 0.5%, #12131C80 100%)';

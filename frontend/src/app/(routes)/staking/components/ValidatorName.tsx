@@ -5,6 +5,7 @@ import ValidatorLogo from '../components/ValidatorLogo';
 import { WalletAddress } from '@/components/main-layout/SelectNetwork';
 import { Tooltip } from '@mui/material';
 import { shortenName } from '@/utils/util';
+import Link from 'next/link';
 
 interface ValidatorNameProps {
   valoperAddress: string;
@@ -39,6 +40,7 @@ const ValidatorName: React.FC<ValidatorNameProps> = ({
   }, [memoizedFetchValidator]);
 
   const validatorDetails = getValidatorDetails(valoperAddress, chainID);
+  const monikerName: string = get(validatorDetails, 'description.moniker', '');
 
   return (
     <div className="flex space-x-2 items-center">
@@ -68,14 +70,18 @@ const ValidatorName: React.FC<ValidatorNameProps> = ({
           &nbsp;
           {/* Validator name  */}
           <Tooltip title={get(validatorDetails, 'description.moniker')}>
-            <p
-              className={` ${smallFont ? 'text-[18px]' : 'text-b1'} flex items-center truncate text-[#ffffffad]`}
+            <Link
+              href={`${monikerName ? `/validator/${encodeURIComponent(monikerName.toLowerCase())}` : ''}`}
             >
-              {shortenName(
-                get(validatorDetails, 'description.moniker', ''),
-                20
-              )}
-            </p>
+              <p
+                className={` ${smallFont ? 'text-[18px]' : 'text-b1'} flex items-center truncate text-[#ffffffad]`}
+              >
+                {shortenName(
+                  get(validatorDetails, 'description.moniker', ''),
+                  20
+                )}
+              </p>
+            </Link>
           </Tooltip>
           &nbsp;
           {/* Copy address icon */}

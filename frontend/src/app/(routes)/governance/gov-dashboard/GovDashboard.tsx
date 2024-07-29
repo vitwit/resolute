@@ -24,9 +24,9 @@ const GovDashboard = ({ chainIDs }: { chainIDs: string[] }) => {
   const [showDeposits, setShowDeposits] = useState(false);
   const [filterDays, setFilterDays] = useState(0);
   const [showAnimation, toggleAnimation] = useState(false);
-  const propsData = getProposals({ chainIDs, showAll:true });
-  const proposalsData = getProposals({ chainIDs, showAll:true });
-  const depositProposals = getProposals({chainIDs, deposits: true})
+  const propsData = getProposals({ chainIDs, showAll: true });
+  const proposalsData = getProposals({ chainIDs, showAll: true });
+  const depositProposals = getProposals({ chainIDs, deposits: true });
   const [filteredProposals, setFilteredProposals] = useState<ProposalsData[]>(
     []
   );
@@ -50,7 +50,7 @@ const GovDashboard = ({ chainIDs }: { chainIDs: string[] }) => {
       ) {
         return null;
       }
-      toggleAnimation(true)
+      toggleAnimation(true);
       return {
         chainID,
         proposalId,
@@ -110,8 +110,7 @@ const GovDashboard = ({ chainIDs }: { chainIDs: string[] }) => {
   };
 
   const handleShowDeposits = (showDeposits: boolean) => {
-
-    setShowDeposits(showDeposits)
+    setShowDeposits(showDeposits);
     if (debounceTimeout.current) {
       clearTimeout(debounceTimeout.current);
     }
@@ -175,22 +174,19 @@ const GovDashboard = ({ chainIDs }: { chainIDs: string[] }) => {
           unmountOnExit
         >
           <div className="w-3/5 ml-10 h-full">
-          {
-            selectedProposal && (
+            {selectedProposal && (
               <ProposalOverview
                 proposalId={selectedProposal?.proposalId}
                 chainID={selectedProposal?.chainID}
                 isActive={selectedProposal?.isActive}
-                onClose={({chainID,isActive,proposalId})=>{
-                  toggleAnimation(false)
+                onClose={({ chainID, isActive, proposalId }) => {
+                  toggleAnimation(false);
                   setTimeout(() => {
-                    handleViewProposal({chainID,isActive,proposalId})
+                    handleViewProposal({ chainID, isActive, proposalId });
                   }, 300);
                 }}
               />
-            )
-          }
-            
+            )}
           </div>
         </CSSTransition>
       </div>
@@ -207,7 +203,7 @@ const QuickFilters = ({
   handleFiltersChange,
   filterDays,
   selectedProposal,
-  handleShowDeposits
+  handleShowDeposits,
 }: {
   searchQuery: string;
   handleSearchQueryChange: HandleInputChangeEvent;
@@ -270,7 +266,7 @@ const GovHeader = () => {
   return (
     <PageHeader
       title="Governance"
-      description="Connect your wallet now to access all the modules on resolute "
+      description="All the proposals in governance require community voting for approval or rejection"
     />
   );
 };

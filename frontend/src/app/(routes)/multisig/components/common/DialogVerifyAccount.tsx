@@ -47,7 +47,10 @@ const DialogVerifyAccount = ({ walletAddress }: { walletAddress: string }) => {
     >
       <DialogContent sx={{ padding: 0 }}>
         <div className="w-[450px] p-4 relative">
-          <button className="absolute top-6 right-6 hover:bg-[#ffffff10] w-8 h-8 rounded-full flex items-center justify-center" onClick={handleClose}>
+          <button
+            className="absolute top-6 right-6 hover:bg-[#ffffff10] w-8 h-8 rounded-full flex items-center justify-center"
+            onClick={handleClose}
+          >
             <Image src="/close.svg" width={20} height={20} alt="close-icon" />
           </button>
           <div className="px-10 py-20 space-y-10">
@@ -61,7 +64,7 @@ const DialogVerifyAccount = ({ walletAddress }: { walletAddress: string }) => {
               <div className="flex items-center flex-col gap-2">
                 <div className="text-h2 !font-bold">Ownership</div>
                 <div className="text-b1-light">
-                  Please verify your account ownership to proceed.
+                  Verify your ownership to continue
                 </div>
               </div>
             </div>

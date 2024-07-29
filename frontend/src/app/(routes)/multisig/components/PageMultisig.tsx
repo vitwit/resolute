@@ -76,7 +76,7 @@ const PageMultisig = ({ chainName }: { chainName: string }) => {
         <div className="flex-1">
           <PageHeader
             title="MultiSig"
-            description="A multisig account is an account that requires multiple signatures to sign transactions."
+            description="You can create and manage all your multisig accounts here"
           />
         </div>
         {isWalletConnected && accounts?.length ? (

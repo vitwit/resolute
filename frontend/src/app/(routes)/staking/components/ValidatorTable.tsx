@@ -135,8 +135,15 @@ const ValidatorTable: React.FC<{ chainID: string }> = ({ chainID }) => {
           </td>
           <td className="">
             <div className="text-left text-b1">
-              <NumberFormat value={getAmountWithDecimal(Number(get(value, 'tokens')), chainID)} cls='' type='token'
-                token={''} />
+              <NumberFormat
+                value={getAmountWithDecimal(
+                  Number(get(value, 'tokens')),
+                  chainID
+                )}
+                cls=""
+                type="token"
+                token={''}
+              />
 
               {/* {getAmountWithDecimal(Number(get(value, 'tokens')), chainID)} */}
             </div>
@@ -206,7 +213,8 @@ const ValidatorTable: React.FC<{ chainID: string }> = ({ chainID }) => {
       <div className="">
         <div className="text-h2 mb-1">Validators</div>
         <div className="secondary-text mb-2">
-          List of the validators in the network.
+          List of the validators in the network, including their voting power,
+          performance metrics and other details
         </div>
         <div className="horizontal-line"></div>
       </div>

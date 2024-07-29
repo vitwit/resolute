@@ -4,6 +4,7 @@ import ProfileDialog from './ProfileDialog';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { setConnectWalletOpen } from '@/store/features/wallet/walletSlice';
 import { getConnectWalletLogo } from '@/utils/util';
+import { RESOLUTE_LOGO } from '@/constants/image-names';
 
 const TopBar = () => {
   const dispatch = useAppDispatch();
@@ -28,12 +29,7 @@ const TopBar = () => {
     <header className="top-bar">
       <nav className="flex justify-between items-center px-4 py-2">
         <div>
-          <Image
-            src="/resolute-logo.png"
-            width={120}
-            height={32}
-            alt="Resolute"
-          />
+          <Image src={RESOLUTE_LOGO} width={120} height={32} alt="Resolute" />
         </div>
         <div className="flex-1 flex justify-center items-center">
           {!walletConnected && (
@@ -77,7 +73,13 @@ const TopBar = () => {
             target="_blank"
             rel="noopener noreferrer"
           >
-            <p className="text-b1">Join our community</p>
+            <Image
+              src="/discord-logo.jpg"
+              width={24}
+              height={24}
+              alt="discord-logo"
+              className="w-6 h-6"
+            />
           </a>
           {walletConnected && (
             <div

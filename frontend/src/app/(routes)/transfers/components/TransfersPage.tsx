@@ -44,7 +44,7 @@ const TransfersPage = ({ chainIDs }: { chainIDs: string[] }) => {
     <div className="space-y-10 flex flex-col py-10">
       <PageHeader
         title={TRANSFERS_TYPES?.[transferType].title}
-        description={TRANSFERS_TYPES?.[transferType].title}
+        description={TRANSFERS_TYPES?.[transferType].description}
       />
       {isWalletConnected ? (
         <>

@@ -31,7 +31,7 @@ const AllMultisigAccounts = ({
           {txnsState?.length ? (
             <SectionHeader
               title={'Multisig Accounts'}
-              description="All multisig accounts you are part of."
+              description="Accounts in multisig acquire multiple signatures to approve and execute transactions"
             />
           ) : null}
           {accounts?.length ? (
@@ -56,8 +56,8 @@ const AllMultisigAccounts = ({
                 btnOnClick={setCreateDialogOpen}
                 hasActionBtn={true}
                 bgImage={NO_DATA_ILLUSTRATION}
-                height={400}
-                width={400}
+                height={246}
+                width={264}
               />
             </div>
           )}

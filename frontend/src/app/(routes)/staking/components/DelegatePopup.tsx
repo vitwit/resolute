@@ -72,6 +72,7 @@ const DelegatePopup: React.FC<PopupProps> = ({
         setOpen(false);
       }}
       title="Delegate"
+      description="Delegate Your Tokens and Manage Your Stake for Optimal Performance and Rewards"
     >
       <div className="flex flex-col w-[800px] items-center gap-6">
         {/* Validator details */}
