@@ -155,25 +155,25 @@ const RedelegateForm = (props: ReDelegateProps) => {
           <div className="space-y-6">
             <div className="flex items-center gap-6 px-6">
               <div className="flex-1 space-y-2">
-                <div className="text-b1-light">Select Source Validator</div>
+                <div className="text-b1-light">Source Validator</div>
                 <CustomAutoComplete
                   dataLoading={validatorsLoading === TxStatus.PENDING}
                   handleChange={handleSrcValidatorChange}
                   options={delegatedValidators}
                   selectedOption={selectedOption}
-                  name="Select Validator"
+                  name="Source"
+                  emptyText="No Delegations"
                 />
               </div>
               <div className="flex-1 space-y-2">
-                <div className="text-b1-light">
-                  Select Destination Validator
-                </div>
+                <div className="text-b1-light">Destination Validator</div>
                 <CustomAutoComplete
                   dataLoading={validatorsLoading === TxStatus.PENDING}
                   handleChange={handleDestValidatorChange}
                   options={validatorsList}
                   selectedOption={selectedDestValidator}
-                  name="Select Validator"
+                  name="Destination"
+                  emptyText="No Validators"
                 />
               </div>
             </div>
@@ -190,7 +190,7 @@ const RedelegateForm = (props: ReDelegateProps) => {
                       sx={{
                         ...customMUITextFieldStyles,
                       }}
-                      placeholder="Enter amount"
+                      placeholder="Amount"
                       fullWidth
                       InputProps={{
                         sx: {

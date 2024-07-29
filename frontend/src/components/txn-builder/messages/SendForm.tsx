@@ -177,7 +177,7 @@ const SendForm = (props: SendFormProps) => {
                     sx={{
                       ...customMUITextFieldStyles,
                     }}
-                    placeholder="Enter amount"
+                    placeholder="Amount"
                     fullWidth
                     required
                     InputProps={{

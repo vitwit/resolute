@@ -147,7 +147,8 @@ const UndelegateForm = (props: UnDelegateProps) => {
                 handleChange={handleValidatorChange}
                 options={delegatedValidators}
                 selectedOption={selectedOption}
-                name="Select Validator"
+                name="Validator"
+                emptyText="No Delegations"
               />
             </div>
             <div className="flex-1 space-y-2">

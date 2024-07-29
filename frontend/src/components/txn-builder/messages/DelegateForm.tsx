@@ -130,7 +130,8 @@ const DelegateForm = (props: DelegateFormProps) => {
                 handleChange={handleValidatorChange}
                 options={validatorsList}
                 selectedOption={selectedOption}
-                name="Select Validator"
+                name="Validator"
+                emptyText="No Validators"
               />
             </div>
             <div className="flex-1 space-y-2">
