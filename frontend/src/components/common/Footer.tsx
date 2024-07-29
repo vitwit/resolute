@@ -25,7 +25,7 @@ const Footer = () => {
               width={24}
               height={24}
               alt="telegram-logo"
-              className="w-6 h-6"
+              // className="w-6 h-6"
             />
           </a>
           <a
@@ -38,7 +38,7 @@ const Footer = () => {
               width={24}
               height={24}
               alt="github-logo"
-              className="w-6 h-6"
+              // className="w-6 h-6"
             />
           </a>
           <a
@@ -51,7 +51,7 @@ const Footer = () => {
               width={24}
               height={24}
               alt="twitter-logo"
-              className="w-6 h-6"
+              // className="w-6 h-6"
             />
           </a>
           <a
@@ -64,7 +64,7 @@ const Footer = () => {
               width={24}
               height={24}
               alt="youtube-logo"
-              className="w-6 h-6"
+              className="w-7 h-7"
             />
           </a>
           <a
@@ -73,11 +73,11 @@ const Footer = () => {
             rel="noopener noreferrer"
           >
              <Image
-              src="/discord-logo.jpg"
+              src="/discord-logo.png"
               width={24}
               height={24}
               alt="discord-logo"
-              className="w-6 h-6"
+              className="w-8 h-8"
             />
           </a>
         </div>
