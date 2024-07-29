@@ -54,7 +54,7 @@ const AssetsTable = ({ chainIDs }: { chainIDs: string[] }) => {
                 {['Available', 'Staked', 'Rewards', 'Value', ''].map(
                   (header, hIndex) => (
                     <th key={hIndex} className="">
-                      <div className="secondary-text items-start flex">
+                      <div className="secondary-text items-start flex px-4">
                         {header}
                       </div>
                     </th>
