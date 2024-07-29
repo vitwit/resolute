@@ -1,7 +1,7 @@
 'use client';
 
 import CustomDialog from '@/components/common/CustomDialog';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import AddressField from './AddressField';
 import useSingleStaking from '@/custom-hooks/useSingleStaking';
@@ -11,6 +11,10 @@ import ValidatorLogo from './ValidatorLogo';
 import { WalletAddress } from '@/components/main-layout/SelectNetwork';
 import { Validator } from '@/types/staking';
 import ValidatorName from './ValidatorName';
+import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
+import { getAllValidators } from '@/store/features/staking/stakeSlice';
+import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
+import { TxStatus } from '@/types/enums';
 
 interface PopupProps {
   validator: string;
@@ -25,6 +29,12 @@ const ReDelegatePopup: React.FC<PopupProps> = ({
   openPopup,
   openReDelegatePopup,
 }) => {
+  const dispatch = useAppDispatch();
+  const { getChainInfo } = useGetChainInfo();
+  const { restURLs } = getChainInfo(chainID);
+  const validatorsLoading = useAppSelector(
+    (state) => state.staking.chains?.[chainID]?.validators.status
+  );
   // Local state to manage the amount, open status, and destination validator
   const [amount, setAmount] = useState<number>(0);
   const [open, setOpen] = useState(openPopup);
@@ -77,6 +87,10 @@ const ReDelegatePopup: React.FC<PopupProps> = ({
     setIsOpen(!isOpen);
   };
 
+  useEffect(() => {
+    if (chainID) dispatch(getAllValidators({ baseURLs: restURLs, chainID }));
+  }, [chainID]);
+
   return (
     <>
       <CustomDialog
@@ -125,8 +139,7 @@ const ReDelegatePopup: React.FC<PopupProps> = ({
             <div className="relative inline-block text-left">
               <button
                 type="button"
-                className="flex items-center gap-1 w-full px-4 py-[10.5px] rounded-[100px] border-[0.25px] border-[#ffffff30]
-}"
+                className={`flex items-center gap-1 w-full px-4 py-[10.5px] rounded-[100px] border-[0.25px] border-[#ffffff10] hover:border-[#ffffff30] ${isOpen ? 'border-[#ffffff30]' : 'border-[#ffffff10]'}`}
                 onClick={toggleDropdown}
               >
                 {destValidator ? (
@@ -147,7 +160,17 @@ const ReDelegatePopup: React.FC<PopupProps> = ({
                     />
                   </>
                 ) : (
-                  <p className="secondary-text">Choose Destination Validator</p>
+                  <div className="flex items-center justify-between w-full">
+                    <p className="secondary-text">
+                      Choose Destination Validator
+                    </p>
+                    {validatorsLoading === TxStatus.PENDING ? (
+                      <div className="secondary-text italic">
+                        Fetching validators
+                        <span className="dots-flashing"></span>{' '}
+                      </div>
+                    ) : null}
+                  </div>
                 )}
               </button>
 
