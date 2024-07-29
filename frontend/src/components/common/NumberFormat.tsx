@@ -12,13 +12,23 @@ function NumberFormat({ value, type, token, cls }: { value: string, type: string
         const d = value.split(' ')[1]
         if (Number(n1) === 0) parsedAmount = '0';
         else if (Number(n1) < 0.01) parsedAmount = '< 0.01';
-        else parsedAmount = formatNumber(Number(n1))
+        else parsedAmount =  formatNumber(Number(n1))
         token = d;
 
     } else {
+        value = value.replace(/,/g, "");
+
         if (Number(value) === 0) parsedAmount = '0';
         else if (Number(value) < 0.01) parsedAmount = '< 0.01';
         else parsedAmount = formatNumber(Number(value))
+    }
+
+    if (!parsedAmount) {
+        parsedAmount = 0
+    }
+
+    if (!token) {
+        token = ''
     }
 
     return (
