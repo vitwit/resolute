@@ -21,6 +21,14 @@ function NumberFormat({ value, type, token, cls }: { value: string, type: string
         else parsedAmount = formatNumber(Number(value))
     }
 
+    if (!parsedAmount) {
+        parsedAmount = 0
+    }
+
+    if (!token) {
+        token = ''
+    }
+
     return (
         <>
             {
