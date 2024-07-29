@@ -24,7 +24,7 @@ export const trackEvent = (category: string, action: string, label: string) => {
   ReactGA.event({
     category: category,
     action: action,
-    label: label
+    label: label,
   });
 };
 
@@ -130,12 +130,10 @@ export const formatDollarAmount = (amount: number): string => {
 export const formatAmountToString = (amount: number): string => {
   if (amount === 0) return '0';
   if (amount < 0.1) return '< 0.1';
-  return (
-    amount.toLocaleString('en-US', {
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 2,
-    })
-  );
+  return amount.toLocaleString('en-US', {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2,
+  });
 };
 
 export const formatAmount = (amount: number): string => {
@@ -339,8 +337,8 @@ export function formatUnbondingPeriod(
 ): string {
   return stakingParams?.unbonding_time
     ? Math.floor(
-      parseInt(stakingParams?.unbonding_time || '', 10) / (3600 * 24)
-    ).toString()
+        parseInt(stakingParams?.unbonding_time || '', 10) / (3600 * 24)
+      ).toString()
     : '-';
 }
 
@@ -426,8 +424,13 @@ export function getRandomNumber(min: number, max: number): number {
   return Math.floor(randomNumber);
 }
 
-export const shortenName = (name: string, maxLength: number): string =>
-  name.length > maxLength ? `${name.substring(0, maxLength)}...` : name;
+export const shortenName = (name: string, maxLength: number): string => {
+  if (name?.length)
+    return name?.length > maxLength
+      ? `${name.substring(0, maxLength)}...`
+      : name;
+  return '';
+};
 
 export const convertToSnakeCase = (name: string) => {
   return name.toLowerCase().replace(/ /g, '_') || '';
@@ -580,4 +583,4 @@ export const addChainIDParam = (uri: string, chainID: string) => {
 export const getFAC = () => {
   const fac = new FastAverageColor();
   return fac;
-}
+};
