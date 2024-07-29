@@ -285,9 +285,7 @@ const MultisigAccountStats = ({
             <NumberFormat
               cls=""
               value={
-                availableBalance < 0.01
-                  ? availableBalance.toString()
-                  : availableBalance.toFixed(2).toString()
+                availableBalance?.toString()
               }
               type="token"
               token={displayDenom}
@@ -312,9 +310,7 @@ const MultisigAccountStats = ({
             <NumberFormat
               cls=""
               value={
-                stakedBalance < 0.01
-                  ? stakedBalance.toString()
-                  : stakedBalance.toFixed(2).toString()
+                stakedBalance?.toString()
               }
               type="token"
               token={displayDenom}
@@ -483,9 +479,7 @@ const DialogMultisigAssets = ({
                     <NumberFormat
                       cls=""
                       value={
-                        asset.amountInDenom < 0.01
-                          ? asset.amountInDenom.toString()
-                          : asset.amountInDenom.toFixed(2).toString()
+                        asset.amountInDenom?.toString()
                       }
                       type="token"
                       token={asset.displayDenom}

@@ -24,7 +24,7 @@ export const trackEvent = (category: string, action: string, label: string) => {
   ReactGA.event({
     category: category,
     action: action,
-    label: label
+    label: label,
   });
 };
 
@@ -130,12 +130,10 @@ export const formatDollarAmount = (amount: number): string => {
 export const formatAmountToString = (amount: number): string => {
   if (amount === 0) return '0';
   if (amount < 0.1) return '< 0.1';
-  return (
-    amount.toLocaleString('en-US', {
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 2,
-    })
-  );
+  return amount.toLocaleString('en-US', {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2,
+  });
 };
 
 export const formatAmount = (amount: number): string => {
@@ -158,11 +156,18 @@ export const formatCoin = (amount: number, denom: string): string => {
 };
 
 export function formatNumber(number: number): string {
-  if (number <= 999) return number + '';
+  if (number <= 999) return number?.toLocaleString('en-US', {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2,
+  }) + '';
+  
   const suffixes = ['', 'K', 'M', 'B', 'T'];
   const tier = (Math.log10(Math.abs(number)) / 3) | 0;
 
-  if (tier === 0) return number.toString();
+  if (tier === 0) return number?.toLocaleString('en-US', {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2,
+  });
 
   const suffix = suffixes[tier];
   const scale = Math.pow(10, tier * 3);
@@ -171,7 +176,10 @@ export function formatNumber(number: number): string {
 
   const formattedNumber = parseFloat(scaledNumber.toFixed(2));
 
-  return formattedNumber.toString() + suffix;
+  return formattedNumber?.toLocaleString('en-US', {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2,
+  }); + suffix;
 }
 
 export const getDaysLeftString = (daysLeft: number): string => {
@@ -426,8 +434,13 @@ export function getRandomNumber(min: number, max: number): number {
   return Math.floor(randomNumber);
 }
 
-export const shortenName = (name: string, maxLength: number): string =>
-  name.length > maxLength ? `${name.substring(0, maxLength)}...` : name;
+export const shortenName = (name: string, maxLength: number): string => {
+  if (name?.length)
+    return name?.length > maxLength
+      ? `${name.substring(0, maxLength)}...`
+      : name;
+  return '';
+};
 
 export const convertToSnakeCase = (name: string) => {
   return name.toLowerCase().replace(/ /g, '_') || '';
@@ -580,4 +593,4 @@ export const addChainIDParam = (uri: string, chainID: string) => {
 export const getFAC = () => {
   const fac = new FastAverageColor();
   return fac;
-}
+};
