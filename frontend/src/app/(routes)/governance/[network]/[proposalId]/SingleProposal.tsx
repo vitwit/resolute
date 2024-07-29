@@ -234,7 +234,7 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
               className={`flex items-start gap-10 w-full h-full ${isProposal2daysgo() ? 'pt-10' : ''}`}
             >
               <div className="flex flex-col flex-1 justify-between h-full">
-                <div className="flex flex-col justify-between h-full">
+                <div className="flex flex-col justify-between h-full gap-10">
                   <div className="flex flex-col gap-6">
                     <div
                       className="secondary-btn "
@@ -321,7 +321,7 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
                           padding: 8,
                           whiteSpace: 'pre-line',
                         }}
-                        className={`proposal-description-markdown h-[36vh] secondary-text ${contentLength > 900 ? (showFullText ? 'overflow-scroll' : 'overflow-hidden') : 'overflow-scroll'}`}
+                        className={`proposal-description-markdown h-[40vh] secondary-text ${contentLength > 900 ? (showFullText ? 'overflow-scroll' : 'overflow-hidden') : 'overflow-scroll'}`}
                       >
                         {proposalMarkdown}
                       </p>
@@ -341,7 +341,7 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
                             />
                           </p>
                         ) : (
-                          <div className="h-30 w-full absolute bottom-0  bg-transparent z-10">
+                          <div className=" w-full absolute bottom-0  bg-transparent z-10">
                             <div
                               onClick={handleToggleText}
                               className="cursor-pointer justify-center w-full bottom-14 absolute flex z-10 text-b1 underline space-x-1"
