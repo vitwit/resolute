@@ -1,6 +1,5 @@
 'use client';
 
-// import ValidatorTable from './ValidatorTable';
 import useStaking from '@/custom-hooks/useStaking';
 import { useAppSelector } from '@/custom-hooks/StateHooks';
 import { RootState } from '@/store/store';
@@ -14,9 +13,8 @@ import { Dialog, DialogContent } from '@mui/material';
 import { dialogBoxPaperPropStyles } from '@/utils/commonStyles';
 import { useState } from 'react';
 import CustomButton from '@/components/common/CustomButton';
-
-// import { RootState } from '@/store/store';
-// import { useAppSelector } from '@/custom-hooks/StateHooks';
+import DialogSelectNetwork from '@/components/select-network/DialogSelectNetwork';
+import { setChangeNetworkDialogOpen } from '@/store/features/common/commonSlice';
 
 const StakingDashboard = () => {
   const dispatch = useAppDispatch();
@@ -30,7 +28,6 @@ const StakingDashboard = () => {
 
   const delegations = staking.getAllDelegations();
 
-  const [newDelegation, setNewDelegation] = useState(false);
   const isWalletConnected = useAppSelector(
     (state: RootState) => state.wallet.connected
   );
@@ -43,6 +40,10 @@ const StakingDashboard = () => {
   );
   const connectWalletOpen = () => {
     dispatch(setConnectWalletOpen(true));
+  };
+
+  const openChangeNetwork = () => {
+    dispatch(setChangeNetworkDialogOpen({ open: true, showSearch: true }));
   };
 
   return (
@@ -70,7 +71,7 @@ const StakingDashboard = () => {
           {isWalletConnected && (
             <CustomButton
               btnText="New Delegation"
-              btnOnClick={() => setNewDelegation(true)}
+              btnOnClick={openChangeNetwork}
             />
           )}
         </div>
@@ -109,55 +110,9 @@ const StakingDashboard = () => {
           </div>
         )}
       </div>
-      <NewDelegation
-        open={newDelegation}
-        onClose={() => {
-          setNewDelegation(false);
-        }}
-      />
+
+      <DialogSelectNetwork />
     </div>
   );
 };
 export default StakingDashboard;
-
-const NewDelegation = ({
-  onClose,
-  open,
-}: {
-  open: boolean;
-  onClose: () => void;
-}) => {
-  return (
-    <Dialog
-      open={open}
-      onClose={onClose}
-      maxWidth="lg"
-      sx={{
-        '& .MuiDialog-paper': {
-          color: 'white',
-        },
-      }}
-      PaperProps={{
-        sx: dialogBoxPaperPropStyles,
-      }}
-    >
-      <DialogContent sx={{ padding: 0 }}>
-        <div className="p-10 pb-14 space-y-6 w-[450px]">
-          <div className="flex justify-end px-6">
-            <button onClick={onClose} className="text-btn !h-8">
-              Close
-            </button>
-          </div>
-          <div className="flex flex-col items-center gap-10">
-            <div className="flex flex-col items-center gap-2">
-              <div className="text-h2">New Delegation</div>
-              <div className="text-[14px] text-[#ffffff80]">
-                Please select a network on the left for new delegation.
-              </div>
-            </div>
-          </div>
-        </div>
-      </DialogContent>
-    </Dialog>
-  );
-};
