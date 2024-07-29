@@ -96,25 +96,25 @@ const TransactionStatusPopup = () => {
       }}
     >
       <DialogContent sx={{ padding: 0 }}>
-        <div className="w-[550px] py-20 relative">
+        <div className="w-[450px] py-10 relative">
           <button
             className="absolute top-6 right-6 hover:bg-[#ffffff10] w-8 h-8 rounded-full flex items-center justify-center"
             onClick={handleClose}
           >
-            <Image src="close.svg" width={20} height={20} alt="close-icon" />
+            <Image src="/close.svg" width={20} height={20} alt="close-icon" />
           </button>
-          <div className="p-10 flex justify-center items-center flex-col gap-20">
+          <div className="p-10 flex justify-center items-center flex-col gap-10">
             <div>
               <Image
                 src={tx?.code === 0 ? TXN_SUCCESS_ICON : TXN_FAILED_ICON}
-                height={100}
-                width={100}
+                height={60}
+                width={60}
                 alt="Transaction Successful"
               />
             </div>
             <div className="w-full">
               <div className="flex items-center gap-2 justify-center">
-                <div className="text-h1 !font-semibold">
+                <div className="text-h2 !font-bold">
                   {tx?.code === 0 ? (
                     <span>Transaction Successful</span>
                   ) : (
@@ -135,22 +135,33 @@ const TransactionStatusPopup = () => {
                   )}
                   target="_blank"
                 >
-                  <Image src={REDIRECT_ICON} width={32} height={32} alt="" />
+                  <Image src={REDIRECT_ICON} width={26} height={26} alt="" />
                 </Link>
               </div>
-              <div className="divider-line mt-4 mb-6"></div>
+              <div className="divider-line mt-2 mb-6"></div>
               <div className="space-y-6">
-                <div className="flex items-center justify-center text-[#ffffffad]">
+                <div className="flex items-center justify-center text-b1">
                   <TxnMessage
                     msgs={tx?.msgs || []}
                     currency={currency}
                     failed={tx?.code !== 0}
                   />
                 </div>
-                <div className="flex gap-6">
-                  <div className="txn-status-data">
+                <div className="profile-grid">
+                  <div className="text-small">Txn Hash</div>
+                  <div className="flex items-center gap-1">
+                    <div className="text-b1">
+                      {shortenMsg(tx?.transactionHash || '', 20) || '-'}
+                    </div>
+                    {tx?.transactionHash ? (
+                      <Copy content={tx?.transactionHash} />
+                    ) : null}
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="profile-grid flex-col gap-2">
                     <div className="text-small">Fees</div>
-                    <div className="text-[#ffffffad]">
+                    <div className="text-[#ffffffad] text-b1">
                       {tx?.fee?.[0]
                         ? parseBalance(
                             tx?.fee,
@@ -161,20 +172,9 @@ const TransactionStatusPopup = () => {
                       {currency.coinDenom}
                     </div>
                   </div>
-                  <div className="txn-status-data">
+                  <div className="profile-grid flex-col gap-2">
                     <div className="text-small">Txn Messages</div>
-                    <div className="text-[#ffffffad]">#{tx?.msgs?.length}</div>
-                  </div>
-                </div>
-                <div className="txn-status-data">
-                  <div className="text-small">Txn Hash</div>
-                  <div className="flex items-center gap-1">
-                    <div className="text-[#ffffffad]">
-                      {shortenMsg(tx?.transactionHash || '', 30) || '-'}
-                    </div>
-                    {tx?.transactionHash ? (
-                      <Copy content={tx?.transactionHash} />
-                    ) : null}
+                    <div className="text-b1">#{tx?.msgs?.length}</div>
                   </div>
                 </div>
               </div>
