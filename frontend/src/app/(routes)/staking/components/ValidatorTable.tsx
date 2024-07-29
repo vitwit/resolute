@@ -22,6 +22,7 @@ import { shortenName } from '@/utils/util';
 import { useRouter, useSearchParams } from 'next/navigation';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import NumberFormat from '@/components/common/NumberFormat';
+import Link from 'next/link';
 
 interface ValStatusObj {
   [key: string]: string;
@@ -113,9 +114,17 @@ const ValidatorTable: React.FC<{ chainID: string }> = ({ chainID }) => {
                 identity={get(value, 'description.identity', '')}
               />{' '}
               &nbsp;
-              <p className="text-b1">
-                {shortenName(get(value, 'description.moniker', ''), 12)}
-              </p>{' '}
+              <Link
+                href={
+                  get(value, 'description.moniker', '')
+                    ? `/validator/${encodeURIComponent(get(value, 'description.moniker', ''))}`
+                    : ''
+                }
+              >
+                <p className="text-b1">
+                  {shortenName(get(value, 'description.moniker', ''), 12)}
+                </p>{' '}
+              </Link>
               &nbsp;
               <WalletAddress
                 address={get(value, 'operator_address')}
