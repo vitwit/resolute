@@ -41,12 +41,7 @@
 }
 
 .dynamic-section {
-  @apply ml-[240px] mt-[60px] w-full;
-  background: radial-gradient(
-    50% 50% at 50% 50%,
-    rgba(68, 83, 223, 0.2) 0%,
-    rgba(9, 9, 10, 0.2) 100%
-  );
+  @apply ml-[240px] mt-[60px] w-full relative;
 }
 
 .menu-item {
@@ -97,4 +92,17 @@
 .logout-btn {
   border-image: none !important;
   background: #d921011a !important;
+}
+
+.section-background {
+  background: radial-gradient(
+    50% 50% at 50% 50%,
+    rgba(68, 83, 223, 0.2) 0%,
+    rgba(9, 9, 10, 0.2) 100%
+  );
+  width: 70%;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 10%;
 }
