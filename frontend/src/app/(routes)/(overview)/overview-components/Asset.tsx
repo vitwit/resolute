@@ -161,10 +161,7 @@ const Asset = ({
               cls=""
               type="token"
               token={asset.displayDenom}
-              value={asset.balance.toLocaleString('en-US', {
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 2,
-              })}
+              value={asset?.balance?.toString()}
             />
           </div>
           <div className="flex space-x-1 justify-center items-center">
@@ -198,10 +195,7 @@ const Asset = ({
                   cls=""
                   token={asset.displayDenom}
                   type="token"
-                  value={asset.staked.toLocaleString('en-US', {
-                    minimumFractionDigits: 0,
-                    maximumFractionDigits: 2,
-                  })}
+                  value={asset?.staked?.toString()}
                 />
               </span>
             ) : (
@@ -221,10 +215,7 @@ const Asset = ({
                   cls=""
                   token={asset.displayDenom}
                   type="token"
-                  value={asset.rewards.toLocaleString('en-US', {
-                    minimumFractionDigits: 0,
-                    maximumFractionDigits: 2,
-                  })}
+                  value={asset?.rewards?.toString()}
                 />
               </span>
             ) : (
@@ -240,10 +231,7 @@ const Asset = ({
             <NumberFormat
               cls=""
               type="dollar"
-              value={asset.usdPrice.toLocaleString('en-US', {
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 2,
-              })}
+              value={asset?.usdPrice?.toString()}
             />
           </div>
           <div className="flex">

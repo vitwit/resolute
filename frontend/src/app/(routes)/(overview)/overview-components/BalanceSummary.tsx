@@ -16,24 +16,12 @@ export default function BalanceSummary({ chainIDs }: { chainIDs: string[] }) {
   const availableAmount = isAuthzMode ? authzAvailable : myAvailable;
   const rewardsAmount = isAuthzMode ? authzRewards : myRewards;
 
-  const available = availableAmount.toLocaleString('en-US', {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 2,
-  });
-  const staked = stakedAmount.toLocaleString('en-US', {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 2,
-  });
-  const rewards = rewardsAmount.toLocaleString('en-US', {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 2,
-  });
+  const available = availableAmount?.toString()
+  const staked = stakedAmount?.toString()
+  const rewards = rewardsAmount?.toString()
 
   let total = availableAmount + stakedAmount + rewardsAmount;
-  total = total.toLocaleString('en-US', {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 2,
-  });
+  total = total?.toString()
 
   const assetsSummaryData: AssetSummary[] = [
     {
