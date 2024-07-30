@@ -321,7 +321,7 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
                           padding: 8,
                           whiteSpace: 'pre-line',
                         }}
-                        className={`proposal-description-markdown h-[40vh] secondary-text ${contentLength > 900 ? (showFullText ? 'overflow-scroll' : 'overflow-hidden') : 'overflow-scroll'}`}
+                        className={`proposal-description-markdown h-[42vh] secondary-text ${contentLength > 900 ? (showFullText ? 'overflow-scroll' : 'overflow-hidden') : 'overflow-scroll'}`}
                       >
                         {proposalMarkdown}
                       </p>
