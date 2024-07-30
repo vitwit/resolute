@@ -52,7 +52,7 @@ export const swapTextFieldStyles = {
 
 export const customTextFieldStyles = {
   '& .MuiInputBase-input': {
-    color: '#ffffffad',
+    color: '#fffffff0',
     fontSize: '14px',
     fontWeight: 200,
     fontFamily: 'Libre Franklin',
@@ -101,6 +101,6 @@ export const customAutoCompleteStyles = {
     fontFamily: 'Libre Franklin',
   },
   '& .Mui-disabled': {
-    '-webkit-text-fill-color': '#ffffffad !important',
+    '-webkit-text-fill-color': '#fffffff0 !important',
   },
 };
