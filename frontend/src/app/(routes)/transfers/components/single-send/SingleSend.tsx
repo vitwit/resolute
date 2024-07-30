@@ -295,7 +295,7 @@ const SingleSendLoading = ({
             <Image src={ALERT_ICON} width={24} height={24} alt="" />
             <div className="text-[#FFC13C]">Important</div>
           </div>
-          <div className="text-[#FFFFFFad]">Single Transfer</div>
+          <div className="text-[#FFFFFFF0]">Single Transfer</div>
         </div>
         <div className="flex gap-[26px]">
           <div></div>

@@ -161,7 +161,7 @@ const TransactionStatusPopup = () => {
                 <div className="grid grid-cols-2 gap-6">
                   <div className="profile-grid flex-col gap-2">
                     <div className="text-small">Fees</div>
-                    <div className="text-[#ffffffad] text-b1">
+                    <div className="text-[#fffffff0] text-b1">
                       {tx?.fee?.[0]
                         ? parseBalance(
                             tx?.fee,

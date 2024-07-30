@@ -65,7 +65,7 @@ export default function AssetsAutocomplete({
       }}
       sx={{
         '& .MuiInputBase-input': {
-          color: '#ffffffad',
+          color: '#fffffff0',
           fontSize: '14px',
           fontWeight: 300,
           fontFamily: 'Libre Franklin',
@@ -97,7 +97,7 @@ export default function AssetsAutocomplete({
         <Paper
           style={{
             background: '#FFFFFF14',
-            color: '#ffffffad',
+            color: '#fffffff0',
             borderRadius: '16px',
             backdropFilter: 'blur(15px)',
             marginTop: '8px',

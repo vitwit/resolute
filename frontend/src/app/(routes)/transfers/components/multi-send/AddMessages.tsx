@@ -82,7 +82,7 @@ const AddMessages = ({
           <TextField
             multiline
             fullWidth
-            className="text-[#ffffffad]"
+            className="text-[#fffffff0]"
             onChange={handleInputChange}
             value={inputs}
             spellCheck={false}
