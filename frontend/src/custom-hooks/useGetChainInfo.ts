@@ -82,6 +82,7 @@ const useGetChainInfo = () => {
     const explorerTxHashEndpoint = network?.explorerTxHashEndpoint;
     const chainLogo = network?.logos?.menu;
     const govV1 = network?.govV1;
+    const isDefaultNetwork = network?.isDefaultNetwork;
 
     return {
       restURLs: config?.restURIs,
@@ -102,6 +103,7 @@ const useGetChainInfo = () => {
       decimals,
       valPrefix,
       govV1,
+      isDefaultNetwork,
     };
   };
 
@@ -173,17 +175,18 @@ const useGetChainInfo = () => {
     if (isWalletConnected) {
       const chainIDs = Object.keys(networks);
       const chainNamesAndLogos = chainIDs.map((chainID) => {
-        const { chainName } = networks[chainID].network.config;
-        const { chainLogo } = getChainInfo(chainID);
-        return { chainID, chainName, chainLogo };
+        const { chainName } = networks?.[chainID].network.config;
+        const { chainLogo, isDefaultNetwork } = getChainInfo(chainID);
+        return { chainID, chainName, chainLogo, isDefaultNetwork };
       });
       return chainNamesAndLogos;
     } else {
       const chainIDs = Object.keys(allNetworks);
       const chainNamesAndLogos = chainIDs.map((chainID) => {
-        const { chainName } = allNetworks[chainID].config;
-        const { menu: chainLogo } = allNetworks[chainID].logos;
-        return { chainID, chainName, chainLogo };
+        const { isDefaultNetwork } = allNetworks?.[chainID];
+        const { chainName } = allNetworks?.[chainID].config;
+        const { menu: chainLogo } = allNetworks?.[chainID].logos;
+        return { chainID, chainName, chainLogo, isDefaultNetwork };
       });
       return chainNamesAndLogos;
     }

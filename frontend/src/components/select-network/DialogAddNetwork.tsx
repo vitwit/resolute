@@ -74,6 +74,7 @@ const DialogAddNetwork = () => {
           chainNameExists(get(parsedData, 'config.chain_name'))
         );
         setChainIDExist(chainIDExists(get(parsedData, 'config.chain_id')));
+        parsedData.is_default_network = false;
         setNetworkConfig(parsedData);
       } else {
         setNetworkConfig({});
@@ -150,7 +151,7 @@ const DialogAddNetwork = () => {
     >
       <div className="space-y-10">
         <div
-          className="border-[1px] border-[#ffffff30] border-dashed rounded-2xl h-[300px] flex-center-center cursor-pointer"
+          className="border-[1px] border-[#ffffff30] border-dashed rounded-2xl h-[200px] flex-center-center cursor-pointer"
           onClick={() => {
             document.getElementById('network_config_file')!.click();
           }}
@@ -208,10 +209,10 @@ const DialogAddNetwork = () => {
               <div className="flex gap-4 items-center">
                 <div className="text-red-600 font-bold">Invalid json file</div>
                 <div
-                  className="show-more-errors"
+                  className="secondary-btn"
                   onClick={() => setShowErrors((showErrors) => !showErrors)}
                 >
-                  show more
+                  view errors
                 </div>
               </div>
               {showErrors &&
@@ -220,17 +221,9 @@ const DialogAddNetwork = () => {
                 ))}
             </div>
           ) : (
-            <div>
-              {chainNameExist ? (
-                <li className="chain-exist-error">{CHAIN_NAME_EXIST_ERROR}</li>
-              ) : (
-                <></>
-              )}
-              {chainIDExist ? (
-                <li className="chain-exist-error">{CHAIN_ID_EXIST_ERROR}</li>
-              ) : (
-                <></>
-              )}
+            <div className='text-red-500'>
+              {chainNameExist ? <li>{CHAIN_NAME_EXIST_ERROR}</li> : <></>}
+              {chainIDExist ? <li>{CHAIN_ID_EXIST_ERROR}</li> : <></>}
             </div>
           )}
         </div>

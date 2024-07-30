@@ -117,6 +117,12 @@ const DialogSelectNetwork = () => {
                   className="primary-btn w-fit"
                   onClick={() => {
                     dispatch(setAddNetworkDialogOpen(true));
+                    dispatch(
+                      setChangeNetworkDialogOpen({
+                        open: false,
+                        showSearch: true,
+                      })
+                    );
                   }}
                 >
                   Add Network
@@ -159,6 +165,8 @@ const DialogSelectNetwork = () => {
                   pathName={constructUrlWithQueryParams(chain.chainName)}
                   handleClose={onClose}
                   selected={isSelected(chain.chainName)}
+                  isDefaultNetwork={chain.isDefaultNetwork}
+                  chainID={chain.chainID}
                 />
               ))}
             </div>

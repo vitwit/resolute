@@ -5,6 +5,7 @@ import commonService from './commonService';
 import { AxiosError } from 'axios';
 import { ERR_UNKNOWN } from '../../../utils/errors';
 import { networks } from '../../../utils/chainsInfo';
+import { getLocalNetworks } from '@/utils/localStorage';
 
 const initialState: CommonState = {
   errState: {
@@ -119,11 +120,16 @@ export const commonSlice = createSlice({
     },
     setAllNetworksInfo: (state) => {
       state.allNetworksInfo = {};
-      for (let i = 0; i < networks.length; i++) {
-        state.allNetworksInfo[networks[i].config.chainId] = networks[i];
+      const networksList = [...networks, ...getLocalNetworks()];
+      for (let i = 0; i < networksList.length; i++) {
+        state.allNetworksInfo[networksList?.[i]?.config?.chainId] =
+          networksList?.[i];
         state.nameToChainIDs[
-          networks[i].config.chainName?.toLowerCase().split(' ').join('')
-        ] = networks[i].config.chainId;
+          networksList?.[i]?.config?.chainName
+            ?.toLowerCase()
+            .split(' ')
+            .join('')
+        ] = networksList?.[i]?.config?.chainId;
       }
     },
   },

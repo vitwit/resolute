@@ -204,3 +204,9 @@ input[type='checkbox'] {
   @apply flex flex-col justify-center items-center gap-2 p-4 rounded-2xl;
   background: rgba(255, 255, 255, 0.02);
 }
+
+.delete-network-button {
+  @apply w-full !border-[#D92101] !bg-[#D921011A];
+  border-image: none !important;
+  background: #d921011a !important;
+}
