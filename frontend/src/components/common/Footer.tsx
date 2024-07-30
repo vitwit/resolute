@@ -64,7 +64,7 @@ const Footer = () => {
               width={24}
               height={24}
               alt="youtube-logo"
-              className="w-7 h-7"
+              className="w-6 h-6"
             />
           </a>
           <a
@@ -77,7 +77,7 @@ const Footer = () => {
               width={24}
               height={24}
               alt="discord-logo"
-              className="w-8 h-8"
+              className="w-6 h-6"
             />
           </a>
         </div>

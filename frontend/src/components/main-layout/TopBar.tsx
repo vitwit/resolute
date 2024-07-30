@@ -74,11 +74,11 @@ const TopBar = () => {
             rel="noopener noreferrer"
           >
             <Image
-              src="/discord-logo.jpg"
-              width={24}
-              height={24}
+              src="/discord-logo.png"
+              width={20}
+              height={20}
               alt="discord-logo"
-              className="w-6 h-6"
+              // className="w-6 h-6"
             />
           </a>
           {walletConnected && (
