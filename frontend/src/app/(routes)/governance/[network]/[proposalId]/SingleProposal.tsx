@@ -259,11 +259,11 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
                           ) || get(proposalInfo, 'content.@type', '')}
                         </p>
                         {isStatusVoting ? (
-                          <div className="active-badge text-sm font-normal leading-[21px]">
+                          <div className="active-badge text-sm font-normal leading-[21px] mt-2">
                             Active
                           </div>
                         ) : (
-                          <div className="deposit-badge text-sm font-normal leading-[21px]">
+                          <div className="deposit-badge text-sm font-normal leading-[21px] mt-2">
                             Deposit
                           </div>
                         )}
@@ -441,9 +441,7 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
                   ) : (
                     <div className="flex flex-col gap-6 p-6 rounded-2xl bg-[#FFFFFF05]">
                       <div className="flex flex-col gap-2">
-                        <p className="text-h2">
-                          Current Status
-                        </p>
+                        <p className="text-h2">Current Status</p>
                         <div className="divider-line"></div>
                       </div>
                       {data.map((v) => (
