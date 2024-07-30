@@ -91,7 +91,7 @@
 }
 
 .network-item .network-name {
-  @apply text-[14px] leading-normal opacity-100 font-normal text-[#ffffffad];
+  @apply text-[14px] leading-normal opacity-100 font-normal text-[#fffffff0];
 }
 
 .logout-btn {

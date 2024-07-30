@@ -207,7 +207,7 @@ const MultiSendLoading = ({
             <Image src={ALERT_ICON} width={24} height={24} alt="" />
             <div className="text-[#FFC13C]">Important</div>
           </div>
-          <div className="text-[#FFFFFFad]">Multi Transfer</div>
+          <div className="text-[#FFFFFFF0]">Multi Transfer</div>
         </div>
         <div className="flex gap-[26px]">
           <div></div>

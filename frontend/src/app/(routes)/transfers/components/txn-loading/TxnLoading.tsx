@@ -50,7 +50,7 @@ const TxnLoading = (props: TxnLoadingProps) => {
             />
           </div>
         )}
-        <div className="bg-[#FFFFFF14] rounded-full flex items-center justify-center text-[14px] text-[#ffffffad] w-[150px] text-center h-8">
+        <div className="bg-[#FFFFFF14] rounded-full flex items-center justify-center text-[14px] text-[#fffffff0] w-[150px] text-center h-8">
           {fromAddress ? (
             <span>{shortenAddress(fromAddress, 12)}</span>
           ) : (
@@ -109,7 +109,7 @@ const TxnLoading = (props: TxnLoadingProps) => {
             />
           </div>
         )}
-        <div className="bg-[#FFFFFF14] rounded-full flex items-center justify-center text-[14px] text-[#ffffffad] w-[150px] text-center h-8">
+        <div className="bg-[#FFFFFF14] rounded-full flex items-center justify-center text-[14px] text-[#fffffff0] w-[150px] text-center h-8">
           {toAddress ? (
             <span>{shortenAddress(toAddress, 12)}</span>
           ) : (
