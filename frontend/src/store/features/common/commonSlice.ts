@@ -41,6 +41,7 @@ const initialState: CommonState = {
   },
   allNetworksInfo: {},
   nameToChainIDs: {},
+  addNetworkOpen: false,
 };
 
 export const getTokenPrice = createAsyncThunk(
@@ -110,6 +111,9 @@ export const commonSlice = createSlice({
       state.changeNetworkDialog.open = action.payload.open;
       state.changeNetworkDialog.showSearch = action.payload.showSearch;
     },
+    setAddNetworkDialogOpen: (state, action: PayloadAction<boolean>) => {
+      state.addNetworkOpen = action.payload;
+    },
     setSelectedNetwork: (state, action: PayloadAction<SelectedNetwork>) => {
       state.selectedNetwork.chainName = action.payload.chainName;
     },
@@ -177,6 +181,7 @@ export const {
   setSelectedNetwork,
   setAllNetworksInfo,
   setChangeNetworkDialogOpen,
+  setAddNetworkDialogOpen,
 } = commonSlice.actions;
 
 export default commonSlice.reducer;

@@ -107,8 +107,6 @@ const StakingDashboard = () => {
           </div>
         )}
       </div>
-
-      <DialogSelectNetwork />
     </div>
   );
 };

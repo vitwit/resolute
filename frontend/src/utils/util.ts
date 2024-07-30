@@ -156,18 +156,22 @@ export const formatCoin = (amount: number, denom: string): string => {
 };
 
 export function formatNumber(number: number): string {
-  if (number <= 999) return number?.toLocaleString('en-US', {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 2,
-  }) + '';
-  
+  if (number <= 999)
+    return (
+      number?.toLocaleString('en-US', {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 2,
+      }) + ''
+    );
+
   const suffixes = ['', 'K', 'M', 'B', 'T'];
   const tier = (Math.log10(Math.abs(number)) / 3) | 0;
 
-  if (tier === 0) return number?.toLocaleString('en-US', {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 2,
-  });
+  if (tier === 0)
+    return number?.toLocaleString('en-US', {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2,
+    });
 
   const suffix = suffixes[tier];
   const scale = Math.pow(10, tier * 3);
@@ -179,7 +183,8 @@ export function formatNumber(number: number): string {
   return formattedNumber?.toLocaleString('en-US', {
     minimumFractionDigits: 0,
     maximumFractionDigits: 2,
-  }); + suffix;
+  });
+  +suffix;
 }
 
 export const getDaysLeftString = (daysLeft: number): string => {
@@ -258,7 +263,6 @@ export function convertKeysToCamelCase(data: any): any {
       const cleanedKey = removeQuotesFromKey(key);
       const camelCaseKey = convertSnakeToCamelCase(cleanedKey);
       convertedData[camelCaseKey] = convertKeysToCamelCase(value);
-      console.log(camelCaseKey);
     }
     return convertedData;
   }
@@ -347,8 +351,8 @@ export function formatUnbondingPeriod(
 ): string {
   return stakingParams?.unbonding_time
     ? Math.floor(
-      parseInt(stakingParams?.unbonding_time || '', 10) / (3600 * 24)
-    ).toString()
+        parseInt(stakingParams?.unbonding_time || '', 10) / (3600 * 24)
+      ).toString()
     : '-';
 }
 
