@@ -50,6 +50,12 @@ const DialogSelectNetwork = () => {
     const pathParts = pathName.split('/') || [];
     if (pathParts.includes('validator')) {
       dispatch(setSelectedNetwork({ chainName: '' }));
+    } else if (pathParts.includes('feegrant') || pathParts.includes('authz')) {
+      if (pathParts.length >= 4) {
+        dispatch(setSelectedNetwork({ chainName: pathParts[3].toLowerCase() }));
+      } else {
+        dispatch(setSelectedNetwork({ chainName: '' }));
+      }
     } else if (pathParts.length >= 3) {
       dispatch(setSelectedNetwork({ chainName: pathParts[2].toLowerCase() }));
     } else {
@@ -98,8 +104,7 @@ const DialogSelectNetwork = () => {
                 Select Network
               </div>
               <div className="secondary-text">
-                Select a network from the list of supported networks on
-                Resolute
+                Select a network from the list of supported networks on Resolute
               </div>
             </div>
             <div className="flex gap-6 items-center">

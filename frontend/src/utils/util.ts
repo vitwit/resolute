@@ -156,28 +156,26 @@ export const formatCoin = (amount: number, denom: string): string => {
 };
 
 export function formatNumber(number: number): string {
-
   // Check for trillions
-  if (Math.abs(number) >= 1.0e+12) {
-    return (number / 1.0e+12).toFixed(2) + "T"; // Trillions
+  if (Math.abs(number) >= 1.0e12) {
+    return (number / 1.0e12).toFixed(2) + 'T'; // Trillions
   }
   // Check for billions
-  else if (Math.abs(number) >= 1.0e+9) {
-    return (number / 1.0e+9).toFixed(2) + "B"; // Billions
+  else if (Math.abs(number) >= 1.0e9) {
+    return (number / 1.0e9).toFixed(2) + 'B'; // Billions
   }
   // Check for more than millions
-  else if (Math.abs(number) > 1.0e+6) {
-    return (number / 1.0e+6).toFixed(2) + "M"; // Millions
-  }
-  else if (Math.abs(number) <= 1.0e+6 && Math.abs(number) > 1.0e+3) {
-    return Math.trunc(number).toLocaleString('en-US')
+  else if (Math.abs(number) > 1.0e6) {
+    return (number / 1.0e6).toFixed(2) + 'M'; // Millions
+  } else if (Math.abs(number) <= 1.0e6 && Math.abs(number) > 1.0e3) {
+    return Math.trunc(number).toLocaleString('en-US');
     // No decimals, formatted with commas
   }
   // Less than a thousand
   else {
     return number.toLocaleString('en-US', {
       minimumFractionDigits: 0,
-      maximumFractionDigits: 2
+      maximumFractionDigits: 2,
     });
   }
 }
@@ -277,6 +275,13 @@ export const tabLink = (link: string, chainName: string): string => {
 };
 
 export const allNetworksLink = (pathParts: string[]): string => {
+  if (pathParts.includes('settings')) {
+    if (pathParts.includes('feegrant')) {
+      return '/settings/feegrant';
+    } else {
+      return '/settings';
+    }
+  }
   return pathParts[1] === 'overview' || pathParts[1] === ''
     ? '/'
     : pathParts[1] === 'validator'
@@ -288,6 +293,9 @@ export const changeNetworkRoute = (
   pathName: string,
   chainName: string
 ): string => {
+  if (pathName.includes('feegrant')) {
+    return '/settings/feegrant/' + chainName.toLowerCase();
+  }
   const route = pathName === '/' ? '/overview' : '/' + pathName.split('/')?.[1];
   return `${route}/${chainName.toLowerCase()}`;
 };
@@ -347,8 +355,8 @@ export function formatUnbondingPeriod(
 ): string {
   return stakingParams?.unbonding_time
     ? Math.floor(
-      parseInt(stakingParams?.unbonding_time || '', 10) / (3600 * 24)
-    ).toString()
+        parseInt(stakingParams?.unbonding_time || '', 10) / (3600 * 24)
+      ).toString()
     : '-';
 }
 
