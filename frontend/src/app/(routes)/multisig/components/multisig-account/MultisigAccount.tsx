@@ -293,7 +293,7 @@ const MultisigAccountStats = ({
           </div>
           {hasIBCTokens ? (
             <button
-              className="secondary-btn !font-bold"
+              className="secondary-btn"
               onClick={() => setViewIBC(true)}
             >
               View IBC
