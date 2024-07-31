@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import SettingsHeader from '../components/SettingsHeader';
 import './../settings.css';
 import SettingsLayout from '../SettingsLayout';
 
