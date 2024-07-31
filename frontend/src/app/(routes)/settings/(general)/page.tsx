@@ -3,17 +3,18 @@
 import React from 'react';
 import SettingsHeader from '../components/SettingsHeader';
 import './../settings.css';
+import SettingsLayout from '../SettingsLayout';
 
 const page = () => {
   const addNetwork = () => {};
   return (
-    <div className="mt-10">
-      <SettingsHeader
-        action={addNetwork}
-        actionName="Add Network"
-        tabName="general"
-      />
-    </div>
+    <SettingsLayout
+      action={addNetwork}
+      actionName="Add Network"
+      tabName="general"
+    >
+      <div>General Settings</div>
+    </SettingsLayout>
   );
 };
 

@@ -3,17 +3,18 @@
 import React from 'react';
 import SettingsHeader from '../../components/SettingsHeader';
 import '../../settings.css';
+import SettingsLayout from '../../SettingsLayout';
 
 const page = () => {
   const createNewFeegrant = () => {};
   return (
-    <div className="mt-10">
-      <SettingsHeader
-        action={createNewFeegrant}
-        actionName="New Feegrant"
-        tabName="feegrant"
-      />
-    </div>
+    <SettingsLayout
+      action={createNewFeegrant}
+      actionName="New Feegrant"
+      tabName="feegrant"
+    >
+      <div>Feegrant</div>
+    </SettingsLayout>
   );
 };
 

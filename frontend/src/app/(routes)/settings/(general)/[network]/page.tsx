@@ -8,11 +8,6 @@ const page = () => {
   const addNetwork = () => {};
   return (
     <div className="mt-10">
-      <SettingsHeader
-        action={addNetwork}
-        actionName="Add Network"
-        tabName="general"
-      />
       <div>Please select all networks to view access general settings</div>
     </div>
   );
