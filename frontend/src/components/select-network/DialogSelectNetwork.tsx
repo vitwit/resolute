@@ -1,6 +1,7 @@
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import {
+  setAddNetworkDialogOpen,
   setChangeNetworkDialogOpen,
   setSelectedNetwork,
 } from '@/store/features/common/commonSlice';
@@ -30,6 +31,7 @@ const DialogSelectNetwork = () => {
   const selectedNetwork = useAppSelector(
     (state) => state.common.selectedNetwork
   );
+  const isWalletConnected = useAppSelector((state) => state.wallet.connected);
 
   const filteredChains = chains.filter((chain) =>
     chain.chainName.toLowerCase().includes(searchQuery.toLowerCase())
@@ -58,13 +60,13 @@ const DialogSelectNetwork = () => {
   }, [pathName]);
 
   const constructUrlWithQueryParams = (newChain: string) => {
-    const queryParams = new URLSearchParams(searchParams);
+    const queryParams = new URLSearchParams(Array.from(searchParams.entries()));
     const baseUrl = changeNetworkRoute(pathName, newChain);
     return `${baseUrl}?${queryParams.toString()}`;
   };
 
   const constructAllNetworksUrl = (pathParts: string[]) => {
-    const queryParams = new URLSearchParams(searchParams);
+    const queryParams = new URLSearchParams(Array.from(searchParams.entries()));
     return `${allNetworksLink(pathParts)}?${queryParams.toString()}`;
   };
 
@@ -98,8 +100,7 @@ const DialogSelectNetwork = () => {
                 Select Network
               </div>
               <div className="secondary-text">
-                Select a network from the list of supported networks on
-                Resolute
+                Select a network from the list of supported networks on Resolute
               </div>
             </div>
             <div className="flex gap-6 items-center">
@@ -111,10 +112,22 @@ const DialogSelectNetwork = () => {
                   searchQuery={searchQuery}
                 />
               </div>
-              {/* TODO: Implement add network after implementing settings page  */}
-              {/* {walletConnected ? (
-                <button className="primary-btn w-fit">Add Network</button>
-              ) : null} */}
+              {isWalletConnected ? (
+                <button
+                  className="primary-btn w-fit"
+                  onClick={() => {
+                    dispatch(setAddNetworkDialogOpen(true));
+                    dispatch(
+                      setChangeNetworkDialogOpen({
+                        open: false,
+                        showSearch: true,
+                      })
+                    );
+                  }}
+                >
+                  Add Network
+                </button>
+              ) : null}
             </div>
           </div>
           <Link
@@ -152,6 +165,8 @@ const DialogSelectNetwork = () => {
                   pathName={constructUrlWithQueryParams(chain.chainName)}
                   handleClose={onClose}
                   selected={isSelected(chain.chainName)}
+                  isDefaultNetwork={chain.isDefaultNetwork}
+                  chainID={chain.chainID}
                 />
               ))}
             </div>

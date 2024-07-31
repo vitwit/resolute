@@ -60,6 +60,17 @@ export function setLocalNetwork(networkConfig: Network, chainID: string) {
   localStorage.setItem('localNetworks', JSON.stringify(localNetworksParsed));
 }
 
+export function removeLocalNetwork(chainID: string) {
+  const localNetworks = localStorage.getItem('localNetworks');
+  if (localNetworks) {
+    const localNetworksParsed: LocalNetworks = JSON.parse(localNetworks);
+    if (localNetworksParsed[chainID]) {
+      delete localNetworksParsed[chainID];
+      localStorage.setItem('localNetworks', JSON.stringify(localNetworksParsed));
+    }
+  }
+}
+
 export function getLocalNetworks(): Network[] {
   const localNetworks = localStorage.getItem('localNetworks');
   const networks: Network[] = [];

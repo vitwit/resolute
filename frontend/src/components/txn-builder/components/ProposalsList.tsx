@@ -2,6 +2,7 @@ import {
   customAutoCompleteStyles,
   customTextFieldStyles,
 } from '@/app/(routes)/transfers/styles';
+import NoOptions from '@/components/common/NoOptions';
 import { shortenName } from '@/utils/util';
 import {
   Autocomplete,
@@ -25,17 +26,17 @@ const ProposalsList = ({
   /* eslint-disable @typescript-eslint/no-explicit-any */
   const renderOption = (props: any, option: ProposalOption) => (
     <li {...props} key={option.value}>
-    <div className="flex gap-2 items-center">
-      <span className="font-semibold">#{option.value}</span>
-      <span className="truncate">{shortenName(option.label, 36)}</span>
-    </div>
-  </li>
+      <div className="flex gap-2 items-center">
+        <span className="font-semibold">#{option.value}</span>
+        <span className="truncate">{shortenName(option.label, 36)}</span>
+      </div>
+    </li>
   );
 
   /* eslint-disable @typescript-eslint/no-explicit-any */
   const renderInput = (params: any) => (
     <TextField
-      placeholder="Select Proposal"
+      placeholder="Proposal"
       {...params}
       required
       sx={{
@@ -64,6 +65,7 @@ const ProposalsList = ({
       getOptionLabel={(option: ProposalOption) => option.label}
       renderOption={renderOption}
       renderInput={renderInput}
+      noOptionsText={<NoOptions text="No Proposals" />}
       onChange={(_, newValue) => handleChange(newValue)}
       value={selectedOption}
       PaperComponent={({ children }) => (

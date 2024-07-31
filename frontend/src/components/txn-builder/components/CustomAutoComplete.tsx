@@ -3,6 +3,7 @@ import {
   customAutoCompleteStyles,
   customTextFieldStyles,
 } from '@/app/(routes)/transfers/styles';
+import NoOptions from '@/components/common/NoOptions';
 import { shortenName } from '@/utils/util';
 import {
   Autocomplete,
@@ -18,12 +19,14 @@ const CustomAutoComplete = ({
   handleChange,
   dataLoading,
   name,
+  emptyText,
 }: {
   options: ValidatorOption[];
   selectedOption: ValidatorOption | null;
   handleChange: (option: ValidatorOption | null) => void;
   dataLoading: boolean;
   name: string;
+  emptyText: string;
 }) => {
   /* eslint-disable @typescript-eslint/no-explicit-any */
   const renderOption = (props: any, option: ValidatorOption) => (
@@ -85,6 +88,7 @@ const CustomAutoComplete = ({
       getOptionLabel={(option: ValidatorOption) => option.label}
       renderOption={renderOption}
       renderInput={renderInput}
+      noOptionsText={<NoOptions text={emptyText} />}
       onChange={(_, newValue) => handleChange(newValue)}
       value={selectedOption}
       PaperComponent={({ children }) => (

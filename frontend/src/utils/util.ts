@@ -258,7 +258,6 @@ export function convertKeysToCamelCase(data: any): any {
       const cleanedKey = removeQuotesFromKey(key);
       const camelCaseKey = convertSnakeToCamelCase(cleanedKey);
       convertedData[camelCaseKey] = convertKeysToCamelCase(value);
-      console.log(camelCaseKey);
     }
     return convertedData;
   }
@@ -347,8 +346,8 @@ export function formatUnbondingPeriod(
 ): string {
   return stakingParams?.unbonding_time
     ? Math.floor(
-      parseInt(stakingParams?.unbonding_time || '', 10) / (3600 * 24)
-    ).toString()
+        parseInt(stakingParams?.unbonding_time || '', 10) / (3600 * 24)
+      ).toString()
     : '-';
 }
 
