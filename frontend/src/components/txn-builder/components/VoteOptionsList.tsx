@@ -34,7 +34,7 @@ const VoteOptionsList = ({
   /* eslint-disable @typescript-eslint/no-explicit-any */
   const renderInput = (params: any) => (
     <TextField
-      placeholder="Select Vote"
+      placeholder="Vote Option"
       {...params}
       required
       sx={{

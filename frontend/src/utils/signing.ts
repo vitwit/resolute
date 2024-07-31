@@ -436,11 +436,16 @@ async function broadcast(
       mode: 'BROADCAST_MODE_SYNC',
     }
   );
-  console.log('response of the post txn ', response);
-  const parsedData = JSON.parse(response.data);
+  let parsedData: any;
+
+  if (typeof response.data === 'string') {
+    parsedData = JSON.parse(response.data);
+  } else {
+    parsedData = response.data;
+  }
+
   const result = parseTxResult(parsedData.tx_response);
   if (result.code !== 0) return result;
-  console.log('result....', result);
   // have ambiguous issues, todo...
   //assertIsDeliverTxSuccess(result);
   return pollForTx(result.transactionHash).then(

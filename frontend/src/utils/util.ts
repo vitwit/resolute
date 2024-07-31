@@ -256,7 +256,6 @@ export function convertKeysToCamelCase(data: any): any {
       const cleanedKey = removeQuotesFromKey(key);
       const camelCaseKey = convertSnakeToCamelCase(cleanedKey);
       convertedData[camelCaseKey] = convertKeysToCamelCase(value);
-      console.log(camelCaseKey);
     }
     return convertedData;
   }
