@@ -26,6 +26,7 @@ type TransactionCount struct {
 
 type AllTransactionResult struct {
 	ID              int              `pg:"id,pk" json:"id"`
+	Title           string           `pg:"title" json:"title,omitempty" sql:"-"`
 	MultisigAddress string           `pg:"multisig_address,use_zero" json:"multisig_address"`
 	Fee             *json.RawMessage `pg:"fee" json:"fee,omitempty" sql:"-"`
 	Status          string           `pg:"status,use_zero" json:"status"`
