@@ -1,23 +1,18 @@
-import CustomButton from '@/components/common/CustomButton';
 import { DELETE_ILLUSTRATION } from '@/constants/image-names';
+import { dialogBoxPaperPropStyles } from '@/utils/commonStyles';
 import { Dialog, DialogContent } from '@mui/material';
 import Image from 'next/image';
 import React from 'react';
+import CustomButton from '../common/CustomButton';
 
-const DialogConfirmDelete = ({
-  open,
+const DialogConfirmDeleteNetwork = ({
   onClose,
-  onDelete,
-  title,
-  description,
-  loading,
+  open,
+  onConfirm,
 }: {
   open: boolean;
   onClose: () => void;
-  onDelete: () => void;
-  title: string;
-  description: string;
-  loading: boolean;
+  onConfirm: () => void;
 }) => {
   return (
     <Dialog
@@ -30,13 +25,10 @@ const DialogConfirmDelete = ({
         },
       }}
       PaperProps={{
-        sx: {
-          borderRadius: '16px',
-          background: '#1C1C20',
-        },
+        sx: dialogBoxPaperPropStyles,
       }}
     >
-      <DialogContent sx={{ padding: 0 }}>
+      <DialogContent>
         <div className="w-[450px] p-4 relative">
           <button
             className="absolute top-6 right-6 hover:bg-[#ffffff10] w-8 h-8 rounded-full flex items-center justify-center"
@@ -53,16 +45,16 @@ const DialogConfirmDelete = ({
                 alt="Delete"
               />
               <div className="flex items-center flex-col gap-2">
-                <div className="text-h2 !font-bold">{title}</div>
-                <div className="text-b1-light">{description}</div>
+                <div className="text-h2 !font-bold">Remove Network</div>
+                <div className="text-b1-light">
+                  Are you sure you want to remove network?
+                </div>
               </div>
             </div>
             <CustomButton
-              btnOnClick={onDelete}
-              btnLoading={loading}
-              btnDisabled={loading}
+              btnOnClick={onConfirm}
               btnText="Delete"
-              btnStyles="w-full !border-[#D92101] !bg-[#D921011A] delete-multisig-btn"
+              btnStyles="delete-network-button"
             />
           </div>
         </div>
@@ -71,4 +63,4 @@ const DialogConfirmDelete = ({
   );
 };
 
-export default DialogConfirmDelete;
+export default DialogConfirmDeleteNetwork;

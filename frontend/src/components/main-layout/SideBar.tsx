@@ -6,8 +6,11 @@ import SideMenu from './SideMenu';
 import SelectNetwork from './SelectNetwork';
 import ConnectWallet from './ConnectWallet';
 import DialogSelectNetwork from '../select-network/DialogSelectNetwork';
+import DialogAddNetwork from '../select-network/DialogAddNetwork';
+import { useAppSelector } from '@/custom-hooks/StateHooks';
 
 const SideBar = () => {
+  const addNetworkOpen = useAppSelector((state) => state.common.addNetworkOpen);
   return (
     <section className="sidebar">
       <SelectNetwork />
@@ -15,6 +18,7 @@ const SideBar = () => {
       <ExitSession />
       <ConnectWallet />
       <DialogSelectNetwork />
+      {addNetworkOpen ? <DialogAddNetwork /> : null}
     </section>
   );
 };
