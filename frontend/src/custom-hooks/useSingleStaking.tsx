@@ -34,17 +34,20 @@ const useSingleStaking = (chainID: string) => {
 
     const getAvaiailableAmount = (chainID: string) => {
         let amount = 0;
+
+        const { decimals, minimalDenom } = getDenomInfo(chainID);
+
         bankData[chainID]?.list?.forEach(element => {
-            amount += Number(element?.amount)
+            if (element?.denom === minimalDenom)
+                amount += Number(element?.amount)
         });
 
-        const { decimals } = getDenomInfo(chainID);
         return Number((amount / 10 ** decimals))
     }
 
     const totalValStakedAssets = (chainID: string, valAddr: string) => {
         let amount = 0;
-         stakeData[chainID]?.delegations?.delegations?.delegation_responses?.forEach((d)=>{
+        stakeData[chainID]?.delegations?.delegations?.delegation_responses?.forEach((d) => {
             if (d?.delegation?.validator_address === valAddr) {
                 amount = Number(d?.balance?.amount)
             }
@@ -86,11 +89,11 @@ const useSingleStaking = (chainID: string) => {
 
     const getAmountWithDecimal = (amount: number, chainID: string) => {
         const { decimals, displayDenom } = getDenomInfo(chainID);
-       
+
         return (amount / 10 ** decimals).toLocaleString('en-US', {
             minimumFractionDigits: 0,
             maximumFractionDigits: 2,
-          }) + ' ' + displayDenom;
+        }) + ' ' + displayDenom;
     }
 
     const getDenomWithChainID = (chainID: string) => {
