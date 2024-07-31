@@ -98,24 +98,7 @@ WITH new_data AS (
     ('ulamb', 'lambda', true, NOW(), '{}'::jsonb),
     ('ulava', 'lava-network', true, NOW(), '{}'::jsonb),
     ('nanolike', 'likecoin', true, NOW(), '{}'::jsonb),
-    ('ulum', 'lum-network', true, NOW(), '{}'::jsonb)
-)   
-
--- Insert or update the data
-INSERT INTO price_info (denom, coingecko_name, enabled, last_updated, info)
-SELECT * FROM new_data
-ON CONFLICT (denom) DO UPDATE
-SET
-  coingecko_name = EXCLUDED.coingecko_name,
-  enabled = EXCLUDED.enabled,
-  last_updated = EXCLUDED.last_updated,
-  info = EXCLUDED.info;
-
-
-  -- Example data1 to be inserted or updated
--- Replace this with your actual data
-WITH new_data1 AS (
-  VALUES
+    ('ulum', 'lum-network', true, NOW(), '{}'::jsonb),
     ('amand', 'mande-network', true, NOW(), '{}'::jsonb),
     ('uom', 'mantra-dao', true, NOW(), '{}'::jsonb),
     ('umars', 'mars-protocol-a7fcbcfb-fd61-4017-92f0-7ee9f9cc6da3', true, NOW(), '{}'::jsonb),
@@ -177,15 +160,5 @@ WITH new_data1 AS (
     ('nund', 'unification', true, NOW(), '{}'::jsonb),
     ('uvdl', 'vidulum', true, NOW(), '{}'::jsonb),
     ('axpla', 'xpla', true, NOW(), '{}'::jsonb),
-    ('azeta', 'zetachain', true, NOW(), '{}'::jsonb)    
-)
-
--- Insert or update the data
-INSERT INTO price_info (denom, coingecko_name, enabled, last_updated, info)
-SELECT * FROM new_data1
-ON CONFLICT (denom) DO UPDATE
-SET
-  coingecko_name = EXCLUDED.coingecko_name,
-  enabled = EXCLUDED.enabled,
-  last_updated = EXCLUDED.last_updated,
-  info = EXCLUDED.info;
+    ('azeta', 'zetachain', true, NOW(), '{}'::jsonb)
+)   
