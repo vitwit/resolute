@@ -268,6 +268,10 @@ function StakingDelegations({
                     <div className="flex justify-end">
                       <StakingActionsPopup
                         chainID={key}
+                        commission={getCommisionRate(
+                          get(data, 'delegation.validator_address'),
+                          key
+                        )}
                         withClaimRewards={withClaimValRewards}
                         validator={get(data, 'delegation.validator_address')}
                       />
@@ -291,11 +295,13 @@ interface PopupProps {
   validator: string;
   chainID: string;
   withClaimRewards: (validator: string, chainID: string) => void;
+  commission: number;
 }
 
 const StakingActionsPopup: React.FC<PopupProps> = ({
   validator,
   chainID,
+  commission,
   withClaimRewards,
 }) => {
   const [showPopup, setShowPopup] = useState<boolean>(false);
@@ -347,6 +353,7 @@ const StakingActionsPopup: React.FC<PopupProps> = ({
         <DelegatePopup
           validator={validator}
           chainID={chainID}
+          commission={commission}
           onClose={openDelegatePopup}
           openPopup={openDelegate}
         />
