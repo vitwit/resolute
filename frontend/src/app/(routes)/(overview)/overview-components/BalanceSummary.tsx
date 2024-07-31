@@ -20,15 +20,15 @@ export default function BalanceSummary({ chainIDs }: { chainIDs: string[] }) {
   const staked = stakedAmount?.toString()
   const rewards = rewardsAmount?.toString()
 
-  let total = availableAmount + stakedAmount + rewardsAmount;
-  total = total?.toString()
+  const total = Number(available) + Number(staked) + Number(rewards);
+  const totalAmt = total?.toString()
 
   const assetsSummaryData: AssetSummary[] = [
     {
       icon: '/total-bal.png',
       alt: 'total-balance',
       type: 'Total Balance',
-      amount: total,
+      amount: totalAmt ,
     },
     {
       icon: '/staked-bal.png',

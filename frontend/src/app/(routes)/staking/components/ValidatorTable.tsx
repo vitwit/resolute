@@ -96,6 +96,7 @@ const ValidatorTable: React.FC<{ chainID: string }> = ({ chainID }) => {
   const { getAmountWithDecimal } = useSingleStaking(chainID);
   const [openDelegate, setOpenDelegate] = useState<boolean>(false);
   const [selectedValidator, setSelectedValidator] = useState<string>('');
+  const [selectValCommission, setSelectValCommission] = useState<number>(0);
 
   const validatorRows = useMemo(() => {
     return Object.entries(filteredValidators || {}).map(([key, value]) => (
@@ -184,6 +185,8 @@ const ValidatorTable: React.FC<{ chainID: string }> = ({ chainID }) => {
 
   const handleOpenDelegateDialog = (validator: Validator) => {
     setSelectedValidator(validator.operator_address);
+    const c = parseInt(get(validator, 'commission.commission_rates.rate'))*100
+    setSelectValCommission(c)
     router.push(
       `?validator_address=${validator.operator_address}&action=delegate`
     );
@@ -212,6 +215,7 @@ const ValidatorTable: React.FC<{ chainID: string }> = ({ chainID }) => {
     <div className="flex flex-col gap-6 w-full">
       {openDelegate ? (
         <DelegatePopup
+          commission={selectValCommission}
           validator={selectedValidator || ''}
           chainID={chainID}
           onClose={handleCloseDelegateDialog}

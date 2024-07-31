@@ -231,7 +231,7 @@ const Asset = ({
             <NumberFormat
               cls=""
               type="dollar"
-              value={asset?.usdPrice?.toString()}
+              value={asset?.usdValue?.toString()}
             />
           </div>
           <div className="flex">

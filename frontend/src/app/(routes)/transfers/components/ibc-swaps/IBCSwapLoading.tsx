@@ -164,7 +164,7 @@ const IBCSwapLoading = ({
             <Image src={ALERT_ICON} width={24} height={24} alt="" />
             <div className="text-[#FFC13C]">Important</div>
           </div>
-          <div className="text-[#FFFFFFad]">IBC Swap</div>
+          <div className="text-[#FFFFFFF0]">IBC Swap</div>
         </div>
         <div className="flex gap-[26px]">
           <div></div>

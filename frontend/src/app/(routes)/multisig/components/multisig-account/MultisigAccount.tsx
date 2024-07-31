@@ -281,7 +281,7 @@ const MultisigAccountStats = ({
           Available Balance
         </div>
         <div className="flex items-center gap-2">
-          <div className="text-[18px] text-[#ffffffad] font-bold">
+          <div className="text-[18px] text-[#fffffff0] font-bold">
             <NumberFormat
               cls=""
               value={
@@ -306,7 +306,7 @@ const MultisigAccountStats = ({
           Staked Balance
         </div>
         <div className="flex items-center gap-2">
-          <div className="text-[18px] text-[#ffffffad] font-bold">
+          <div className="text-[18px] text-[#fffffff0] font-bold">
             <NumberFormat
               cls=""
               value={
@@ -350,13 +350,13 @@ const MultisigAccountStatsCard = ({
       <div className="text-[14px] font-extralight text-[#ffffff80]">{name}</div>
       {actionName ? (
         <div className="flex items-center gap-2">
-          <div className="text-[18px] text-[#ffffffad] font-bold">{value}</div>
+          <div className="text-[18px] text-[#fffffff0] font-bold">{value}</div>
           <button className="secondary-btn !font-bold" onClick={action}>
             View IBC
           </button>
         </div>
       ) : (
-        <div className="text-[18px] text-[#ffffffad] font-bold">{value}</div>
+        <div className="text-[18px] text-[#fffffff0] font-bold">{value}</div>
       )}
     </div>
   );
@@ -408,7 +408,7 @@ const TabsGroup = ({
           <div key={tab} className="flex flex-col justify-center">
             <button
               className={`text-[18px] mb-2 px-1 ${
-                tab === selectedTab ? 'text-[#ffffffad]' : 'text-[#ffffff80]'
+                tab === selectedTab ? 'text-[#fffffff0]' : 'text-[#ffffff80]'
               }`}
               onClick={() => handleChange(tab)}
             >
@@ -473,7 +473,7 @@ const DialogMultisigAssets = ({
               allAssets.map((asset) => (
                 <div
                   key={asset.minimalDenom}
-                  className="flex gap-1 items-center p-4 bg-[#FFFFFF05] rounded-2xl text-[14px] text-[#ffffffad]"
+                  className="flex gap-1 items-center p-4 bg-[#FFFFFF05] rounded-2xl text-[14px] text-[#fffffff0]"
                 >
                   <div>
                     <NumberFormat

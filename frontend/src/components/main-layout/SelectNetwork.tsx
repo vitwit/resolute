@@ -69,7 +69,7 @@ const SelectNetwork = () => {
             className="flex items-center gap-2 cursor-pointer"
             onClick={openChangeNetwork}
           >
-            <div className="text-[16px] h-6 font-bold text-[#ffffffad] capitalize">
+            <div className="text-[16px] h-6 font-bold text-[#fffffff0] capitalize">
               {shortenName(selectedNetwork.chainName, 15) || 'All Networks'}
             </div>
             <Image

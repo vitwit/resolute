@@ -74,7 +74,7 @@ const ValidatorName: React.FC<ValidatorNameProps> = ({
               href={`${monikerName ? `/validator/${encodeURIComponent(monikerName.toLowerCase())}` : ''}`}
             >
               <p
-                className={` ${smallFont ? 'text-[18px]' : 'text-b1'} flex items-center truncate text-[#ffffffad]`}
+                className={` ${smallFont ? 'text-[18px]' : 'text-b1'} flex items-center truncate text-[#fffffff0]`}
               >
                 {shortenName(
                   get(validatorDetails, 'description.moniker', ''),

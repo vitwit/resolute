@@ -74,7 +74,7 @@ const AssetsTable = ({ chainIDs }: { chainIDs: string[] }) => {
           </table>
         </div>
       ) : (
-        <div className="w-full flex flex-col flex-1 items-center justify-start text-[#ffffffad">
+        <div className="w-full flex flex-col flex-1 items-center justify-start text-[#fffffff0]">
           {loading || authzLoading ? <DashboardLoading /> : <NoAssets />}
         </div>
       )}

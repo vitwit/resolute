@@ -93,7 +93,7 @@ const AssetsDropDown: React.FC<AssetsDropDownProps> = ({
                   }}
                 />
                 <div className="flex items-center gap-2">
-                  <div className="flex gap-1 items-center text-[14px] leading-[24px] text-[#ffffffad]">
+                  <div className="flex gap-1 items-center text-[14px] leading-[24px] text-[#fffffff0]">
                     <div>{selectedAsset.balance}</div>
                   </div>
                 </div>
@@ -117,7 +117,7 @@ const AssetsDropDown: React.FC<AssetsDropDownProps> = ({
       }}
       sx={{
         '& .MuiInputBase-input': {
-          color: '#ffffffad',
+          color: '#fffffff0',
           fontSize: '14px',
           fontWeight: 300,
           fontFamily: 'Libre Franklin',
