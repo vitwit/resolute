@@ -7,6 +7,8 @@ import { RootState } from '@/store/store';
 // import OverviewTable from './overview-components/OverviewTable';
 import WithoutConnectionIllustration from '@/components/illustrations/WithoutConnectionIllustration';
 import OverviewDashboard from './overview-components/OverviewDashboard';
+// import FeegrantsToMe from '@/components/common/FeegrantsToMe';
+import FeegrantsByMe from '@/components/common/FeegrantsByMe';
 
 const Overview = () => {
   const nameToChainIDs = useAppSelector(
@@ -27,6 +29,8 @@ const Overview = () => {
         <WithoutConnectionIllustration />
       )}
       {/* <OverviewDashboard chainIDs={chainIDs}/> */}
+      {/* <FeegrantsToMe /> */}
+      <FeegrantsByMe />
     </div>
   );
 };
