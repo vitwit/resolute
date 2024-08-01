@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import useGetChainInfo from './useGetChainInfo';
 import { useAppDispatch, useAppSelector } from './StateHooks';
 import {
-  getAllValidators,
+  // getAllValidators,
   getDelegations,
   getUnbonding,
 } from '@/store/features/staking/stakeSlice';
