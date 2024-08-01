@@ -57,7 +57,7 @@ const FeegrantsByMe = () => {
       {grants.map((grant, index) => (
         <div className="garnts-card justify-between w-full" key={index}>
           <div className="flex flex-col gap-2">
-            <div className="flex gap-2">
+            <div className="flex gap-2 items-center">
               <Image
                 src="/akash.png"
                 width={20}

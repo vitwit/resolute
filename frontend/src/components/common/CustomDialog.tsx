@@ -15,7 +15,7 @@ interface CustomDialogProps {
   title: string;
   styles?: string;
   description?: string;
-  img?: any;
+  img?: string;
 }
 
 /**
