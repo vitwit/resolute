@@ -61,7 +61,7 @@ const ValidatorsAutoComplete = ({
             </div>
           </div>
           <div className="text-[#ffffff80] text-[12px] font-extralight">
-            {option.commission}% Commission
+            {Math.trunc(option.commission || 0)}% Commission
           </div>
         </div>
       </div>

@@ -14,7 +14,8 @@ const useValidator = () => {
   const fetchValidator = useCallback((valoperAddress: string, chainID: string) => {
     if (isWalletConnected && valoperAddress && chainID) {
       const { restURLs } = getChainInfo(chainID);
-      dispatch(getValidator({ baseURLs: restURLs, chainID, valoperAddress }));
+      if (!stakeData[chainID]?.validator[valoperAddress])
+        dispatch(getValidator({ baseURLs: restURLs, chainID, valoperAddress }));
     }
   }, []);
 
