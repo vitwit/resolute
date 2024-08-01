@@ -41,13 +41,13 @@ const TransfersPage = ({ chainIDs }: { chainIDs: string[] }) => {
   }, [paramsTransferType]);
 
   return (
-    <div className="space-y-10 flex flex-col py-10">
+    <div className="space-y-10 flex flex-col py-10 min-h-[calc(100vh-64px)]">
       <PageHeader
         title={TRANSFERS_TYPES?.[transferType].title}
         description={TRANSFERS_TYPES?.[transferType].description}
       />
       {isWalletConnected ? (
-        <>
+        <div className="flex-1">
           {transferType === 'single' ? (
             <SingleSend
               sortedAssets={isAuthzMode ? authzSortedAssets : sortedAssets}
@@ -57,7 +57,7 @@ const TransfersPage = ({ chainIDs }: { chainIDs: string[] }) => {
             <MultiSendPage chainID={chainIDs[0]} />
           ) : null}
           {transferType === 'ibc-swap' ? <IBCSwapPage /> : null}
-        </>
+        </div>
       ) : (
         <div className="flex-1 flex items-center justify-center min-h-[80vh]">
           <EmptyScreen

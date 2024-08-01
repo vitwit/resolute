@@ -19,7 +19,6 @@ import AssetsDropDown from './AssetsDropDown';
 import TxnLoading from '../txn-loading/TxnLoading';
 import { get } from 'lodash';
 import { TxStatus } from '@/types/enums';
-import { ALERT_ICON } from '@/constants/image-names';
 
 const SingleSend = ({ sortedAssets }: { sortedAssets: ParsedAsset[] }) => {
   const dispatch = useAppDispatch();
@@ -49,7 +48,7 @@ const SingleSend = ({ sortedAssets }: { sortedAssets: ParsedAsset[] }) => {
     ? getChainInfo(selectedAsset.chainID).feeAmount
     : 0;
 
-  const { handleSubmit, control, reset, getValues, setValue } = useForm({
+  const { handleSubmit, control, reset, getValues, setValue, watch } = useForm({
     defaultValues: {
       amount: '',
       address: '',
@@ -186,9 +185,9 @@ const SingleSend = ({ sortedAssets }: { sortedAssets: ParsedAsset[] }) => {
   }, [selectedNetwork]);
 
   return (
-    <div className="flex flex-col-reverse md:flex-row gap-10 justify-between items-center">
+    <div className="flex flex-col md:flex-row gap-10 justify-between items-center w-full">
       <div
-        className={`w-[600px] md:min-w-[550px] ${sendTxLoading ? 'opacity-50' : ''}`}
+        className={`w-[450px] desktop:min-w-[500px] ${sendTxLoading ? 'opacity-50' : ''}`}
       >
         <div className="single-send-box">
           <Box
@@ -202,20 +201,21 @@ const SingleSend = ({ sortedAssets }: { sortedAssets: ParsedAsset[] }) => {
               className="flex items-center gap-2 cursor-pointer w-fit"
             >
               <Image
-                className="rounded-full"
+                className="rounded-full w-5 h-5 desktop:w-10 desktop:h-10"
                 src={chainLogo}
                 height={40}
                 width={40}
                 alt=""
               />
-              <div className="text-[18px] font-bold capitalize">
+              <div className="text-[14px] desktop:text-[18px] desktop:font-bold capitalize">
                 {shortenName(selectedNetwork.chainName, 15) || 'All Networks'}
               </div>
               <Image src="/drop-down-icon.svg" height={24} width={24} alt="" />
             </div>
           </Box>
-          <div className="py-10 pt-12 px-6 flex gap-10 flex-col justify-between h-[630px]">
+          <div className="py-10 pt-12 px-6 flex gap-6 flex-col">
             <div>
+              <div className="form-label-text">Select Asset</div>
               <AssetsDropDown
                 selectedAsset={selectedAsset}
                 sortedAssets={sortedAssets}
@@ -239,8 +239,8 @@ const SingleSend = ({ sortedAssets }: { sortedAssets: ParsedAsset[] }) => {
       <SingleSendLoading
         chainID={selectedAsset?.chainID || ''}
         isIBC={isIBC}
-        toAddress={getValues('address')}
-        amount={getValues('amount')}
+        toAddress={watch('address')}
+        amount={watch('amount')}
         displayDenom={selectedAsset?.displayDenom || ''}
       />
     </div>
@@ -278,7 +278,7 @@ const SingleSendLoading = ({
   );
   const isDataProvided = amount?.length && chainID?.length && toAddress?.length;
   return (
-    <div className="space-y-8 w-full max-w-[600px] md:px-10">
+    <div className="space-y-8 w-full max-w-[500px] md:max-w-[600px] md:px-10">
       <TxnLoading
         fromAddress={fromAddress}
         toChainLogo={toChainLogo}
@@ -289,34 +289,21 @@ const SingleSendLoading = ({
         msgsCount={1}
         isSingle={true}
       />
-      <div className="px-6 py-4 rounded-2xl bg-[#FFFFFF14] text-[14px] space-y-2">
-        <div className="flex items-center gap-2">
-          <div className="flex items-center gap-[2px]">
-            <Image src={ALERT_ICON} width={24} height={24} alt="" />
-            <div className="text-[#FFC13C]">Important</div>
-          </div>
-          <div className="text-[#FFFFFFF0]">Single Transfer</div>
-        </div>
-        <div className="flex gap-[26px]">
-          <div></div>
-          <div className="text-[#ffffff80]">
-            {isDataProvided ? (
-              <span>
-                {' '}
-                You are sending{' '}
-                <span className="font-medium">
-                  {amount} {displayDenom}
-                </span>{' '}
-                to {shortenAddress(toAddress, 20)}
-              </span>
-            ) : (
-              <span>
-                Provide all the required fields to continue with the
-                transaction.
-              </span>
-            )}
-          </div>
-        </div>
+      <div className="txn-summary">
+        {isDataProvided ? (
+          <span>
+            {' '}
+            You are sending{' '}
+            <span className="font-medium">
+              {amount} {displayDenom}
+            </span>{' '}
+            to {shortenAddress(toAddress, 20)}
+          </span>
+        ) : (
+          <span className="text-[#ffffff80]">
+            Your transaction summary appears here.
+          </span>
+        )}
       </div>
     </div>
   );
