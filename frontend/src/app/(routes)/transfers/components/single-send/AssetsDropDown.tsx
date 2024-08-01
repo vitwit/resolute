@@ -8,7 +8,10 @@ import {
   InputAdornment,
 } from '@mui/material';
 import React from 'react';
-import { customAutoCompleteStyles, customTextFieldStyles } from '../../styles';
+import {
+  customAutoCompleteStyles,
+  customTransferTextFieldStyles,
+} from '../../styles';
 import NoOptions from '@/components/common/NoOptions';
 import CustomLoader from '@/components/common/CustomLoader';
 import { css } from '@emotion/react';
@@ -51,7 +54,7 @@ const AssetsDropDown: React.FC<AssetsDropDownProps> = ({
             />
           </div>
           <div className="flex items-center gap-2">
-            <div className="flex gap-1 items-center text-[14px] leading-[24px]">
+            <div className="flex gap-1 items-center text-[14px] leading-[24px] text-[#ffffffad]">
               <div>
                 {String(option.balance).split('.')[0]}
                 {option.balance > 0 ? (
@@ -75,7 +78,7 @@ const AssetsDropDown: React.FC<AssetsDropDownProps> = ({
   /* eslint-disable @typescript-eslint/no-explicit-any */
   const renderInput = (params: any) => (
     <TextField
-      placeholder="Select Asset"
+      placeholder="Asset"
       {...params}
       InputProps={{
         ...params.InputProps,
@@ -87,13 +90,17 @@ const AssetsDropDown: React.FC<AssetsDropDownProps> = ({
                   src={selectedAsset.chainLogoURL}
                   alt={selectedAsset.displayDenom}
                   sx={{
-                    width: '24px',
-                    height: '24px',
+                    width: '20px',
+                    height: '20px',
                     boxShadow: '0px 4px 4px 0px rgba(0, 0, 0, 0.25)',
+                    '@media (min-width: 1500px)': {
+                      width: '24px',
+                      height: '24px',
+                    },
                   }}
                 />
                 <div className="flex items-center gap-2">
-                  <div className="flex gap-1 items-center text-[14px] leading-[24px] text-[#fffffff0]">
+                  <div className="flex gap-1 items-center text-[14px] leading-[24px] text-[#ffffffad]">
                     <div>{selectedAsset.balance}</div>
                   </div>
                 </div>
@@ -117,7 +124,7 @@ const AssetsDropDown: React.FC<AssetsDropDownProps> = ({
       }}
       sx={{
         '& .MuiInputBase-input': {
-          color: '#fffffff0',
+          color: '#ffffffad',
           fontSize: '14px',
           fontWeight: 300,
           fontFamily: 'Libre Franklin',
@@ -174,7 +181,7 @@ const AssetsDropDown: React.FC<AssetsDropDownProps> = ({
           )}
         </Paper>
       )}
-      sx={{ ...customTextFieldStyles, ...customAutoCompleteStyles }}
+      sx={{ ...customTransferTextFieldStyles, ...customAutoCompleteStyles }}
     />
   );
 };
