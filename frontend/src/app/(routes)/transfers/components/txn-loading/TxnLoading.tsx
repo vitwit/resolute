@@ -37,12 +37,14 @@ const TxnLoading = (props: TxnLoadingProps) => {
     <div className="w-full flex items-center justify-between relative">
       <div className="flex flex-col items-center gap-4 z-[99]">
         {fromChainLogo ? (
-          <StyledNetworkLogo
-            primaryColor={fromChainColor || '#4453DF'}
-            logo={fromChainLogo || GLOBE_ICON}
-          />
+          <div className={`${sendTxLoading ? 'opacity-100' : 'opacity-70'}`}>
+            <StyledNetworkLogo
+              primaryColor={fromChainColor || '#4453DF'}
+              logo={fromChainLogo || GLOBE_ICON}
+            />
+          </div>
         ) : (
-          <div className="opacity-60">
+          <div className="opacity-40">
             <StyledNetworkLogo
               primaryColor={'#4453DF'}
               logo={GLOBE_ICON}
@@ -54,7 +56,7 @@ const TxnLoading = (props: TxnLoadingProps) => {
           {fromAddress ? (
             <span>{shortenAddress(fromAddress, 12)}</span>
           ) : (
-            <span className="text-[#ffffff80]">From</span>
+            <span className="text-[#ffffff80]">You</span>
           )}
         </div>
       </div>
@@ -96,12 +98,14 @@ const TxnLoading = (props: TxnLoadingProps) => {
 
       <div className="flex flex-col items-center gap-4 z-[99]">
         {toChainLogo ? (
-          <StyledNetworkLogo
-            primaryColor={toChainColor || '#4453DF'}
-            logo={toChainLogo || GLOBE_ICON}
-          />
+          <div className={`${sendTxLoading ? 'opacity-100' : 'opacity-70'}`}>
+            <StyledNetworkLogo
+              primaryColor={toChainColor || '#4453DF'}
+              logo={toChainLogo || GLOBE_ICON}
+            />
+          </div>
         ) : (
-          <div className="opacity-60">
+          <div className="opacity-40">
             <StyledNetworkLogo
               primaryColor={'#4453DF'}
               logo={GLOBE_ICON}

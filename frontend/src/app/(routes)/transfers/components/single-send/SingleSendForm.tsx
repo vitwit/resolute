@@ -58,10 +58,10 @@ const SingleSendForm = ({
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="h-full flex flex-col gap-10 justify-between"
+      className="h-full flex flex-col gap-6"
     >
       <div className="relative">
-        <div className="space-y-2">
+        <div className="">
           <div className="form-label-text">Enter recipient address</div>
           <AddressField
             control={control}
@@ -74,15 +74,31 @@ const SingleSendForm = ({
           </div>
         ) : null}
       </div>
-      <div className="space-y-2">
-        <div className="form-label-text">Enter Amount</div>
+      <div className="">
+        <div className="flex items-center justify-between">
+          <div className="form-label-text">Enter Amount</div>
+          {selectedAsset ? (
+            <div className="secondary-text font-light !text-[12px] flex gap-1 max:hidden">
+              <div>Balance</div>
+              <div>
+                {String(selectedAsset.balance).split('.')[0]}
+                {selectedAsset.balance > 0 ? (
+                  <span className="text-[10px]">
+                    .{String(selectedAsset.balance).split('.')[1]}
+                  </span>
+                ) : null}{' '}
+                {selectedAsset.displayDenom}
+              </div>
+            </div>
+          ) : null}
+        </div>
         <AmountInputWrapper
           control={control}
           quickSelectAmount={quickSelectAmount}
           selectedAsset={selectedAsset}
         />
       </div>
-      <div className="space-y-2">
+      <div className="">
         <div className="form-label-text">Enter Memo (Optional)</div>
         <MemoField control={control} />
       </div>

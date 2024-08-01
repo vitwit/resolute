@@ -31,8 +31,8 @@ const AmountInputWrapper = ({
             />
           </div>
         </div>
-        <div className="secondary-text font-light !text-[12px] flex gap-1">
-          <div>Available Balance</div>
+        <div className="secondary-text font-light !text-[12px] gap-1 hidden max:flex">
+          <div>Balance</div>
           {selectedAsset ? (
             <div>
               {String(selectedAsset.balance).split('.')[0]}
