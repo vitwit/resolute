@@ -40,9 +40,9 @@ const useInitStaking = (chainID: string) => {
     }
   }, [isWalletConnected, chainID]);
 
-  useEffect(() => {
-    if (chainID) dispatch(getAllValidators({ baseURLs: restURLs, chainID }));
-  }, [chainID]);
+  // useEffect(() => {
+  //   if (chainID) dispatch(getAllValidators({ baseURLs: restURLs, chainID }));
+  // }, [chainID]);
 };
 
 export default useInitStaking;

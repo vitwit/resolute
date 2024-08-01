@@ -108,7 +108,8 @@ const useStaking = ({ isSingleChain }: { isSingleChain: boolean }) => {
         dispatch(getUnbonding({ baseURLs: restURLs, address, chainID }));
 
         // Fetch all validators
-        dispatch(getAllValidators({ baseURLs: restURLs, chainID }));
+        if (!stakeData[chainID]?.validators)
+          dispatch(getAllValidators({ baseURLs: restURLs, chainID }));
       });
     }
   }, [isWalletConnected]);
