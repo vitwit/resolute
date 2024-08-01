@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import Copy from '@/components/common/Copy';
+import DialogViewDetails from './DialogViewDetails';
 
 type Grant = {
   address: string;
@@ -11,6 +12,14 @@ const FeegrantsToMe = () => {
   const [selectedCardIndex, setSelectedCardIndex] = useState<number | null>(
     null
   );
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const handleViewDetails = () => {
+    setDialogOpen(true);
+  };
+
+  const handleCloseDialog = () => {
+    setDialogOpen(false);
+  };
 
   const grants: Grant[] = [
     {
@@ -101,10 +110,13 @@ const FeegrantsToMe = () => {
             >
               {selectedCardIndex === index ? 'Cancel' : 'Using'}
             </button>
-            <div className="secondary-btn">view details</div>
+            <div className="secondary-btn" onClick={handleViewDetails}>
+              View Details
+            </div>
           </div>
         </div>
       ))}
+      <DialogViewDetails open={dialogOpen} onClose={handleCloseDialog} />
     </div>
   );
 };

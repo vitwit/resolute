@@ -6,6 +6,7 @@
 import { dialogBoxPaperPropStyles } from '@/utils/commonStyles';
 import { Dialog, DialogContent } from '@mui/material';
 import React from 'react';
+import Image from 'next/image';
 
 interface CustomDialogProps {
   children: React.ReactNode;
@@ -14,6 +15,7 @@ interface CustomDialogProps {
   title: string;
   styles?: string;
   description?: string;
+  img?: any;
 }
 
 /**
@@ -32,6 +34,7 @@ const CustomDialog = ({
   children,
   onClose,
   open,
+  img,
   title,
   styles,
   description,
@@ -58,8 +61,22 @@ const CustomDialog = ({
             </button>
           </div>
           <div className="flex items-center flex-col gap-2">
-            <div className="text-h1 w-full text-center px-6">{title}</div>
-            <div className="text-b1-light text-center w-full">{description}</div>
+            <div className="flex gap-2 items-center px-6">
+             {
+              img ?  <div className="">
+              <Image
+              src={img}
+              width={40}
+              height={40}
+              alt="Network-logo"
+              />
+            </div>:null
+             }
+              <div className="text-h1 w-full text-center ">{title}</div>
+            </div>
+            <div className="text-b1-light text-center w-full">
+              {description}
+            </div>
           </div>
           <div className="px-6">{children}</div>
           <div className="h-10"></div>
