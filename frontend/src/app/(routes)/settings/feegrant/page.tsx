@@ -7,7 +7,7 @@ import FeegrantFilters from '../components/FeegrantFilters';
 
 const page = () => {
   const createNewFeegrant = () => {};
- 
+
   return (
     <SettingsLayout
       action={createNewFeegrant}
@@ -15,10 +15,7 @@ const page = () => {
       tabName="feegrant"
     >
       <div>
-        <FeegrantFilters
-          // handleFiltersChange={handleFiltersChange}
-          // filter={filter}
-        />
+        <FeegrantFilters />
       </div>
     </SettingsLayout>
   );
