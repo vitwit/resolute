@@ -11,6 +11,7 @@ import {
 } from '@/store/features/staking/stakeSlice';
 import { getAccountInfo } from '@/store/features/auth/authSlice';
 import { getDelegatorTotalRewards } from '@/store/features/distribution/distributionSlice';
+import { RootState } from '@/store/store';
 
 const OverviewDashboard = ({ chainIDs }: { chainIDs: string[] }) => {
   const dispatch = useAppDispatch();
@@ -29,7 +30,7 @@ const OverviewDashboard = ({ chainIDs }: { chainIDs: string[] }) => {
         address,
         chainID,
       };
-      dispatch(getBalances(basicChainInputs));
+      // dispatch(getBalances(basicChainInputs));
       dispatch(getDelegations(basicChainInputs));
       dispatch(getAccountInfo(basicChainInputs));
       dispatch(
@@ -50,6 +51,30 @@ const OverviewDashboard = ({ chainIDs }: { chainIDs: string[] }) => {
       );
     });
   }, []);
+
+  const allNameToChainIDs = useAppSelector(
+    (state: RootState) => state.wallet.nameToChainIDs
+  );
+
+  useEffect(() => {
+    const allChainIDs = Object.keys(allNameToChainIDs).map(
+      (chainName) => allNameToChainIDs[chainName]
+    );
+
+    allChainIDs.forEach((chainID) => {
+      const allChainInfo = networks[chainID];
+      const chainInfo = allChainInfo.network;
+      const address = allChainInfo?.walletInfo?.bech32Address;
+      const basicChainInputs = {
+        baseURL: chainInfo.config.rest,
+        baseURLs: chainInfo.config.restURIs,
+        address,
+        chainID,
+      };
+
+      dispatch(getBalances(basicChainInputs));
+    });
+  }, [])
 
   return (
     <div>
