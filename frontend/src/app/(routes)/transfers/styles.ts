@@ -1,3 +1,5 @@
+import { merge } from 'lodash';
+
 export const customDialogPaper = {
   borderRadius: '24px',
   background: 'linear-gradient(90deg, #704290 0.11%, #241b61 70.28%)',
@@ -52,7 +54,7 @@ export const swapTextFieldStyles = {
 
 export const customTextFieldStyles = {
   '& .MuiInputBase-input': {
-    color: '#ffffffad',
+    color: '#fffffff0',
     fontSize: '14px',
     fontWeight: 200,
     fontFamily: 'Libre Franklin',
@@ -71,6 +73,15 @@ export const customTextFieldStyles = {
     borderRadius: '100px',
   },
 };
+
+export const customTransferTextFieldStyles = merge({}, customTextFieldStyles, {
+  '& .MuiOutlinedInput-root': {
+    height: '32px',
+    '@media (min-width: 1500px)': {
+      height: '36px',
+    },
+  },
+});
 
 export const amountFieldStyles = {
   '& .MuiInputBase-input': {
@@ -101,6 +112,6 @@ export const customAutoCompleteStyles = {
     fontFamily: 'Libre Franklin',
   },
   '& .Mui-disabled': {
-    '-webkit-text-fill-color': '#ffffffad !important',
+    '-webkit-text-fill-color': '#fffffff0 !important',
   },
 };

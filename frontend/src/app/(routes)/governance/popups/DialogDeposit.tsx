@@ -166,7 +166,7 @@ const DialogDeposit = ({
       <div className="space-y-10">
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <div className="text-[18px] font-bold max-w-[450px] truncate text-[#ffffffad]">
+            <div className="text-[18px] font-bold max-w-[450px] truncate">
               {proposalTitle}
             </div>
             <div className="flex gap-1 items-center">

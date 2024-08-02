@@ -10,7 +10,6 @@ import StakingSummary from './StakingSummary';
 import StakingUnDelegations from './StakingUnDelegations';
 import StakingDelegations from './StakingDelegations';
 import CustomButton from '@/components/common/CustomButton';
-import DialogSelectNetwork from '@/components/select-network/DialogSelectNetwork';
 import { setChangeNetworkDialogOpen } from '@/store/features/common/commonSlice';
 
 const StakingDashboard = () => {
@@ -107,8 +106,6 @@ const StakingDashboard = () => {
           </div>
         )}
       </div>
-
-      <DialogSelectNetwork />
     </div>
   );
 };

@@ -17,7 +17,7 @@
   "keplr_experimental": false,
   "leap_experimental": false,
   "is_testnet": false,
-  "govV1": false,
+  "gov_v1": false,
   "explorer_tx_hash_endpoint": "https://www.mintscan.io/cosmos/txs/",
   "config": {
     "chain_id": "cosmoshub-4",

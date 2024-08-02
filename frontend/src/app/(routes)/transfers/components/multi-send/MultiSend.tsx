@@ -18,7 +18,6 @@ import MemoField from '../single-send/MemoField';
 import AmountSummary from './AmountSummary';
 import AddMessages from './AddMessages';
 import { get } from 'lodash';
-import { ALERT_ICON } from '@/constants/image-names';
 import TxnLoading from '../txn-loading/TxnLoading';
 import { getTotalAmount } from '@/utils/denom';
 
@@ -112,9 +111,9 @@ const MultiSend = ({ chainID }: { chainID: string }) => {
   }, [selectedNetwork, isWalletConnected]);
 
   return (
-    <div className="flex flex-col-reverse md:flex-row gap-10 justify-between items-center">
+    <div className="flex flex-col md:flex-row gap-10 justify-between items-center w-full">
       <div
-        className={`w-[600px] md:min-w-[550px] ${txnLoading ? 'opacity-50' : ''}`}
+        className={`w-[450px] desktop:min-w-[500px] ${txnLoading ? 'opacity-50' : ''}`}
       >
         <div className="single-send-box">
           <Box
@@ -127,14 +126,20 @@ const MultiSend = ({ chainID }: { chainID: string }) => {
               onClick={() => changeNetwork()}
               className="flex items-center gap-2 cursor-pointer w-fit"
             >
-              <Image className='rounded-full' src={chainLogo} height={40} width={40} alt="" />
-              <div className="text-[18px] font-bold capitalize">
+              <Image
+                className="rounded-full w-5 h-5 desktop:w-10 desktop:h-10"
+                src={chainLogo}
+                height={40}
+                width={40}
+                alt=""
+              />
+              <div className="text-[14px] desktop:text-[18px] desktop:font-bold capitalize">
                 {shortenName(selectedNetwork.chainName, 15) || 'All Networks'}
               </div>
               <Image src="/drop-down-icon.svg" height={24} width={24} alt="" />
             </div>
           </Box>
-          <div className="py-10 px-6 flex flex-col justify-between gap-6 min-h-[630px]">
+          <div className="py-10 pt-12 px-6 flex flex-col gap-6">
             <form
               className={`flex flex-col justify-between ${msgs?.length ? 'gap-6' : 'gap-10'}`}
               onSubmit={handleSubmit(onSubmit)}
@@ -190,7 +195,7 @@ const MultiSendLoading = ({
   const firstAddress = msgs?.[0]?.value?.toAddress || '';
 
   return (
-    <div className="space-y-8 w-full max-w-[600px] md:px-10">
+    <div className="space-y-8 w-full max-w-[500px] md:max-w-[600px] md:px-10">
       <TxnLoading
         fromAddress={fromAddress}
         toChainLogo={chainLogo}
@@ -201,37 +206,24 @@ const MultiSendLoading = ({
         msgsCount={msgs.length}
         isSingle={false}
       />
-      <div className="px-6 py-4 rounded-2xl bg-[#FFFFFF14] text-[14px] space-y-2">
-        <div className="flex items-center gap-2">
-          <div className="flex items-center gap-[2px]">
-            <Image src={ALERT_ICON} width={24} height={24} alt="" />
-            <div className="text-[#FFC13C]">Important</div>
-          </div>
-          <div className="text-[#FFFFFFad]">Multi Transfer</div>
-        </div>
-        <div className="flex gap-[26px]">
-          <div></div>
-          <div className="text-[#ffffff80]">
-            {msgs?.length ? (
-              <span>
-                You are sending{' '}
-                {totalAmount ? (
-                  <span className="font-medium">
-                    {totalAmount} {originDenomInfo?.originDenom}
-                  </span>
-                ) : (
-                  <span>tokens</span>
-                )}{' '}
-                to <span className="font-medium">{msgs.length} addresses</span>
+      <div className="txn-summary">
+        {msgs?.length ? (
+          <span>
+            You are sending{' '}
+            {totalAmount ? (
+              <span className="font-medium">
+                {totalAmount} {originDenomInfo?.originDenom}
               </span>
             ) : (
-              <>
-                Provide all the required fields to continue with the
-                transaction.
-              </>
-            )}
-          </div>
-        </div>
+              <span>tokens</span>
+            )}{' '}
+            to <span className="font-medium">{msgs.length} addresses</span>
+          </span>
+        ) : (
+          <span className="text-[#ffffff80]">
+            Your transaction summary appears here.
+          </span>
+        )}
       </div>
     </div>
   );

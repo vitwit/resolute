@@ -3,6 +3,7 @@ import { useAppDispatch, useAppSelector } from './StateHooks';
 import { RootState } from '@/store/store';
 import useGetChainInfo from './useGetChainInfo';
 import {
+  getAllValidators,
   getDelegations,
   getUnbonding,
   getValidator,
@@ -21,6 +22,7 @@ import { getBalances } from '@/store/features/bank/bankSlice';
 // import { Interface } from "readline";
 import useGetAssetsAmount from './useGetAssetsAmount';
 import useGetTxInputs from './useGetTxInputs';
+import { isEmpty } from 'lodash';
 
 const useStaking = ({ isSingleChain }: { isSingleChain: boolean }) => {
   const dispatch = useAppDispatch();
@@ -107,7 +109,8 @@ const useStaking = ({ isSingleChain }: { isSingleChain: boolean }) => {
         dispatch(getUnbonding({ baseURLs: restURLs, address, chainID }));
 
         // Fetch all validators
-        // dispatch(getAllValidators({ baseURLs: restURLs, chainID }));
+        if (isEmpty(stakeData[chainID]?.validators?.active) || isEmpty(stakeData[chainID]?.validators?.inactive))
+          dispatch(getAllValidators({ baseURLs: restURLs, chainID }));
       });
     }
   }, [isWalletConnected]);
@@ -184,17 +187,20 @@ const useStaking = ({ isSingleChain }: { isSingleChain: boolean }) => {
     let totalRewardsAmount = 0;
     let displayDenomName = '';
 
+
     chainIDs.forEach((cId) => {
       if (cId === chainID) {
         const rewards = rewardsChains?.[chainID]?.delegatorRewards;
-
         rewards?.list?.forEach((r) => {
           if (r.validator_address === validator) {
-            const { decimals, displayDenom } = getDenomInfo(chainID);
-
-            totalRewardsAmount =
-              Number(r?.reward[0]?.amount || 0) / 10 ** decimals;
-            displayDenomName = displayDenom;
+            const { decimals, displayDenom, minimalDenom } = getDenomInfo(chainID);
+            r?.reward?.forEach(r1 => {
+              if (r1?.denom === minimalDenom) {
+                totalRewardsAmount =
+                  Number(r1?.amount || 0) / 10 ** decimals;
+                displayDenomName = displayDenom;
+              }
+            })
           }
 
           return false;

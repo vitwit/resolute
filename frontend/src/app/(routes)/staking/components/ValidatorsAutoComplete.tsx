@@ -45,7 +45,7 @@ const ValidatorsAutoComplete = ({
         width: '100%',
         paddingTop: '8px',
         paddingBottom: '8px',
-        color: '#ffffffad !important',
+        color: '#fffffff0 !important',
       }}
       css={listItemStyle}
     >
@@ -61,7 +61,7 @@ const ValidatorsAutoComplete = ({
             </div>
           </div>
           <div className="text-[#ffffff80] text-[12px] font-extralight">
-            {option.commission}% Commission
+            {Math.trunc(option.commission || 0)}% Commission
           </div>
         </div>
       </div>
@@ -104,7 +104,7 @@ const ValidatorsAutoComplete = ({
       }}
       sx={{
         '& .MuiInputBase-input': {
-          color: '#ffffffad',
+          color: '#fffffff0',
           fontSize: '14px',
           fontWeight: 400,
           fontFamily: 'Libre Franklin',
@@ -113,7 +113,7 @@ const ValidatorsAutoComplete = ({
           border: 'none',
         },
         '& .MuiSvgIcon-root': {
-          color: '#ffffffad',
+          color: '#fffffff0',
         },
       }}
     />

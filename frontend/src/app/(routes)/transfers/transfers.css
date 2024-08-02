@@ -79,7 +79,7 @@
 }
 
 .multisend-btn-active {
-  @apply text-[#ffffffad] rounded-2xl;
+  @apply text-[#fffffff0] rounded-2xl;
   background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
   box-shadow: 0px 4px 4px 0px #100;
 }
@@ -93,7 +93,7 @@
 }
 
 .select-network {
-  @apply h-[100px] py-6 px-10 flex items-center;
+  @apply h-[64px] desktop:h-[80px] py-6 px-6 flex items-center;
   border-radius: 16px 16px 0px 0px;
   background: linear-gradient(
     180deg,
@@ -251,4 +251,8 @@
   to {
     transform: rotateY(360deg);
   }
+}
+
+.txn-summary {
+  @apply px-6 py-3 rounded-2xl bg-[#FFFFFF14] text-[14px] space-y-2 text-[#ffffff80] italic text-center;
 }

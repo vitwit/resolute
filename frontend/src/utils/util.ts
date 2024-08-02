@@ -156,30 +156,30 @@ export const formatCoin = (amount: number, denom: string): string => {
 };
 
 export function formatNumber(number: number): string {
-  if (number <= 999) return number?.toLocaleString('en-US', {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 2,
-  }) + '';
-  
-  const suffixes = ['', 'K', 'M', 'B', 'T'];
-  const tier = (Math.log10(Math.abs(number)) / 3) | 0;
 
-  if (tier === 0) return number?.toLocaleString('en-US', {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 2,
-  });
-
-  const suffix = suffixes[tier];
-  const scale = Math.pow(10, tier * 3);
-
-  const scaledNumber = number / scale;
-
-  const formattedNumber = parseFloat(scaledNumber.toFixed(2));
-
-  return formattedNumber?.toLocaleString('en-US', {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 2,
-  }); + suffix;
+  // Check for trillions
+  if (Math.abs(number) >= 1.0e+12) {
+    return (number / 1.0e+12).toFixed(2) + "T"; // Trillions
+  }
+  // Check for billions
+  else if (Math.abs(number) >= 1.0e+9) {
+    return (number / 1.0e+9).toFixed(2) + "B"; // Billions
+  }
+  // Check for more than millions
+  else if (Math.abs(number) > 1.0e+6) {
+    return (number / 1.0e+6).toFixed(2) + "M"; // Millions
+  }
+  else if (Math.abs(number) <= 1.0e+6 && Math.abs(number) > 1.0e+3) {
+    return Math.trunc(number).toLocaleString('en-US')
+    // No decimals, formatted with commas
+  }
+  // Less than a thousand
+  else {
+    return number.toLocaleString('en-US', {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2
+    });
+  }
 }
 
 export const getDaysLeftString = (daysLeft: number): string => {
@@ -258,7 +258,6 @@ export function convertKeysToCamelCase(data: any): any {
       const cleanedKey = removeQuotesFromKey(key);
       const camelCaseKey = convertSnakeToCamelCase(cleanedKey);
       convertedData[camelCaseKey] = convertKeysToCamelCase(value);
-      console.log(camelCaseKey);
     }
     return convertedData;
   }
@@ -347,8 +346,8 @@ export function formatUnbondingPeriod(
 ): string {
   return stakingParams?.unbonding_time
     ? Math.floor(
-      parseInt(stakingParams?.unbonding_time || '', 10) / (3600 * 24)
-    ).toString()
+        parseInt(stakingParams?.unbonding_time || '', 10) / (3600 * 24)
+      ).toString()
     : '-';
 }
 

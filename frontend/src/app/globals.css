@@ -41,7 +41,7 @@ body {
   @apply h-[1px] self-stretch bg-[#1C1C20];
 }
 .primary-btn {
-  @apply border-[1px] text-[14px] rounded-full px-4 py-[10.5px] leading-[21px] !h-8 flex justify-center items-center text-[#ffffffad];
+  @apply border-[1px] text-[14px] rounded-full px-4 py-[10.5px] leading-[21px] !h-8 flex justify-center items-center text-[#fffffff0];
   background: linear-gradient(
     180deg,
     rgba(68, 83, 223, 0.1) 12.5%,
@@ -143,15 +143,15 @@ body {
 }
 
 .text-h1 {
-  @apply text-[28px] font-bold text-[#ffffffad];
+  @apply text-[28px] font-bold text-[#fffffff0];
 }
 
 .text-h2 {
-  @apply text-[18px] text-[#ffffffad];
+  @apply text-[18px] text-[#fffffff0];
 }
 
 .text-b1 {
-  @apply text-[14px] leading-[21px] text-[#ffffffad];
+  @apply text-[14px] leading-[21px] text-[#fffffff0];
 }
 
 .text-b1-light {
@@ -203,4 +203,10 @@ input[type='checkbox'] {
 .profile-grid {
   @apply flex flex-col justify-center items-center gap-2 p-4 rounded-2xl;
   background: rgba(255, 255, 255, 0.02);
+}
+
+.delete-network-button {
+  @apply w-full !border-[#D92101] !bg-[#D921011A];
+  border-image: none !important;
+  background: #d921011a !important;
 }

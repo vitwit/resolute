@@ -14,10 +14,12 @@ interface PopupProps {
   chainID: string;
   openPopup: boolean;
   onClose: () => void;
+  commission: number;
 }
 
 const DelegatePopup: React.FC<PopupProps> = ({
   validator,
+  commission,
   chainID,
   openPopup,
   onClose,
@@ -38,7 +40,10 @@ const DelegatePopup: React.FC<PopupProps> = ({
 
   // Get the current validator's information from the staking module
   const stakeModule = staking.getAllDelegations();
-  const val = stakeModule[chainID]?.validators?.active?.[validator];
+  let val = stakeModule[chainID]?.validators?.active?.[validator];
+  if (!val) {
+    val = stakeModule[chainID]?.validators?.inactive?.[validator];
+  }
 
   const availableAmount = singleStake.getAvaiailableAmount(chainID);
 
@@ -89,7 +94,7 @@ const DelegatePopup: React.FC<PopupProps> = ({
               {get(val, 'description.details', '-')}
             </p>
             <p className="flex secondary-text">
-              {getCommisionRate()}% Commission
+              {commission ? commission : getCommisionRate()}% Commission
             </p>
           </div>
           <div className="divider-line"></div>

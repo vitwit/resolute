@@ -207,7 +207,7 @@ const SendForm = (props: SendFormProps) => {
                                 sx={{
                                   ...customSelectStyles,
                                   '& .MuiSelect-select': {
-                                    color: '#ffffffad',
+                                    color: '#fffffff0',
                                   },
                                 }}
                                 MenuProps={{
@@ -215,7 +215,7 @@ const SendForm = (props: SendFormProps) => {
                                     sx: {
                                       backgroundColor: '#FFFFFF14',
                                       backdropFilter: 'blur(15px)',
-                                      color: '#ffffffad',
+                                      color: '#fffffff0',
                                       borderRadius: '16px',
                                       marginTop: '8px',
                                     },

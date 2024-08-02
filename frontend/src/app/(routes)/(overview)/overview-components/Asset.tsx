@@ -174,7 +174,7 @@ const Asset = ({
               className="w-4 h-4"
               draggable={false}
             />
-            <p className="text-small">
+            <p className="text-b1-light">
               on{' '}
               <Link
                 className="capitalize"
@@ -226,12 +226,12 @@ const Asset = ({
         </div>
       </th>
       <th>
-        <div className="flex flex-col items-start gap-2 px-4">
+        <div className="flex flex-col items-start gap-1 px-4">
           <div className="text-[14px] font-normal leading-[21px] flex items-baseline">
             <NumberFormat
               cls=""
               type="dollar"
-              value={asset?.usdPrice?.toString()}
+              value={asset?.usdValue?.toString()}
             />
           </div>
           <div className="flex">
