@@ -86,10 +86,10 @@ const AddMessages = ({
             onChange={handleInputChange}
             value={inputs}
             spellCheck={false}
-            rows={msgs.length ? 2 : 11}
+            rows={msgs.length ? 2 : 6}
             sx={{
               ...multiSendInputFieldStyles,
-              ...{ height: msgs.length ? '90px' : '290px' },
+              ...{ height: msgs.length ? '90px' : '190px' },
             }}
             placeholder={MULTISEND_PLACEHOLDER}
             autoFocus={true}

@@ -1,3 +1,5 @@
+import { merge } from 'lodash';
+
 export const customDialogPaper = {
   borderRadius: '24px',
   background: 'linear-gradient(90deg, #704290 0.11%, #241b61 70.28%)',
@@ -71,6 +73,15 @@ export const customTextFieldStyles = {
     borderRadius: '100px',
   },
 };
+
+export const customTransferTextFieldStyles = merge({}, customTextFieldStyles, {
+  '& .MuiOutlinedInput-root': {
+    height: '32px',
+    '@media (min-width: 1500px)': {
+      height: '36px',
+    },
+  },
+});
 
 export const amountFieldStyles = {
   '& .MuiInputBase-input': {

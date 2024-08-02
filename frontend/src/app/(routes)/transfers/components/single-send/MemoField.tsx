@@ -1,7 +1,7 @@
 import { TextField } from '@mui/material';
 import React from 'react';
 import { Controller } from 'react-hook-form';
-import { customTextFieldStyles } from '../../styles';
+import { customTransferTextFieldStyles } from '../../styles';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const MemoField = ({ control }: { control: any }) => {
@@ -16,7 +16,7 @@ const MemoField = ({ control }: { control: any }) => {
           {...field}
           fullWidth
           type="text"
-          sx={customTextFieldStyles}
+          sx={customTransferTextFieldStyles}
         />
       )}
     />

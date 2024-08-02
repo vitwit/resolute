@@ -22,6 +22,7 @@ import { getBalances } from '@/store/features/bank/bankSlice';
 // import { Interface } from "readline";
 import useGetAssetsAmount from './useGetAssetsAmount';
 import useGetTxInputs from './useGetTxInputs';
+import { isEmpty } from 'lodash';
 
 const useStaking = ({ isSingleChain }: { isSingleChain: boolean }) => {
   const dispatch = useAppDispatch();
@@ -108,7 +109,8 @@ const useStaking = ({ isSingleChain }: { isSingleChain: boolean }) => {
         dispatch(getUnbonding({ baseURLs: restURLs, address, chainID }));
 
         // Fetch all validators
-        dispatch(getAllValidators({ baseURLs: restURLs, chainID }));
+        if (isEmpty(stakeData[chainID]?.validators?.active) || isEmpty(stakeData[chainID]?.validators?.inactive))
+          dispatch(getAllValidators({ baseURLs: restURLs, chainID }));
       });
     }
   }, [isWalletConnected]);
