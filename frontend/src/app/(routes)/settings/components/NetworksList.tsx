@@ -32,9 +32,9 @@ const SelectNetworks = (props: SelectNetworksProps) => {
 
   const handleViewAllChains = (value: boolean) => {
     if (value) {
-      setDisplayedChains(filteredChains);
+      setDisplayedChains(chainNames);
     } else {
-      setDisplayedChains(filteredChains?.slice(0, 5) || []);
+      setDisplayedChains(chainNames?.slice(0, 5) || []);
     }
     setViewAllChains(value);
   };
