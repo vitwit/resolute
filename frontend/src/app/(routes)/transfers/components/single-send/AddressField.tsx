@@ -1,7 +1,7 @@
 import { TextField } from '@mui/material';
 import React from 'react';
 import { Controller } from 'react-hook-form';
-import { customTextFieldStyles } from '../../styles';
+import { customTransferTextFieldStyles } from '../../styles';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const AddressField = ({
@@ -20,10 +20,17 @@ const AddressField = ({
         <TextField
           className="bg-transparent rounded-full border-[1px] border-[#ffffff80] h-10"
           {...field}
+          placeholder="Address"
           required
           fullWidth
           type="text"
-          sx={customTextFieldStyles}
+          sx={{
+            ...customTransferTextFieldStyles,
+            '& .MuiOutlinedInput-root': {
+              ...customTransferTextFieldStyles['& .MuiOutlinedInput-root'],
+              paddingLeft: '2px',
+            },
+          }}
           onBlur={() => {
             checkIfIBCTransaction?.();
           }}

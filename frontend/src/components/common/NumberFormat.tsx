@@ -24,7 +24,7 @@ function NumberFormat({ value, type, token = '', cls }: { value: string, type: s
 
     return (
         <span className={cls}>
-            {type === 'token' ? `${parsedAmount} ${formattedToken}` : `$ ${parsedAmount}`}
+            {type === 'token' ? `${parsedAmount} ${formattedToken}` : `${parsedAmount === '< 0.01'? '< $0.01': '$'+parsedAmount}`}
         </span>
     );
 }
