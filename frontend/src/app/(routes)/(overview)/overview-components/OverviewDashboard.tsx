@@ -12,6 +12,7 @@ import {
 import { getAccountInfo } from '@/store/features/auth/authSlice';
 import { getDelegatorTotalRewards } from '@/store/features/distribution/distributionSlice';
 import { RootState } from '@/store/store';
+import PageHeader from '@/components/common/PageHeader';
 
 const OverviewDashboard = ({ chainIDs }: { chainIDs: string[] }) => {
   const dispatch = useAppDispatch();
@@ -74,10 +75,13 @@ const OverviewDashboard = ({ chainIDs }: { chainIDs: string[] }) => {
 
       dispatch(getBalances(basicChainInputs));
     });
-  }, [])
+  }, []);
 
   return (
     <div>
+      <div className="pt-10">
+        <GovHeader />
+      </div>
       <div className="flex pt-10 gap-10">
         <div className="flex flex-1">
           <div className="flex flex-col gap-10 h-[calc(100vh-104px)] overflow-y-auto pb-3">
@@ -95,3 +99,12 @@ const OverviewDashboard = ({ chainIDs }: { chainIDs: string[] }) => {
 };
 
 export default OverviewDashboard;
+
+const GovHeader = () => {
+  return (
+    <PageHeader
+      title="Dashboard"
+      description="Summary of your digital assets"
+    />
+  );
+};
