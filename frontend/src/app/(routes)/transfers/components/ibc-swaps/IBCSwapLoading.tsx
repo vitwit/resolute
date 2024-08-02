@@ -2,7 +2,6 @@ import { useAppSelector } from '@/custom-hooks/StateHooks';
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import {
-  ALERT_ICON,
   CHECK_ICON_FILLED,
   CROSS_ICON,
   SWAP_ROUTE_ICON,
