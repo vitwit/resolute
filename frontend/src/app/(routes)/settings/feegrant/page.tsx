@@ -3,16 +3,20 @@
 import React from 'react';
 import '../settings.css';
 import SettingsLayout from '../SettingsLayout';
+import FeegrantFilters from '../components/FeegrantFilters';
 
 const page = () => {
   const createNewFeegrant = () => {};
+
   return (
     <SettingsLayout
       action={createNewFeegrant}
       actionName="New Feegrant"
       tabName="feegrant"
     >
-      <div>Feegrant</div>
+      <div>
+        <FeegrantFilters />
+      </div>
     </SettingsLayout>
   );
 };
