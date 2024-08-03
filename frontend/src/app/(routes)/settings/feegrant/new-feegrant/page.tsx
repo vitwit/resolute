@@ -9,7 +9,7 @@ import PageHeader from '@/components/common/PageHeader';
 const page = () => {
   return (
     <div className="feegrant-main">
-      <div className="sticky top-0">
+      <div className="">
         <Link
           href="/settings/feegrant"
           className="text-btn h-8 flex items-center w-fit"

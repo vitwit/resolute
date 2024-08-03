@@ -4,18 +4,20 @@
 }
 
 .feegrant-main {
-  @apply py-10 relative flex flex-col;
-  height: calc(100vh - 60px) !important;
+  @apply pt-10 relative flex flex-col;
+  height: calc(100vh - 56px);
 }
 
 .search-network-input {
   @apply w-full border-none cursor-text focus:outline-none bg-transparent placeholder:text-[#FFFFFF30] placeholder:font-normal text-[#ffffff] flex-1 text-[14px];
 }
 
-.chain-item {
+.chain-item,
+.msg-item {
   @apply border-[0.25px] border-[#FFFFFF30] rounded-lg p-2 pr-3 flex items-center gap-1;
 }
 
-.chain-item-selected {
+.chain-item-selected,
+.msg-item-selected {
   @apply bg-[#FFFFFF10] border-transparent;
 }
