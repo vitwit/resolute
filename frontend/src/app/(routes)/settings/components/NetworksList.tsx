@@ -2,7 +2,7 @@ import { SEARCH_ICON } from '@/constants/image-names';
 import { useAppSelector } from '@/custom-hooks/StateHooks';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import Image from 'next/image';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 interface SelectNetworksProps {
   selectedNetworks: string[];
@@ -12,10 +12,10 @@ interface SelectNetworksProps {
 const SelectNetworks = (props: SelectNetworksProps) => {
   const { selectedNetworks, handleSelectChain } = props;
 
-  const nameToChainIDs = useAppSelector((state) => state.wallet.nameToChainIDs);
+  const nameToChainIDs = useAppSelector((state) => state.common.nameToChainIDs);
   const chainNames = Object.keys(nameToChainIDs);
   const [displayedChains, setDisplayedChains] = useState<string[]>(
-    chainNames?.slice(0, 5) || []
+    chainNames?.slice(0, 5)
   );
   const [viewAllChains, setViewAllChains] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -38,6 +38,13 @@ const SelectNetworks = (props: SelectNetworksProps) => {
     }
     setViewAllChains(value);
   };
+
+  useEffect(() => {
+    if (nameToChainIDs?.length) {
+      const chains = Object.keys(nameToChainIDs);
+      setDisplayedChains(chains);
+    }
+  }, [nameToChainIDs]);
 
   return (
     <div className="space-y-4">
@@ -146,7 +153,7 @@ const NetworksList = ({
   handleSelectChain: (chainName: string) => void;
 }) => {
   const { getChainInfo } = useGetChainInfo();
-  const nameToChainIDs = useAppSelector((state) => state.wallet.nameToChainIDs);
+  const nameToChainIDs = useAppSelector((state) => state.common.nameToChainIDs);
 
   return (
     <div className="min-h-[100px]">
