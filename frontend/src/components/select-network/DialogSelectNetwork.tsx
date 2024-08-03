@@ -52,6 +52,18 @@ const DialogSelectNetwork = () => {
     const pathParts = pathName.split('/') || [];
     if (pathParts.includes('validator')) {
       dispatch(setSelectedNetwork({ chainName: '' }));
+    } else if (pathParts.includes('feegrant') || pathParts.includes('authz')) {
+      if (pathParts.length >= 4) {
+        if (pathParts.includes('new-feegrant')) {
+          dispatch(setSelectedNetwork({ chainName: '' }));
+        } else {
+          dispatch(
+            setSelectedNetwork({ chainName: pathParts[3].toLowerCase() })
+          );
+        }
+      } else {
+        dispatch(setSelectedNetwork({ chainName: '' }));
+      }
     } else if (pathParts.length >= 3) {
       dispatch(setSelectedNetwork({ chainName: pathParts[2].toLowerCase() }));
     } else {
