@@ -89,7 +89,6 @@ const useGetProposals = () => {
       }
 
       if (deposits) {
-        const proposalsData: ProposalsData[] = [];
         if (Array.isArray(depositProposals)) {
           depositProposals?.forEach((proposal) => {
             const proposalTitle = get(
