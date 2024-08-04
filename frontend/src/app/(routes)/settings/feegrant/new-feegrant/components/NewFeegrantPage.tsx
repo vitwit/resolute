@@ -20,6 +20,8 @@ import Image from 'next/image';
 import { useAppSelector } from '@/custom-hooks/StateHooks';
 import Copy from '@/components/common/Copy';
 import { shortenAddress, shortenName } from '@/utils/util';
+import DialogFeegrantTxStatus from './DialogFeegrantTxStatus';
+import SelectedChains from './SelectedChains';
 
 const NewFeegrantPage = () => {
   const [selectedChains, setSelectedChains] = useState<string[]>([]);
@@ -31,6 +33,7 @@ const NewFeegrantPage = () => {
     chains: '',
     msgs: '',
   });
+  const [txStatusOpen, setTxStatusOpen] = useState(false);
 
   const { getFeegrantMsgs } = useGetFeegrantMsgs();
   const { getChainInfo, getDenomInfo } = useGetChainInfo();
@@ -121,6 +124,7 @@ const NewFeegrantPage = () => {
     });
 
     setTxnStarted(true);
+    setTxStatusOpen(true);
     trackTxs(txCreateFeegrantInputs);
   };
 
@@ -150,18 +154,7 @@ const NewFeegrantPage = () => {
       </div>
       <div className="flex-1 flex flex-col p-6 bg-[#FFFFFF05] rounded-2xl">
         <div className="space-y-6 flex-1">
-          <div className="py-2 px-4 rounded-2xl flex items-center gap-6 bg-[#FFFFFF05] h-12">
-            <div className="text-[#FFFFFF80] font-light text-[14px]">
-              Networks Selected
-            </div>
-            <div className="flex gap-6 items-center flex-wrap">
-              {selectedChains.map((chainName) => {
-                const chainID = nameToChainIDs?.[chainName.toLowerCase()];
-                const { chainLogo } = getChainInfo(chainID);
-                return <NetworkLogo key={chainName} logo={chainLogo} />;
-              })}
-            </div>
-          </div>
+          <SelectedChains selectedChains={selectedChains} />
           <div className="py-2 px-4 rounded-2xl flex items-center gap-6 bg-[#FFFFFF05] h-12">
             <div className="text-[#FFFFFF80] font-light text-[14px]">
               Grantee Address
@@ -204,17 +197,22 @@ const NewFeegrantPage = () => {
           )}
         </button>
       </div>
+      <DialogFeegrantTxStatus
+        open={txStatusOpen}
+        onClose={() => {
+          setTxStatusOpen(false);
+          setTxnStarted(false);
+        }}
+        chainsStatus={chainsStatus}
+        selectedChains={selectedChains}
+        selectedMsgs={allTxns ? ['All Transactions'] : selectedMsgs}
+        granteeAddress={watch('grantee_address')}
+      />
     </div>
   );
 };
 
 export default NewFeegrantPage;
-
-const NetworkLogo = ({ logo }: { logo: string }) => {
-  return (
-    <Image className="rounded-full" src={logo} width={24} height={24} alt="" />
-  );
-};
 
 const DisplayNumber = ({ value, name }: { value: string; name: string }) => {
   const parsedAmount = Number(value);
