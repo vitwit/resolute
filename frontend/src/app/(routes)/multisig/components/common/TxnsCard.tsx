@@ -29,7 +29,6 @@ import SignTxn from './SignTxn';
 import useVerifyAccount from '@/custom-hooks/useVerifyAccount';
 import { fee } from '@/txns/execute';
 import DialogRepeatTxn from '../DialogRepeatTxn';
-import { getTimeDifferenceToFutureDate } from '@/utils/dataTime';
 
 export const TxnsCard = ({
   txn,
@@ -201,20 +200,8 @@ export const TxnsCard = ({
             : null}
         </div>
       </div>
-      <div className="space-y-2 min-w-[8%]">
-        <div className="text-small-light">
-          {isHistory || isReadyToBroadcast() ? 'Last Updated' : 'Created'}
-        </div>
-        <div className="flex gap-[2px] items-end">
-          <span className="text-b1">
-            {isHistory || isReadyToBroadcast()
-              ? getTimeDifferenceToFutureDate(txn.last_updated, true)
-              : getTimeDifferenceToFutureDate(txn.created_at, true)}
-          </span>
-        </div>
-      </div>
       {isHistory ? (
-        <div className="space-y-2 w-[10%]">
+        <div className="space-y-2 w-1/6">
           <div className="text-small-light">Status</div>
           <div className="flex gap-[2px] items-end">
             {txn?.status === 'SUCCESS' ? (
@@ -247,7 +234,7 @@ export const TxnsCard = ({
           </div>
         </div>
       ) : (
-        <div className="space-y-2 w-[6%]">
+        <div className="space-y-2 w-1/6">
           <div className="text-small-light">Signed</div>
           <div className="flex gap-[2px] items-end">
             <span className="text-b1">{txn.signatures.length}</span>
