@@ -2,12 +2,18 @@ import Copy from '@/components/common/Copy';
 import CustomDialog from '@/components/common/CustomDialog';
 import { useAppSelector } from '@/custom-hooks/StateHooks';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
-import { capitalizeFirstLetter, cleanURL, shortenAddress } from '@/utils/util';
+import {
+  capitalizeFirstLetter,
+  cleanURL,
+  shortenAddress,
+  shortenName,
+} from '@/utils/util';
 import { Tooltip } from '@mui/material';
 import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
 import SelectedChains from './SelectedChains';
+import { REDIRECT_ICON } from '@/constants/image-names';
 
 const DialogFeegrantTxStatus = ({
   onClose,
@@ -28,7 +34,7 @@ const DialogFeegrantTxStatus = ({
   const nameToChainIDs = useAppSelector((state) => state.common.nameToChainIDs);
 
   return (
-    <CustomDialog title="Create Feegrant" open={open} onClose={onClose}>
+    <CustomDialog title="New Feegrant" open={open} onClose={onClose}>
       <div className="w-[800px] space-y-4">
         <div className="py-2 px-4 rounded-2xl flex items-center gap-6 bg-[#FFFFFF05] h-12">
           <div className="text-[#FFFFFF80] font-light text-[14px] w-[124px]">
@@ -74,15 +80,34 @@ const DialogFeegrantTxStatus = ({
                       ) : (
                         <>
                           {chainsStatus?.[chainID]?.isTxSuccess ? (
-                            <Link
-                              href={`${cleanURL(
-                                explorerTxHashEndpoint
-                              )}/${chainsStatus?.[chainID]?.txHash}`}
-                              className="underline underline-offset-2 text-[#4AA29C]"
-                              target="_blank"
-                            >
-                              Transaction Successful
-                            </Link>
+                            <div className="flex items-end gap-2">
+                              <div className="flex items-end gap-1 text-[14px]">
+                                <div>
+                                  {shortenName(
+                                    chainsStatus?.[chainID]?.txHash,
+                                    18
+                                  )}
+                                </div>
+                                <Copy
+                                  content={chainsStatus?.[chainID]?.txHash}
+                                />
+                              </div>
+                              <Link
+                                href={`${cleanURL(
+                                  explorerTxHashEndpoint
+                                )}/${chainsStatus?.[chainID]?.txHash}`}
+                                className="underline underline-offset-2 text-[#2BA472] text-[14px] flex items-end gap-1"
+                                target="_blank"
+                              >
+                                <div>Transaction Successful</div>
+                                <Image
+                                  src={REDIRECT_ICON}
+                                  width={18}
+                                  height={18}
+                                  alt=""
+                                />
+                              </Link>
+                            </div>
                           ) : (
                             <Tooltip
                               title={
@@ -91,7 +116,7 @@ const DialogFeegrantTxStatus = ({
                               }
                               placement="top"
                             >
-                              <span className="text-[#E57575] underline underline-offset-2 cursor-default">
+                              <span className="text-[#D92101] underline underline-offset-2 cursor-default">
                                 {chainsStatus?.[chainID]?.error ===
                                 'Request rejected'
                                   ? 'Wallet request rejected'

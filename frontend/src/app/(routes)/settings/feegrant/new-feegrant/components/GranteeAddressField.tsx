@@ -42,7 +42,7 @@ const GranteeAddressField = ({
           />
         )}
       />
-      <div className="error-box absolute left-0">
+      <div className="error-box absolute right-0">
         <span
           className={error ? 'error-chip opacity-80' : 'error-chip opacity-0'}
         >

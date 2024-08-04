@@ -1,7 +1,6 @@
 import React from 'react';
 import { Control, FieldErrors, UseFormGetValues } from 'react-hook-form';
 import { feegrantMsgTypes } from '@/utils/feegrant';
-import Image from 'next/image';
 import MsgItem from './MsgItem';
 import GranteeAddressField from './GranteeAddressField';
 import CustomTextField from './CustomTextField';
@@ -50,7 +49,6 @@ const CreateFeegrantForm: React.FC<ICreateFeegrantForm> = (props) => {
         getValues={getValues}
       />
       <ExpirationField control={control} />
-
       <div>
         <div className="flex justify-between items-center">
           <div className="mb-2 text-[#FFFFFF80] text-[14px] font-light">
@@ -71,7 +69,7 @@ const CreateFeegrantForm: React.FC<ICreateFeegrantForm> = (props) => {
       </div>
       {isPeriodic && (
         <div className="flex gap-10">
-          <div>
+          <div className='flex-1'>
             <div className="mb-2 text-[#FFFFFF80] text-[14px] font-light">
               Period
             </div>
@@ -82,7 +80,7 @@ const CreateFeegrantForm: React.FC<ICreateFeegrantForm> = (props) => {
               title={'Period'}
             />
           </div>
-          <div>
+          <div className='flex-1'>
             <div className="mb-2 text-[#FFFFFF80] text-[14px] font-light">
               Period Spend Limit
             </div>

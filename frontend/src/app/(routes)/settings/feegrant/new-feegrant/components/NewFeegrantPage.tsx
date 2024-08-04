@@ -3,23 +3,16 @@ import SelectNetworks from '../../../components/NetworksList';
 import useGetFeegrantMsgs from '@/custom-hooks/useGetFeegrantMsgs';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import { FieldValues, useForm } from 'react-hook-form';
-import {
-  getFeegrantFormDefaultValues,
-  MAP_TXN_MSG_TYPES,
-} from '@/utils/feegrant';
-import useGetFeegranter from '@/custom-hooks/useGetFeegranter';
+import { getFeegrantFormDefaultValues } from '@/utils/feegrant';
 import CreateFeegrantForm from './CreateFeegrantForm';
 import {
   CHAIN_NOT_SELECTED_ERROR,
   MSG_NOT_SELECTED_ERROR,
 } from '@/utils/errors';
 import useMultiTxTracker from '@/custom-hooks/useGetCreateFeegrantTxLoading';
-import CustomButton from '@/components/common/CustomButton';
 import { CircularProgress } from '@mui/material';
-import Image from 'next/image';
-import { useAppSelector } from '@/custom-hooks/StateHooks';
 import Copy from '@/components/common/Copy';
-import { shortenAddress, shortenName } from '@/utils/util';
+import { shortenAddress } from '@/utils/util';
 import DialogFeegrantTxStatus from './DialogFeegrantTxStatus';
 import SelectedChains from './SelectedChains';
 
@@ -37,15 +30,12 @@ const NewFeegrantPage = () => {
 
   const { getFeegrantMsgs } = useGetFeegrantMsgs();
   const { getChainInfo, getDenomInfo } = useGetChainInfo();
-  const { getFeegranter } = useGetFeegranter();
   const { trackTxs, chainsStatus, currentTxCount } = useMultiTxTracker();
-  const nameToChainIDs = useAppSelector((state) => state.common.nameToChainIDs);
 
   const {
     handleSubmit,
     control,
     formState: { errors },
-    reset: resetForm,
     getValues,
     watch,
   } = useForm({
@@ -80,10 +70,10 @@ const NewFeegrantPage = () => {
       }));
       return false;
     } else if (!selectedMsgs.length && !allTxns) {
-      setFormValidationError((prevState) => ({
-        ...prevState,
+      setFormValidationError({
+        chains: '',
         msgs: MSG_NOT_SELECTED_ERROR,
-      }));
+      });
       return false;
     }
     setFormValidationError({ chains: '', msgs: '' });
@@ -156,7 +146,7 @@ const NewFeegrantPage = () => {
         <div className="space-y-6 flex-1">
           <SelectedChains selectedChains={selectedChains} />
           <div className="py-2 px-4 rounded-2xl flex items-center gap-6 bg-[#FFFFFF05] h-12">
-            <div className="text-[#FFFFFF80] font-light text-[14px]">
+            <div className="text-[#FFFFFF80] font-light text-[14px] w-[124px]">
               Grantee Address
             </div>
             <div className="flex items-center gap-2">
@@ -179,23 +169,34 @@ const NewFeegrantPage = () => {
             />
           ) : null}
         </div>
-        <button
-          className="primary-btn"
-          disabled={currentTxCount !== 0}
-          type="submit"
-          form="create-feegrant-form"
-        >
-          {currentTxCount !== 0 ? (
-            <div className="flex justify-center items-center gap-2">
-              <CircularProgress size={12} sx={{ color: 'white' }} />
-              <span className="italic">
-                Pending<span className="dots-flashing"></span>{' '}
-              </span>
-            </div>
-          ) : (
-            'Create Feegrant'
-          )}
-        </button>
+        <div className="space-y-6 w-full">
+          <div
+            className={`py-2 px-4 rounded-2xl flex items-center gap-6 bg-[#FFFFFF05] h-12 text-[#d92101f7] text-[14px] ${
+              formValidationError.chains || formValidationError.msgs
+                ? 'opacity-80'
+                : 'opacity-0'
+            }`}
+          >
+            {formValidationError.chains || formValidationError.msgs}
+          </div>
+          <button
+            className="primary-btn w-full"
+            disabled={currentTxCount !== 0}
+            type="submit"
+            form="create-feegrant-form"
+          >
+            {currentTxCount !== 0 ? (
+              <div className="flex justify-center items-center gap-2">
+                <CircularProgress size={12} sx={{ color: 'white' }} />
+                <span className="italic">
+                  Pending<span className="dots-flashing"></span>{' '}
+                </span>
+              </div>
+            ) : (
+              'Create Feegrant'
+            )}
+          </button>
+        </div>
       </div>
       <DialogFeegrantTxStatus
         open={txStatusOpen}
@@ -218,7 +219,9 @@ const DisplayNumber = ({ value, name }: { value: string; name: string }) => {
   const parsedAmount = Number(value);
   return (
     <div className="py-2 px-4 rounded-2xl flex items-center gap-6 bg-[#FFFFFF05] h-12">
-      <div className="text-[#FFFFFF80] font-light text-[14px]">{name}</div>
+      <div className="text-[#FFFFFF80] font-light text-[14px] w-[124px]">
+        {name}
+      </div>
       <div className="flex items-center">
         <div className="text-[14px] font-medium">
           {!isNaN(parsedAmount) && parsedAmount ? parsedAmount : null}

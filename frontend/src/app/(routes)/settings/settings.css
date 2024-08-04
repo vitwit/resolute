@@ -21,3 +21,11 @@
 .msg-item-selected {
   @apply bg-[#FFFFFF10] border-transparent;
 }
+
+.error-box {
+  @apply flex justify-end mt-2;
+}
+
+.error-chip {
+  @apply text-[12px] rounded-lg bg-[#ff00005b] text-center leading-normal max-w-fit px-2 truncate;
+}
