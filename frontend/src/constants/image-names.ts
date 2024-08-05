@@ -39,3 +39,4 @@ export const GLOBE_ICON = '/icons/globe-icon.svg';
 export const CHECK_ICON_FILLED = '/icons/check-filled.svg';
 export const CROSS_ICON = '/icons/cross-icon.svg';
 export const RESOLUTE_LOGO = '/resolute-logo.svg';
+export const TICK_ICON = '/icons/tick-icon.svg';

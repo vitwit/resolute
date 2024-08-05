@@ -2,123 +2,164 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import Copy from '@/components/common/Copy';
 import DialogViewDetails from './DialogViewDetails';
+import useFeeGrants from '@/custom-hooks/useFeeGrants';
+import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
+import { TICK_ICON } from '@/constants/image-names';
+import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
+import { get } from 'lodash';
+import {
+  capitalizeFirstLetter,
+  convertToSpacedName,
+  shortenAddress,
+} from '@/utils/util';
+import { getTypeURLName } from '@/utils/authorizations';
+import FeegrantToMeLoading from './FeegrantToMeLoading';
+import { Tooltip } from '@mui/material';
+import { ALLOWED_MSG_ALLOWANCE } from '@/utils/feegrant';
 
-type Grant = {
-  address: string;
-  permissions: string[];
-};
+const FeegrantsToMe = ({ chainIDs }: { chainIDs: string[] }) => {
+  const { getGrantsToMe } = useFeeGrants();
+  const addressGrants = getGrantsToMe(chainIDs);
 
-const FeegrantsToMe = () => {
-  const [selectedCardIndex, setSelectedCardIndex] = useState<number | null>(
-    null
+  const loading = useAppSelector(
+    (state) => state.feegrant.getGrantsToMeLoading
   );
   const [dialogOpen, setDialogOpen] = useState(false);
-  const handleViewDetails = () => {
-    setDialogOpen(true);
-  };
 
   const handleCloseDialog = () => {
     setDialogOpen(false);
   };
 
-  const grants: Grant[] = [
-    {
-      address: 'pasg1y0hvu8ts6m87yltguyufwf',
-      permissions: ['send', 'Delegate', 'vote', 'send'],
-    },
-    {
-      address: 'pasg1xy2a8ts6m87yltguyufwf',
-      permissions: ['send', 'Delegate', 'vote', 'send'],
-    },
-    {
-      address: 'pasg1y0hvu8ts6m87yltguyufwf',
-      permissions: [
-        'send',
-        'Delegate',
-        'vote',
-        'send',
-        'send',
-        'Delegate',
-        'vote',
-        'send',
-      ],
-    },
-    {
-      address: 'pasg1xy2a8ts6m87yltguyufwf',
-      permissions: ['send', 'Delegate', 'vote', 'send'],
-    },
-  ];
-
-  const handleSelectCard = (index: number) => {
-    setSelectedCardIndex(selectedCardIndex === index ? null : index);
-  };
-
   return (
     <div className="space-y-6 pt-6">
-      {grants.map((grant, index) => (
-        <div
-          className={`garnts-card justify-between w-full ${
-            selectedCardIndex === index ? 'selected-grants-card' : ''
-          }`}
-          key={index}
-        >
-          <div className="flex flex-col gap-2">
-            <div className="flex gap-2">
-              <p className="text-b1-light">Address</p>
-              {selectedCardIndex === index && (
-                <div className="flex space-x-0">
-                  <Image
-                    src="/tick-icon.svg"
-                    width={16}
-                    height={16}
-                    alt="used-icon"
-                  />
-                  <span className="text-[#2BA472]">Currently Using</span>
-                </div>
+      {addressGrants?.length ? (
+        <>
+          {addressGrants.map((addressGrant) => (
+            <React.Fragment key={addressGrant.address}>
+              {!!addressGrant.grants.length && (
+                <GrantToMeCard
+                  chainID={addressGrant.chainID}
+                  grant={addressGrant?.grants[0]}
+                  address={addressGrant.address}
+                />
               )}
-            </div>
-            <div className="flex gap-2 items-center">
-              <p className="truncate text-b1">{grant.address}</p>
-              <Copy content={grant.address} />
-            </div>
-          </div>
-          <div className="flex flex-col gap-2">
-            <p className="text-b1-light">Permissions</p>
-            <div className="grid grid-cols-4 gap-2">
-              {grant.permissions.map((permission, idx) => (
-                <div
-                  className="permission-card flex gap-2 items-center"
-                  key={idx}
-                >
-                  <p className="text-b1">{permission}</p>
-                  <Image
-                    src="/akash.png"
-                    width={20}
-                    height={20}
-                    alt="network-logo"
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-          <div className="flex gap-6 items-end">
-            <button
-              className={
-                selectedCardIndex === index ? 'cancel-btn' : 'primary-btn'
-              }
-              onClick={() => handleSelectCard(index)}
-            >
-              {selectedCardIndex === index ? 'Cancel' : 'Using'}
-            </button>
-            <div className="secondary-btn" onClick={handleViewDetails}>
-              View Details
-            </div>
-          </div>
-        </div>
-      ))}
+            </React.Fragment>
+          ))}
+        </>
+      ) : !!loading ? (
+        <FeegrantToMeLoading />
+      ) : (
+        // TODO: Display empty illutration
+        <div>No Feegrants</div>
+      )}
       <DialogViewDetails open={dialogOpen} onClose={handleCloseDialog} />
     </div>
   );
 };
 
 export default FeegrantsToMe;
+
+interface GrantToMeCardprops {
+  chainID: string;
+  address: string;
+  grant: Allowance;
+}
+
+const GrantToMeCard = (props: GrantToMeCardprops) => {
+  const { address, chainID, grant } = props;
+  const dispatch = useAppDispatch();
+
+  const [viewDetailsOpen, setViewDetailsOpen] = useState(false);
+
+  let allowedMsgs: Array<string>;
+  const { allowance } = grant;
+
+  if (get(allowance, '@type') === ALLOWED_MSG_ALLOWANCE) {
+    allowedMsgs = get(allowance, 'allowed_messages', []);
+  } else {
+    allowedMsgs = [];
+  }
+  const { getChainInfo } = useGetChainInfo();
+  const { chainLogo, chainName } = getChainInfo(chainID);
+
+  // TODO: set the value of isSelected based on the granter selected currently
+  const isSelected = false;
+
+  // TODO: handle use feegrant
+  const handleUseFeegrant = () => {};
+
+  const toggleViewDetails = () => {
+    setViewDetailsOpen((prev) => !prev);
+  };
+
+  return (
+    <div
+      className={`garnts-card justify-between items-end w-full ${
+        isSelected ? 'selected-grants-card' : ''
+      }`}
+    >
+      <div className="flex flex-col gap-2">
+        <div className="flex gap-2 items-center">
+          <p className="text-b1-light">Address</p>
+          {isSelected && (
+            <div className="flex space-x-0">
+              <Image src={TICK_ICON} width={16} height={16} alt="used-icon" />
+              <span className="text-[#2BA472]">Currently Using</span>
+            </div>
+          )}
+        </div>
+        <div className="flex gap-2 items-center h-8">
+          <p className="truncate text-b1">{shortenAddress(address, 24)}</p>
+          <Copy content={address} />
+        </div>
+      </div>
+      <div className="flex flex-col gap-2">
+        <p className="text-b1-light">Allowed Messages</p>
+        <div className="grid grid-cols-4 gap-2">
+          {allowedMsgs.length > 0 ? (
+            allowedMsgs.slice(0, 2).map((message: string) => (
+              <div
+                className="permission-card flex gap-2 items-center"
+                key={message}
+              >
+                <p className="text-b1">
+                  {convertToSpacedName(getTypeURLName(message))}
+                </p>
+                <Tooltip
+                  title={capitalizeFirstLetter(chainName)}
+                  placement="top"
+                >
+                  <Image
+                    src={chainLogo}
+                    width={16}
+                    height={16}
+                    alt={chainName}
+                  />
+                </Tooltip>
+              </div>
+            ))
+          ) : (
+            <div className="permission-card">
+              <p className="text-b1">All</p>
+              <Tooltip title={capitalizeFirstLetter(chainName)} placement="top">
+                <Image src={chainLogo} width={16} height={16} alt={chainName} />
+              </Tooltip>
+            </div>
+          )}
+        </div>
+      </div>
+      <div className="flex gap-6 items-center ">
+        <button
+          className={isSelected ? 'cancel-btn' : 'primary-btn'}
+          onClick={() => handleUseFeegrant()}
+        >
+          {isSelected ? 'Cancel' : 'Use Allowance'}
+        </button>
+        <div className="secondary-btn" onClick={toggleViewDetails}>
+          View Details
+        </div>
+      </div>
+      <DialogViewDetails open={viewDetailsOpen} onClose={toggleViewDetails} />
+    </div>
+  );
+};
