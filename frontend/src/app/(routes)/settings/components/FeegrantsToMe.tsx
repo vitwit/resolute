@@ -94,11 +94,11 @@ const GrantToMeCard = (props: GrantToMeCardprops) => {
 
   return (
     <div
-      className={`garnts-card justify-between items-end w-full ${
+      className={`grants-card justify-between items-start gap-16 w-full ${
         isSelected ? 'selected-grants-card' : ''
       }`}
     >
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-2 w-[216px]">
         <div className="flex gap-2 items-center">
           <p className="text-b1-light">Address</p>
           {isSelected && (
@@ -113,11 +113,11 @@ const GrantToMeCard = (props: GrantToMeCardprops) => {
           <Copy content={address} />
         </div>
       </div>
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-2 flex-1">
         <p className="text-b1-light">Allowed Messages</p>
-        <div className="grid grid-cols-4 gap-2">
+        <div className="flex gap-2 flex-wrap">
           {allowedMsgs.length > 0 ? (
-            allowedMsgs.slice(0, 2).map((message: string) => (
+            allowedMsgs.map((message: string) => (
               <div
                 className="permission-card flex gap-2 items-center"
                 key={message}
@@ -148,15 +148,18 @@ const GrantToMeCard = (props: GrantToMeCardprops) => {
           )}
         </div>
       </div>
-      <div className="flex gap-6 items-center ">
-        <button
-          className={isSelected ? 'cancel-btn' : 'primary-btn'}
-          onClick={() => handleUseFeegrant()}
-        >
-          {isSelected ? 'Cancel' : 'Use Allowance'}
-        </button>
-        <div className="secondary-btn" onClick={toggleViewDetails}>
-          View Details
+      <div className="flex flex-col gap-2">
+        <div className="h-[21px]"></div>
+        <div className="flex gap-6 items-center">
+          <button
+            className={isSelected ? 'cancel-btn' : 'primary-btn'}
+            onClick={() => handleUseFeegrant()}
+          >
+            {isSelected ? 'Cancel' : 'Use Allowance'}
+          </button>
+          <div className="secondary-btn" onClick={toggleViewDetails}>
+            View Details
+          </div>
         </div>
       </div>
       <DialogViewDetails open={viewDetailsOpen} onClose={toggleViewDetails} />

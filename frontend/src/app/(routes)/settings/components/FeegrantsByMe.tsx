@@ -134,8 +134,8 @@ const GranteByMeCard = (props: GrantByMeCardProps) => {
   const handleRevokeFeegrant = () => {};
 
   return (
-    <div className="garnts-card justify-between items-end w-full">
-      <div className="flex flex-col gap-2">
+    <div className="grants-card justify-between gap-16 items-start w-full">
+      <div className="flex flex-col gap-2 w-[216px]">
         <div className="flex gap-2 items-center">
           <div className="flex gap-2 items-center">
             <Image src={chainLogo} width={20} height={20} alt="network-logo" />
@@ -147,11 +147,11 @@ const GranteByMeCard = (props: GrantByMeCardProps) => {
           <Copy content={address} />
         </div>
       </div>
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-2 flex-1">
         <p className="text-b1-light">Allowed Messages</p>
-        <div className="grid grid-cols-4 gap-2">
+        <div className="flex gap-2 flex-wrap">
           {allowedMsgs.length > 0 ? (
-            allowedMsgs.slice(0, 2).map((message: string) => (
+            allowedMsgs.map((message: string) => (
               <div
                 className="permission-card flex gap-2 items-center"
                 key={message}
@@ -164,17 +164,17 @@ const GranteByMeCard = (props: GrantByMeCardProps) => {
           ) : (
             <div className="permission-card">
               <p className="text-b1">All</p>
-              <Tooltip title={capitalizeFirstLetter(chainName)} placement="top">
-                <Image src={chainLogo} width={16} height={16} alt={chainName} />
-              </Tooltip>
             </div>
           )}
         </div>
       </div>
-      <div className="flex gap-6 items-center ">
-        <CustomButton btnText="Revoke" btnOnClick={handleRevokeFeegrant} />
-        <div className="secondary-btn" onClick={toggleViewDetails}>
-          View Details
+      <div className="flex flex-col gap-2">
+        <div className="h-[21px]"></div>
+        <div className="flex gap-6 items-center ">
+          <CustomButton btnText="Revoke" btnOnClick={handleRevokeFeegrant} />
+          <div className="secondary-btn" onClick={toggleViewDetails}>
+            View Details
+          </div>
         </div>
       </div>
       <DialogViewDetails open={viewDetailsOpen} onClose={toggleViewDetails} />

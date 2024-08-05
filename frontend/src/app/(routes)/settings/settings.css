@@ -30,7 +30,7 @@
   @apply text-[12px] rounded-lg bg-[#ff00005b] text-center leading-normal max-w-fit px-2 truncate;
 }
 
-.garnts-card {
+.grants-card {
   @apply flex p-6 rounded-2xl w-full;
   background: rgba(255, 255, 255, 0.02);
 }
