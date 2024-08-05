@@ -99,6 +99,8 @@ export const getSelectedPartFromURL = (urlParts: string[]): string => {
       return 'Cosmwasm';
     case 'multiops':
       return 'Multiops';
+    case 'settings':
+      return 'Settings';
     default:
       return 'Overview';
   }
@@ -276,6 +278,9 @@ export const tabLink = (link: string, chainName: string): string => {
 export const allNetworksLink = (pathParts: string[]): string => {
   if (pathParts.includes('settings')) {
     if (pathParts.includes('feegrant')) {
+      if (pathParts.includes('new-feegrant')) {
+        return '/settings/feegrant/new-feegrant';
+      }
       return '/settings/feegrant';
     } else {
       return '/settings';
@@ -293,6 +298,9 @@ export const changeNetworkRoute = (
   chainName: string
 ): string => {
   if (pathName.includes('feegrant')) {
+    if (pathName.includes('new-feegrant')) {
+      return '/settings/feegrant/new-feegrant';
+    }
     return '/settings/feegrant/' + chainName.toLowerCase();
   }
   const route = pathName === '/' ? '/overview' : '/' + pathName.split('/')?.[1];
