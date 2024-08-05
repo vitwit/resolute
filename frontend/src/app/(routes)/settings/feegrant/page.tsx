@@ -6,7 +6,7 @@ import SettingsLayout from '../SettingsLayout';
 import FeegrantFilters from '../components/FeegrantFilters';
 import { useRouter } from 'next/navigation';
 
-const page = () => {
+const Page = () => {
   const router = useRouter();
   const createNewFeegrant = () => {
     router.push('/settings/feegrant/new-feegrant');
@@ -25,4 +25,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;
