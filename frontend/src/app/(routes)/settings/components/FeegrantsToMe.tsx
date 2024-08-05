@@ -5,7 +5,7 @@ import DialogViewDetails from './DialogViewDetails';
 import useFeeGrants from '@/custom-hooks/useFeeGrants';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import { TICK_ICON } from '@/constants/image-names';
-import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
+import { useAppSelector } from '@/custom-hooks/StateHooks';
 import { get } from 'lodash';
 import {
   capitalizeFirstLetter,
@@ -67,7 +67,6 @@ interface GrantToMeCardprops {
 
 const GrantToMeCard = (props: GrantToMeCardprops) => {
   const { address, chainID, grant } = props;
-  const dispatch = useAppDispatch();
 
   const [viewDetailsOpen, setViewDetailsOpen] = useState(false);
 

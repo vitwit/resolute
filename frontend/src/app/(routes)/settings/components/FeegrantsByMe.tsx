@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Copy from '@/components/common/Copy';
 import DialogViewDetails from './DialogViewDetails';
@@ -8,15 +8,12 @@ import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { ALLOWED_MSG_ALLOWANCE } from '@/utils/feegrant';
 import { get } from 'lodash';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
-import {
-  capitalizeFirstLetter,
-  convertToSpacedName,
-  shortenAddress,
-} from '@/utils/util';
+import { convertToSpacedName, shortenAddress } from '@/utils/util';
 import { getTypeURLName } from '@/utils/authorizations';
-import { Tooltip } from '@mui/material';
 import CustomButton from '@/components/common/CustomButton';
 import FeegrantByMeLoading from './FeegrantByMeLoading';
+import { TxStatus } from '@/types/enums';
+import { txRevoke } from '@/store/features/feegrant/feegrantSlice';
 
 const FeegrantsByMe = ({ chainIDs }: { chainIDs: string[] }) => {
   const { getGrantsByMe } = useFeeGrants();
@@ -28,49 +25,13 @@ const FeegrantsByMe = ({ chainIDs }: { chainIDs: string[] }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [revokeDialogOpen, setRevokeDialogOpen] = useState(false);
 
-  const handleViewDetails = () => {
-    setDialogOpen(true);
-  };
-
   const handleCloseDialog = () => {
     setDialogOpen(false);
-  };
-
-  const handleRevokeAll = () => {
-    setRevokeDialogOpen(true);
   };
 
   const handleCloseRevokeDialog = () => {
     setRevokeDialogOpen(false);
   };
-
-  const grants = [
-    {
-      address: 'pasg1y0hvu8ts6m87yltguyufwf',
-      permissions: ['send', 'Delegate', 'vote', 'send'],
-    },
-    {
-      address: 'pasg1xy2a8ts6m87yltguyufwf',
-      permissions: ['send', 'Delegate', 'vote', 'send'],
-    },
-    {
-      address: 'pasg1y0hvu8ts6m87yltguyufwf',
-      permissions: [
-        'send',
-        'Delegate',
-        'vote',
-        'send',
-        'send',
-        'Delegate',
-        'vote',
-        'send',
-      ],
-    },
-    {
-      address: 'pasg1xy2a8ts6m87yltguyufwf',
-      permissions: ['send', 'Delegate', 'vote', 'send'],
-    },
-  ];
 
   return (
     <div className="space-y-6 pt-6">
@@ -123,15 +84,40 @@ const GranteByMeCard = (props: GrantByMeCardProps) => {
   } else {
     allowedMsgs = [];
   }
-  const { getChainInfo } = useGetChainInfo();
-  const { chainLogo, chainName } = getChainInfo(chainID);
+  const { getChainInfo, getDenomInfo } = useGetChainInfo();
+  const { minimalDenom } = getDenomInfo(chainID);
+  const basicChainInfo = getChainInfo(chainID);
+  const { chainLogo, chainName } = basicChainInfo;
+
+  const txRevokeStatus = useAppSelector(
+    (state) => state.feegrant.chains[chainID].tx.status
+  );
+  const [selectedGrantee, setSelectedGrantee] = useState('');
+  const txRevokeLoading =
+    txRevokeStatus === TxStatus.PENDING && address === selectedGrantee;
 
   const toggleViewDetails = () => {
     setViewDetailsOpen((prev) => !prev);
   };
 
   // TODO: handle revoke feegrant txn
-  const handleRevokeFeegrant = () => {};
+  const handleRevokeFeegrant = () => {
+    setSelectedGrantee(grant.grantee);
+    dispatch(
+      txRevoke({
+        granter: grant.granter,
+        grantee: grant.grantee,
+        basicChainInfo: basicChainInfo,
+        baseURLs: basicChainInfo.restURLs,
+        feegranter: '',
+        denom: minimalDenom,
+      })
+    );
+  };
+
+  useEffect(() => {
+    if (txRevokeStatus !== TxStatus.PENDING) setSelectedGrantee('');
+  }, [txRevokeStatus]);
 
   return (
     <div className="grants-card justify-between gap-16 items-start w-full">
@@ -171,7 +157,13 @@ const GranteByMeCard = (props: GrantByMeCardProps) => {
       <div className="flex flex-col gap-2">
         <div className="h-[21px]"></div>
         <div className="flex gap-6 items-center ">
-          <CustomButton btnText="Revoke" btnOnClick={handleRevokeFeegrant} />
+          <CustomButton
+            btnText="Revoke"
+            btnOnClick={handleRevokeFeegrant}
+            btnDisabled={txRevokeStatus === TxStatus.PENDING}
+            btnLoading={txRevokeLoading}
+            btnStyles="w-[114px]"
+          />
           <div className="secondary-btn" onClick={toggleViewDetails}>
             View Details
           </div>

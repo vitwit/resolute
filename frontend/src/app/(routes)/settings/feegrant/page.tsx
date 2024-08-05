@@ -3,7 +3,6 @@
 import React from 'react';
 import '../settings.css';
 import SettingsLayout from '../SettingsLayout';
-import FeegrantFilters from '../components/FeegrantFilters';
 import { useRouter } from 'next/navigation';
 import { useAppSelector } from '@/custom-hooks/StateHooks';
 import FeegrantPage from './FeegrantPage';
