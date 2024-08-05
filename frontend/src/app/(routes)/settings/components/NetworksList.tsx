@@ -31,16 +31,12 @@ const SelectNetworks = (props: SelectNetworksProps) => {
   };
 
   const handleViewAllChains = (value: boolean) => {
-    if (value) {
-      setDisplayedChains(chainNames);
-    } else {
-      setDisplayedChains(chainNames?.slice(0, 5) || []);
-    }
+    setDisplayedChains(value ? chainNames : chainNames.slice(0, 5));
     setViewAllChains(value);
   };
 
   useEffect(() => {
-    if (nameToChainIDs?.length) {
+    if (Object.keys(nameToChainIDs).length) {
       const chains = Object.keys(nameToChainIDs);
       setDisplayedChains(chains);
     }

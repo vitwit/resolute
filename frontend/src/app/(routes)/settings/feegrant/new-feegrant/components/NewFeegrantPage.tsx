@@ -224,7 +224,7 @@ const DisplayNumber = ({ value, name }: { value: string; name: string }) => {
       </div>
       <div className="flex items-center">
         <div className="text-[14px] font-medium">
-          {!isNaN(parsedAmount) && parsedAmount ? parsedAmount : null}
+          {!Number.isNaN(parsedAmount) && parsedAmount ? parsedAmount : null}
         </div>
       </div>
     </div>

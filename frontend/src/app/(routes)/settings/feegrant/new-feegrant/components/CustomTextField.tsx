@@ -23,7 +23,7 @@ const CustomTextField = ({
         rules={{
           validate: (value) => {
             const amount = Number(value);
-            if (value?.length && (isNaN(amount) || amount <= 0))
+            if (value?.length && (Number.isNaN(amount) || amount <= 0))
               return 'Invalid input';
           },
         }}
