@@ -1,8 +1,8 @@
 import useInitFeegrant from '@/custom-hooks/useInitFeegrant';
 import React, { useState } from 'react';
-import FeegrantsToMe from '../components/FeegrantsToMe';
-import FeegrantFilters from '../components/FeegrantFilters';
-import FeegrantsByMe from '../components/FeegrantsByMe';
+import FeegrantFilters from './components/FeegrantFilters';
+import FeegrantsToMe from './components/FeegrantsToMe';
+import FeegrantsByMe from './components/FeegrantsByMe';
 
 const FeegrantPage = ({ chainIDs }: { chainIDs: string[] }) => {
   useInitFeegrant({ chainIDs });
