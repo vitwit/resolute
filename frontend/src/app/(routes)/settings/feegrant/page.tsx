@@ -4,10 +4,8 @@ import React from 'react';
 import '../settings.css';
 import SettingsLayout from '../SettingsLayout';
 import { useRouter } from 'next/navigation';
-import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
+import { useAppSelector } from '@/custom-hooks/StateHooks';
 import FeegrantPage from './FeegrantPage';
-import { setConnectWalletOpen } from '@/store/features/wallet/walletSlice';
-import EmptyScreen from '@/components/common/EmptyScreen';
 
 const Page = () => {
   const router = useRouter();
