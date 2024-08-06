@@ -42,7 +42,6 @@ const CustomNetworkCard: React.FC = () => {
 
   const handleDelete = () => {
     if (selectedNetwork) {
-      // Perform delete action here, e.g., remove from state or make an API call
       console.log(`Deleting network: ${selectedNetwork.name}`);
     }
     handleCloseDialog();
