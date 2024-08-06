@@ -161,7 +161,6 @@ WITH new_data AS (
     ('axpla', 'xpla', true, NOW(), '{}'::jsonb),
     ('azeta', 'zetachain', true, NOW(), '{}'::jsonb),
     ('weth', 'weth', true, NOW(), '{}'::jsonb),
-    ('usdc', 'usd-coin', true, NOW(), '{}'::jsonb),
     ('wbtc', 'wrapped-bitcoin', true, NOW(), '{}'::jsonb)
 )   
 
