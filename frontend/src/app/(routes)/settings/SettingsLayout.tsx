@@ -30,7 +30,7 @@ const SettingsLayout = (props: SetttingLayoutProps) => {
       {isWalletConnected ? (
         <div>{children}</div>
       ) : (
-        <div className="mt-20">
+        <div className="pt-10">
           <EmptyScreen
             title="Connect your wallet"
             description="Connect your wallet to access your account on Resolute"

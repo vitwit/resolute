@@ -67,3 +67,17 @@
   @apply flex items-start gap-2 w-full px-6 py-4 rounded-2xl;
   background: rgba(255, 255, 255, 0.02);
 }
+
+.feegrant-badge {
+  @apply text-[14px] h-6 max-w-[85px] border flex justify-center items-center gap-2 px-3 py-1 rounded-[100px] border-solid;
+}
+
+.basic-badge {
+  @apply border-[#2BA472];
+  background: rgba(43, 164, 114, 0.5);
+}
+
+.periodic-badge {
+  @apply border-[#DA561E];
+  background: rgba(218, 86, 30, 0.5);
+}

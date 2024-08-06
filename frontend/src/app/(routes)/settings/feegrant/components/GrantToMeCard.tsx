@@ -11,8 +11,9 @@ import {
 } from '@/utils/util';
 import { getTypeURLName } from '@/utils/authorizations';
 import { Tooltip } from '@mui/material';
-import { ALLOWED_MSG_ALLOWANCE } from '@/utils/feegrant';
+import { ALLOWED_MSG_ALLOWANCE, PERIODIC_ALLOWANCE } from '@/utils/feegrant';
 import DialogFeegrantDetails from './DialogFeegrantDetails';
+import FeegrantTypeBadge from './FeegrantTypeBadge';
 
 interface GrantToMeCardProps {
   chainID: string;
@@ -20,15 +21,23 @@ interface GrantToMeCardProps {
   grant: Allowance;
 }
 
-const GrantToMeCard: React.FC<GrantToMeCardProps> = ({ chainID, address, grant }) => {
+const GrantToMeCard: React.FC<GrantToMeCardProps> = ({
+  chainID,
+  address,
+  grant,
+}) => {
   const [viewDetailsOpen, setViewDetailsOpen] = useState(false);
   const { getChainInfo } = useGetChainInfo();
   const { chainLogo, chainName } = getChainInfo(chainID);
-  
+
   const { allowance } = grant;
-  const allowedMsgs = get(allowance, '@type') === ALLOWED_MSG_ALLOWANCE 
-    ? get(allowance, 'allowed_messages', []) 
-    : [];
+  const allowedMsgs =
+    get(allowance, '@type') === ALLOWED_MSG_ALLOWANCE
+      ? get(allowance, 'allowed_messages', [])
+      : [];
+  const isPeriodic =
+    get(grant, '@type') === PERIODIC_ALLOWANCE ||
+    get(grant, 'allowance.@type') === PERIODIC_ALLOWANCE;
 
   const isSelected = false; // TODO: set the value of isSelected based on the granter selected currently
 
@@ -44,14 +53,16 @@ const GrantToMeCard: React.FC<GrantToMeCardProps> = ({ chainID, address, grant }
     if (allowedMsgs.length > 0) {
       return allowedMsgs.map((message) => (
         <div className="permission-card flex gap-2 items-center" key={message}>
-          <p className="text-b1">{convertToSpacedName(getTypeURLName(message))}</p>
+          <p className="text-b1">
+            {convertToSpacedName(getTypeURLName(message))}
+          </p>
           <Tooltip title={capitalizeFirstLetter(chainName)} placement="top">
             <Image src={chainLogo} width={16} height={16} alt={chainName} />
           </Tooltip>
         </div>
       ));
     }
-    
+
     return (
       <div className="permission-card">
         <p className="text-b1">All</p>
@@ -63,8 +74,10 @@ const GrantToMeCard: React.FC<GrantToMeCardProps> = ({ chainID, address, grant }
   };
 
   return (
-    <div className={`grants-card justify-between items-start gap-16 w-full ${isSelected ? 'selected-grants-card' : ''}`}>
-      <div className="flex flex-col gap-2 w-[216px]">
+    <div
+      className={`grants-card justify-between items-start gap-16 w-full ${isSelected ? 'selected-grants-card' : ''}`}
+    >
+      <div className="flex flex-col gap-2 w-[280px]">
         <div className="flex gap-2 items-center">
           <p className="text-b1-light">Address</p>
           {isSelected && (
@@ -75,15 +88,14 @@ const GrantToMeCard: React.FC<GrantToMeCardProps> = ({ chainID, address, grant }
           )}
         </div>
         <div className="flex gap-2 items-center h-8">
-          <p className="truncate text-b1">{shortenAddress(address, 24)}</p>
+          <p className="text-b1">{shortenAddress(address, 20)}</p>
           <Copy content={address} />
+          <FeegrantTypeBadge isPeriodic={isPeriodic} />
         </div>
       </div>
       <div className="flex flex-col gap-2 flex-1">
         <p className="text-b1-light">Allowed Messages</p>
-        <div className="flex gap-2 flex-wrap">
-          {renderAllowedMessages()}
-        </div>
+        <div className="flex gap-2 flex-wrap">{renderAllowedMessages()}</div>
       </div>
       <div className="flex flex-col gap-2">
         <div className="h-[21px]" />

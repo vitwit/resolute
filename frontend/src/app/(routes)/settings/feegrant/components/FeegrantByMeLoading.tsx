@@ -3,7 +3,7 @@ import React from 'react';
 const FeegrantByMeLoading = () => {
   return (
     <div className="space-y-6 pt-6 px-6">
-      {[1, 2,3].map((_, index) => (
+      {[1, 2, 3].map((_, index) => (
         <div className="grants-card justify-between w-full" key={index}>
           <div className="flex flex-col gap-2">
             <div className="flex gap-2 items-center">
@@ -16,7 +16,7 @@ const FeegrantByMeLoading = () => {
             </div>
           </div>
           <div className="flex flex-col gap-2">
-            <p className="text-b1-light">Permissions</p>
+            <p className="text-b1-light">Allowed Messages</p>
             <div className="grid grid-cols-4 gap-2 ">
               <p className="w-[120px] h-[37px] bg-[#252525] rounded animate-pulse"></p>
               <p className="w-[120px] h-[37px] bg-[#252525] rounded animate-pulse"></p>
