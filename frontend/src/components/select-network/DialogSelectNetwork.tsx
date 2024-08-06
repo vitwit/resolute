@@ -108,7 +108,7 @@ const DialogSelectNetwork = () => {
           </div>
           <div className="space-y-6">
             <div className="text-center">
-              <div className="font-bold text-[28px] leading-normal text-[#fffffff0]">
+              <div className="text-h1">
                 Select Network
               </div>
               <div className="secondary-text">

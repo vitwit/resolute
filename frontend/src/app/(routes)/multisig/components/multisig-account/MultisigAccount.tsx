@@ -284,18 +284,13 @@ const MultisigAccountStats = ({
           <div className="text-[18px] text-[#fffffff0] font-bold">
             <NumberFormat
               cls=""
-              value={
-                availableBalance?.toString()
-              }
+              value={availableBalance?.toString()}
               type="token"
               token={displayDenom}
             />
           </div>
           {hasIBCTokens ? (
-            <button
-              className="secondary-btn !font-bold"
-              onClick={() => setViewIBC(true)}
-            >
+            <button className="secondary-btn" onClick={() => setViewIBC(true)}>
               View IBC
             </button>
           ) : null}
@@ -309,9 +304,7 @@ const MultisigAccountStats = ({
           <div className="text-[18px] text-[#fffffff0] font-bold">
             <NumberFormat
               cls=""
-              value={
-                stakedBalance?.toString()
-              }
+              value={stakedBalance?.toString()}
               type="token"
               token={displayDenom}
             />
@@ -402,7 +395,7 @@ const TabsGroup = ({
   createNewTxn: () => void;
 }) => {
   return (
-    <div className="flex justify-between">
+    <div className="flex justify-between gap-6">
       <div className="flex gap-10 items-center flex-1 border-b-[1px] border-[#ffffff1d]">
         {tabs.map((tab) => (
           <div key={tab} className="flex flex-col justify-center">
@@ -478,9 +471,7 @@ const DialogMultisigAssets = ({
                   <div>
                     <NumberFormat
                       cls=""
-                      value={
-                        asset.amountInDenom?.toString()
-                      }
+                      value={asset.amountInDenom?.toString()}
                       type="token"
                       token={asset.displayDenom}
                     />

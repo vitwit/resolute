@@ -88,7 +88,7 @@ const GovernanceView = ({ chainIDs }: { chainIDs: string[] }) => {
   return (
     <div className="flex flex-col p-6 rounded-2xl bg-[#ffffff05] w-[418px] gap-4 overflow-y-scroll flex-1">
       <div className="flex flex-col gap-1 w-full">
-        <div className="text-h2">Governance</div>
+        <div className="text-h2 !font-bold">Governance</div>
         <div className="flex flex-col gap-2 mb-2">
           <div className="secondary-text">
             Active proposals on cosmos ecosystem

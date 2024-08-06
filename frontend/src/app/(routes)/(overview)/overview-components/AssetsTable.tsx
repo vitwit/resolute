@@ -35,7 +35,7 @@ const AssetsTable = ({ chainIDs }: { chainIDs: string[] }) => {
   return (
     <div className="flex flex-col gap-6 w-full bg-[#ffffff05] rounded-2xl p-6">
       <div className=" flex flex-col gap-1">
-        <div className="text-h2">Asset Information</div>
+        <div className="text-h2 !font-bold">Asset Information</div>
         <div className="flex flex-col gap-2">
           <div className="secondary-text">
             Information of your asset holdings
