@@ -49,7 +49,7 @@ const ValidatorHeader = (props: ValidatorHeaderProps) => {
         <div className="space-y-1">
           <div className="flex items-center gap-2">
             <ValidatorLogo identity={identity} height={32} width={32} />
-            <div className="text-[28px] text-[#fffffff0] font-bold">
+            <div className="text-h1">
               {isWitval ? VITWIT : capitalizeFirstLetter(name)}
             </div>
             {!isLoading ? (

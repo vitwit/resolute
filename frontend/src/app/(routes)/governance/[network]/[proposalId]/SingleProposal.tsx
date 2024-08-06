@@ -244,7 +244,7 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
                     </div>
                     <div className="flex flex-col gap-4">
                       <div className="flex justify-between w-full gap-4 items-start">
-                        <p className="text-[28px] font-bold leading-[42px]">
+                        <p className="text-h1">
                           {/* Aave v3.1 Cantina competitione */}
                           {get(
                             proposalInfo,
