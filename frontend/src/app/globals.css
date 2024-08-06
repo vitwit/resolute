@@ -143,7 +143,7 @@ body {
 }
 
 .text-h1 {
-  @apply text-[28px] font-bold text-[#fffffff0];
+  @apply text-[20px] font-bold text-[#fffffff0];
 }
 
 .text-h2 {

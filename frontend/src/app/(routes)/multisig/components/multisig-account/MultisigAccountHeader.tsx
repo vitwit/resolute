@@ -77,14 +77,14 @@ const MultisigAccountHeader = ({
   }, [deleteMultisigRes]);
 
   return (
-    <div className="flex items-center w-full">
+    <div className="flex items-center w-full gap-6">
       <div className="flex-1 space-y-6 border-b-[1px] border-[#ffffff1d] pb-2">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
             <div>
               <LetterAvatar name={multisigName} height="32px" width="32px" />
             </div>
-            <div className="text-[28px] font-bold text-[#fffffff0]">
+            <div className="text-h1">
               {multisigName}
             </div>
             <div className="px-4 py-1 rounded-full border-[1px] border-[#ffffff80] bg-[#ffffff14] h-6 flex font-extralight">
