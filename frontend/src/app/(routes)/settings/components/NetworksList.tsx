@@ -9,13 +9,15 @@ interface SelectNetworksProps {
   handleSelectChain: (chainName: string) => void;
 }
 
+const DISPLAYED_NETWORKS_COUNT = 5;
+
 const SelectNetworks = (props: SelectNetworksProps) => {
   const { selectedNetworks, handleSelectChain } = props;
 
   const nameToChainIDs = useAppSelector((state) => state.common.nameToChainIDs);
   const chainNames = Object.keys(nameToChainIDs);
   const [displayedChains, setDisplayedChains] = useState<string[]>(
-    chainNames?.slice(0, 5)
+    chainNames?.slice(0, DISPLAYED_NETWORKS_COUNT)
   );
   const [viewAllChains, setViewAllChains] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -31,14 +33,16 @@ const SelectNetworks = (props: SelectNetworksProps) => {
   };
 
   const handleViewAllChains = (value: boolean) => {
-    setDisplayedChains(value ? chainNames : chainNames.slice(0, 5));
+    setDisplayedChains(
+      value ? chainNames : chainNames.slice(0, DISPLAYED_NETWORKS_COUNT)
+    );
     setViewAllChains(value);
   };
 
   useEffect(() => {
     if (Object.keys(nameToChainIDs).length) {
       const chains = Object.keys(nameToChainIDs);
-      setDisplayedChains(chains);
+      setDisplayedChains(chains.slice(0, DISPLAYED_NETWORKS_COUNT));
     }
   }, [nameToChainIDs]);
 

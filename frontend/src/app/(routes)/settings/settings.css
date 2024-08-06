@@ -29,3 +29,55 @@
 .error-chip {
   @apply text-[12px] rounded-lg bg-[#ff00005b] text-center leading-normal max-w-fit px-2 truncate;
 }
+
+.grants-card {
+  @apply flex p-6 rounded-2xl w-full;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.selected-grants-card {
+  @apply flex p-6 border rounded-2xl border-solid border-[#4453DF] w-full;
+  background: linear-gradient(
+    90deg,
+    rgba(68, 83, 223, 0.1) 0%,
+    rgba(127, 92, 237, 0.1) 100%
+  );
+}
+
+.permission-card {
+  @apply h-8 flex justify-center items-center gap-2 px-4 py-2 rounded-lg;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.cancel-btn {
+  @apply border-[1px] text-[14px] rounded-full px-4 py-[10.5px] leading-[21px] !h-8 flex justify-center items-center text-[#fffffff0]  border-solid border-[#D92101];
+  background: rgba(217, 33, 1, 0.1);
+}
+
+.selected-filter {
+  @apply flex justify-center items-center gap-4 px-4 py-[10.5px] rounded-lg border-[0.25px]  hover:bg-[#ffffff14] hover:border-transparent w-[50%];
+}
+
+.dialog-permission {
+  @apply flex flex-col items-start gap-6 pb-6 rounded-2xl;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.dialog-permission-header {
+  @apply flex items-start gap-2 w-full px-6 py-4 rounded-2xl;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.feegrant-badge {
+  @apply text-[14px] h-6 max-w-[85px] border flex justify-center items-center gap-2 px-3 py-1 rounded-[100px] border-solid;
+}
+
+.basic-badge {
+  @apply border-[#2BA472];
+  background: rgba(43, 164, 114, 0.5);
+}
+
+.periodic-badge {
+  @apply border-[#DA561E];
+  background: rgba(218, 86, 30, 0.5);
+}
