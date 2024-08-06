@@ -4,8 +4,10 @@ import React from 'react';
 import '../settings.css';
 import SettingsLayout from '../SettingsLayout';
 import { useRouter } from 'next/navigation';
-import { useAppSelector } from '@/custom-hooks/StateHooks';
+import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import FeegrantPage from './FeegrantPage';
+import { setConnectWalletOpen } from '@/store/features/wallet/walletSlice';
+import EmptyScreen from '@/components/common/EmptyScreen';
 
 const Page = () => {
   const router = useRouter();
@@ -26,7 +28,13 @@ const Page = () => {
       tabName="feegrant"
     >
       <div>
-        <FeegrantPage chainIDs={chainIDs} />
+        {chainIDs.length ? (
+          <FeegrantPage chainIDs={chainIDs} />
+        ) : (
+          <div className="w-full h-full text-white flex justify-center items-center">
+            - Chain Not found -
+          </div>
+        )}
       </div>
     </SettingsLayout>
   );
