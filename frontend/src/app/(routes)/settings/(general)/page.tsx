@@ -6,7 +6,6 @@ import SettingsLayout from '../SettingsLayout';
 import CustomNetworkCard from '../components/CustomNetworkCard';
 import AddressBook from '../components/AddressBook';
 
-
 const page = () => {
   const addNetwork = () => {};
   return (
