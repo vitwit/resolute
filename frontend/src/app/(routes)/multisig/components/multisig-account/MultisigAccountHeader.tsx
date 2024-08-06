@@ -77,7 +77,7 @@ const MultisigAccountHeader = ({
   }, [deleteMultisigRes]);
 
   return (
-    <div className="flex items-center w-full">
+    <div className="flex items-center w-full gap-6">
       <div className="flex-1 space-y-6 border-b-[1px] border-[#ffffff1d] pb-2">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
