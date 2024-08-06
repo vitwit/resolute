@@ -3,6 +3,8 @@
 import React from 'react';
 import './../settings.css';
 import SettingsLayout from '../SettingsLayout';
+import CustomNetworkCard from '../components/CustomNetworkCard';
+import AddressBook from '../components/AddressBook';
 
 const page = () => {
   const addNetwork = () => {};
@@ -12,7 +14,10 @@ const page = () => {
       actionName="Add Network"
       tabName="general"
     >
-      <div>General Settings</div>
+      <div>
+        <CustomNetworkCard />
+        <AddressBook />
+      </div>
     </SettingsLayout>
   );
 };

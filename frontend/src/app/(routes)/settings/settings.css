@@ -29,3 +29,7 @@
 .error-chip {
   @apply text-[12px] rounded-lg bg-[#ff00005b] text-center leading-normal max-w-fit px-2 truncate;
 }
+.customnetwork-card {
+  @apply shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)_inset] flex flex-col items-start gap-10 px-4 py-6 rounded-2xl;
+  background: rgba(255, 255, 255, 0.02);
+}
