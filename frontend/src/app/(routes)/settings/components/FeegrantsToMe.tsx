@@ -16,6 +16,7 @@ import { getTypeURLName } from '@/utils/authorizations';
 import FeegrantToMeLoading from './FeegrantToMeLoading';
 import { Tooltip } from '@mui/material';
 import { ALLOWED_MSG_ALLOWANCE } from '@/utils/feegrant';
+import DialogFeegrantDetails from './DialogFeegrantDetails';
 
 const FeegrantsToMe = ({ chainIDs }: { chainIDs: string[] }) => {
   const { getGrantsToMe } = useFeeGrants();
@@ -161,7 +162,12 @@ const GrantToMeCard = (props: GrantToMeCardprops) => {
           </div>
         </div>
       </div>
-      <DialogViewDetails open={viewDetailsOpen} onClose={toggleViewDetails} />
+      <DialogFeegrantDetails
+        open={viewDetailsOpen}
+        onClose={toggleViewDetails}
+        chainID={chainID}
+        grant={grant.allowance}
+      />
     </div>
   );
 };

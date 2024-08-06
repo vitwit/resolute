@@ -1,3 +1,4 @@
+import { get } from 'lodash';
 import { convertToSnakeCase } from './util';
 import { getTypeURLName } from './util';
 
@@ -10,7 +11,7 @@ export const BASIC_ALLOWANCE = '/cosmos.feegrant.v1beta1.BasicAllowance';
 export const PERIODIC_ALLOWANCE = '/cosmos.feegrant.v1beta1.PeriodicAllowance';
 export const ALLOWED_MSG_ALLOWANCE =
   '/cosmos.feegrant.v1beta1.AllowedMsgAllowance';
-  
+
 export function feegrantMsgTypes(): FeegrantMenuItem[] {
   return [
     {
@@ -156,4 +157,56 @@ export const getMsgListFromMsgNames = (msgNames: string[]) => {
     msgsList.push(MAP_TXN_MSG_TYPES[convertToSnakeCase(msg)]);
   });
   return msgsList;
+};
+
+export const getExpiryDate = (
+  allowance: BasicAllowance | PeriodicAllowance | AllowedMsgAllowance
+) => {
+  if (get(allowance, '@type') === BASIC_ALLOWANCE) {
+    return get(allowance, 'expiration', '');
+  } else if (get(allowance, '@type') === PERIODIC_ALLOWANCE) {
+    return get(allowance, 'basic.expiration', '');
+  } else {
+    if (get(allowance, 'allowance.@type') === BASIC_ALLOWANCE) {
+      return get(allowance, 'allowance.expiration', '');
+    } else {
+      return get(allowance, 'allowance.basic.expiration', '');
+    }
+  }
+};
+
+export const getSpendLimit = (
+  allowance: BasicAllowance | PeriodicAllowance | AllowedMsgAllowance
+) => {
+  if (get(allowance, '@type') === BASIC_ALLOWANCE) {
+    return get(allowance, 'spend_limit', []);
+  } else if (get(allowance, '@type') === PERIODIC_ALLOWANCE) {
+    return get(allowance, 'basic.spend_limit', []);
+  } else {
+    if (get(allowance, 'allowance.@type') === BASIC_ALLOWANCE) {
+      return get(allowance, 'allowance.spend_limit', []);
+    } else {
+      return get(allowance, 'allowance.basic.spend_limit', []);
+    }
+  }
+};
+
+export const getPeriodExpiryDate = (
+  allowance: BasicAllowance | PeriodicAllowance | AllowedMsgAllowance
+) => {
+  if (get(allowance, '@type') === PERIODIC_ALLOWANCE) {
+    return get(allowance, 'period_reset', '');
+  } else {
+    return get(allowance, 'allowance.period_reset', '');
+  }
+};
+
+export const getPeriodSpendLimit = (
+  allowance: BasicAllowance | PeriodicAllowance | AllowedMsgAllowance
+) => {
+  if (get(allowance, '@type') === PERIODIC_ALLOWANCE) {
+    return get(allowance, 'period_spend_limit', []);
+  } else {
+    return get(allowance, 'allowance.period_spend_limit', []);
+  }
 };

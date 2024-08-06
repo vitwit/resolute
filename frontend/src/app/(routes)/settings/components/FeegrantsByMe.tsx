@@ -14,6 +14,7 @@ import CustomButton from '@/components/common/CustomButton';
 import FeegrantByMeLoading from './FeegrantByMeLoading';
 import { TxStatus } from '@/types/enums';
 import { txRevoke } from '@/store/features/feegrant/feegrantSlice';
+import DialogFeegrantDetails from './DialogFeegrantDetails';
 
 const FeegrantsByMe = ({ chainIDs }: { chainIDs: string[] }) => {
   const { getGrantsByMe } = useFeeGrants();
@@ -169,7 +170,12 @@ const GranteByMeCard = (props: GrantByMeCardProps) => {
           </div>
         </div>
       </div>
-      <DialogViewDetails open={viewDetailsOpen} onClose={toggleViewDetails} />
+      <DialogFeegrantDetails
+        open={viewDetailsOpen}
+        onClose={toggleViewDetails}
+        chainID={chainID}
+        grant={grant.allowance}
+      />
     </div>
   );
 };
