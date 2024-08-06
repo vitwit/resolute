@@ -16,7 +16,7 @@ const FeegrantsByMe = ({ chainIDs }: { chainIDs: string[] }) => {
       {addressGrants?.length ? (
         <>
           {addressGrants.map((addressGrant) => (
-            <>
+            <React.Fragment key={addressGrant.address}>
               {!!addressGrant.grants.length && (
                 <GrantByMeCard
                   chainID={addressGrant.chainID}
@@ -24,7 +24,7 @@ const FeegrantsByMe = ({ chainIDs }: { chainIDs: string[] }) => {
                   address={addressGrant.address}
                 />
               )}
-            </>
+            </React.Fragment>
           ))}
         </>
       ) : (
