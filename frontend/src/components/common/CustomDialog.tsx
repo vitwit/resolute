@@ -16,6 +16,7 @@ interface CustomDialogProps {
   styles?: string;
   description?: string;
   img?: string;
+  showDivider?: boolean;
 }
 
 /**
@@ -27,6 +28,7 @@ interface CustomDialogProps {
  * @param {string} props.title - The title of the dialog.
  * @param {string} props.description - The description of the dialog.
  * @param {string} [props.styles] - (Optional) Additional tailwindcss styles for the dialog container.
+ * @param {string} props.showDivider - (Optional) Whether to display a horizontal line after the title and description.
  * @returns {React.ReactNode} - React element representing the CustomDialog component.
  */
 
@@ -38,6 +40,7 @@ const CustomDialog = ({
   title,
   styles,
   description,
+  showDivider,
 }: CustomDialogProps) => {
   return (
     <Dialog
@@ -62,21 +65,21 @@ const CustomDialog = ({
           </div>
           <div className="flex items-center flex-col gap-2">
             <div className="flex gap-2 items-center px-6">
-             {
-              img ?  <div className="">
-              <Image
-              src={img}
-              width={40}
-              height={40}
-              alt="Network-logo"
-              />
-            </div>:null
-             }
+              {img ? (
+                <div className="">
+                  <Image src={img} width={40} height={40} alt="Network-logo" />
+                </div>
+              ) : null}
               <div className="text-h1 w-full text-center ">{title}</div>
             </div>
             <div className="text-b1-light text-center w-full">
               {description}
             </div>
+            {showDivider ? (
+              <div className="px-6 w-full">
+                <div className="divider-line"></div>
+              </div>
+            ) : null}
           </div>
           <div className="px-6">{children}</div>
           <div className="h-10"></div>

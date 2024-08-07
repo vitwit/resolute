@@ -17,13 +17,12 @@ const useInitFeegrant = ({ chainIDs }: { chainIDs: string[] }) => {
   const [dataFetched, setDataFetched] = useState(false);
   const fetchedChains = useRef<{ [key: string]: boolean }>({});
 
-  const allChainsFetched = chainIDs.every(
-    (chainID) => fetchedChains.current[chainID]
-  );
   useEffect(() => {
-    if (networksCount > 0 && !dataFetched && !allChainsFetched) {
+    if (networksCount > 0 && !dataFetched) {
+      let allFetched = true;
+      
       chainIDs.forEach((chainID) => {
-        if (!fetchedChains.current?.[chainID]) {
+        if (!fetchedChains.current[chainID]) {
           const { address, baseURL, restURLs } = getChainInfo(chainID);
           const feegrantInputs = {
             baseURLs: restURLs,
@@ -33,13 +32,20 @@ const useInitFeegrant = ({ chainIDs }: { chainIDs: string[] }) => {
           };
           dispatch(getGrantsByMe(feegrantInputs));
           dispatch(getGrantsToMe(feegrantInputs));
+          fetchedChains.current[chainID] = true; // Mark this chain as fetched
+        }
+        if (!fetchedChains.current[chainID]) {
+          allFetched = false;
         }
       });
-      if (allChainsFetched) {
+
+      if (allFetched) {
         setDataFetched(true);
       }
     }
-  }, [chainIDs, networksCount]);
+  }, [chainIDs, networksCount, dataFetched, getChainInfo, dispatch]);
+
+  return null;
 };
 
 export default useInitFeegrant;

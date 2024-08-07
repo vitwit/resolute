@@ -4,6 +4,7 @@ import React from 'react';
 import MenuItem from './MenuItem';
 import { getSelectedPartFromURL } from '@/utils/util';
 import { useAppSelector } from '@/custom-hooks/StateHooks';
+import FeegrantButton from '../common/FeegrantButton';
 
 const SideMenu = () => {
   const pathName = usePathname();
@@ -104,8 +105,11 @@ const MoreOptions = ({
             </div>
             <div className="flex gap-2 items-center pl-3">
               <div className="w-5"></div>
-              <div className="cursor-pointer hover:font-semibold">
-                Feegrant Mode
+              <div className="flex items-center gap-2">
+                <div className="cursor-pointer hover:font-semibold">
+                  Feegrant Mode
+                </div>
+                <FeegrantButton />
               </div>
             </div>
           </div>
