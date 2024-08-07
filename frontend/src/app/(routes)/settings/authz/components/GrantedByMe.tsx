@@ -3,7 +3,7 @@ import Image from 'next/image';
 import Copy from '@/components/common/Copy';
 
 import DialogRevokeAll from '../../components/DialogRevokeAll';
-import DialogConfirmDelete from '@/app/(routes)/multisig/components/multisig-account/DialogConfirmDelete';
+import DialogConfirmDelete from '@/components/common/DialogConfirmDelete';
 import DialogAuthzDetails from './DialogAuthzDetails';
 
 interface Grant {
