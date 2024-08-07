@@ -14,7 +14,9 @@ const GrantedByMe = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [revokeDialogOpen, setRevokeDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [selectedPermission, setSelectedPermission] = useState<string | null>(null);
+  const [selectedPermission, setSelectedPermission] = useState<string | null>(
+    null
+  );
 
   const handleViewDetails = () => {
     setDialogOpen(true);
@@ -44,7 +46,6 @@ const GrantedByMe = () => {
 
   const handleDelete = () => {
     console.log('Delete permission:', selectedPermission);
-    // Implement your delete logic here
     setDeleteDialogOpen(false);
   };
 
@@ -79,8 +80,11 @@ const GrantedByMe = () => {
   return (
     <div className="space-y-6 pt-6">
       {grants.map((grant, index) => (
-        <div className="grants-card justify-between gap-16 w-full" key={index}>
-          <div className="flex flex-col gap-2">
+        <div
+          className="grants-card justify-between gap-16 w-full items-start"
+          key={index}
+        >
+          <div className="flex flex-col gap-2 w-[280px]">
             <div className="flex gap-2 items-center">
               <Image
                 src="/akash.png"
@@ -95,9 +99,9 @@ const GrantedByMe = () => {
               <Copy content={grant.address} />
             </div>
           </div>
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-2 flex-1">
             <p className="text-b1-light">Permissions</p>
-            <div className="grid grid-cols-4 gap-2 ">
+            <div className="flex gap-2 flex-wrap">
               {grant.permissions.map((permission, idx) => (
                 <div className="permission-card" key={idx}>
                   <div className="flex space-x-2 items-center">
@@ -115,12 +119,15 @@ const GrantedByMe = () => {
               ))}
             </div>
           </div>
-          <div className="flex gap-6 items-end">
-            <button className="primary-btn" onClick={handleRevokeAll}>
-              Revoke
-            </button>
-            <div className="secondary-btn" onClick={handleViewDetails}>
-              View Details
+          <div className="flex flex-col gap-2">
+            <div className="h-[21px]" />
+            <div className="flex gap-6 items-center">
+              <button className="primary-btn" onClick={handleRevokeAll}>
+                Revoke All
+              </button>
+              <div className="secondary-btn" onClick={handleViewDetails}>
+                View Details
+              </div>
             </div>
           </div>
         </div>
