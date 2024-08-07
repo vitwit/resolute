@@ -96,12 +96,12 @@ const MoreOptions = ({
         <div key={item.name} className="space-y-2">
           <MenuItem key={item.name} itemData={item} pathName={selectedPart} />
           <div className="text-[12px] font-medium space-y-4">
-            {/* <div className="flex gap-2 items-center pl-3">
+            <div className="flex gap-2 items-center pl-3">
               <div className="w-5"></div>
               <div className="cursor-pointer hover:font-semibold">
                 Authz Mode
               </div>
-            </div> */}
+            </div>
             <div className="flex gap-2 items-center pl-3">
               <div className="w-5"></div>
               <div className="cursor-pointer hover:font-semibold">

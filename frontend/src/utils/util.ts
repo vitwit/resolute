@@ -79,14 +79,10 @@ export const getSelectedPartFromURL = (urlParts: string[]): string => {
   switch (urlParts[1]) {
     case 'staking':
       return 'Staking';
-    case 'feegrant':
-      return 'Feegrant';
     case 'governance':
       return 'Governance';
     case 'groups':
       return 'Groups';
-    case 'authz':
-      return 'Authz';
     case 'multisig':
       return 'Multisig';
     case 'transfers':
@@ -282,6 +278,11 @@ export const allNetworksLink = (pathParts: string[]): string => {
         return '/settings/feegrant/new-feegrant';
       }
       return '/settings/feegrant';
+    } else if (pathParts.includes('authz')) {
+      if (pathParts.includes('new-authz')) {
+        return '/settings/authz/new-authz';
+      }
+      return '/settings/authz';
     } else {
       return '/settings';
     }
@@ -302,6 +303,12 @@ export const changeNetworkRoute = (
       return '/settings/feegrant/new-feegrant';
     }
     return '/settings/feegrant/' + chainName.toLowerCase();
+  }
+  if (pathName.includes('authz')) {
+    if (pathName.includes('new-authz')) {
+      return '/settings/authz/new-authz';
+    }
+    return '/settings/authz/' + chainName.toLowerCase();
   }
   const route = pathName === '/' ? '/overview' : '/' + pathName.split('/')?.[1];
   return `${route}/${chainName.toLowerCase()}`;

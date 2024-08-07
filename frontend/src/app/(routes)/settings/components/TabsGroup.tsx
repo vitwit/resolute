@@ -2,7 +2,7 @@ import { useAppSelector } from '@/custom-hooks/StateHooks';
 import Link from 'next/link';
 import React from 'react';
 
-const TABS = ['general', 'feegrant'];
+const TABS = ['general', 'authz', 'feegrant'];
 
 const TabsGroup = ({
   selectedTab,
