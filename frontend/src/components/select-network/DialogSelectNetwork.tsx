@@ -54,7 +54,7 @@ const DialogSelectNetwork = () => {
       dispatch(setSelectedNetwork({ chainName: '' }));
     } else if (pathParts.includes('feegrant') || pathParts.includes('authz')) {
       if (pathParts.length >= 4) {
-        if (pathParts.includes('new-feegrant')) {
+        if (pathParts.includes('new-feegrant') || pathParts.includes('new-authz')) {
           dispatch(setSelectedNetwork({ chainName: '' }));
         } else {
           dispatch(
