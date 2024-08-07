@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import Copy from '@/components/common/Copy';
-import DialogAuthzDetails from './DialogAuthzDetails';
+
 import DialogRevokeAll from '../../components/DialogRevokeAll';
 import DialogConfirmDelete from '@/app/(routes)/multisig/components/multisig-account/DialogConfirmDelete';
+import DialogAuthzDetails from './DialogAuthzDetails';
 
 interface Grant {
   address: string;

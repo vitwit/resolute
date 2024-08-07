@@ -1,5 +1,5 @@
 import React from 'react';
-import AuthzFilters from '../Authz/components/AuthzFilters';
+import AuthzFilters from './components/AuthzFilters';
 
 const AuthzPage = () => {
   return <div>

@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import Copy from '@/components/common/Copy';
-import DialogAuthzDetails from './DialogAuthzDetails';
+
 import { TICK_ICON } from '@/constants/image-names';
+import DialogAuthzDetails from './DialogAuthzDetails';
 
 type Grant = {
   address: string;
