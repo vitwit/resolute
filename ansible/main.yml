@@ -1,0 +1,344 @@
+---
+- name: Create new Droplets
+  hosts: localhost
+  vars:
+    droplets_to_create: 1
+    
+  tasks:
+    - name: Get DigitalOcean SSH Key ID
+      uri:
+        url: "https://api.digitalocean.com/v2/account/keys"
+        method: GET
+        headers:
+          Authorization: "Bearer {{ digital_ocean_api_token }}"
+        return_content: yes
+      register: ssh_key_response
+
+    - name: Debug SSH Key Response
+      debug:
+        var: ssh_key_response
+
+    - name: Parse SSH Key ID
+      set_fact:
+        ssh_key_id: "{{ (ssh_key_response.json | json_query(query)) | first }}"
+      vars:
+        query: "ssh_keys[?name=='{{ ssh_key_name }}'].id"
+
+    - name: Read file contents
+      slurp:
+        src: "{{ ssh_file_path }}"
+      register: ssh_content
+
+    - name: Store SSH key contents into a variable
+      set_fact:
+        ssh_key_variable: "{{ ssh_content['content'] | b64decode }}"
+
+    - name: Create new Droplet
+      digital_ocean_droplet:
+        state: present
+        name: "test{{ item }}"
+        size: s-2vcpu-4gb
+        image: ubuntu-22-04-x64
+        region: blr1
+        ssh_keys: "{{ ssh_key_id }}"
+        monitoring: false
+        ipv6: false
+        user_data: |
+          #cloud-config
+          users:
+            - name: {{ user }}
+              groups: sudo
+              sudo: "ALL=(ALL) NOPASSWD:ALL"
+              shell: /bin/bash
+              ssh-authorized-keys:
+                - {{ ssh_key_variable  }}
+        api_token: "{{ digital_ocean_api_token }}"
+      with_sequence: start=1 end={{ droplets_to_create }}
+      register: do
+
+    - name: Extract IP addresses
+      set_fact:
+        ip_addresses: "{{ do.results | json_query('[].data.droplet.networks.v4[0].ip_address') | flatten }}"
+
+    - name: Set IP addresses as separate Ansible variables
+      set_fact:
+        validator1_ip: "{{ ip_addresses[0] }}"
+
+    - name: Debug separate IP addresses
+      debug:
+        msg:
+          - "Validator 1 IP: {{ validator1_ip }}"
+
+    - name: Add validator1 to host group
+      add_host:
+        name: "validator_1"
+        ansible_host: "{{ validator1_ip }}"
+
+        ansible_user: "{{ user }}"
+
+    - name: sleep for a few seconds
+      command: sleep 15
+
+    - name: Disable host key checking
+      set_fact:
+        ansible_ssh_common_args: "-o StrictHostKeyChecking=no"
+
+    - name: Update validator_1 IP in inventory file
+      lineinfile:
+        path: ./inventory.ini
+        line: "validator_1 ansible_host={{ validator1_ip }} ansible_user={{ user }}"
+        insertafter: '^\[hosting\]'
+
+- name: Installing Dependencies
+  hosts: validator_1
+  vars:
+    ansible_ssh_common_args: "-o StrictHostKeyChecking=no"
+
+  tasks:
+    - name: Debug the user dir
+      debug:
+        msg: "User Directory: {{ user_home }}"
+
+    - name: Create directory for NVM installation script
+      file:
+        path: "{{ user_home }}/.nvm_install"
+        state: directory
+        mode: "0755"
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+      become: true
+
+    - name: Download NVM installation script
+      get_url:
+        url: https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh
+        dest: "{{ user_home }}/.nvm_install/install_nvm.sh"
+        mode: "0755"
+        owner: root
+        group: "{{ ansible_user }}"
+      become: true
+
+    - name: Run NVM installation script
+      shell: "/bin/bash {{ user_home }}/.nvm_install/install_nvm.sh"
+      environment:
+        HOME: "{{ user_home }}"
+      args:
+        executable: /bin/bash
+      become: true
+
+    - name: Source nvm for shell environment
+      lineinfile:
+        path: "{{ user_home }}/.bashrc"
+        line: 'export NVM_DIR="$HOME/.nvm" && [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm'
+        create: yes
+        state: present
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: "0644"
+
+    - name: Source NVM script
+      shell: "source {{ user_home }}/.bashrc"
+      environment:
+        HOME: "{{ user_home }}"
+      args:
+        executable: /bin/bash
+      become: true
+
+    - name: Install Node.js version 18
+      shell: ". {{ user_home }}/.nvm/nvm.sh && nvm install 18"
+      environment:
+        HOME: "{{ user_home }}"
+      args:
+        executable: /bin/bash
+      become: true
+
+    - name: Verify Node.js installation
+      shell: ". {{ user_home }}/.nvm/nvm.sh && nvm use 18 && node -v"
+      environment:
+        HOME: "{{ user_home }}"
+      args:
+        executable: /bin/bash
+      become: true
+
+    - name: Install Yarn using npm
+      shell: ". {{ user_home }}/.nvm/nvm.sh && nvm use 18 && npm install -g yarn"
+      environment:
+        HOME: "{{ user_home }}"
+      args:
+        executable: /bin/bash
+      become: true
+
+    - name: Debug the user dir
+      debug:
+        msg: "User Directory: {{ user_home }}"
+
+    - name: Download go tar file
+      command: wget https://go.dev/dl/go{{go_version}}.linux-amd64.tar.gz
+      args:
+        chdir: "{{ user_home }}"
+      become: true
+
+    - name: Delete previous installation
+      command: rm -rf /usr/local/go
+      become: true
+
+    - name: Extract and move new go folder to /usr/local
+      command: tar -C /usr/local -xzf go{{go_version}}.linux-amd64.tar.gz
+      args:
+        creates: /usr/local/go/bin/go
+      become: true
+
+    - name: Delete downloaded tar file
+      command: rm -rf go{{go_version}}.linux-amd64.tar.gz*
+      args:
+        chdir: "{{ user_home }}"
+      become: true
+
+    - name: Set Go environment variables in ~/.profile
+      lineinfile:
+        path: "{{ user_home }}/.profile"
+        line: |
+          export GOROOT=/usr/local/go 
+          export GOPATH={{ user_home }}/go
+          export GOBIN=$GOPATH/bin
+          export PATH=$PATH:/usr/local/go/bin:$GOBIN
+        create: true
+        state: present
+
+    - name: Sleep for a few seconds
+      command: sleep 15
+
+    - name: Update apt package list
+      apt:
+        update_cache: yes
+      environment:
+        HOME: "{{ user_home }}"
+      become: true
+
+    - name: sleep for a few seconds
+      command: sleep 30
+      
+
+    - name: Install Docker
+      shell: sudo apt update && sudo apt install -y apt-transport-https ca-certificates curl software-properties-common && curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null && sudo apt update && sudo apt install -y docker-ce docker-ce-cli containerd.io && sudo systemctl enable docker && sudo systemctl start docker
+
+    - name: Clone the resolute Directory
+      git:
+        repo: "https://github.com/vitwit/resolute.git"
+        dest: "{{ user_home }}/resolute"
+        version: master
+        update: yes
+      become_user: "{{ ansible_user }}"
+      environment:
+        HOME: "{{ user_home }}"
+
+    - name: Set correct permissions for frontend directory
+      file:
+        path: "{{ user_home }}/resolute"
+        state: directory
+        mode: "0755"
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+
+    - name: Run yarn
+      shell: ". {{ user_home }}/.nvm/nvm.sh && yarn && yarn build"
+      args:
+        chdir: "{{ user_home }}/resolute/frontend"
+        executable: /bin/bash
+      environment:
+        HOME: "{{ user_home }}"
+      become_user: "{{ ansible_user }}"
+
+    - name: Run yarn start
+      command: "screen -dmS yarn_session bash -c '. {{ user_home }}/.nvm/nvm.sh && nvm use 18 && cd {{ user_home }}/resolute/frontend && yarn start'"
+      environment:
+        HOME: "{{ user_home }}"
+
+      become_user: "{{ ansible_user }}"
+
+   
+
+    - name: Copy the Dockerfile
+      become_user: "{{ ansible_user }}"
+      copy:
+        src: "{{ playbook_dir }}/templates/docker.j2"
+        dest: "{{ user_home }}/resolute/server/Dockerfile"
+      environment:
+        HOME: "{{ user_home }}"
+
+    - name: Copy the contents of config.yaml file
+      become_user: "{{ ansible_user }}"
+      copy:
+        src: "{{ playbook_dir }}/templates/server-config.j2"
+        dest: "{{ user_home }}/resolute/server/config.yaml"
+      environment:
+        HOME: "{{ user_home }}"
+
+    - name: Run the docker build command
+      command: docker build -t database .
+      args:
+        chdir: "{{ user_home }}/resolute/server"
+      environment:
+        HOME: "{{ user_home }}"
+      become: true
+
+    - name: Run the docker
+      command: docker run --name resolute-db-container -p 5432:5432 -d database
+      args:
+        chdir: "{{ user_home }}/resolute/server"
+      become: true
+      environment:
+        HOME: "{{ user_home }}"
+
+    - name: Run go get
+      shell: go get ./...
+      args:
+        chdir: "{{ user_home }}/resolute/server"
+      environment:
+        HOME: "{{ user_home }}"
+        PATH: "{{ path }}"
+        GOPATH: "{{ user_home }}/go"
+      become: true
+
+    - name: Run go mod download
+      shell: go mod download
+      args:
+        chdir: "{{ user_home }}/resolute/server"
+      environment:
+        HOME: "{{ user_home }}"
+        PATH: "{{ path }}"
+        GOPATH: "{{ user_home }}/go"
+      become: true
+
+    - name: Run go mod tidy
+      shell: go mod tidy
+      args:
+        chdir: "{{ user_home }}/resolute/server"
+      environment:
+        HOME: "{{ user_home }}"
+        PATH: "{{ path }}"
+        GOPATH: "{{ user_home }}/go"
+      become: true
+
+    - name: Copy the go service file
+      template:
+        src: "{{ playbook_dir }}/templates/go.j2"
+        dest: "/etc/systemd/system/go.service"
+        owner: "{{ansible_user}}"
+        group: "{{ ansible_user }}"
+        mode: "0644"
+      environment:
+        HOME: "{{ user_home }}"
+      become: true
+
+    - name: Start the service file
+      systemd:
+        name: "go"
+        state: started
+        enabled: yes
+      become: true
+
+    - name: Restart the journald service file
+      shell: systemctl restart systemd-journald.service
+      become: true
+
+
