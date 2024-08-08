@@ -5,7 +5,7 @@ import FeegrantsToMe from './components/FeegrantsToMe';
 import FeegrantsByMe from './components/FeegrantsByMe';
 
 const FeegrantPage = ({ chainIDs }: { chainIDs: string[] }) => {
-  useInitFeegrant({ chainIDs });
+  useInitFeegrant({ chainIDs, shouldFetch: true });
 
   const [isGrantedToMe, setIsGrantedToMe] = useState(true);
 

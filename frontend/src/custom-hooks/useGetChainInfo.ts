@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { RootState } from '@/store/store';
 import { useAppSelector } from './StateHooks';
 import { getAddressByPrefix } from '@/utils/address';
-import { USD_CURRENCY } from '@/utils/constants';
+import { COSMOS_CHAIN_ID, USD_CURRENCY } from '@/utils/constants';
 
 export interface DenomInfo {
   minimalDenom: string;
@@ -232,6 +232,15 @@ const useGetChainInfo = () => {
     };
   };
 
+  const convertToCosmosAddress = (address: string) => {
+    if (address?.length) {
+      const { prefix } = getChainInfo(COSMOS_CHAIN_ID);
+      const cosmosAddress = getAddressByPrefix(address, prefix);
+      return cosmosAddress;
+    }
+    return address || '';
+  };
+
   return {
     getDenomInfo,
     getChainInfo,
@@ -245,6 +254,7 @@ const useGetChainInfo = () => {
     getValueFromToken,
     getTokenValueByChainId,
     getNetworkTheme,
+    convertToCosmosAddress,
   };
 };
 

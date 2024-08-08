@@ -36,7 +36,7 @@ const DialogFeegrants: React.FC<DialogFeegrantsProps> = (props) => {
   const chainIDs = Object.keys(nameToChainIDs).map(
     (chainName) => nameToChainIDs[chainName]
   );
-  useInitFeegrant({ chainIDs });
+  useInitFeegrant({ chainIDs, shouldFetch: true });
 
   const toggleViewMore = () => {
     setViewMore((prev) => !prev);

@@ -10,7 +10,13 @@ import {
  * This custom hook is used to dispatch the feegrantsByMe and feegrantsToMe
  *
  */
-const useInitFeegrant = ({ chainIDs }: { chainIDs: string[] }) => {
+const useInitFeegrant = ({
+  chainIDs,
+  shouldFetch,
+}: {
+  chainIDs: string[];
+  shouldFetch: boolean;
+}) => {
   const dispatch = useAppDispatch();
   const { getChainInfo } = useGetChainInfo();
   const networksCount = chainIDs.length;
@@ -18,9 +24,9 @@ const useInitFeegrant = ({ chainIDs }: { chainIDs: string[] }) => {
   const fetchedChains = useRef<{ [key: string]: boolean }>({});
 
   useEffect(() => {
-    if (networksCount > 0 && !dataFetched) {
+    if (networksCount > 0 && !dataFetched && shouldFetch) {
       let allFetched = true;
-      
+
       chainIDs.forEach((chainID) => {
         if (!fetchedChains.current[chainID]) {
           const { address, baseURL, restURLs } = getChainInfo(chainID);
