@@ -46,7 +46,7 @@ const NetworkItem = ({
     );
     setRemoveNetworkDialogOpen(false);
     dispatch(setChangeNetworkDialogOpen({ open: false, showSearch: true }));
-    dispatch(setError({ type: 'succes', message: 'Network Removed' }));
+    dispatch(setError({ type: 'success', message: 'Network Removed' }));
     setTimeout(() => router.push('/'), 2000);
   };
 

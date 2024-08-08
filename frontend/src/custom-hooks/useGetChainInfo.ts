@@ -244,12 +244,9 @@ const useGetChainInfo = () => {
   const getCustomNetworks = () => {
     const customNetworks: string[] = [];
     if (isWalletConnected) {
-      const chainIDs = Object.keys(networks);
-      chainIDs.forEach((chainID) => {
+      return Object.keys(networks).filter((chainID) => {
         const { isDefaultNetwork } = getChainInfo(chainID);
-        if (!isDefaultNetwork) {
-          customNetworks.push(chainID);
-        }
+        return !isDefaultNetwork;
       });
     }
     return customNetworks;

@@ -29,7 +29,7 @@ const CustomNetworkCard = ({
       })
     );
     setRemoveNetworkDialogOpen(false);
-    dispatch(setError({ type: 'succes', message: 'Network Removed' }));
+    dispatch(setError({ type: 'success', message: 'Network Removed' }));
   };
 
   return (
