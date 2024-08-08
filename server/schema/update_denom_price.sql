@@ -159,7 +159,9 @@ WITH new_data AS (
     ('nund', 'unification', true, NOW(), '{}'::jsonb),
     ('uvdl', 'vidulum', true, NOW(), '{}'::jsonb),
     ('axpla', 'xpla', true, NOW(), '{}'::jsonb),
-    ('azeta', 'zetachain', true, NOW(), '{}'::jsonb)
+    ('azeta', 'zetachain', true, NOW(), '{}'::jsonb),
+    ('weth', 'weth', true, NOW(), '{}'::jsonb),
+    ('wbtc', 'wrapped-bitcoin', true, NOW(), '{}'::jsonb)
 )   
 
 -- Insert or update the data
