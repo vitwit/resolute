@@ -2,7 +2,11 @@ import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Copy from '@/components/common/Copy';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
-import { ALLOWED_MSG_ALLOWANCE, PERIODIC_ALLOWANCE } from '@/utils/feegrant';
+import {
+  ALLOWED_MSG_ALLOWANCE,
+  MAP_TXN_MSG_TYPES,
+  PERIODIC_ALLOWANCE,
+} from '@/utils/feegrant';
 import { get } from 'lodash';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import { convertToSpacedName, shortenAddress } from '@/utils/util';
@@ -12,6 +16,7 @@ import { TxStatus } from '@/types/enums';
 import { txRevoke } from '@/store/features/feegrant/feegrantSlice';
 import DialogFeegrantDetails from './DialogFeegrantDetails';
 import FeegrantTypeBadge from './FeegrantTypeBadge';
+import useGetFeegranter from '@/custom-hooks/useGetFeegranter';
 
 interface GrantByMeCardProps {
   chainID: string;
@@ -31,6 +36,7 @@ const GrantByMeCard: React.FC<GrantByMeCardProps> = ({
   const { getChainInfo, getDenomInfo } = useGetChainInfo();
   const { chainLogo, chainName } = getChainInfo(chainID);
   const { minimalDenom } = getDenomInfo(chainID);
+  const { getFeegranter } = useGetFeegranter();
 
   const txRevokeStatus = useAppSelector(
     (state) => state.feegrant.chains[chainID].tx.status
@@ -61,7 +67,10 @@ const GrantByMeCard: React.FC<GrantByMeCardProps> = ({
         grantee: grant.grantee,
         basicChainInfo: getChainInfo(chainID),
         baseURLs: getChainInfo(chainID).restURLs,
-        feegranter: '',
+        feegranter: getFeegranter(
+          chainID,
+          MAP_TXN_MSG_TYPES['revoke_feegrant']
+        ),
         denom: minimalDenom,
       })
     );

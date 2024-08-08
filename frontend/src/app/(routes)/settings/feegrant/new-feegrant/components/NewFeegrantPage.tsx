@@ -3,7 +3,7 @@ import SelectNetworks from '../../../components/NetworksList';
 import useGetFeegrantMsgs from '@/custom-hooks/useGetFeegrantMsgs';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import { FieldValues, useForm } from 'react-hook-form';
-import { getFeegrantFormDefaultValues } from '@/utils/feegrant';
+import { getFeegrantFormDefaultValues, MAP_TXN_MSG_TYPES } from '@/utils/feegrant';
 import CreateFeegrantForm from './CreateFeegrantForm';
 import {
   CHAIN_NOT_SELECTED_ERROR,
@@ -15,6 +15,7 @@ import Copy from '@/components/common/Copy';
 import { shortenAddress } from '@/utils/util';
 import DialogFeegrantTxStatus from './DialogFeegrantTxStatus';
 import SelectedChains from './SelectedChains';
+import useGetFeegranter from '@/custom-hooks/useGetFeegranter';
 
 const NewFeegrantPage = () => {
   const [selectedChains, setSelectedChains] = useState<string[]>([]);
@@ -30,6 +31,7 @@ const NewFeegrantPage = () => {
 
   const { getFeegrantMsgs } = useGetFeegrantMsgs();
   const { getChainInfo, getDenomInfo } = useGetChainInfo();
+  const { getFeegranter } = useGetFeegranter();
   const { trackTxs, chainsStatus, currentTxCount } = useMultiTxTracker();
 
   const {
@@ -108,7 +110,10 @@ const NewFeegrantPage = () => {
           msg: msgs,
           denom: minimalDenom,
           feeAmount: feeAmount,
-          feegranter: '',
+          feegranter: getFeegranter(
+            chainID,
+            MAP_TXN_MSG_TYPES['grant_feegrant']
+          ),
         },
       });
     });
