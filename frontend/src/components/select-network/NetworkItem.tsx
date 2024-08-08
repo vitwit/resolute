@@ -20,7 +20,7 @@ const NetworkItem = ({
   pathName,
   handleClose,
   selected,
-  isDefaultNetwork,
+  isCustomNetwork,
   chainID,
 }: {
   chainName: string;
@@ -28,7 +28,7 @@ const NetworkItem = ({
   pathName: string;
   handleClose: () => void;
   selected: boolean;
-  isDefaultNetwork?: boolean;
+  isCustomNetwork?: boolean;
   chainID: string;
 }) => {
   const dispatch = useAppDispatch();
@@ -53,7 +53,7 @@ const NetworkItem = ({
   return (
     <Badge
       badgeContent={
-        !isDefaultNetwork ? (
+        isCustomNetwork ? (
           <Tooltip title="Remove Network">
             <IconButton
               onClick={() => setRemoveNetworkDialogOpen(true)}

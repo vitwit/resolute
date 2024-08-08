@@ -111,7 +111,7 @@ export const networks: Network[] = [
     leapExperimental: false,
     isTestnet: false,
     govV1: false,
-    isDefaultNetwork: true,
+    isCustomNetwork: false,
     explorerTxHashEndpoint: 'https://www.mintscan.io/akash/txs/',
     config: {
       chainId: 'akashnet-2',
@@ -189,7 +189,7 @@ export const networks: Network[] = [
     leapExperimental: false,
     isTestnet: false,
     govV1: true,
-    isDefaultNetwork: true,
+    isCustomNetwork: false,
     explorerTxHashEndpoint: 'https://www.mintscan.io/cosmos/txs/',
     config: {
       chainId: 'cosmoshub-4',
@@ -583,7 +583,7 @@ export const networks: Network[] = [
     leapExperimental: false,
     isTestnet: false,
     govV1: true,
-    isDefaultNetwork: true,
+    isCustomNetwork: false,
     explorerTxHashEndpoint: 'https://www.mintscan.io/osmosis/txs/',
     config: {
       chainId: 'osmosis-1',
@@ -747,7 +747,7 @@ export const networks: Network[] = [
     leapExperimental: true,
     isTestnet: false,
     govV1: true,
-    isDefaultNetwork: true,
+    isCustomNetwork: false,
     explorerTxHashEndpoint: 'https://mintscan.io/dydx/txs/',
     config: {
       chainId: 'dydx-mainnet-1',
@@ -1242,7 +1242,7 @@ export const networks: Network[] = [
     leapExperimental: false,
     isTestnet: false,
     govV1: false,
-    isDefaultNetwork: true,
+    isCustomNetwork: false,
     explorerTxHashEndpoint: 'https://mintscan.io/celestia/txs/',
     config: {
       chainId: 'celestia',
@@ -1645,7 +1645,7 @@ export const networks: Network[] = [
     keplrExperimental: true,
     leapExperimental: false,
     isTestnet: false,
-    isDefaultNetwork: true,
+    isCustomNetwork: false,
     explorerTxHashEndpoint: 'https://www.mintscan.io/archway/txs/',
     govV1: false,
     config: {
