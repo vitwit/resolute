@@ -17,7 +17,7 @@ interface BasicChainInfo {
   decimals: number;
   valPrefix: string;
   govV1: boolean;
-  isDefaultNetwork: boolean;
+  isCustomNetwork: boolean;
 }
 
 interface Coin {

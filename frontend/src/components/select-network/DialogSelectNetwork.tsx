@@ -54,7 +54,10 @@ const DialogSelectNetwork = () => {
       dispatch(setSelectedNetwork({ chainName: '' }));
     } else if (pathParts.includes('feegrant') || pathParts.includes('authz')) {
       if (pathParts.length >= 4) {
-        if (pathParts.includes('new-feegrant') || pathParts.includes('new-authz')) {
+        if (
+          pathParts.includes('new-feegrant') ||
+          pathParts.includes('new-authz')
+        ) {
           dispatch(setSelectedNetwork({ chainName: '' }));
         } else {
           dispatch(
@@ -108,9 +111,7 @@ const DialogSelectNetwork = () => {
           </div>
           <div className="space-y-6">
             <div className="text-center">
-              <div className="text-h1">
-                Select Network
-              </div>
+              <div className="text-h1">Select Network</div>
               <div className="secondary-text">
                 Select a network from the list of supported networks on Resolute
               </div>
@@ -177,7 +178,7 @@ const DialogSelectNetwork = () => {
                   pathName={constructUrlWithQueryParams(chain.chainName)}
                   handleClose={onClose}
                   selected={isSelected(chain.chainName)}
-                  isDefaultNetwork={chain.isDefaultNetwork}
+                  isCustomNetwork={chain.isCustomNetwork}
                   chainID={chain.chainID}
                 />
               ))}

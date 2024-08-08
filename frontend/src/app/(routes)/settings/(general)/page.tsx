@@ -4,9 +4,8 @@ import React from 'react';
 import { useAppDispatch } from '@/custom-hooks/StateHooks';
 import './../settings.css';
 import SettingsLayout from '../SettingsLayout';
-import CustomNetworkCard from '../components/CustomNetworkCard';
-import AddressBook from '../components/AddressBook';
 import { setAddNetworkDialogOpen } from '@/store/features/common/commonSlice';
+import CustomNetworks from './components/CustomNetworks';
 
 const Page = () => {
   const dispatch = useAppDispatch();
@@ -22,8 +21,9 @@ const Page = () => {
       tabName="general"
     >
       <div>
-        <CustomNetworkCard />
-        <AddressBook />
+        <CustomNetworks />
+        {/* TODO: Implement address book functionality and integrate at all address fields */}
+        {/* TODO: Empty screen when no custom networks or no addresses */}
       </div>
     </SettingsLayout>
   );
