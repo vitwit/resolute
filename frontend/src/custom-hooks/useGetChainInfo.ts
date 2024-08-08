@@ -241,6 +241,20 @@ const useGetChainInfo = () => {
     return address || '';
   };
 
+  const getCustomNetworks = () => {
+    const customNetworks: string[] = [];
+    if (isWalletConnected) {
+      const chainIDs = Object.keys(networks);
+      chainIDs.forEach((chainID) => {
+        const { isDefaultNetwork } = getChainInfo(chainID);
+        if (!isDefaultNetwork) {
+          customNetworks.push(chainID);
+        }
+      });
+    }
+    return customNetworks;
+  };
+
   return {
     getDenomInfo,
     getChainInfo,
@@ -255,6 +269,7 @@ const useGetChainInfo = () => {
     getTokenValueByChainId,
     getNetworkTheme,
     convertToCosmosAddress,
+    getCustomNetworks,
   };
 };
 
