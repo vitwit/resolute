@@ -23,9 +23,13 @@ import { getBalances } from '@/store/features/bank/bankSlice';
 import useGetAssetsAmount from './useGetAssetsAmount';
 import useGetTxInputs from './useGetTxInputs';
 import { isEmpty } from 'lodash';
+import useGetFeegranter from './useGetFeegranter';
+import { MAP_TXN_MSG_TYPES } from '@/utils/feegrant';
 
 const useStaking = ({ isSingleChain }: { isSingleChain: boolean }) => {
   const dispatch = useAppDispatch();
+  const { getFeegranter } = useGetFeegranter();
+
   const networks = useAppSelector((state: RootState) => state.wallet.networks);
   const nameToChainIDs = useAppSelector(
     (state: RootState) => state.wallet.nameToChainIDs
@@ -274,7 +278,7 @@ const useStaking = ({ isSingleChain }: { isSingleChain: boolean }) => {
         amount: amount * 10 ** currency?.coinDecimals,
         denom: currency?.coinMinimalDenom,
         feeAmount: feeAmount,
-        feegranter: '',
+        feegranter: getFeegranter(chainID, MAP_TXN_MSG_TYPES['cancel_unbonding']),
         creationHeight: creationHeight,
       })
     );
@@ -298,7 +302,7 @@ const useStaking = ({ isSingleChain }: { isSingleChain: boolean }) => {
         amount: amount * 10 ** currency?.coinDecimals,
         denom: currency?.coinMinimalDenom,
         feeAmount: feeAmount,
-        feegranter: '',
+        feegranter: getFeegranter(chainID, MAP_TXN_MSG_TYPES['delegate']),
       })
     );
   };
@@ -325,7 +329,7 @@ const useStaking = ({ isSingleChain }: { isSingleChain: boolean }) => {
         amount: amount * 10 ** currency?.coinDecimals,
         denom: currency?.coinMinimalDenom,
         feeAmount: feeAmount,
-        feegranter: '',
+        feegranter: getFeegranter(chainID, MAP_TXN_MSG_TYPES['undelegate']),
       })
     );
   };
@@ -354,7 +358,7 @@ const useStaking = ({ isSingleChain }: { isSingleChain: boolean }) => {
         amount: amount * 10 ** currency?.coinDecimals,
         denom: currency?.coinMinimalDenom,
         feeAmount: feeAmount,
-        feegranter: '',
+        feegranter: getFeegranter(chainID, MAP_TXN_MSG_TYPES['redelegate']),
       })
     );
   };
