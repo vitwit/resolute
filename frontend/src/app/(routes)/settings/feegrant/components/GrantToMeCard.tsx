@@ -14,6 +14,12 @@ import { Tooltip } from '@mui/material';
 import { ALLOWED_MSG_ALLOWANCE, PERIODIC_ALLOWANCE } from '@/utils/feegrant';
 import DialogFeegrantDetails from './DialogFeegrantDetails';
 import FeegrantTypeBadge from './FeegrantTypeBadge';
+import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
+import { getAddressByPrefix } from '@/utils/address';
+import useFeeGrants from '@/custom-hooks/useFeeGrants';
+import { enableFeegrantMode } from '@/store/features/feegrant/feegrantSlice';
+import { setFeegrantMode } from '@/utils/localStorage';
+import { exitAuthzMode } from '@/store/features/authz/authzSlice';
 
 interface GrantToMeCardProps {
   chainID: string;
@@ -26,9 +32,24 @@ const GrantToMeCard: React.FC<GrantToMeCardProps> = ({
   address,
   grant,
 }) => {
+  const dispatch = useAppDispatch();
   const [viewDetailsOpen, setViewDetailsOpen] = useState(false);
-  const { getChainInfo } = useGetChainInfo();
-  const { chainLogo, chainName } = getChainInfo(chainID);
+  const { getChainInfo, convertToCosmosAddress } = useGetChainInfo();
+  const { disableFeegrantMode } = useFeeGrants();
+  const {
+    chainLogo,
+    chainName,
+    prefix,
+    address: walletAddress,
+  } = getChainInfo(chainID);
+  const feegranterAddress = useAppSelector(
+    (state) => state.feegrant.feegrantAddress
+  );
+  const feegrantModeEnabled = useAppSelector(
+    (state) => state.feegrant.feegrantModeEnabled
+  );
+  const feegranterCosmosAddress = convertToCosmosAddress(address);
+  const feegranteeCosmosAddress = convertToCosmosAddress(walletAddress);
 
   const { allowance } = grant;
   const allowedMsgs =
@@ -39,10 +60,23 @@ const GrantToMeCard: React.FC<GrantToMeCardProps> = ({
     get(grant, '@type') === PERIODIC_ALLOWANCE ||
     get(grant, 'allowance.@type') === PERIODIC_ALLOWANCE;
 
-  const isSelected = false; // TODO: set the value of isSelected based on the granter selected currently
+  const isGranterSelected = () => {
+    const nativeFeegranterAddress = getAddressByPrefix(
+      feegranterAddress,
+      prefix
+    );
+    return nativeFeegranterAddress === address;
+  };
+  const isSelected = isGranterSelected();
 
   const handleUseFeegrant = () => {
-    // TODO: handle use feegrant
+    if (feegrantModeEnabled) {
+      disableFeegrantMode();
+    } else {
+      dispatch(enableFeegrantMode({ address: feegranterCosmosAddress }));
+      dispatch(exitAuthzMode());
+      setFeegrantMode(feegranteeCosmosAddress, feegranterCosmosAddress);
+    }
   };
 
   const toggleViewDetails = () => {
@@ -83,7 +117,9 @@ const GrantToMeCard: React.FC<GrantToMeCardProps> = ({
           {isSelected && (
             <div className="flex space-x-0">
               <Image src={TICK_ICON} width={16} height={16} alt="used-icon" />
-              <span className="text-[#2BA472]">Currently Using</span>
+              <span className="text-[#2BA472] text-[14px]">
+                Currently Using
+              </span>
             </div>
           )}
         </div>
@@ -101,7 +137,7 @@ const GrantToMeCard: React.FC<GrantToMeCardProps> = ({
         <div className="h-[21px]" />
         <div className="flex gap-6 items-center">
           <button
-            className={isSelected ? 'cancel-btn' : 'primary-btn'}
+            className={`w-[130px] ${isSelected ? 'cancel-btn' : 'primary-btn'}`}
             onClick={handleUseFeegrant}
           >
             {isSelected ? 'Cancel' : 'Use Allowance'}

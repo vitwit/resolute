@@ -40,3 +40,4 @@ export const CHECK_ICON_FILLED = '/icons/check-filled.svg';
 export const CROSS_ICON = '/icons/cross-icon.svg';
 export const RESOLUTE_LOGO = '/resolute-logo.svg';
 export const TICK_ICON = '/icons/tick-icon.svg';
+export const DROP_DOWN_ICON_FILLED = '/icons/drop-down-arrow-filled.svg';
