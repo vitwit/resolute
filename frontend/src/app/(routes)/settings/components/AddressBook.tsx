@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
-import DialogConfirmDelete from '../../multisig/components/multisig-account/DialogConfirmDelete';
+import DialogConfirmDelete from '@/components/common/DialogConfirmDelete';
 import DialogAddAddress from '../components/DialogAddAddress';
 
 interface Address {
