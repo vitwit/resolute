@@ -17,7 +17,7 @@ const FeegrantFilters = ({
             : 'border-[#ffffff26]'
         }`}
       >
-        Feegrant to me
+        Feegrants to me
       </button>
       <button
         onClick={() => handleFilterChange(false)}
@@ -27,7 +27,7 @@ const FeegrantFilters = ({
             : 'border-[#ffffff26]'
         }`}
       >
-        Feegrant by me
+        Feegrants by me
       </button>
     </div>
   );

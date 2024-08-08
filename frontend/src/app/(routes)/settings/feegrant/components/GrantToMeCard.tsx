@@ -67,10 +67,9 @@ const GrantToMeCard: React.FC<GrantToMeCardProps> = ({
     );
     return nativeFeegranterAddress === address;
   };
-  const isSelected = isGranterSelected(); // TODO: set the value of isSelected based on the granter selected currently
+  const isSelected = isGranterSelected();
 
   const handleUseFeegrant = () => {
-    // TODO: handle use feegrant
     if (feegrantModeEnabled) {
       disableFeegrantMode();
     } else {
