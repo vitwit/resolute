@@ -90,3 +90,22 @@
   @apply shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)_inset] flex flex-col items-start gap-10 px-4 py-6 rounded-2xl;
   background: rgba(255, 255, 255, 0.02);
 }
+
+@keyframes pop-in {
+  0% {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.06);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.pop-in {
+  animation: pop-in 0.5s ease-in-out;
+}

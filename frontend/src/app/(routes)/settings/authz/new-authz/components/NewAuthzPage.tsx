@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useState } from 'react';
+import React, { ChangeEvent, useEffect, useState } from 'react';
 import SelectNetworks from '../../../components/NetworksList';
 import { fromBech32 } from '@cosmjs/encoding';
 import { convertToSnakeCase, shortenAddress } from '@/utils/util';
@@ -57,6 +57,7 @@ const NewAuthzPage = () => {
   const [delegateAdvanced, setDelegateAdvanced] = useState(false);
   const [undelegateAdvanced, setUndelegateAdvanced] = useState(false);
   const [redelegateAdvanced, setRedelegateAdvanced] = useState(false);
+  const [recentlyAdded, setRecentlyAdded] = useState<number | null>(null);
 
   const {
     handleSubmit,
@@ -85,10 +86,18 @@ const NewAuthzPage = () => {
   const handleSelectMsg = (msgType: string) => {
     const updatedSelection = selectedMsgs.includes(msgType)
       ? selectedMsgs.filter((id) => id !== msgType)
-      : [...selectedMsgs, msgType];
+      : [msgType, ...selectedMsgs];
 
     setSelectedMsgs(updatedSelection);
+    setRecentlyAdded(0);
   };
+
+  useEffect(() => {
+    if (recentlyAdded !== null) {
+      const timer = setTimeout(() => setRecentlyAdded(null), 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [recentlyAdded]);
 
   const handleRemoveMsg = (index: number) => {
     const arr = selectedMsgs.filter((_, i) => i !== index);
@@ -193,7 +202,14 @@ const NewAuthzPage = () => {
     const msgType = convertToSnakeCase(msg);
     const sendGrant = 'send';
     if (GENRIC_GRANTS.includes(msgType)) {
-      return <ExpirationField msg={msgType} control={control} />;
+      return (
+        <div className="space-y-2">
+          <div className="text-[12px] text-[#ffffff80] font-light">
+            Set Expiry
+          </div>
+          <ExpirationField msg={msgType} control={control} />
+        </div>
+      );
     } else if (msgType === sendGrant) {
       return (
         <SendAuthzForm
@@ -303,7 +319,9 @@ const NewAuthzPage = () => {
             <div className="space-y-6">
               {selectedMsgs.map((msg, index) => (
                 <div
-                  className="bg-[#FFFFFF05] p-6 rounded-2xl space-y-6"
+                  className={`bg-[#FFFFFF05] p-6 rounded-2xl space-y-6 ${
+                    recentlyAdded === index ? 'pop-in' : ''
+                  }`}
                   key={msg}
                 >
                   <div className="space-y-2">

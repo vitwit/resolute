@@ -19,7 +19,12 @@ const SendAuthzForm = ({
   return (
     <div className="space-y-2">
       <div className="space-y-4">
-        <ExpirationField control={control} msg={'send'} />
+        <div className="space-y-2">
+          <div className="text-[12px] text-[#ffffff80] font-light">
+            Set Expiry
+          </div>
+          <ExpirationField control={control} msg={'send'} />
+        </div>
         {advanced && (
           <>
             <Controller
