@@ -8,7 +8,6 @@ import { PERMISSION_NOT_SELECTED_ERROR } from '@/utils/errors';
 import useMultiTxTracker from '@/custom-hooks/useGetMultiChainTxLoading';
 import { CircularProgress } from '@mui/material';
 import GranteeAddress from './GranteeAddress';
-import ToggleSwitch from '@/components/common/ToggleSwitch';
 import {
   authzMsgTypes,
   GENRIC_GRANTS,
@@ -24,6 +23,8 @@ import StakeAuthzForm from './StakeAuthzForm';
 import useGetGrantAuthzMsgs from '@/custom-hooks/useGetGrantAuthzMsgs';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import useGetFeegranter from '@/custom-hooks/useGetFeegranter';
+import Image from 'next/image';
+import CustomButton from '@/components/common/CustomButton';
 
 const NewAuthzPage = () => {
   const { getChainInfo, getDenomInfo } = useGetChainInfo();
@@ -87,6 +88,11 @@ const NewAuthzPage = () => {
       : [...selectedMsgs, msgType];
 
     setSelectedMsgs(updatedSelection);
+  };
+
+  const handleRemoveMsg = (index: number) => {
+    const arr = selectedMsgs.filter((_, i) => i !== index);
+    setSelectedMsgs(arr);
   };
 
   const validateAddress = (address: string) => {
@@ -249,7 +255,7 @@ const NewAuthzPage = () => {
   };
 
   return (
-    <div className="flex h-full overflow-y-scroll my-10 gap-20">
+    <div className="flex h-full my-10 gap-20">
       <div className="space-y-6 w-[40%]">
         <GranteeAddress
           handleChange={handleAddressChange}
@@ -277,7 +283,7 @@ const NewAuthzPage = () => {
           </div>
         </div>
       </div>
-      <div className="flex-1 flex flex-col p-6 bg-[#FFFFFF05] rounded-2xl overflow-y-scroll max-h-[70vh]">
+      <div className="flex-1 h-full flex flex-col p-6 bg-[#FFFFFF05] rounded-2xl min-h-[72vh]">
         <div className="space-y-6 flex-1">
           <SelectedChains selectedChains={selectedChains} />
           <div className="py-2 px-4 rounded-2xl flex items-center gap-6 bg-[#FFFFFF05] h-12">
@@ -295,41 +301,70 @@ const NewAuthzPage = () => {
           >
             <div className="font-medium py-[6px] mb-4">Permissions</div>
             <div className="space-y-6">
-              {selectedMsgs.map((msg) => (
-                <div className="grant-authz-form" key={msg}>
-                  <h3 className="py-[6px]">{msg}</h3>
+              {selectedMsgs.map((msg, index) => (
+                <div
+                  className="bg-[#FFFFFF05] p-6 rounded-2xl space-y-6"
+                  key={msg}
+                >
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center">
+                      <div className="text-[14px]">{msg}</div>
+                      <button
+                        className="rounded-full p-[2px] hover:bg-[#ffffff10]"
+                        onClick={() => handleRemoveMsg(index)}
+                        type="button"
+                      >
+                        <Image
+                          src="/close.svg"
+                          width={18}
+                          height={18}
+                          alt="Remove"
+                        />
+                      </button>
+                    </div>
+                    <div className="divider-line"></div>
+                  </div>
                   <div className="my-2">{renderForm(msg)}</div>
                 </div>
               ))}
+              <div className="space-y-6 w-full">
+                <div
+                  className={`py-2 px-4 rounded-2xl flex items-center gap-6 bg-[#FFFFFF05] h-12 text-[#d92101f7] text-[14px] ${
+                    formValidationError ? 'opacity-80' : 'opacity-0'
+                  }`}
+                >
+                  {formValidationError}
+                </div>
+                {selectedMsgs?.length ? (
+                  <button
+                    className="primary-btn w-full"
+                    disabled={currentTxCount !== 0}
+                    type="submit"
+                    form="create-authz-form"
+                  >
+                    {currentTxCount !== 0 ? (
+                      <div className="flex justify-center items-center gap-2">
+                        <CircularProgress size={12} sx={{ color: 'white' }} />
+                        <span className="italic">
+                          Pending<span className="dots-flashing"></span>{' '}
+                        </span>
+                      </div>
+                    ) : (
+                      'Create Authz'
+                    )}
+                  </button>
+                ) : null}
+              </div>
             </div>
           </form>
         </div>
-        <div className="space-y-6 w-full">
-          <div
-            className={`py-2 px-4 rounded-2xl flex items-center gap-6 bg-[#FFFFFF05] h-12 text-[#d92101f7] text-[14px] ${
-              formValidationError ? 'opacity-80' : 'opacity-0'
-            }`}
-          >
-            {formValidationError}
-          </div>
-          <button
-            className="primary-btn w-full"
-            disabled={currentTxCount !== 0}
-            type="submit"
-            form="create-authz-form"
-          >
-            {currentTxCount !== 0 ? (
-              <div className="flex justify-center items-center gap-2">
-                <CircularProgress size={12} sx={{ color: 'white' }} />
-                <span className="italic">
-                  Pending<span className="dots-flashing"></span>{' '}
-                </span>
-              </div>
-            ) : (
-              'Create Feegrant'
-            )}
-          </button>
-        </div>
+        {selectedMsgs?.length ? null : (
+          <CustomButton
+            btnText="Create Authz"
+            btnDisabled={true}
+            btnStyles="opacity-80"
+          />
+        )}
       </div>
     </div>
   );
