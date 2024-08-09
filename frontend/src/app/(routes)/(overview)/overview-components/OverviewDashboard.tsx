@@ -79,12 +79,12 @@ const OverviewDashboard = ({ chainIDs }: { chainIDs: string[] }) => {
 
   return (
     <div>
-      <div className="pt-10">
-        <GovHeader />
-      </div>
       <div className="flex pt-10 gap-10">
         <div className="flex flex-1">
           <div className="flex flex-col gap-10 h-[calc(100vh-104px)] overflow-y-auto pb-3">
+            <div className="">
+              <GovHeader />
+            </div>
             <BalanceSummary chainIDs={chainIDs} />
             <AssetsTable chainIDs={chainIDs} />
           </div>

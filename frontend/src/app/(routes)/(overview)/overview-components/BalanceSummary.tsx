@@ -51,7 +51,7 @@ export default function BalanceSummary({ chainIDs }: { chainIDs: string[] }) {
   ];
 
   return (
-    <div className="portfolio-bg gap-6">
+    <div className="px-6 gap-6">
       {/* <div className="flex flex-col gap-1">
         <div className="text-h2 !font-bold">Portfolio</div>
         <div className="flex flex-col gap-2">
