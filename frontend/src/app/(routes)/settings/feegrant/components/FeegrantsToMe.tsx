@@ -3,6 +3,7 @@ import useFeeGrants from '@/custom-hooks/useFeeGrants';
 import { useAppSelector } from '@/custom-hooks/StateHooks';
 import FeegrantToMeLoading from './FeegrantToMeLoading';
 import GrantToMeCard from './GrantToMeCard';
+import WithConnectionIllustration from '@/components/illustrations/withConnectionIllustration';
 
 const FeegrantsToMe = ({ chainIDs }: { chainIDs: string[] }) => {
   const { getGrantsToMe } = useFeeGrants();
@@ -32,7 +33,8 @@ const FeegrantsToMe = ({ chainIDs }: { chainIDs: string[] }) => {
         <FeegrantToMeLoading />
       ) : (
         // TODO: Display empty illutration
-        <div>No Feegrants</div>
+        // <div>No Feegrants</div>
+        <WithConnectionIllustration message="No Feegrants" />
       )}
     </div>
   );
