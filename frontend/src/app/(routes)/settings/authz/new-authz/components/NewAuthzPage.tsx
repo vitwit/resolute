@@ -315,7 +315,7 @@ const NewAuthzPage = () => {
             onSubmit={handleSubmit((e) => onSubmit(e))}
             id="create-authz-form"
           >
-            <div className="font-medium py-[6px] mb-4">Permissions</div>
+            <div className="text-[14px] mb-4">Permissions</div>
             <div className="space-y-6">
               {selectedMsgs.map((msg, index) => (
                 <div

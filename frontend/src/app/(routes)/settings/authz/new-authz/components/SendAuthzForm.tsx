@@ -74,11 +74,7 @@ const SendAuthzForm = ({
         )}
       </div>
       <div className="flex justify-end">
-        <button
-          type="button"
-          onClick={toggle}
-          className="text-[14px] leading-[20px] underline underline-offset-2 tracking-[0.56px]"
-        >
+        <button type="button" onClick={toggle} className="secondary-btn">
           Customize
         </button>
       </div>
