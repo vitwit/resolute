@@ -81,9 +81,9 @@ const OverviewDashboard = ({ chainIDs }: { chainIDs: string[] }) => {
     <div>
       <div className="flex pt-10 gap-10">
         <div className="flex flex-1">
-          <div className="flex flex-col gap-10 h-[calc(100vh-104px)] overflow-y-auto pb-3">
+          <div className="flex flex-col gap-10 h-[calc(100vh-104px)] overflow-y-auto pb-3 w-full">
             <div className="">
-              <GovHeader />
+              <OverviewHeader />
             </div>
             <BalanceSummary chainIDs={chainIDs} />
             <AssetsTable chainIDs={chainIDs} />
@@ -100,7 +100,7 @@ const OverviewDashboard = ({ chainIDs }: { chainIDs: string[] }) => {
 
 export default OverviewDashboard;
 
-const GovHeader = () => {
+const OverviewHeader = () => {
   return (
     <PageHeader
       title="Dashboard"

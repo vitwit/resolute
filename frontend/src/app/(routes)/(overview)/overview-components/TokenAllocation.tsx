@@ -81,7 +81,9 @@ const TokenAllocation = () => {
       <div className="flex gap-1 flex-col w-full">
         <div className="text-h2 !font-bold">Token Distribution</div>
         <div className="flex flex-col gap-2">
-          <div className="secondary-text">Distribution of tokens across various networks</div>
+          <div className="secondary-text">
+            Distribution of tokens across various networks
+          </div>
           <div className="divider-line"></div>
         </div>
       </div>
@@ -98,7 +100,9 @@ const TokenAllocation = () => {
                     {Math.round(get(value, 'percentage', 0))}%
                   </div>
                 ) : (
-                  <div className="text-[12px] font-extralight mb-1 text-center">0%</div>
+                  <div className="text-[12px] font-extralight mb-1 text-center">
+                    0%
+                  </div>
                 )}
 
                 <Tooltip
@@ -110,7 +114,6 @@ const TokenAllocation = () => {
                     style={{
                       height: get(value, 'percentage', 0) + '%',
                       background: get(value, 'theme.gradient'),
-                      
                     }}
                   ></div>
                 </Tooltip>
@@ -142,7 +145,9 @@ const TokenAllocation = () => {
                   {Math.round(othersPercentage)}%
                 </div>
               ) : (
-                <div className="text-[12px] font-extralight mb-1 text-center">0%</div>
+                <div className="text-[12px] font-extralight mb-1 text-center">
+                  0%
+                </div>
               )}
               <Tooltip
                 title={`${Math.round(othersPercentage)}%`}
@@ -171,7 +176,9 @@ const TokenAllocation = () => {
               </Tooltip>
             </div>
             <Tooltip title="" placement="top">
-              <div className="mb-2 text-[12px] font-extralight mt-2">Others</div>
+              <div className="mb-2 text-[12px] font-extralight mt-2">
+                Others
+              </div>
             </Tooltip>
           </div>
         </div>

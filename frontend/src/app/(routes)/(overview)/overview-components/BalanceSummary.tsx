@@ -16,19 +16,19 @@ export default function BalanceSummary({ chainIDs }: { chainIDs: string[] }) {
   const availableAmount = isAuthzMode ? authzAvailable : myAvailable;
   const rewardsAmount = isAuthzMode ? authzRewards : myRewards;
 
-  const available = availableAmount?.toString()
-  const staked = stakedAmount?.toString()
-  const rewards = rewardsAmount?.toString()
+  const available = availableAmount?.toString();
+  const staked = stakedAmount?.toString();
+  const rewards = rewardsAmount?.toString();
 
   const total = Number(available) + Number(staked) + Number(rewards);
-  const totalAmt = total?.toString()
+  const totalAmt = total?.toString();
 
   const assetsSummaryData: AssetSummary[] = [
     {
       icon: '/total-bal.png',
       alt: 'total-balance',
       type: 'Total Balance',
-      amount: totalAmt ,
+      amount: totalAmt,
     },
     {
       icon: '/staked-bal.png',
@@ -51,7 +51,7 @@ export default function BalanceSummary({ chainIDs }: { chainIDs: string[] }) {
   ];
 
   return (
-    <div className="px-6 gap-6">
+    <div className="gap-6">
       {/* <div className="flex flex-col gap-1">
         <div className="text-h2 !font-bold">Portfolio</div>
         <div className="flex flex-col gap-2">
