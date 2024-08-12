@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 import ProfileDialog from './ProfileDialog';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
@@ -29,7 +30,9 @@ const TopBar = () => {
     <header className="top-bar">
       <nav className="flex justify-between items-center px-4 py-2">
         <div>
-          <Image src={RESOLUTE_LOGO} width={120} height={32} alt="Resolute" />
+          <Link href="/" passHref>
+            <Image src={RESOLUTE_LOGO} width={120} height={32} alt="Resolute" />
+          </Link>
         </div>
         <div className="flex-1 flex justify-center items-center">
           {!walletConnected && (
@@ -78,7 +81,6 @@ const TopBar = () => {
               width={20}
               height={20}
               alt="discord-logo"
-              // className="w-6 h-6"
             />
           </a>
           {walletConnected && (

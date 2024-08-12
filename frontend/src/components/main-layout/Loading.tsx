@@ -1,3 +1,4 @@
+import { RESOLUTE_LOGO } from '@/constants/image-names';
 import Image from 'next/image';
 import React from 'react';
 
@@ -21,12 +22,7 @@ const TopBarLoading = () => {
     <header className="top-bar">
       <nav>
         <div>
-          <Image
-            src="/resolute-logo.png"
-            width={120}
-            height={32}
-            alt="Resolute"
-          />
+          <Image src={RESOLUTE_LOGO} width={120} height={32} alt="Resolute" />
         </div>
         <div className="w-[170px] animate-pulse h-[40px] bg-[#252525] rounded" />
       </nav>
