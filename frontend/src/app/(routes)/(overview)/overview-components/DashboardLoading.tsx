@@ -2,7 +2,7 @@ import React from 'react';
 
 const DashboardLoading = () => {
   return (
-    <div className="flex gap-10 pt-10">
+    <div className="flex gap-10 h-[48vh]">
       <div className="flex flex-1">
         <div className="flex-col w-full">
           {/* <div className="flex flex-col items-center gap-10 mb-20">
@@ -30,7 +30,7 @@ const DashboardLoading = () => {
       </div> */}
 
           {/* <AssetsTable chainIDs={chainIDs} /> Skeleton*/}
-          <div className="flex flex-col items-start gap-2 w-[690px] p-6">
+          <div className="flex flex-col items-start gap-2 w-[690px] px-6">
             <table className="relative w-full">
               <thead className="w-full">
                 <tr>
