@@ -27,6 +27,10 @@
   @apply bg-[#FFFFFF10] border-transparent;
 }
 
+.selected-validator {
+  @apply border-[0.25px] border-[#FFFFFF30] rounded-lg p-2 flex items-center gap-2;
+}
+
 .error-box {
   @apply flex justify-end mt-2;
 }

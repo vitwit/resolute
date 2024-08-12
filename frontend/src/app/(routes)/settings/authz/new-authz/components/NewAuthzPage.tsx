@@ -25,13 +25,20 @@ import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import useGetFeegranter from '@/custom-hooks/useGetFeegranter';
 import Image from 'next/image';
 import CustomButton from '@/components/common/CustomButton';
+import DialogAuthzTxStatus from './DialogAuthzTxStatus';
+import { NO_MESSAGES_ILLUSTRATION } from '@/constants/image-names';
 
 const NewAuthzPage = () => {
   const { getChainInfo, getDenomInfo } = useGetChainInfo();
-  const { trackTxs, ChainsStatus, currentTxCount } = useMultiTxTracker();
+  const {
+    trackTxs,
+    ChainsStatus: chainsStatus,
+    currentTxCount,
+  } = useMultiTxTracker();
   const { getFeegranter } = useGetFeegranter();
   const msgTypes = authzMsgTypes();
 
+  const [txStatusOpen, setTxStatusOpen] = useState(false);
   const [selectedChains, setSelectedChains] = useState<string[]>([]);
   const [txnStarted, setTxnStarted] = useState(false);
   const [granteeAddress, setGranteeAddress] = useState('');
@@ -63,7 +70,6 @@ const NewAuthzPage = () => {
     handleSubmit,
     control,
     formState: { errors: formErrors },
-    reset: resetTxnMsgForms,
   } = useForm({
     defaultValues: grantAuthzFormDefaultValues(),
   });
@@ -84,6 +90,9 @@ const NewAuthzPage = () => {
   };
 
   const handleSelectMsg = (msgType: string) => {
+    if (selectedMsgs.includes(msgType)) {
+      resetCustomData(msgType);
+    }
     const updatedSelection = selectedMsgs.includes(msgType)
       ? selectedMsgs.filter((id) => id !== msgType)
       : [msgType, ...selectedMsgs];
@@ -99,7 +108,33 @@ const NewAuthzPage = () => {
     }
   }, [recentlyAdded]);
 
-  const handleRemoveMsg = (index: number) => {
+  const resetCustomData = (msg: string) => {
+    switch (msg) {
+      case 'Send':
+        setSendAdvanced(false);
+        break;
+      case 'Delegate':
+        setSelectedDelegateValidators([]);
+        setDelegateAdvanced(false);
+        setIsDenyDelegateList(false);
+        break;
+      case 'Undelegate':
+        setSelectedUndelegateValidators([]);
+        setUndelegateAdvanced(false);
+        setIsDenyUndelegateList(false);
+        break;
+      case 'Redelegate':
+        setSelectedRedelegateValidators([]);
+        setRedelegateAdvanced(false);
+        setIsDenyRedelegateList(false);
+        break;
+      default:
+        break;
+    }
+  };
+
+  const handleRemoveMsg = (index: number, msg: string) => {
+    resetCustomData(msg);
     const arr = selectedMsgs.filter((_, i) => i !== index);
     setSelectedMsgs(arr);
   };
@@ -115,7 +150,7 @@ const NewAuthzPage = () => {
         return false;
       }
     } else {
-      setAddressValidationError('Please enter address');
+      setAddressValidationError('Please enter grantee address');
       return false;
     }
   };
@@ -138,6 +173,9 @@ const NewAuthzPage = () => {
   const { getGrantAuthzMsgs } = useGetGrantAuthzMsgs();
 
   const onSubmit = (e: FieldValues) => {
+    if (!validateForm()) {
+      return;
+    }
     const fieldValues = e;
     fieldValues['delegate'] = {
       expiration: fieldValues['delegate'].expiration,
@@ -195,6 +233,7 @@ const NewAuthzPage = () => {
       });
     });
     setTxnStarted(true);
+    setTxStatusOpen(true);
     trackTxs(txCreateAuthzInputs);
   };
 
@@ -228,7 +267,6 @@ const NewAuthzPage = () => {
               advanced={delegateAdvanced}
               msg={msgType}
               selectedChains={selectedChains}
-              selectedValidators={selectedDelegateValidators}
               maxTokensError={formErrors.delegate?.max_tokens?.message || ''}
               setSelectedValidators={setSelectedDelegateValidators}
               isDenyList={isDenyDelegateList}
@@ -243,7 +281,6 @@ const NewAuthzPage = () => {
               advanced={undelegateAdvanced}
               msg={msgType}
               selectedChains={selectedChains}
-              selectedValidators={selectedUndelegateValidators}
               maxTokensError={formErrors.undelegate?.max_tokens?.message || ''}
               setSelectedValidators={setSelectedUndelegateValidators}
               isDenyList={isDenyUndelegateList}
@@ -258,7 +295,6 @@ const NewAuthzPage = () => {
               advanced={redelegateAdvanced}
               msg={msgType}
               selectedChains={selectedChains}
-              selectedValidators={selectedRedelegateValidators}
               maxTokensError={formErrors.redelegate?.max_tokens?.message || ''}
               setSelectedValidators={setSelectedRedelegateValidators}
               isDenyList={isDenyRedelegateList}
@@ -269,6 +305,12 @@ const NewAuthzPage = () => {
       }
     }
   };
+
+  useEffect(() => {
+    if (currentTxCount === 0) {
+      setTxnStarted(false);
+    }
+  }, [currentTxCount]);
 
   return (
     <div className="flex h-full my-10 gap-20">
@@ -284,7 +326,7 @@ const NewAuthzPage = () => {
         <div className="space-y-2">
           <div className="py-[6px] mt-10 mb-2 flex justify-between">
             <div className="text-[#FFFFFF80] text-[14px] font-light">
-              Select Messages
+              Select Permissions
             </div>
           </div>
           <div className="flex flex-wrap gap-4">
@@ -315,65 +357,81 @@ const NewAuthzPage = () => {
             onSubmit={handleSubmit((e) => onSubmit(e))}
             id="create-authz-form"
           >
-            <div className="text-[14px] mb-4">Permissions</div>
-            <div className="space-y-6">
-              {selectedMsgs.map((msg, index) => (
-                <div
-                  className={`bg-[#FFFFFF05] p-6 rounded-2xl space-y-6 ${
-                    recentlyAdded === index ? 'pop-in' : ''
-                  }`}
-                  key={msg}
-                >
-                  <div className="space-y-2">
-                    <div className="flex justify-between items-center">
-                      <div className="text-[14px]">{msg}</div>
-                      <button
-                        className="rounded-full p-[2px] hover:bg-[#ffffff10]"
-                        onClick={() => handleRemoveMsg(index)}
-                        type="button"
-                      >
-                        <Image
-                          src="/close.svg"
-                          width={18}
-                          height={18}
-                          alt="Remove"
-                        />
-                      </button>
-                    </div>
-                    <div className="divider-line"></div>
-                  </div>
-                  <div className="my-2">{renderForm(msg)}</div>
-                </div>
-              ))}
-              <div className="space-y-6 w-full">
-                <div
-                  className={`py-2 px-4 rounded-2xl flex items-center gap-6 bg-[#FFFFFF05] h-12 text-[#d92101f7] text-[14px] ${
-                    formValidationError ? 'opacity-80' : 'opacity-0'
-                  }`}
-                >
-                  {formValidationError}
-                </div>
-                {selectedMsgs?.length ? (
-                  <button
-                    className="primary-btn w-full"
-                    disabled={currentTxCount !== 0}
-                    type="submit"
-                    form="create-authz-form"
+            <div className="text-[14px] mb-4 text-[#ffffff80]">Permissions</div>
+            {selectedMsgs?.length ? (
+              <div className="space-y-6">
+                {selectedMsgs.map((msg, index) => (
+                  <div
+                    className={`bg-[#FFFFFF05] p-6 rounded-2xl space-y-6 ${
+                      recentlyAdded === index ? 'pop-in' : ''
+                    }`}
+                    key={msg}
                   >
-                    {currentTxCount !== 0 ? (
-                      <div className="flex justify-center items-center gap-2">
-                        <CircularProgress size={12} sx={{ color: 'white' }} />
-                        <span className="italic">
-                          Pending<span className="dots-flashing"></span>{' '}
-                        </span>
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-center">
+                        <div className="text-[14px]">{msg}</div>
+                        <button
+                          className="rounded-full p-[2px] hover:bg-[#ffffff10]"
+                          onClick={() => handleRemoveMsg(index, msg)}
+                          type="button"
+                        >
+                          <Image
+                            src="/close.svg"
+                            width={18}
+                            height={18}
+                            alt="Remove"
+                          />
+                        </button>
                       </div>
-                    ) : (
-                      'Create Authz'
-                    )}
-                  </button>
-                ) : null}
+                      <div className="divider-line"></div>
+                    </div>
+                    <div className="my-2">{renderForm(msg)}</div>
+                  </div>
+                ))}
+                <div className="space-y-6 w-full">
+                  <div
+                    className={`py-2 px-4 rounded-2xl flex items-center gap-6 bg-[#FFFFFF05] h-12 text-[#d92101f7] text-[14px] ${
+                      addressValidationError || formValidationError
+                        ? 'opacity-80'
+                        : 'opacity-0'
+                    }`}
+                  >
+                    {addressValidationError || formValidationError}
+                  </div>
+                  {selectedMsgs?.length ? (
+                    <button
+                      className="primary-btn w-full"
+                      disabled={currentTxCount !== 0}
+                      type="submit"
+                      form="create-authz-form"
+                    >
+                      {currentTxCount !== 0 ? (
+                        <div className="flex justify-center items-center gap-2">
+                          <CircularProgress size={12} sx={{ color: 'white' }} />
+                          <span className="italic">
+                            Pending<span className="dots-flashing"></span>{' '}
+                          </span>
+                        </div>
+                      ) : (
+                        'Create Authz'
+                      )}
+                    </button>
+                  ) : null}
+                </div>
               </div>
-            </div>
+            ) : (
+              <div className="my-[15%] flex-1 flex flex-col items-center justify-center opacity-70">
+                <Image
+                  src={NO_MESSAGES_ILLUSTRATION}
+                  height={130}
+                  width={195}
+                  alt="No Messages"
+                />
+                <div className="text-b1 font-light">
+                  Select a permissions from the left side to add here
+                </div>
+              </div>
+            )}
           </form>
         </div>
         {selectedMsgs?.length ? null : (
@@ -384,6 +442,17 @@ const NewAuthzPage = () => {
           />
         )}
       </div>
+      <DialogAuthzTxStatus
+        open={txStatusOpen}
+        onClose={() => {
+          setTxStatusOpen(false);
+          setTxnStarted(false);
+        }}
+        chainsStatus={chainsStatus}
+        selectedChains={selectedChains}
+        selectedMsgs={selectedMsgs}
+        granteeAddress={granteeAddress}
+      />
     </div>
   );
 };
