@@ -1,5 +1,5 @@
 import { AxiosResponse } from 'axios';
-import { convertPaginationToParams } from '@/utils/util';
+import { addChainIDParam, convertPaginationToParams } from '@/utils/util';
 import { axiosGetRequestWrapper } from '@/utils/RequestWrapper';
 
 const grantToMeURL = '/cosmos/authz/v1beta1/grants/grantee/';
@@ -23,7 +23,8 @@ const fetchGrantsToMe = (
 const fetchGrantsByMe = (
   baseURLs: string[],
   grantee: string,
-  pagination?: KeyLimitPagination
+  pagination?: KeyLimitPagination,
+  chainID: string,
 ): Promise<AxiosResponse<GetGrantsResponse>> => {
   let endPoint = `${grantByMeURL}${grantee}`;
 
@@ -31,6 +32,8 @@ const fetchGrantsByMe = (
   if (parsed !== '') {
     endPoint += `?${parsed}`;
   }
+
+  endPoint = addChainIDParam(endPoint, chainID);
 
   return axiosGetRequestWrapper(baseURLs, endPoint);
 };

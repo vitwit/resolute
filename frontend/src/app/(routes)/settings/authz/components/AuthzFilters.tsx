@@ -3,12 +3,13 @@ import GrantedByMe from './GrantedByMe';
 import GrantedToMe from './GrantedToMe';
 
 
-const FeegrantFilters = () => {
+const FeegrantFilters = ({ chainIDs }: { chainIDs: string[] }) => {
   const [filter, setFilter] = useState('byMe');
 
   const handleFiltersChange = (newFilter: string) => {
     setFilter(newFilter);
   };
+
   return (
     <div className="  w-full px-6">
       <div className="flex py-2 gap-2 w-full">
@@ -35,7 +36,7 @@ const FeegrantFilters = () => {
       </div>
       {filter === 'byMe' ? (
         <div className="">
-          <GrantedByMe />
+          <GrantedByMe chainIDs={chainIDs} />
         </div>
       ) : null}
       {filter === 'toMe' ? (

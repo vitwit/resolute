@@ -119,7 +119,8 @@ export const getGrantsByMe = createAsyncThunk(
     const response = await authzService.grantsByMe(
       data.baseURLs,
       data.address,
-      data.pagination
+      data.pagination,
+      data.chainID
     );
     return {
       data: response.data,
