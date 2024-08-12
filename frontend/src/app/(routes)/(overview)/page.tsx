@@ -24,7 +24,19 @@ const Overview = () => {
       {isWalletConnected ? (
         <OverviewDashboard chainIDs={chainIDs} />
       ) : (
-        <WithoutConnectionIllustration />
+        <>
+          <div className="flex flex-col mt-12">
+            <div className="text-h1">Dashboard</div>
+            <div className="flex flex-col gap-2">
+              <div className="secondary-text">
+                <p>Summary of your digital assets</p>
+              </div>
+              <div className="divider-line"></div>
+            </div>
+          </div>
+
+          <WithoutConnectionIllustration />
+        </>
       )}
       {/* <OverviewDashboard chainIDs={chainIDs}/> */}
     </div>
