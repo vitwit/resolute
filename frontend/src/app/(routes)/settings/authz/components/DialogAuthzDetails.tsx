@@ -1,8 +1,7 @@
 import CustomDialog from '@/components/common/CustomDialog';
 import React from 'react';
 import Image from 'next/image';
-import { getMsgNameFromAuthz, getTypeURLName } from '@/utils/authorizations';
-import { convertToSpacedName } from '@/utils/util';
+import { getMsgNameFromAuthz } from '@/utils/authorizations';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import { getTimeDifferenceToFutureDate } from '@/utils/dataTime';
 
@@ -21,7 +20,7 @@ const DialogViewDetails = ({
 }) => {
 
   const { getChainInfo, getDenomInfo } = useGetChainInfo();
-  const { chainLogo, chainName } = getChainInfo(chainID);
+  const { chainLogo } = getChainInfo(chainID);
 
   const { decimals, displayDenom, minimalDenom } = getDenomInfo(chainID)
 
@@ -50,8 +49,8 @@ const DialogViewDetails = ({
         <div className=" flex justify-between gap-10">
 
           {
-            AddressGrants?.map(g => (
-              <div className="dialog-permission">
+            AddressGrants?.map((g, ig) => (
+              <div key={ig} className="dialog-permission">
                 <div className="dialog-permission-header items-start">
                   <Image
                     src={chainLogo}

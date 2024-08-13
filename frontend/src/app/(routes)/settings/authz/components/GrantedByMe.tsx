@@ -8,17 +8,11 @@ import DialogAuthzDetails from './DialogAuthzDetails';
 import useAuthzGrants from '@/custom-hooks/useAuthzGrants';
 import { useAppSelector } from '@/custom-hooks/StateHooks';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
-import { getMsgNameFromAuthz, getTypeURLName } from '@/utils/authorizations';
-import { convertToSpacedName } from '@/utils/util';
+import { getMsgNameFromAuthz } from '@/utils/authorizations';
 import GrantByMeLoading from './GrantByMeLoading';
 
-interface Grant {
-  address: string;
-  permissions: string[];
-}
-
 const GrantedByMe = ({ chainIDs }: { chainIDs: string[] }) => {
-  const [dialogOpen, setDialogOpen] = useState(false);
+  // const [dialogOpen, setDialogOpen] = useState(false);
   const [revokeDialogOpen, setRevokeDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedPermission, setSelectedPermission] = useState<string | null>(
@@ -37,26 +31,26 @@ const GrantedByMe = ({ chainIDs }: { chainIDs: string[] }) => {
 
   console.log({ chainIDs })
 
-  const handleViewDetails = () => {
-    setDialogOpen(true);
-  };
+  // const handleViewDetails = () => {
+  //   setDialogOpen(true);
+  // };
 
-  const handleCloseDialog = () => {
-    setDialogOpen(false);
-  };
+  // const handleCloseDialog = () => {
+  //   setDialogOpen(false);
+  // };
 
-  const handleRevokeAll = () => {
-    setRevokeDialogOpen(true);
-  };
+  // const handleRevokeAll = () => {
+  //   setRevokeDialogOpen(true);
+  // };
 
   const handleCloseRevokeDialog = () => {
     setRevokeDialogOpen(false);
   };
 
-  const handleDeletePermission = (permission: string) => {
-    setSelectedPermission(permission);
-    setDeleteDialogOpen(true);
-  };
+  // const handleDeletePermission = (permission: string) => {
+  //   setSelectedPermission(permission);
+  //   setDeleteDialogOpen(true);
+  // };
 
   const handleCloseDeleteDialog = () => {
     setDeleteDialogOpen(false);
@@ -103,8 +97,8 @@ const GrantedByMe = ({ chainIDs }: { chainIDs: string[] }) => {
       {!!loading ? <GrantByMeLoading /> : null}
 
       {
-        grants1.length && grants1?.map(g => (
-          <AuthzGrant chainID={g?.chainID} address={g?.address} grants={g?.grants} />
+        grants1.length && grants1?.map((g,ig) => (
+          <AuthzGrant key={ig} chainID={g?.chainID} address={g?.address} grants={g?.grants} />
         )) || <>
           <div>No grants by you</div>
         </>
@@ -187,7 +181,7 @@ const AuthzGrant: React.FC<AddressGrants> = ({
 }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
 
-  const { getChainInfo, getDenomInfo } = useGetChainInfo();
+  const { getChainInfo } = useGetChainInfo();
   const { chainLogo, chainName } = getChainInfo(chainID);
 
   const handleCloseDialog = () => {
