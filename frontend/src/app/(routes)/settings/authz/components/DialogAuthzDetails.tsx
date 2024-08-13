@@ -11,33 +11,32 @@ const DialogViewDetails = ({
   open,
   AddressGrants,
   chainID,
-  address
+  address,
 }: {
   open: boolean;
   onClose: () => void;
-  AddressGrants: Authorization[],
-  chainID: string,
-  address: string
+  AddressGrants: Authorization[];
+  chainID: string;
+  address: string;
 }) => {
-
   const { getChainInfo, getDenomInfo } = useGetChainInfo();
   const { chainLogo, chainName } = getChainInfo(chainID);
 
-  const { decimals, displayDenom, minimalDenom } = getDenomInfo(chainID)
+  const { decimals, displayDenom, minimalDenom } = getDenomInfo(chainID);
 
   const getParseAmounts = (amount: Coin[]) => {
     let total = 0;
-    amount && amount.map(c => {
-      if (c?.denom === minimalDenom)
-        total += Number(c.amount)
-    })
+    amount &&
+      amount.map((c) => {
+        if (c?.denom === minimalDenom) total += Number(c.amount);
+      });
 
-    return (total / 10 ** decimals)
-  }
+    return total / 10 ** decimals;
+  };
 
   const getParseAmount = (amount?: Coin | null) => {
-    return amount?.amount ? (Number(amount?.amount) / 10 ** decimals) : 0
-  }
+    return amount?.amount ? Number(amount?.amount) / 10 ** decimals : 0;
+  };
 
   return (
     <CustomDialog
@@ -47,11 +46,14 @@ const DialogViewDetails = ({
       styles="w-[800px]"
     >
       <div className="flex flex-col w-full items-center gap-6">
-        <div className=" flex justify-between gap-10">
-
-          {
-            AddressGrants?.map(g => (
-              <div className="dialog-permission">
+        <div className="grid grid-cols-2 gap-10">
+          {AddressGrants?.map((g, index) => {
+            //TODO: check is the grant is stake authorization or not
+            const isStakeAuthz = false;
+            return (
+              <div
+                className={`dialog-permission ${isStakeAuthz ? 'col-span-2' : ''}`}
+              >
                 <div className="dialog-permission-header items-start">
                   <Image
                     src={chainLogo}
@@ -59,25 +61,31 @@ const DialogViewDetails = ({
                     height={24}
                     alt="network-logo"
                   />
-                  {
-                    getMsgNameFromAuthz(g)
-                  }
-
+                  {getMsgNameFromAuthz(g)}
                 </div>
-                {
-                  g?.authorization?.['@type'] === '/cosmos.bank.v1beta1.SendAuthorization' && <>
+                {(g?.authorization?.['@type'] ===
+                  '/cosmos.bank.v1beta1.SendAuthorization' && (
+                  <>
                     <div className="flex gap-2 px-6">
                       <p className="w-[100px] text-small-light">Spend Limit</p>
-                      <p className="text-b1">{getParseAmounts(g?.authorization?.spend_limit)} {displayDenom}</p>
+                      <p className="text-b1">
+                        {getParseAmounts(g?.authorization?.spend_limit)}{' '}
+                        {displayDenom}
+                      </p>
                     </div>
-
-                  </> ||
-                  g?.authorization?.['@type'] === '/cosmos.staking.v1beta1.StakeAuthorization' && <>
-                    <div className="flex gap-2 px-6">
-                      <p className="w-[100px] text-small-light">Max Tokens</p>
-                      <p className="text-b1">{getParseAmount(g?.authorization?.max_tokens)} {displayDenom}</p>
-                    </div>
-                    {/* <div className="flex gap-2 px-6">
+                  </>
+                )) ||
+                  (g?.authorization?.['@type'] ===
+                    '/cosmos.staking.v1beta1.StakeAuthorization' && (
+                    <>
+                      <div className="flex gap-2 px-6">
+                        <p className="w-[100px] text-small-light">Max Tokens</p>
+                        <p className="text-b1">
+                          {getParseAmount(g?.authorization?.max_tokens)}{' '}
+                          {displayDenom}
+                        </p>
+                      </div>
+                      {/* <div className="flex gap-2 px-6">
                       <p className="w-[100px] text-small-light">Allow Addresses</p>
                       {
                         g?.authorization?.allow_list?.address?.map(a => (
@@ -86,17 +94,18 @@ const DialogViewDetails = ({
                       }
 
                     </div> */}
-                  </>
-                }
+                    </>
+                  ))}
 
                 <div className="flex gap-2 px-6">
                   <p className="w-[100px] text-small-light">Expiry</p>
-                  <p className="text-b1">{getTimeDifferenceToFutureDate(g?.expiration || '')}</p>
+                  <p className="text-b1">
+                    {getTimeDifferenceToFutureDate(g?.expiration || '')}
+                  </p>
                 </div>
-
               </div>
-            ))
-          }
+            );
+          })}
 
           {/* <div className="dialog-permission">
             <div className="dialog-permission-header items-start">
