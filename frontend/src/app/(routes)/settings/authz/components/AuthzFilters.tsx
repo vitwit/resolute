@@ -41,7 +41,7 @@ const FeegrantFilters = ({ chainIDs }: { chainIDs: string[] }) => {
       ) : null}
       {filter === 'toMe' ? (
         <div className="">
-          <GrantedToMe />
+          <GrantedToMe chainIDs={chainIDs} />
         </div>
       ) : null}
     </div>

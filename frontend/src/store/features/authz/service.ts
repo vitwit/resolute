@@ -8,7 +8,8 @@ const grantByMeURL = '/cosmos/authz/v1beta1/grants/granter/';
 const fetchGrantsToMe = (
   baseURLs: string[],
   grantee: string,
-  pagination?: KeyLimitPagination
+  chainID:string,
+  pagination?: KeyLimitPagination,
 ): Promise<AxiosResponse<GetGrantsResponse>> => {
   let endPoint = `${grantToMeURL}${grantee}`;
 
@@ -17,14 +18,16 @@ const fetchGrantsToMe = (
     endPoint += `?${parsed}`;
   }
 
+  endPoint = addChainIDParam(endPoint, chainID);
+
   return axiosGetRequestWrapper(baseURLs, endPoint);
 };
 
 const fetchGrantsByMe = (
   baseURLs: string[],
   grantee: string,
-  pagination?: KeyLimitPagination,
   chainID: string,
+  pagination?: KeyLimitPagination,
 ): Promise<AxiosResponse<GetGrantsResponse>> => {
   let endPoint = `${grantByMeURL}${grantee}`;
 
