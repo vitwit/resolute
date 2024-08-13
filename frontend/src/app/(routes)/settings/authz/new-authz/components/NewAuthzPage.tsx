@@ -140,17 +140,16 @@ const NewAuthzPage = () => {
   };
 
   const validateAddress = (address: string) => {
-    if (address.length) {
-      try {
-        fromBech32(address);
-        setAddressValidationError('');
-        return true;
-      } catch (error) {
-        setAddressValidationError('Invalid grantee address');
-        return false;
-      }
-    } else {
+    if (!address.length) {
       setAddressValidationError('Please enter grantee address');
+      return false;
+    }
+    try {
+      fromBech32(address);
+      setAddressValidationError('');
+      return true;
+    } catch (error) {
+      setAddressValidationError('Invalid grantee address');
       return false;
     }
   };
@@ -159,10 +158,12 @@ const NewAuthzPage = () => {
     if (!selectedChains.length) {
       setFormValidationError('Atleast one chain must be selected');
       return false;
-    } else if (!validateAddress(granteeAddress)) {
+    }
+    if (!validateAddress(granteeAddress)) {
       setFormValidationError('');
       return false;
-    } else if (!selectedMsgs.length) {
+    }
+    if (!selectedMsgs.length) {
       setFormValidationError(PERMISSION_NOT_SELECTED_ERROR);
       return false;
     }

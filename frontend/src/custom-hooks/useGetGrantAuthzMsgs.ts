@@ -33,7 +33,7 @@ const useGetGrantAuthzMsgs = () => {
     const chainWiseGrants: ChainGrants[] = [];
 
     selectedChains.forEach((chain) => {
-      const chainID = nameToChainIDs?.[chain.toLowerCase()];
+      const chainID = nameToChainIDs?.[chain.toLowerCase()] || '';
       const { address: granterAddress, prefix } = getChainInfo(chainID);
       const { minimalDenom, decimals } = getDenomInfo(chainID);
       const msgs: Msg[] = [];

@@ -48,7 +48,7 @@ const DialogAuthzTxStatus = ({
         <SelectedChains selectedChains={selectedChains} />
         <div className="space-y-10">
           {selectedChains.map((chain) => {
-            const chainID = nameToChainIDs?.[chain.toLowerCase()];
+            const chainID = nameToChainIDs?.[chain.toLowerCase()] || '';
             const { chainLogo, chainName, explorerTxHashEndpoint } =
               getChainInfo(chainID);
             return (
