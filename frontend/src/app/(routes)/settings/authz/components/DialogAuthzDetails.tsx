@@ -1,8 +1,7 @@
 import CustomDialog from '@/components/common/CustomDialog';
 import React from 'react';
 import Image from 'next/image';
-import { getMsgNameFromAuthz, getTypeURLName } from '@/utils/authorizations';
-import { convertToSpacedName } from '@/utils/util';
+import { getMsgNameFromAuthz } from '@/utils/authorizations';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import { getTimeDifferenceToFutureDate } from '@/utils/dataTime';
 
@@ -20,7 +19,7 @@ const DialogViewDetails = ({
   address: string;
 }) => {
   const { getChainInfo, getDenomInfo } = useGetChainInfo();
-  const { chainLogo, chainName } = getChainInfo(chainID);
+  const { chainLogo } = getChainInfo(chainID);
 
   const { decimals, displayDenom, minimalDenom } = getDenomInfo(chainID);
 
