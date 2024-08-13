@@ -15,7 +15,7 @@ import React from 'react';
 import { REDIRECT_ICON } from '@/constants/image-names';
 import SelectedChains from '../../../(general)/components/SelectedChains';
 
-const DialogFeegrantTxStatus = ({
+const DialogAuthzTxStatus = ({
   onClose,
   open,
   chainsStatus,
@@ -34,7 +34,7 @@ const DialogFeegrantTxStatus = ({
   const nameToChainIDs = useAppSelector((state) => state.common.nameToChainIDs);
 
   return (
-    <CustomDialog title="New Feegrant" open={open} onClose={onClose}>
+    <CustomDialog title="New Authz" open={open} onClose={onClose}>
       <div className="w-[800px] space-y-4">
         <div className="py-2 px-4 rounded-2xl flex items-center gap-6 bg-[#FFFFFF05] h-12">
           <div className="text-[#FFFFFF80] font-light text-[14px] w-[124px]">
@@ -48,7 +48,7 @@ const DialogFeegrantTxStatus = ({
         <SelectedChains selectedChains={selectedChains} />
         <div className="space-y-10">
           {selectedChains.map((chain) => {
-            const chainID = nameToChainIDs?.[chain.toLowerCase()];
+            const chainID = nameToChainIDs?.[chain.toLowerCase()] || '';
             const { chainLogo, chainName, explorerTxHashEndpoint } =
               getChainInfo(chainID);
             return (
@@ -149,4 +149,4 @@ const DialogFeegrantTxStatus = ({
   );
 };
 
-export default DialogFeegrantTxStatus;
+export default DialogAuthzTxStatus;

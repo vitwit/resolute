@@ -14,8 +14,8 @@ import { CircularProgress } from '@mui/material';
 import Copy from '@/components/common/Copy';
 import { shortenAddress } from '@/utils/util';
 import DialogFeegrantTxStatus from './DialogFeegrantTxStatus';
-import SelectedChains from './SelectedChains';
 import useGetFeegranter from '@/custom-hooks/useGetFeegranter';
+import SelectedChains from '../../../(general)/components/SelectedChains';
 
 const NewFeegrantPage = () => {
   const [selectedChains, setSelectedChains] = useState<string[]>([]);

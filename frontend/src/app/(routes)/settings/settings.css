@@ -3,9 +3,14 @@
   box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
 }
 
-.feegrant-main, .authz-main {
+.feegrant-main {
   @apply pt-10 relative flex flex-col;
   height: calc(100vh - 56px);
+}
+
+.authz-main {
+  @apply pt-10 relative flex flex-col;
+  min-height: calc(100vh - 56px);
 }
 
 .search-network-input {
@@ -20,6 +25,10 @@
 .chain-item-selected,
 .msg-item-selected {
   @apply bg-[#FFFFFF10] border-transparent;
+}
+
+.selected-validator {
+  @apply border-[0.25px] border-[#FFFFFF30] rounded-lg p-2 flex items-center gap-2;
 }
 
 .error-box {
@@ -84,4 +93,23 @@
 .customnetwork-card {
   @apply shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)_inset] flex flex-col items-start gap-10 px-4 py-6 rounded-2xl;
   background: rgba(255, 255, 255, 0.02);
+}
+
+@keyframes pop-in {
+  0% {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.06);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.pop-in {
+  animation: pop-in 0.5s ease-in-out;
 }

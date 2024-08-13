@@ -4,6 +4,7 @@ import { MAP_TXN_MSG_TYPES } from '@/utils/authorizations';
 import { getAddressByPrefix } from '@/utils/address';
 import { AuthzStakeGrantMsg } from '@/txns/authz/grant';
 import { amountToMinimalValue } from '@/utils/util';
+import { useAppSelector } from './StateHooks';
 
 interface ChainGrants {
   chainID: string;
@@ -18,6 +19,7 @@ const MAP_STAKE_AUTHZ_TYPE: Record<string, number> = {
 
 const useGetGrantAuthzMsgs = () => {
   const { getChainInfo, getDenomInfo } = useGetChainInfo();
+  const nameToChainIDs = useAppSelector((state) => state.common.nameToChainIDs);
 
   const getGrantAuthzMsgs = ({
     grantsList,
@@ -30,7 +32,8 @@ const useGetGrantAuthzMsgs = () => {
   }) => {
     const chainWiseGrants: ChainGrants[] = [];
 
-    selectedChains.forEach((chainID) => {
+    selectedChains.forEach((chain) => {
+      const chainID = nameToChainIDs?.[chain.toLowerCase()] || '';
       const { address: granterAddress, prefix } = getChainInfo(chainID);
       const { minimalDenom, decimals } = getDenomInfo(chainID);
       const msgs: Msg[] = [];
