@@ -39,6 +39,7 @@ const ValidatorTable: React.FC<{ chainID: string }> = ({ chainID }) => {
   const { getChainInfo } = useGetChainInfo();
   const { chainName } = getChainInfo(chainID);
   const staking = useSingleStaking(chainID);
+  console.log(staking.getValidators())
   const dispatch = useAppDispatch();
   const filteredValidators = useSelector(selectFilteredValidators);
   const searchQuery = useSelector(selectSearchQuery);
