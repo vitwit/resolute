@@ -9,6 +9,8 @@ import { useAppSelector } from '@/custom-hooks/StateHooks';
 import { getMsgNameFromAuthz } from '@/utils/authorizations';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import GrantToMeLoading from './GrantToMeLoading';
+import { setAuthzMode } from '@/utils/localStorage';
+import { RootState } from '@/store/store';
 
 const GrantedToMe = ({ chainIDs }: { chainIDs: string[] }) => {
   const [selectedCardIndex, setSelectedCardIndex] = useState<number | null>(
@@ -50,9 +52,15 @@ const GrantToMeCard = ({ index, grant, handleSelectCard, selectedCardIndex }: {
   selectedCardIndex: number;
   grant: AddressGrants
 }) => {
-  // const [selectedCardIndex, setSelectedCardIndex] = useState<number | null>(
-  //   null
-  // );
+
+  const SelectedauthzGranterAddr = useAppSelector((state: RootState) => state.authz.authzAddress)
+
+  const { getCosmosAddress, convertToCosmosAddress } = useGetChainInfo();
+
+  const granteeCosmosAddr = getCosmosAddress()
+  const granterCosmosAddr = convertToCosmosAddress(grant.address)
+
+  setAuthzMode(granteeCosmosAddr, granterCosmosAddr)
 
   const [dialogOpen, setDialogOpen] = useState(false);
 
@@ -67,9 +75,14 @@ const GrantToMeCard = ({ index, grant, handleSelectCard, selectedCardIndex }: {
     setDialogOpen(false);
   };
 
+  const isGranterSelected = (cosmosAddr: string) => {
+    return SelectedauthzGranterAddr === cosmosAddr
+  }
+
   return (
     <div
-      className={`grants-card justify-between items-start w-full gap-16 ${selectedCardIndex === index ? 'selected-grants-card' : ''
+      className={`grants-card justify-between items-start w-full gap-16
+       ${isGranterSelected(convertToCosmosAddress(grant?.address)) ? 'selected-grants-card' : ''
         }`}
       key={index}
     >
@@ -133,7 +146,12 @@ const GrantToMeCard = ({ index, grant, handleSelectCard, selectedCardIndex }: {
         </div>
       </div>
 
-      <DialogAuthzDetails AddressGrants={grant?.grants} chainID={grant?.chainID} address={grant?.address} open={dialogOpen} onClose={handleCloseDialog} />
+      <DialogAuthzDetails
+        revoke={false}
+        AddressGrants={grant?.grants}
+        chainID={grant?.chainID}
+        address={grant?.address}
+        open={dialogOpen} onClose={handleCloseDialog} />
     </div>
   )
 }
