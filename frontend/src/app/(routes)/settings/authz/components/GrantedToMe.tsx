@@ -5,12 +5,15 @@ import Copy from '@/components/common/Copy';
 import { TICK_ICON } from '@/constants/image-names';
 import DialogAuthzDetails from './DialogAuthzDetails';
 import useAuthzGrants from '@/custom-hooks/useAuthzGrants';
-import { useAppSelector } from '@/custom-hooks/StateHooks';
+import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { getMsgNameFromAuthz } from '@/utils/authorizations';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import GrantToMeLoading from './GrantToMeLoading';
 import { setAuthzMode } from '@/utils/localStorage';
 import { RootState } from '@/store/store';
+import { groupBy } from 'lodash';
+import { enableAuthzMode } from '@/store/features/authz/authzSlice';
+import { exitFeegrantMode } from '@/store/features/feegrant/feegrantSlice';
 
 const GrantedToMe = ({ chainIDs }: { chainIDs: string[] }) => {
   const [selectedCardIndex, setSelectedCardIndex] = useState<number | null>(
@@ -18,16 +21,21 @@ const GrantedToMe = ({ chainIDs }: { chainIDs: string[] }) => {
   );
   // const [dialogOpen, setDialogOpen] = useState(false);
 
-  const { getGrantsToMe } = useAuthzGrants()
+  const { getGrantsToMe } = useAuthzGrants();
+  const { convertToCosmosAddress } = useGetChainInfo();
 
-  const grants1 = getGrantsToMe(chainIDs);
+  const authzGrants = getGrantsToMe(chainIDs);
+  let grantsList: any[] = [];
+  authzGrants.forEach((grant) => {
+    const data = {
+      ...grant,
+      cosmosAddress: convertToCosmosAddress(grant.address),
+    };
+    grantsList = [...grantsList, data];
+  });
+  const groupedGrants = groupBy(grantsList, 'cosmosAddress');
 
-  const loading = useAppSelector(
-    (state) => state.authz.getGrantsByMeLoading
-  );
-
-  console.log('grants to me grants ===== ', grants1, chainIDs)
-
+  const loading = useAppSelector((state) => state.authz.getGrantsByMeLoading);
 
   const handleSelectCard = (index: number) => {
     setSelectedCardIndex(selectedCardIndex === index ? null : index);
@@ -35,32 +43,60 @@ const GrantedToMe = ({ chainIDs }: { chainIDs: string[] }) => {
 
   return (
     <div className="space-y-6 pt-6">
-      {!!loading ? <GrantToMeLoading /> : null}
-
-      {grants1.length && grants1.map((grant, index) => (
-        <GrantToMeCard key={index} selectedCardIndex={selectedCardIndex || 0} handleSelectCard={handleSelectCard} index={index} grant={grant} />
-      )) || <>
-          <div>No grants to you</div>
-        </>}
+      {Object.entries(groupedGrants).map(([granterKey, grants]) => (
+        <div
+          className="border-[1px] border-[#565656] rounded-2xl"
+          key={granterKey}
+        >
+          {grants.map((grant, index) => (
+            <GrantToMeCard
+              key={index}
+              selectedCardIndex={selectedCardIndex || 0}
+              handleSelectCard={handleSelectCard}
+              index={index}
+              grant={grant}
+            />
+          ))}
+        </div>
+      ))}
+      {!!loading ? (
+        <GrantToMeLoading />
+      ) : (
+        <>
+          {!authzGrants?.length && (
+            <>
+              <div>No grants to you</div>
+            </>
+          )}
+        </>
+      )}
     </div>
   );
 };
 
-const GrantToMeCard = ({ index, grant, handleSelectCard, selectedCardIndex }: {
-  index: number,
+const GrantToMeCard = ({
+  index,
+  grant,
+  handleSelectCard,
+  selectedCardIndex,
+}: {
+  index: number;
   handleSelectCard: (index: number) => void;
   selectedCardIndex: number;
-  grant: AddressGrants
+  grant: AddressGrants;
 }) => {
-
-  const SelectedauthzGranterAddr = useAppSelector((state: RootState) => state.authz.authzAddress)
+  const dispatch = useAppDispatch();
+  const authzData = useAppSelector((state: RootState) => state.authz);
+  const { authzModeEnabled, authzAddress: SelectedauthzGranterAddr } =
+    authzData;
+  const { disableAuthzMode } = useAuthzGrants();
 
   const { getCosmosAddress, convertToCosmosAddress } = useGetChainInfo();
 
-  const granteeCosmosAddr = getCosmosAddress()
-  const granterCosmosAddr = convertToCosmosAddress(grant.address)
+  const granteeCosmosAddr = getCosmosAddress();
+  const granterCosmosAddr = convertToCosmosAddress(grant.address);
 
-  setAuthzMode(granteeCosmosAddr, granterCosmosAddr)
+  // setAuthzMode(granteeCosmosAddr, granterCosmosAddr);
 
   const [dialogOpen, setDialogOpen] = useState(false);
 
@@ -76,27 +112,35 @@ const GrantToMeCard = ({ index, grant, handleSelectCard, selectedCardIndex }: {
   };
 
   const isGranterSelected = (cosmosAddr: string) => {
-    return SelectedauthzGranterAddr === cosmosAddr
-  }
+    return SelectedauthzGranterAddr === cosmosAddr;
+  };
+
+  const handleUseAuthz = () => {
+    if (authzModeEnabled) {
+      disableAuthzMode();
+    } else {
+      dispatch(enableAuthzMode({ address: granterCosmosAddr }));
+      dispatch(exitFeegrantMode());
+      setAuthzMode(granteeCosmosAddr, granterCosmosAddr);
+    }
+  };
 
   return (
     <div
       className={`grants-card justify-between items-start w-full gap-16
-       ${isGranterSelected(convertToCosmosAddress(grant?.address)) ? 'selected-grants-card' : ''
-        }`}
+       ${
+         isGranterSelected(convertToCosmosAddress(grant?.address))
+           ? 'selected-grants-card'
+           : ''
+       }`}
       key={index}
     >
       <div className="flex flex-col gap-2 w-[280px]">
         <div className="flex gap-2 items-center">
           <p className="text-b1-light">Address</p>
-          {selectedCardIndex === index && (
+          {isGranterSelected(convertToCosmosAddress(grant?.address)) && (
             <div className="flex space-x-0">
-              <Image
-                src={TICK_ICON}
-                width={16}
-                height={16}
-                alt="used-icon"
-              />
+              <Image src={TICK_ICON} width={16} height={16} alt="used-icon" />
               <span className="text-[#2BA472]">Currently Using</span>
             </div>
           )}
@@ -110,13 +154,8 @@ const GrantToMeCard = ({ index, grant, handleSelectCard, selectedCardIndex }: {
         <p className="text-b1-light">Permissions</p>
         <div className="flex gap-2 flex-wrap">
           {grant?.grants?.map((g, idx) => (
-            <div
-              className="permission-card flex gap-2 items-center"
-              key={idx}
-            >
-              <p className="text-b1">{
-                getMsgNameFromAuthz(g)
-              }</p>
+            <div className="permission-card flex gap-2 items-center" key={idx}>
+              <p className="text-b1">{getMsgNameFromAuthz(g)}</p>
               <Image
                 src={chainLogo}
                 width={20}
@@ -132,15 +171,17 @@ const GrantToMeCard = ({ index, grant, handleSelectCard, selectedCardIndex }: {
         <div className="flex gap-6 items-center">
           <button
             className={
-              selectedCardIndex === index ? 'cancel-btn' : 'primary-btn'
+              isGranterSelected(convertToCosmosAddress(grant?.address))
+                ? 'cancel-btn'
+                : 'primary-btn'
             }
-            onClick={() => handleSelectCard(index)}
+            onClick={handleUseAuthz}
           >
-            {selectedCardIndex === index ? 'Cancel' : 'Use'}
+            {isGranterSelected(convertToCosmosAddress(grant?.address))
+              ? 'Cancel'
+              : 'Use'}
           </button>
-          <div className="secondary-btn"
-            onClick={handleViewDetails}
-          >
+          <div className="secondary-btn" onClick={handleViewDetails}>
             View Details
           </div>
         </div>
@@ -151,9 +192,11 @@ const GrantToMeCard = ({ index, grant, handleSelectCard, selectedCardIndex }: {
         AddressGrants={grant?.grants}
         chainID={grant?.chainID}
         address={grant?.address}
-        open={dialogOpen} onClose={handleCloseDialog} />
+        open={dialogOpen}
+        onClose={handleCloseDialog}
+      />
     </div>
-  )
-}
+  );
+};
 
 export default GrantedToMe;

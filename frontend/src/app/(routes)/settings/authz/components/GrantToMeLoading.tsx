@@ -3,7 +3,7 @@ import React from 'react';
 const GrantToMeLoading = () => {
   return (
     <div className="space-y-6 pt-6 px-6">
-      {[1, 2, 3].map((_, index) => (
+      {[1, 2].map((_, index) => (
         <div className="garnts-card justify-between w-full" key={index}>
           <div className="flex flex-col gap-2">
             <div className="text-b1-light">Address </div>
