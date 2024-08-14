@@ -25,6 +25,7 @@ const GrantedToMe = ({ chainIDs }: { chainIDs: string[] }) => {
   const { convertToCosmosAddress } = useGetChainInfo();
 
   const authzGrants = getGrantsToMe(chainIDs);
+   /* eslint-disable @typescript-eslint/no-explicit-any */
   let grantsList: any[] = [];
   authzGrants.forEach((grant) => {
     const data = {
@@ -77,12 +78,8 @@ const GrantedToMe = ({ chainIDs }: { chainIDs: string[] }) => {
 const GrantToMeCard = ({
   index,
   grant,
-  handleSelectCard,
-  selectedCardIndex,
 }: {
   index: number;
-  handleSelectCard: (index: number) => void;
-  selectedCardIndex: number;
   grant: AddressGrants;
 }) => {
   const dispatch = useAppDispatch();

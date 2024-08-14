@@ -30,6 +30,7 @@ const GrantedByMe = ({ chainIDs }: { chainIDs: string[] }) => {
   const { getGrantsByMe } = useAuthzGrants();
 
   const authzGrants = getGrantsByMe(chainIDs);
+   /* eslint-disable @typescript-eslint/no-explicit-any */
   let grantsList: any[] = [];
   authzGrants.forEach((grant) => {
     const data = {
