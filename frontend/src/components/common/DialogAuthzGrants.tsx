@@ -37,7 +37,7 @@ const DialogAuthzGrants: React.FC<DialogAuthzGrantsProps> = (props) => {
   const chainIDs = Object.keys(nameToChainIDs).map(
     (chainName) => nameToChainIDs[chainName]
   );
-  useInitAuthz({ chainIDs });
+  useInitAuthz({ chainIDs, shouldFetch: true });
 
   return (
     <CustomDialog

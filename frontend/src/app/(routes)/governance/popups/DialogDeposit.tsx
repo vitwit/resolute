@@ -4,7 +4,7 @@ import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import { getAuthzBalances, getBalances } from '@/store/features/bank/bankSlice';
 import { parseBalance } from '@/utils/denom';
-import React, { use, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import AmountInputWrapper from '../utils-components/AmountInputWrapper';
 import { TxStatus } from '@/types/enums';
 import useGetTxInputs from '@/custom-hooks/useGetTxInputs';
