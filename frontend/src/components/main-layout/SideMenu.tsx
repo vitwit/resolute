@@ -6,6 +6,7 @@ import { getSelectedPartFromURL } from '@/utils/util';
 import { useAppSelector } from '@/custom-hooks/StateHooks';
 import FeegrantButton from '../common/FeegrantButton';
 import AuthzButton from '../common/AuthzButton';
+import Link from 'next/link';
 
 const SideMenu = () => {
   const pathName = usePathname();
@@ -50,6 +51,7 @@ const MoreOptions = ({
   const selectedNetwork = useAppSelector(
     (state) => state.common.selectedNetwork.chainName
   );
+  const isAuthzMode = useAppSelector((state) => state.authz.authzModeEnabled);
 
   const changePath = (type: string) => {
     const path = selectedNetwork
@@ -75,8 +77,12 @@ const MoreOptions = ({
             <div className="flex gap-2 items-center pl-3">
               <div className="w-5"></div>
               <div
-                onClick={() => changePath('multi-send')}
-                className="cursor-pointer hover:font-semibold"
+                onClick={() => {
+                  if (!isAuthzMode) {
+                    changePath('multi-send');
+                  }
+                }}
+                className={`hover:font-semibold ${isAuthzMode ? 'opacity-20 !cursor-not-allowed' : 'cursor-pointer'}`}
               >
                 Multiple
               </div>
@@ -84,8 +90,10 @@ const MoreOptions = ({
             <div className="flex gap-2 items-center pl-3">
               <div className="w-5"></div>
               <div
-                onClick={() => changePath('ibc-swap')}
-                className="cursor-pointer hover:font-semibold"
+                onClick={() => {
+                  if (!isAuthzMode) changePath('ibc-swap');
+                }}
+                className={`hover:font-semibold ${isAuthzMode ? 'opacity-20 !cursor-not-allowed' : 'cursor-pointer'}`}
               >
                 IBC Swap
               </div>
@@ -99,17 +107,23 @@ const MoreOptions = ({
           <div className="text-[12px] font-medium space-y-4">
             <div className="flex gap-2 items-center pl-3">
               <div className="w-5"></div>
-              <div className="cursor-pointer hover:font-semibold">
+              <Link
+                href={`/settings/authz/${selectedNetwork.toLowerCase() || ''}`}
+                className="hover:font-semibold"
+              >
                 Authz Mode
-              </div>
+              </Link>
               <AuthzButton />
             </div>
             <div className="flex gap-2 items-center pl-3">
               <div className="w-5"></div>
               <div className="flex items-center gap-2">
-                <div className="cursor-pointer hover:font-semibold">
+                <Link
+                  href={`/settings/feegrant/${selectedNetwork.toLowerCase() || ''}`}
+                  className="hover:font-semibold"
+                >
                   Feegrant Mode
-                </div>
+                </Link>
                 <FeegrantButton />
               </div>
             </div>

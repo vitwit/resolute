@@ -4,6 +4,8 @@ import { RootState } from '@/store/store';
 import useGetChainInfo from './useGetChainInfo';
 import {
   getAllValidators,
+  getAuthzDelegations,
+  getAuthzUnbonding,
   getDelegations,
   getUnbonding,
   getValidator,
@@ -14,10 +16,11 @@ import {
   txUnDelegate,
 } from '@/store/features/staking/stakeSlice';
 import {
+  getAuthzDelegatorTotalRewards,
   getDelegatorTotalRewards,
   txWithdrawAllRewards,
 } from '@/store/features/distribution/distributionSlice';
-import { getBalances } from '@/store/features/bank/bankSlice';
+import { getAuthzBalances, getBalances } from '@/store/features/bank/bankSlice';
 // import useGetAssets from "./useGetAssets";
 // import { Interface } from "readline";
 import useGetAssetsAmount from './useGetAssetsAmount';
@@ -25,12 +28,24 @@ import useGetTxInputs from './useGetTxInputs';
 import { isEmpty } from 'lodash';
 import useGetFeegranter from './useGetFeegranter';
 import { MAP_TXN_MSG_TYPES } from '@/utils/feegrant';
+import useGetAuthzAssetsAmount from './useGetAuthzAssetsAmount';
+import useAddressConverter from './useAddressConverter';
+import useAuthzStakingExecHelper from './useAuthzStakingExecHelper';
+import { UnbondingEncode } from '@/txns/staking/unbonding';
 
+/* eslint-disable react-hooks/rules-of-hooks */
 const useStaking = ({ isSingleChain }: { isSingleChain: boolean }) => {
   const dispatch = useAppDispatch();
   const { getFeegranter } = useGetFeegranter();
+  const { convertAddress } = useAddressConverter();
+  const { txAuthzDelegate, txAuthzReDelegate, txAuthzUnDelegate } =
+    useAuthzStakingExecHelper();
+  const { txAuthzRestake, txAuthzClaim, txAuthzCancelUnbond } =
+    useAuthzStakingExecHelper();
 
   const networks = useAppSelector((state: RootState) => state.wallet.networks);
+  const isAuthzMode = useAppSelector((state) => state.authz.authzModeEnabled);
+  const authzAddress = useAppSelector((state) => state.authz.authzAddress);
   const nameToChainIDs = useAppSelector(
     (state: RootState) => state.wallet.nameToChainIDs
   );
@@ -46,8 +61,8 @@ const useStaking = ({ isSingleChain }: { isSingleChain: boolean }) => {
     //  getValueFromToken, getTokenValueByChainId
   } = useGetChainInfo();
 
-  const rewardsChains = useAppSelector(
-    (state: RootState) => state.distribution.chains
+  const rewardsChains = useAppSelector((state: RootState) =>
+    isAuthzMode ? state.distribution.authzChains : state.distribution.chains
   );
 
   // const totalData = useAppSelector((state: RootState) => state.staking)
@@ -57,29 +72,40 @@ const useStaking = ({ isSingleChain }: { isSingleChain: boolean }) => {
     availableAmount,
     rewardsAmount,
     totalUnStakedAmount,
-  ] = useGetAssetsAmount(chainIDs);
+  ] = isAuthzMode
+    ? useGetAuthzAssetsAmount(chainIDs)
+    : useGetAssetsAmount(chainIDs);
 
   // const { getTokensByChainID } = useGetAssets();
 
   // get total staking data data from the  state
-  const stakeData = useAppSelector((state: RootState) => state.staking.chains);
-
-  const delegationsLoading = useAppSelector(
-    (state: RootState) => state.staking.delegationsLoading
+  const stakeData = useAppSelector((state: RootState) =>
+    isAuthzMode ? state.staking.authz.chains : state.staking.chains
   );
 
-  const undelegationsLoading = useAppSelector(
-    (state: RootState) => state.staking.undelegationsLoading
+  const delegationsLoading = useAppSelector((state: RootState) =>
+    isAuthzMode
+      ? state.staking.authz.delegationsLoading
+      : state.staking.delegationsLoading
   );
 
-  const totalUnbondedAmount = useAppSelector(
-    (state: RootState) => state.staking.totalUndelegationsAmount
+  const undelegationsLoading = useAppSelector((state: RootState) =>
+    isAuthzMode
+      ? state.staking.authz.undelegationsLoading
+      : state.staking.undelegationsLoading
+  );
+
+  const totalUnbondedAmount = useAppSelector((state: RootState) =>
+    isAuthzMode
+      ? state.staking.authz.totalUndelegationsAmount
+      : state.staking.totalUndelegationsAmount
   );
 
   const {
     txWithdrawAllRewardsInputs,
     txWithdrawValidatorRewardsInputs,
     txRestakeInputs,
+    txAuthzRestakeMsgs,
   } = useGetTxInputs();
 
   useEffect(() => {
@@ -87,37 +113,57 @@ const useStaking = ({ isSingleChain }: { isSingleChain: boolean }) => {
       chainIDs.forEach((chainID) => {
         const { address, baseURL, restURLs } = getChainInfo(chainID);
         const { minimalDenom } = getDenomInfo(chainID);
-
+        const authzGranterAddress = convertAddress(chainID, authzAddress);
+        const chainRequestData = {
+          baseURLs: restURLs,
+          address: isAuthzMode ? authzGranterAddress : address,
+          chainID,
+        };
         // Fetch delegations
         dispatch(
-          getDelegations({ baseURLs: restURLs, address, chainID })
+          isAuthzMode
+            ? getAuthzDelegations(chainRequestData)
+            : getDelegations(chainRequestData)
         ).then();
 
         // Fetch available balances
         dispatch(
-          getBalances({ baseURLs: restURLs, baseURL, address, chainID })
+          isAuthzMode
+            ? getAuthzBalances({ ...chainRequestData, baseURL })
+            : getBalances({ ...chainRequestData, baseURL })
         );
 
         // Fetch rewards
         dispatch(
-          getDelegatorTotalRewards({
-            baseURLs: restURLs,
-            baseURL,
-            address,
-            chainID,
-            denom: minimalDenom,
-          })
+          isAuthzMode
+            ? getAuthzDelegatorTotalRewards({
+                ...chainRequestData,
+                baseURL,
+                denom: minimalDenom,
+              })
+            : getDelegatorTotalRewards({
+                ...chainRequestData,
+                baseURL,
+                denom: minimalDenom,
+              })
         );
 
         // Fetch unbonding delegations
-        dispatch(getUnbonding({ baseURLs: restURLs, address, chainID }));
+        dispatch(
+          isAuthzMode
+            ? getAuthzUnbonding(chainRequestData)
+            : getUnbonding(chainRequestData)
+        );
 
         // Fetch all validators
-        if (isEmpty(stakeData[chainID]?.validators?.active) || isEmpty(stakeData[chainID]?.validators?.inactive))
+        if (
+          isEmpty(stakeData[chainID]?.validators?.active) ||
+          isEmpty(stakeData[chainID]?.validators?.inactive)
+        )
           dispatch(getAllValidators({ baseURLs: restURLs, chainID }));
       });
     }
-  }, [isWalletConnected]);
+  }, [isWalletConnected, isAuthzMode]);
 
   const fetchValidatorDetails = (valoperAddress: string, chainID: string) => {
     const { restURLs } = getChainInfo(chainID);
@@ -191,20 +237,19 @@ const useStaking = ({ isSingleChain }: { isSingleChain: boolean }) => {
     let totalRewardsAmount = 0;
     let displayDenomName = '';
 
-
     chainIDs.forEach((cId) => {
       if (cId === chainID) {
         const rewards = rewardsChains?.[chainID]?.delegatorRewards;
         rewards?.list?.forEach((r) => {
           if (r.validator_address === validator) {
-            const { decimals, displayDenom, minimalDenom } = getDenomInfo(chainID);
-            r?.reward?.forEach(r1 => {
+            const { decimals, displayDenom, minimalDenom } =
+              getDenomInfo(chainID);
+            r?.reward?.forEach((r1) => {
               if (r1?.denom === minimalDenom) {
-                totalRewardsAmount =
-                  Number(r1?.amount || 0) / 10 ** decimals;
+                totalRewardsAmount = Number(r1?.amount || 0) / 10 ** decimals;
                 displayDenomName = displayDenom;
               }
-            })
+            });
           }
 
           return false;
@@ -226,12 +271,34 @@ const useStaking = ({ isSingleChain }: { isSingleChain: boolean }) => {
   };
 
   const transactionRestake = (chainID: string) => {
+    if (isAuthzMode) {
+      const { address } = getChainInfo(chainID);
+      const msgs = txAuthzRestakeMsgs(chainID);
+      txAuthzRestake({
+        grantee: address,
+        granter: authzAddress,
+        msgs: msgs,
+        chainID: chainID,
+        isTxAll: true,
+      });
+      return;
+    }
     const txInputs = txRestakeInputs(chainID);
     txInputs.isTxAll = true;
     if (txInputs.msgs.length) dispatch(txRestake(txInputs));
   };
 
   const txWithdrawValRewards = (validator: string, chainID: string) => {
+    const { address } = getChainInfo(chainID);
+    if (isAuthzMode) {
+      txAuthzClaim({
+        grantee: address,
+        granter: authzAddress,
+        pairs: [{ validator, delegator: authzAddress }],
+        chainID: chainID,
+      });
+      return;
+    }
     const delegatorAddress = networks[chainID]?.walletInfo?.bech32Address;
     const txInputs = txWithdrawValidatorRewardsInputs(
       chainID,
@@ -266,22 +333,41 @@ const useStaking = ({ isSingleChain }: { isSingleChain: boolean }) => {
 
     const currency = currencies[0];
 
-    const { feeAmount: avgFeeAmount } = getChainInfo(chainID);
+    const { feeAmount: avgFeeAmount, address } = getChainInfo(chainID);
     const feeAmount = avgFeeAmount * 10 ** currency?.coinDecimals;
 
-    dispatch(
-      txCancelUnbonding({
-        isAuthzMode: false,
-        basicChainInfo: basicChainInfo,
-        delegator: delegator,
-        validator: validator,
-        amount: amount * 10 ** currency?.coinDecimals,
-        denom: currency?.coinMinimalDenom,
-        feeAmount: feeAmount,
-        feegranter: getFeegranter(chainID, MAP_TXN_MSG_TYPES['cancel_unbonding']),
-        creationHeight: creationHeight,
-      })
-    );
+    if (isAuthzMode) {
+      const msg = UnbondingEncode(
+        delegator,
+        validator,
+        amount * 10 ** currency.coinDecimals,
+        currency.coinMinimalDenom,
+        creationHeight
+      );
+      txAuthzCancelUnbond({
+        grantee: address,
+        granter: authzAddress,
+        chainID: chainID,
+        msg: msg,
+      });
+    } else {
+      dispatch(
+        txCancelUnbonding({
+          isAuthzMode: false,
+          basicChainInfo: basicChainInfo,
+          delegator: delegator,
+          validator: validator,
+          amount: amount * 10 ** currency?.coinDecimals,
+          denom: currency?.coinMinimalDenom,
+          feeAmount: feeAmount,
+          feegranter: getFeegranter(
+            chainID,
+            MAP_TXN_MSG_TYPES['cancel_unbonding']
+          ),
+          creationHeight: creationHeight,
+        })
+      );
+    }
   };
 
   const txDelegateTx = (validator: string, amount: number, chainID: string) => {
@@ -290,21 +376,34 @@ const useStaking = ({ isSingleChain }: { isSingleChain: boolean }) => {
 
     const currency = currencies[0];
 
-    const { feeAmount: avgFeeAmount } = getChainInfo(chainID);
+    const { feeAmount: avgFeeAmount, address } = getChainInfo(chainID);
     const feeAmount = avgFeeAmount * 10 ** currency?.coinDecimals;
 
-    dispatch(
-      txDelegate({
-        isAuthzMode: false,
-        basicChainInfo: basicChainInfo,
-        delegator: basicChainInfo.address,
-        validator: validator,
-        amount: amount * 10 ** currency?.coinDecimals,
-        denom: currency?.coinMinimalDenom,
-        feeAmount: feeAmount,
-        feegranter: getFeegranter(chainID, MAP_TXN_MSG_TYPES['delegate']),
-      })
-    );
+    const txDelegateInputs = {
+      validator: validator,
+      amount: amount * 10 ** currency?.coinDecimals,
+      denom: currency?.coinMinimalDenom,
+    };
+
+    if (isAuthzMode) {
+      txAuthzDelegate({
+        ...txDelegateInputs,
+        grantee: address,
+        granter: authzAddress,
+        chainID: basicChainInfo.chainID,
+      });
+    } else {
+      dispatch(
+        txDelegate({
+          ...txDelegateInputs,
+          isAuthzMode: false,
+          basicChainInfo: basicChainInfo,
+          delegator: basicChainInfo.address,
+          feeAmount: feeAmount,
+          feegranter: getFeegranter(chainID, MAP_TXN_MSG_TYPES['delegate']),
+        })
+      );
+    }
   };
 
   const txUnDelegateTx = (
@@ -317,21 +416,34 @@ const useStaking = ({ isSingleChain }: { isSingleChain: boolean }) => {
 
     const currency = currencies[0];
 
-    const { feeAmount: avgFeeAmount } = getChainInfo(chainID);
+    const { feeAmount: avgFeeAmount, address } = getChainInfo(chainID);
     const feeAmount = avgFeeAmount * 10 ** currency?.coinDecimals;
 
-    dispatch(
-      txUnDelegate({
-        isAuthzMode: false,
-        basicChainInfo: basicChainInfo,
-        delegator: basicChainInfo.address,
-        validator: validator,
-        amount: amount * 10 ** currency?.coinDecimals,
-        denom: currency?.coinMinimalDenom,
-        feeAmount: feeAmount,
-        feegranter: getFeegranter(chainID, MAP_TXN_MSG_TYPES['undelegate']),
-      })
-    );
+    const txUndelegateInputs = {
+      validator: validator,
+      amount: amount * 10 ** currency?.coinDecimals,
+      denom: currency?.coinMinimalDenom,
+    };
+    if (isAuthzMode) {
+      txAuthzUnDelegate({
+        ...txUndelegateInputs,
+        grantee: address,
+        granter: authzAddress,
+        chainID: basicChainInfo.chainID,
+      });
+    } else {
+      dispatch(
+        txUnDelegate({
+          ...txUndelegateInputs,
+          isAuthzMode: false,
+          basicChainInfo: basicChainInfo,
+          delegator: basicChainInfo.address,
+
+          feeAmount: feeAmount,
+          feegranter: getFeegranter(chainID, MAP_TXN_MSG_TYPES['undelegate']),
+        })
+      );
+    }
   };
 
   const txReDelegateTx = (
@@ -345,22 +457,34 @@ const useStaking = ({ isSingleChain }: { isSingleChain: boolean }) => {
 
     const currency = currencies[0];
 
-    const { feeAmount: avgFeeAmount } = getChainInfo(chainID);
+    const { feeAmount: avgFeeAmount, address } = getChainInfo(chainID);
     const feeAmount = avgFeeAmount * 10 ** currency?.coinDecimals;
 
-    dispatch(
-      txReDelegate({
-        isAuthzMode: false,
-        basicChainInfo: basicChainInfo,
-        delegator: basicChainInfo.address,
-        destVal: destVal,
-        srcVal: srcVal,
-        amount: amount * 10 ** currency?.coinDecimals,
-        denom: currency?.coinMinimalDenom,
-        feeAmount: feeAmount,
-        feegranter: getFeegranter(chainID, MAP_TXN_MSG_TYPES['redelegate']),
-      })
-    );
+    if (isAuthzMode) {
+      txAuthzReDelegate({
+        grantee: address,
+        granter: authzAddress,
+        srcValidator: srcVal,
+        validator: destVal,
+        amount: amount * 10 ** currency.coinDecimals,
+        denom: currency.coinMinimalDenom,
+        chainID: basicChainInfo.chainID,
+      });
+    } else {
+      dispatch(
+        txReDelegate({
+          isAuthzMode: false,
+          basicChainInfo: basicChainInfo,
+          delegator: basicChainInfo.address,
+          destVal: destVal,
+          srcVal: srcVal,
+          amount: amount * 10 ** currency?.coinDecimals,
+          denom: currency?.coinMinimalDenom,
+          feeAmount: feeAmount,
+          feegranter: getFeegranter(chainID, MAP_TXN_MSG_TYPES['redelegate']),
+        })
+      );
+    }
   };
 
   return {

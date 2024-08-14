@@ -76,7 +76,7 @@ export const SIDEBAR_MENU_OPTIONS: MenuItemI[] = [
     name: 'Settings',
     icon: '/sidebar-menu-icons/settings-icon.svg',
     path: '/settings',
-    authzSupported: false,
+    authzSupported: true,
     isMetaMaskSupported: false,
     multipleOptions: true,
   },

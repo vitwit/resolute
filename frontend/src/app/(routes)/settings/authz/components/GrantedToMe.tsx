@@ -16,16 +16,11 @@ import { enableAuthzMode } from '@/store/features/authz/authzSlice';
 import { exitFeegrantMode } from '@/store/features/feegrant/feegrantSlice';
 
 const GrantedToMe = ({ chainIDs }: { chainIDs: string[] }) => {
-  const [selectedCardIndex, setSelectedCardIndex] = useState<number | null>(
-    null
-  );
-  // const [dialogOpen, setDialogOpen] = useState(false);
-
   const { getGrantsToMe } = useAuthzGrants();
   const { convertToCosmosAddress } = useGetChainInfo();
 
   const authzGrants = getGrantsToMe(chainIDs);
-   /* eslint-disable @typescript-eslint/no-explicit-any */
+  /* eslint-disable @typescript-eslint/no-explicit-any */
   let grantsList: any[] = [];
   authzGrants.forEach((grant) => {
     const data = {
@@ -38,10 +33,6 @@ const GrantedToMe = ({ chainIDs }: { chainIDs: string[] }) => {
 
   const loading = useAppSelector((state) => state.authz.getGrantsByMeLoading);
 
-  const handleSelectCard = (index: number) => {
-    setSelectedCardIndex(selectedCardIndex === index ? null : index);
-  };
-
   return (
     <div className="space-y-6 pt-6">
       {Object.entries(groupedGrants).map(([granterKey, grants]) => (
@@ -50,13 +41,7 @@ const GrantedToMe = ({ chainIDs }: { chainIDs: string[] }) => {
           key={granterKey}
         >
           {grants.map((grant, index) => (
-            <GrantToMeCard
-              key={index}
-              selectedCardIndex={selectedCardIndex || 0}
-              handleSelectCard={handleSelectCard}
-              index={index}
-              grant={grant}
-            />
+            <GrantToMeCard key={index} index={index} grant={grant} />
           ))}
         </div>
       ))}
