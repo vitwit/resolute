@@ -565,7 +565,7 @@ export const networks: Network[] = [
   {
     enableModules: {
       authz: true,
-      feegrant: true,
+      feegrant: false,
       group: false,
     },
     aminoConfig: {
