@@ -6,6 +6,7 @@ import { getSelectedPartFromURL } from '@/utils/util';
 import { useAppSelector } from '@/custom-hooks/StateHooks';
 import FeegrantButton from '../common/FeegrantButton';
 import AuthzButton from '../common/AuthzButton';
+import Link from 'next/link';
 
 const SideMenu = () => {
   const pathName = usePathname();
@@ -99,17 +100,23 @@ const MoreOptions = ({
           <div className="text-[12px] font-medium space-y-4">
             <div className="flex gap-2 items-center pl-3">
               <div className="w-5"></div>
-              <div className="cursor-pointer hover:font-semibold">
+              <Link
+                href={`/settings/authz/${selectedNetwork.toLowerCase() || ''}`}
+                className="hover:font-semibold"
+              >
                 Authz Mode
-              </div>
+              </Link>
               <AuthzButton />
             </div>
             <div className="flex gap-2 items-center pl-3">
               <div className="w-5"></div>
               <div className="flex items-center gap-2">
-                <div className="cursor-pointer hover:font-semibold">
+                <Link
+                  href={`/settings/feegrant/${selectedNetwork.toLowerCase() || ''}`}
+                  className="hover:font-semibold"
+                >
                   Feegrant Mode
-                </div>
+                </Link>
                 <FeegrantButton />
               </div>
             </div>
