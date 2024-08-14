@@ -27,7 +27,7 @@ const Page = () => {
     >
       <div>
         {chainIDs.length ? (
-          <AuthzPage />
+          <AuthzPage chainIDs={chainIDs} />
         ) : (
           <div className="w-full h-full text-white flex justify-center items-center">
             - Chain Not found -
