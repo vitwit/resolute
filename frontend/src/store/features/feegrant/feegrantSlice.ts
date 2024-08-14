@@ -72,6 +72,7 @@ export const getGrantsToMe = createAsyncThunk(
     const response = await feegrantService.grantsToMe(
       data.baseURLs,
       data.address,
+      data.chainID,
       data.pagination
     );
 
@@ -87,6 +88,7 @@ export const getGrantsByMe = createAsyncThunk(
     const response = await feegrantService.grantsByMe(
       data.baseURLs,
       data.address,
+      data.chainID,
       data.pagination
     );
 

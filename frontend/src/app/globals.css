@@ -5,7 +5,7 @@
 @tailwind utilities;
 
 :root {
-  --primary-text-color: #ffffff;
+  --primary-text-color: #fffffff0;
   --secondary-text-color: #ffffff80;
   --main-bg: #09090a;
 }
@@ -42,6 +42,16 @@ body {
 }
 .primary-btn {
   @apply border-[1px] text-[14px] rounded-full px-4 py-[10.5px] leading-[21px] !h-8 flex justify-center items-center text-[#fffffff0];
+  background: linear-gradient(
+    180deg,
+    rgba(68, 83, 223, 0.1) 12.5%,
+    rgba(127, 92, 237, 0.1) 87.5%
+  );
+  border-image: url("data:image/svg+xml,%3csvg width='149' height='42' viewBox='0 0 149 42' fill='none' xmlns='http://www.w3.org/2000/svg'%3e %3crect x='0.5' y='0.5' width='148' height='41' rx='20.5' stroke='url(%23paint0_linear_2064_7866)'/%3e %3cdefs%3e %3clinearGradient id='paint0_linear_2064_7866' x1='74.5' y1='1' x2='74.5' y2='41' gradientUnits='userSpaceOnUse'%3e %3cstop stop-color='%234453DF'/%3e %3cstop offset='1' stop-color='%237F5CED'/%3e %3c/linearGradient%3e %3c/defs%3e %3c/svg%3e")
+    20 / 40px stretch;
+}
+
+.btn-border-primary {
   background: linear-gradient(
     180deg,
     rgba(68, 83, 223, 0.1) 12.5%,
@@ -209,4 +219,16 @@ input[type='checkbox'] {
   @apply w-full !border-[#D92101] !bg-[#D921011A];
   border-image: none !important;
   background: #d921011a !important;
+}
+
+.custom-radio-button {
+  @apply border-2 w-4 h-4 border-[#FFFFFF80] rounded-full flex justify-center items-center;
+}
+
+.custom-radio-button-label {
+  @apply flex items-center cursor-pointer gap-2;
+}
+
+.custom-radio-button-checked {
+  @apply h-[6px] w-[6px] bg-white rounded-full;
 }

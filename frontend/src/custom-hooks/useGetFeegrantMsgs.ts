@@ -5,6 +5,7 @@ import { getAddressByPrefix } from '@/utils/address';
 import { amountToMinimalValue } from '@/utils/util';
 import { FeegrantFilterMsg } from '@/txns/feegrant/grant';
 import { getMsgListFromMsgNames } from '@/utils/feegrant';
+import { useAppSelector } from './StateHooks';
 
 interface ChainGrant {
   chainID: string;
@@ -13,7 +14,8 @@ interface ChainGrant {
 
 const useGetFeegrantMsgs = () => {
   const { getChainInfo, getDenomInfo } = useGetChainInfo();
-
+  const nameToChainIDs = useAppSelector((state) => state.common.nameToChainIDs);
+  
   const getFeegrantMsgs = ({
     isFiltered,
     msgsList,
@@ -28,7 +30,8 @@ const useGetFeegrantMsgs = () => {
     fieldValues: FieldValues;
   }) => {
     const chainWiseGrants: ChainGrant[] = [];
-    selectedChains.forEach((chainID) => {
+    selectedChains.forEach((chain) => {
+      const chainID = nameToChainIDs?.[chain.toLowerCase()];
       const { address: granterAddress, prefix } = getChainInfo(chainID);
       const granteeAddress = fieldValues?.grantee_address || '';
       const grantee = getAddressByPrefix(granteeAddress, prefix);

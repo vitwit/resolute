@@ -16,15 +16,23 @@ const MenuItem = (props: MenuItemProps) => {
   const selectedNetwork = useAppSelector(
     (state) => state.common.selectedNetwork.chainName
   );
+  const isAuthzMode = useAppSelector((state) => state.authz.authzModeEnabled);
   const { icon, name, path } = itemData;
   const pageLink = tabLink(path, selectedNetwork);
+  const isEnableModule = !isAuthzMode || itemData.authzSupported
 
   return (
-    <Link href={pageLink} prefetch={false}>
+    <Link href={isEnableModule ? pageLink : ''} prefetch={false}>
       <div
-        className={`menu-item ${routePath === path ? 'menu-item-selected' : 'font-medium'}`}
+        className={`menu-item ${routePath === path ? 'menu-item-selected' : 'font-medium'} ${isEnableModule ? '' : 'opacity-20 cursor-not-allowed'}`}
       >
-        <Image src={icon} height={20} width={20} alt="Dashboard" className="opacity-60"/>
+        <Image
+          src={icon}
+          height={20}
+          width={20}
+          alt="Dashboard"
+          className="opacity-60"
+        />
         <div className="menu-item-name">{name}</div>
       </div>
     </Link>

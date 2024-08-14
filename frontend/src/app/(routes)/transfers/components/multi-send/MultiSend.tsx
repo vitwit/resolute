@@ -20,11 +20,14 @@ import AddMessages from './AddMessages';
 import { get } from 'lodash';
 import TxnLoading from '../txn-loading/TxnLoading';
 import { getTotalAmount } from '@/utils/denom';
+import useGetFeegranter from '@/custom-hooks/useGetFeegranter';
+import { MAP_TXN_MSG_TYPES } from '@/utils/feegrant';
 
 const MultiSend = ({ chainID }: { chainID: string }) => {
   const dispatch = useAppDispatch();
   const { getChainInfo, getDenomInfo } = useGetChainInfo();
   const denomInfo = getDenomInfo(chainID);
+  const { getFeegranter } = useGetFeegranter();
 
   const [msgs, setMsgs] = useState<Msg[]>([]);
   const [chainLogo, setChainLogo] = useState(ALL_NETWORKS_ICON);
@@ -89,7 +92,7 @@ const MultiSend = ({ chainID }: { chainID: string }) => {
       msgs,
       memo: data.memo,
       denom: denomInfo.minimalDenom,
-      feegranter: '',
+      feegranter: getFeegranter(chainID, MAP_TXN_MSG_TYPES['send']),
     };
     dispatch(multiTxns(txnInputs));
   };

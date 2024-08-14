@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { RootState } from '@/store/store';
 import { useAppSelector } from './StateHooks';
 import { getAddressByPrefix } from '@/utils/address';
-import { USD_CURRENCY } from '@/utils/constants';
+import { COSMOS_CHAIN_ID, USD_CURRENCY } from '@/utils/constants';
 
 export interface DenomInfo {
   minimalDenom: string;
@@ -82,7 +82,7 @@ const useGetChainInfo = () => {
     const explorerTxHashEndpoint = network?.explorerTxHashEndpoint;
     const chainLogo = network?.logos?.menu;
     const govV1 = network?.govV1;
-    const isDefaultNetwork = network?.isDefaultNetwork;
+    const isCustomNetwork = network?.isCustomNetwork;
 
     return {
       restURLs: config?.restURIs,
@@ -103,7 +103,7 @@ const useGetChainInfo = () => {
       decimals,
       valPrefix,
       govV1,
-      isDefaultNetwork,
+      isCustomNetwork,
     };
   };
 
@@ -176,17 +176,17 @@ const useGetChainInfo = () => {
       const chainIDs = Object.keys(networks);
       const chainNamesAndLogos = chainIDs.map((chainID) => {
         const { chainName } = networks?.[chainID].network.config;
-        const { chainLogo, isDefaultNetwork } = getChainInfo(chainID);
-        return { chainID, chainName, chainLogo, isDefaultNetwork };
+        const { chainLogo, isCustomNetwork } = getChainInfo(chainID);
+        return { chainID, chainName, chainLogo, isCustomNetwork };
       });
       return chainNamesAndLogos;
     } else {
       const chainIDs = Object.keys(allNetworks);
       const chainNamesAndLogos = chainIDs.map((chainID) => {
-        const { isDefaultNetwork } = allNetworks?.[chainID];
+        const { isCustomNetwork } = allNetworks?.[chainID];
         const { chainName } = allNetworks?.[chainID].config;
         const { menu: chainLogo } = allNetworks?.[chainID].logos;
-        return { chainID, chainName, chainLogo, isDefaultNetwork };
+        return { chainID, chainName, chainLogo, isCustomNetwork };
       });
       return chainNamesAndLogos;
     }
@@ -232,6 +232,26 @@ const useGetChainInfo = () => {
     };
   };
 
+  const convertToCosmosAddress = (address: string) => {
+    if (address?.length) {
+      const { prefix } = getChainInfo(COSMOS_CHAIN_ID);
+      const cosmosAddress = getAddressByPrefix(address, prefix);
+      return cosmosAddress;
+    }
+    return address || '';
+  };
+
+  const getCustomNetworks = () => {
+    const customNetworks: string[] = [];
+    if (isWalletConnected) {
+      return Object.keys(networks).filter((chainID) => {
+        const { isCustomNetwork } = getChainInfo(chainID);
+        return isCustomNetwork;
+      });
+    }
+    return customNetworks;
+  };
+
   return {
     getDenomInfo,
     getChainInfo,
@@ -245,6 +265,8 @@ const useGetChainInfo = () => {
     getValueFromToken,
     getTokenValueByChainId,
     getNetworkTheme,
+    convertToCosmosAddress,
+    getCustomNetworks,
   };
 };
 
