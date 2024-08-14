@@ -1,11 +1,11 @@
 import React from 'react';
 import { Control, FieldErrors, UseFormGetValues } from 'react-hook-form';
 import { feegrantMsgTypes } from '@/utils/feegrant';
-import MsgItem from './MsgItem';
 import GranteeAddressField from './GranteeAddressField';
 import CustomTextField from './CustomTextField';
 import ExpirationField from './ExpirationField';
 import ToggleSwitch from '@/components/common/ToggleSwitch';
+import MsgItem from '../../../(general)/components/MsgItem';
 
 interface CreateFeegrantFormFields {
   grantee_address: string;

@@ -5,13 +5,13 @@ import MenuItem from './MenuItem';
 import { getSelectedPartFromURL } from '@/utils/util';
 import { useAppSelector } from '@/custom-hooks/StateHooks';
 import FeegrantButton from '../common/FeegrantButton';
+import AuthzButton from '../common/AuthzButton';
 
 const SideMenu = () => {
   const pathName = usePathname();
   const pathParts = pathName.split('/');
   const selectedPart = getSelectedPartFromURL(pathParts).toLowerCase();
 
-  // TODO: Add more option for Transfers and Settings MenuItem
   return (
     <div className="scrollable-content w-full">
       <div className="flex flex-col gap-2">
@@ -102,6 +102,7 @@ const MoreOptions = ({
               <div className="cursor-pointer hover:font-semibold">
                 Authz Mode
               </div>
+              <AuthzButton />
             </div>
             <div className="flex gap-2 items-center pl-3">
               <div className="w-5"></div>

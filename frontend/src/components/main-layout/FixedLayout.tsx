@@ -28,12 +28,16 @@ import IBCSwapTxStatus from '../IBCSwapTxStatus';
 import useFetchPriceInfo from '@/custom-hooks/useFetchPriceInfo';
 import Footer from '../common/Footer';
 import useInitFeegrant from '@/custom-hooks/useInitFeegrant';
+import useInitAuthz from '@/custom-hooks/useInitAuthz';
 
 const FixedLayout = ({ children }: { children: React.ReactNode }) => {
   const dispatch = useAppDispatch();
   const nameToChainIDs = useAppSelector((state) => state.wallet.nameToChainIDs);
   const isFeegrantModeEnabled = useAppSelector(
     (state) => state.feegrant.feegrantModeEnabled
+  );
+  const isAuthzModeEnabled = useAppSelector(
+    (state) => state.authz.authzModeEnabled
   );
   const chainIDs = Object.keys(nameToChainIDs).map(
     (chainName) => nameToChainIDs[chainName]
@@ -102,6 +106,7 @@ const FixedLayout = ({ children }: { children: React.ReactNode }) => {
 
   useFetchPriceInfo();
   useInitFeegrant({ chainIDs, shouldFetch: isFeegrantModeEnabled });
+  useInitAuthz({chainIDs, shouldFetch: isAuthzModeEnabled})
 
   return (
     <div className="fixed-layout">
