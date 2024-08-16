@@ -9,6 +9,9 @@ import useGetAuthzRevokeMsgs from '@/custom-hooks/useGetAuthzRevokeMsgs';
 import { RootState } from '@/store/store';
 import { TxStatus } from '@/types/enums';
 import { txAuthzRevoke } from '@/store/features/authz/authzSlice';
+import { get } from 'lodash';
+import { shortenAddress } from '@/utils/util';
+import Copy from '@/components/common/Copy';
 
 const DialogViewDetails = ({
   onClose,
@@ -138,15 +141,38 @@ const DialogViewDetails = ({
                             {displayDenom}
                           </p>
                         </div>
-                        {/* <div className="flex gap-2 px-6">
-                      <p className="w-[100px] text-small-light">Allow Addresses</p>
-                      {
-                        g?.authorization?.allow_list?.address?.map(a => (
-                          <p className="text-b1">{a}</p>
-                        ))
-                      }
+                        {
+                          (get(g, 'authorization.allow_list.address')) &&
+                          <div className="flex gap-2 px-6">
+                            <p className="w-[100px] text-small-light">Allow Addresses</p>
+                            <div>
+                              {
+                                get(g, 'authorization.allow_list.address', []).map(a => (
+                                  <div className='flex'> <p className="text-b1">{shortenAddress(a, 20)}</p>  <Copy content={a} /><br /></div>
+                                ))
+                              }
+                            </div>
 
-                    </div> */}
+
+                          </div> || null
+                        }
+
+                        {
+                          (get(g, 'authorization.deny_list.address')) &&
+                          <div className="flex gap-2 px-6">
+                            <p className="w-[100px] text-small-light">Validator List (Deny)</p>
+                            <div>
+                              {
+                                get(g, 'authorization.deny_list.address', []).map(a => (
+                                  <div className='flex'> <p className="text-b1">{shortenAddress(a, 20)}</p>  <Copy content={a} /><br /></div>
+                                ))
+                              }
+                            </div>
+
+
+                          </div> || null
+                        }
+
                       </>
                     ))}
 
