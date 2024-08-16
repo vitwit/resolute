@@ -147,8 +147,8 @@ const DialogViewDetails = ({
                             <p className="w-[100px] text-small-light">Allow Addresses</p>
                             <div>
                               {
-                                get(g, 'authorization.allow_list.address', []).map(a => (
-                                  <div className='flex'> <p className="text-b1">{shortenAddress(a, 20)}</p>  <Copy content={a} /><br /></div>
+                                get(g, 'authorization.allow_list.address', []).map((a, ai) => (
+                                  <div className='flex' key={ai}> <p className="text-b1">{shortenAddress(a, 20)}</p>  <Copy content={a} /><br /></div>
                                 ))
                               }
                             </div>
@@ -163,8 +163,8 @@ const DialogViewDetails = ({
                             <p className="w-[100px] text-small-light">Validator List (Deny)</p>
                             <div>
                               {
-                                get(g, 'authorization.deny_list.address', []).map(a => (
-                                  <div className='flex'> <p className="text-b1">{shortenAddress(a, 20)}</p>  <Copy content={a} /><br /></div>
+                                get(g, 'authorization.deny_list.address', []).map((a, ai) => (
+                                  <div className='flex' key={ai}> <p className="text-b1">{shortenAddress(a, 20)}</p>  <Copy content={a} /><br /></div>
                                 ))
                               }
                             </div>
