@@ -4,7 +4,7 @@ import messages from '@/utils/messages.json';
 
 const NoAssets = () => {
   return (
-    <div className="flex flex-col flex-1 gap-6 items-center justify-center">
+    <div className="flex flex-col flex-1 gap-6 items-center justify-center min-h-[48vh]">
       <Image
         className="disable-draggable"
         src="/illustrate.png"
