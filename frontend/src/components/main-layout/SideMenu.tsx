@@ -7,6 +7,7 @@ import { useAppSelector } from '@/custom-hooks/StateHooks';
 import FeegrantButton from '../common/FeegrantButton';
 import AuthzButton from '../common/AuthzButton';
 import Link from 'next/link';
+import { Tooltip } from '@mui/material';
 
 const SideMenu = () => {
   const pathName = usePathname();
@@ -76,27 +77,45 @@ const MoreOptions = ({
             </div>
             <div className="flex gap-2 items-center pl-3">
               <div className="w-5"></div>
-              <div
-                onClick={() => {
-                  if (!isAuthzMode) {
-                    changePath('multi-send');
-                  }
-                }}
-                className={`hover:font-semibold ${isAuthzMode ? 'opacity-20 !cursor-not-allowed' : 'cursor-pointer'}`}
+              <Tooltip
+                title={
+                  isAuthzMode
+                    ? 'Authz is not supporting Multiple'
+                    : null
+                }
+                placement="top-end"
               >
-                Multiple
-              </div>
+                <div
+                  onClick={() => {
+                    if (!isAuthzMode) {
+                      changePath('multi-send');
+                    }
+                  }}
+                  className={`hover:font-semibold ${isAuthzMode ? 'opacity-20 !cursor-not-allowed' : 'cursor-pointer'}`}
+                >
+                  Multiple
+                </div>
+              </Tooltip>
             </div>
             <div className="flex gap-2 items-center pl-3">
               <div className="w-5"></div>
-              <div
-                onClick={() => {
-                  if (!isAuthzMode) changePath('ibc-swap');
-                }}
-                className={`hover:font-semibold ${isAuthzMode ? 'opacity-20 !cursor-not-allowed' : 'cursor-pointer'}`}
+              <Tooltip
+                title={
+                  isAuthzMode
+                    ? 'Authz is not supporting IBC Swap'
+                    : null
+                }
+                placement="top-end"
               >
-                IBC Swap
-              </div>
+                <div
+                  onClick={() => {
+                    if (!isAuthzMode) changePath('ibc-swap');
+                  }}
+                  className={`hover:font-semibold ${isAuthzMode ? 'opacity-20 !cursor-not-allowed' : 'cursor-pointer'}`}
+                >
+                  IBC Swap
+                </div>
+              </Tooltip>
             </div>
           </div>
         </div>

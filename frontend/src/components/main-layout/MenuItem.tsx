@@ -1,6 +1,7 @@
 import { MenuItemI } from '@/constants/sidebar-options';
 import { useAppSelector } from '@/custom-hooks/StateHooks';
 import { tabLink } from '@/utils/util';
+import { Tooltip } from '@mui/material';
 import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
@@ -23,18 +24,27 @@ const MenuItem = (props: MenuItemProps) => {
 
   return (
     <Link href={isEnableModule ? pageLink : ''} prefetch={false}>
-      <div
-        className={`menu-item ${routePath === path ? 'menu-item-selected' : 'font-medium'} ${isEnableModule ? '' : 'opacity-20 cursor-not-allowed'}`}
+      <Tooltip
+        title={
+          !isEnableModule
+            ? `Authz is not supporting ${name}` 
+            : null
+        }
+        placement="top-end"
       >
-        <Image
-          src={icon}
-          height={20}
-          width={20}
-          alt="Dashboard"
-          className="opacity-60"
-        />
-        <div className="menu-item-name">{name}</div>
-      </div>
+        <div
+          className={`menu-item ${routePath === path ? 'menu-item-selected' : 'font-medium'} ${isEnableModule ? '' : 'opacity-20 cursor-not-allowed'}`}
+        >
+          <Image
+            src={icon}
+            height={20}
+            width={20}
+            alt="Dashboard"
+            className="opacity-60"
+          />
+          <div className="menu-item-name">{name}</div>
+        </div>
+      </Tooltip>
     </Link>
   );
 };
