@@ -6,13 +6,16 @@ import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { setConnectWalletOpen } from '@/store/features/wallet/walletSlice';
 import { getConnectWalletLogo } from '@/utils/util';
 import { RESOLUTE_LOGO } from '@/constants/image-names';
+import { RootState } from '@/store/store';
 
 const TopBar = () => {
   const dispatch = useAppDispatch();
   const [profileOpen, setProfileOpen] = useState(false);
-  const walletConnected = useAppSelector((state) => state.wallet.connected);
-  const walletUserName = useAppSelector((state) => state.wallet.name);
   const [walletLogo, setWalletLogo] = useState('');
+
+  const { name: walletUserName, connected: walletConnected, isLoading: isWalletLoading } = useAppSelector(
+    (state: RootState) => state.wallet
+  );
 
   const onClose = () => {
     setProfileOpen(false);
@@ -35,7 +38,7 @@ const TopBar = () => {
           </Link>
         </div>
         <div className="flex-1 flex justify-center items-center">
-          {!walletConnected && (
+          {isWalletLoading ? null : !walletConnected && (
             <div className="flex items-center gap-6">
               <div className="secondary-text text-center">
                 Connect your wallet now to access your account on Resolute
