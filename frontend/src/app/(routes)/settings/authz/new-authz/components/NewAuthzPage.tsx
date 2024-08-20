@@ -27,6 +27,7 @@ import Image from 'next/image';
 import CustomButton from '@/components/common/CustomButton';
 import DialogAuthzTxStatus from './DialogAuthzTxStatus';
 import { NO_MESSAGES_ILLUSTRATION } from '@/constants/image-names';
+import { AUTHZ } from '@/utils/constants';
 
 const NewAuthzPage = () => {
   const { getChainInfo, getDenomInfo } = useGetChainInfo();
@@ -323,6 +324,7 @@ const NewAuthzPage = () => {
         <SelectNetworks
           selectedNetworks={selectedChains}
           handleSelectChain={handleSelectChain}
+          module={AUTHZ}
         />
         <div className="space-y-2">
           <div className="py-[6px] mt-10 mb-2 flex justify-between">
