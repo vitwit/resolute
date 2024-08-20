@@ -1,3 +1,5 @@
+import { COSMOSTATION, KEPLR, LEAP } from "@/constants/wallet";
+
 export const networks: Network[] = [
   // {
   //   enableModules: {
@@ -109,9 +111,10 @@ export const networks: Network[] = [
     },
     keplrExperimental: false,
     leapExperimental: false,
+    supportedWallets: [KEPLR, LEAP, COSMOSTATION],
     isTestnet: false,
     govV1: false,
-    isDefaultNetwork: true,
+    isCustomNetwork: false,
     explorerTxHashEndpoint: 'https://www.mintscan.io/akash/txs/',
     config: {
       chainId: 'akashnet-2',
@@ -185,11 +188,12 @@ export const networks: Network[] = [
       toolbar:
         'https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/cosmoshub/images/cosmoshub-logo.png',
     },
+    supportedWallets: [KEPLR, LEAP, COSMOSTATION],
     keplrExperimental: false,
     leapExperimental: false,
     isTestnet: false,
     govV1: true,
-    isDefaultNetwork: true,
+    isCustomNetwork: false,
     explorerTxHashEndpoint: 'https://www.mintscan.io/cosmos/txs/',
     config: {
       chainId: 'cosmoshub-4',
@@ -565,7 +569,7 @@ export const networks: Network[] = [
   {
     enableModules: {
       authz: true,
-      feegrant: true,
+      feegrant: false,
       group: false,
     },
     aminoConfig: {
@@ -579,11 +583,12 @@ export const networks: Network[] = [
       toolbar:
         'https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/osmosis/images/osmosis-logo.png',
     },
+    supportedWallets: [KEPLR, LEAP, COSMOSTATION],
     keplrExperimental: false,
     leapExperimental: false,
     isTestnet: false,
     govV1: true,
-    isDefaultNetwork: true,
+    isCustomNetwork: false,
     explorerTxHashEndpoint: 'https://www.mintscan.io/osmosis/txs/',
     config: {
       chainId: 'osmosis-1',
@@ -743,11 +748,12 @@ export const networks: Network[] = [
       toolbar:
         'https://raw.githubusercontent.com/cosmos/chain-registry/master/dydx/images/dydx.svg',
     },
+    supportedWallets: [KEPLR, LEAP, COSMOSTATION],
     keplrExperimental: false,
     leapExperimental: true,
     isTestnet: false,
     govV1: true,
-    isDefaultNetwork: true,
+    isCustomNetwork: false,
     explorerTxHashEndpoint: 'https://mintscan.io/dydx/txs/',
     config: {
       chainId: 'dydx-mainnet-1',
@@ -1238,11 +1244,12 @@ export const networks: Network[] = [
       toolbar:
         'https://raw.githubusercontent.com/cosmos/chain-registry/master/celestia/images/celestia.svg',
     },
+    supportedWallets: [KEPLR, LEAP, COSMOSTATION],
     keplrExperimental: false,
     leapExperimental: false,
     isTestnet: false,
     govV1: false,
-    isDefaultNetwork: true,
+    isCustomNetwork: false,
     explorerTxHashEndpoint: 'https://mintscan.io/celestia/txs/',
     config: {
       chainId: 'celestia',
@@ -1642,10 +1649,11 @@ export const networks: Network[] = [
       toolbar:
         'https://raw.githubusercontent.com/cosmos/chain-registry/master/archway/images/archway.png',
     },
+    supportedWallets: ['KEPLR'],
     keplrExperimental: true,
     leapExperimental: false,
     isTestnet: false,
-    isDefaultNetwork: true,
+    isCustomNetwork: false,
     explorerTxHashEndpoint: 'https://www.mintscan.io/archway/txs/',
     govV1: false,
     config: {

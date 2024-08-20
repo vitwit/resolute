@@ -74,7 +74,7 @@ const DialogAddNetwork = () => {
           chainNameExists(get(parsedData, 'config.chain_name'))
         );
         setChainIDExist(chainIDExists(get(parsedData, 'config.chain_id')));
-        parsedData.is_default_network = false;
+        parsedData.is_custom_network = true;
         setNetworkConfig(parsedData);
       } else {
         setNetworkConfig({});
