@@ -200,13 +200,13 @@ const useStaking = ({ isSingleChain }: { isSingleChain: boolean }) => {
 
   const getAmountWithDecimal = (amount: number, chainID: string) => {
     const { decimals, displayDenom } = getDenomInfo(chainID);
-    return (amount / 10 ** decimals).toFixed(4) + ' ' + displayDenom;
+    return (amount / 10 ** decimals).toFixed(6) + ' ' + displayDenom;
   };
 
   const getAmountObjectWithDecimal = (amount: number, chainID: string) => {
     const { decimals, displayDenom } = getDenomInfo(chainID);
     return {
-      amount: (amount / 10 ** decimals).toFixed(4),
+      amount: (amount / 10 ** decimals).toFixed(6),
       denom: displayDenom,
     };
   };

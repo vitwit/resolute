@@ -111,7 +111,7 @@ const useAuthzExecHelper = () => {
     const grants: Authorization[] =
       authzChains?.[data.chainID]?.GrantsToMeAddressMapping?.[address] || [];
     let isExpired = false;
-    console.log("grants....", grants)
+    
     const haveGrant = grants.some((grant) => {
       if (
         grant.authorization['@type'] ===

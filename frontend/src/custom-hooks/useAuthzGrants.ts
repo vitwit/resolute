@@ -62,8 +62,6 @@ const useAuthzGrants = () => {
     let grants: AddressGrants[] = [];
     chainIDs && chainIDs.forEach((chainID) => {
 
-      console.log('grants to loading===', authzChains[chainID])
-
       Object.keys(authzChains[chainID]?.GrantsToMeAddressMapping || {}).forEach(
         (address) => {
           grants = [
