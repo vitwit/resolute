@@ -16,6 +16,7 @@ import { shortenAddress } from '@/utils/util';
 import DialogFeegrantTxStatus from './DialogFeegrantTxStatus';
 import useGetFeegranter from '@/custom-hooks/useGetFeegranter';
 import SelectedChains from '../../../(general)/components/SelectedChains';
+import { FEEGRANT } from '@/utils/constants';
 
 const NewFeegrantPage = () => {
   const [selectedChains, setSelectedChains] = useState<string[]>([]);
@@ -129,6 +130,7 @@ const NewFeegrantPage = () => {
         <SelectNetworks
           selectedNetworks={selectedChains}
           handleSelectChain={handleSelectChain}
+          module={FEEGRANT}
         />
         <form
           onSubmit={handleSubmit((e) => onSubmit(e))}

@@ -1,18 +1,20 @@
 import { SEARCH_ICON } from '@/constants/image-names';
 import { useAppSelector } from '@/custom-hooks/StateHooks';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
+import { AUTHZ, FEEGRANT } from '@/utils/constants';
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 
 interface SelectNetworksProps {
   selectedNetworks: string[];
   handleSelectChain: (chainName: string) => void;
+  module: string;
 }
 
 const DISPLAYED_NETWORKS_COUNT = 5;
 
 const SelectNetworks = (props: SelectNetworksProps) => {
-  const { selectedNetworks, handleSelectChain } = props;
+  const { selectedNetworks, handleSelectChain, module } = props;
 
   const nameToChainIDs = useAppSelector((state) => state.common.nameToChainIDs);
   const chainNames = Object.keys(nameToChainIDs);
@@ -60,6 +62,7 @@ const SelectNetworks = (props: SelectNetworksProps) => {
         networks={searchQuery?.length ? filteredChains : displayedChains}
         selectedNetworks={selectedNetworks}
         handleSelectChain={handleSelectChain}
+        module={module}
       />
       <button
         onClick={() => handleViewAllChains(!viewAllChains)}
@@ -147,10 +150,12 @@ const NetworksList = ({
   networks,
   selectedNetworks,
   handleSelectChain,
+  module,
 }: {
   networks: string[];
   selectedNetworks: string[];
   handleSelectChain: (chainName: string) => void;
+  module: string;
 }) => {
   const { getChainInfo } = useGetChainInfo();
   const nameToChainIDs = useAppSelector((state) => state.common.nameToChainIDs);
@@ -161,8 +166,11 @@ const NetworksList = ({
         <div className="flex flex-wrap gap-4">
           {networks.map((network) => {
             const chainID = nameToChainIDs?.[network];
-            const { chainName, chainLogo } = getChainInfo(chainID);
-            return chainName ? (
+            const { chainName, chainLogo, enableModules } =
+              getChainInfo(chainID);
+            return chainName &&
+              ((enableModules.authz && module === AUTHZ) ||
+                (enableModules.feegrant && module === FEEGRANT)) ? (
               <NetworkItem
                 key={chainID}
                 chainName={chainName}
