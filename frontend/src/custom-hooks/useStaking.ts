@@ -96,12 +96,9 @@ const useStaking = ({ isSingleChain }: { isSingleChain: boolean }) => {
       : state.staking.undelegationsLoading
   );
 
-
   const cancelUnbdongTxLoading = (chainID: string) => {
     return stakeData[chainID].cancelUnbondingTxStatus === TxStatus.PENDING ? true : false;
   }
-
-
 
   const totalUnbondedAmount = useAppSelector((state: RootState) =>
     isAuthzMode
