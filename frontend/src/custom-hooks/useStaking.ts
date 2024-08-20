@@ -32,6 +32,7 @@ import useGetAuthzAssetsAmount from './useGetAuthzAssetsAmount';
 import useAddressConverter from './useAddressConverter';
 import useAuthzStakingExecHelper from './useAuthzStakingExecHelper';
 import { UnbondingEncode } from '@/txns/staking/unbonding';
+import { TxStatus } from '@/types/enums';
 
 /* eslint-disable react-hooks/rules-of-hooks */
 const useStaking = ({ isSingleChain }: { isSingleChain: boolean }) => {
@@ -73,8 +74,8 @@ const useStaking = ({ isSingleChain }: { isSingleChain: boolean }) => {
     rewardsAmount,
     totalUnStakedAmount,
   ] = isAuthzMode
-    ? useGetAuthzAssetsAmount(chainIDs)
-    : useGetAssetsAmount(chainIDs);
+      ? useGetAuthzAssetsAmount(chainIDs)
+      : useGetAssetsAmount(chainIDs);
 
   // const { getTokensByChainID } = useGetAssets();
 
@@ -94,6 +95,13 @@ const useStaking = ({ isSingleChain }: { isSingleChain: boolean }) => {
       ? state.staking.authz.undelegationsLoading
       : state.staking.undelegationsLoading
   );
+
+
+  const cancelUnbdongTxLoading = (chainID: string) => {
+    return stakeData[chainID].cancelUnbondingTxStatus === TxStatus.PENDING ? true : false;
+  }
+
+
 
   const totalUnbondedAmount = useAppSelector((state: RootState) =>
     isAuthzMode
@@ -137,15 +145,15 @@ const useStaking = ({ isSingleChain }: { isSingleChain: boolean }) => {
         dispatch(
           isAuthzMode
             ? getAuthzDelegatorTotalRewards({
-                ...chainRequestData,
-                baseURL,
-                denom: minimalDenom,
-              })
+              ...chainRequestData,
+              baseURL,
+              denom: minimalDenom,
+            })
             : getDelegatorTotalRewards({
-                ...chainRequestData,
-                baseURL,
-                denom: minimalDenom,
-              })
+              ...chainRequestData,
+              baseURL,
+              denom: minimalDenom,
+            })
         );
 
         // Fetch unbonding delegations
@@ -509,6 +517,7 @@ const useStaking = ({ isSingleChain }: { isSingleChain: boolean }) => {
     transactionRestake,
     chainName,
     getAmountObjectWithDecimal,
+    cancelUnbdongTxLoading,
   };
 };
 
