@@ -48,6 +48,12 @@
       },
       "required": ["menu", "toolbar"]
     },
+    "supported_wallets": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
     "keplr_experimental": {
       "type": "boolean"
     },
@@ -374,6 +380,7 @@
     "amino_config",
     "show_airdrop",
     "logos",
+    "supported_wallets",
     "keplr_experimental",
     "leap_experimental",
     "is_testnet",

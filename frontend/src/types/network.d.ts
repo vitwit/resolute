@@ -83,4 +83,5 @@ interface Network {
   aminoConfig: AminoConfig;
   enableModules: EnableModule;
   isCustomNetwork: boolean;
+  supportedWallets: string[];
 }
