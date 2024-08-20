@@ -6,7 +6,13 @@ import {
 } from '@/store/features/authz/authzSlice';
 import useGetChainInfo from './useGetChainInfo';
 
-const useInitAuthz = ({ chainIDs, shouldFetch }: { chainIDs: string[], shouldFetch: boolean; }) => {
+const useInitAuthz = ({
+  chainIDs,
+  shouldFetch,
+}: {
+  chainIDs: string[];
+  shouldFetch: boolean;
+}) => {
   const dispatch = useAppDispatch();
   const { getChainInfo } = useGetChainInfo();
   const networksCount = useMemo(() => chainIDs?.length, [chainIDs]);
@@ -15,21 +21,22 @@ const useInitAuthz = ({ chainIDs, shouldFetch }: { chainIDs: string[], shouldFet
 
   useEffect(() => {
     if (networksCount > 0 && !dataFetched && shouldFetch) {
-
       chainIDs.forEach((chainID) => {
         if (!fetchedChains.current[chainID]) {
-          const { address, baseURL, restURLs } = getChainInfo(chainID);
+          const { address, baseURL, restURLs, enableModules } =
+            getChainInfo(chainID);
           const authzInputs = {
             baseURLs: restURLs,
             address,
             baseURL,
             chainID,
           };
-          dispatch(getGrantsByMe(authzInputs));
-          dispatch(getGrantsToMe(authzInputs));
+          if (enableModules.authz) {
+            dispatch(getGrantsByMe(authzInputs));
+            dispatch(getGrantsToMe(authzInputs));
+          }
           fetchedChains.current[chainID] = true;
         }
-
       });
 
       setDataFetched(true);

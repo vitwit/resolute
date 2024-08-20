@@ -29,6 +29,7 @@ import useFetchPriceInfo from '@/custom-hooks/useFetchPriceInfo';
 import Footer from '../common/Footer';
 import useInitFeegrant from '@/custom-hooks/useInitFeegrant';
 import useInitAuthz from '@/custom-hooks/useInitAuthz';
+import DynamicSection from './DynamicSection';
 
 const FixedLayout = ({ children }: { children: React.ReactNode }) => {
   const dispatch = useAppDispatch();
@@ -106,7 +107,7 @@ const FixedLayout = ({ children }: { children: React.ReactNode }) => {
 
   useFetchPriceInfo();
   useInitFeegrant({ chainIDs, shouldFetch: isFeegrantModeEnabled });
-  useInitAuthz({chainIDs, shouldFetch: isAuthzModeEnabled})
+  useInitAuthz({ chainIDs, shouldFetch: isAuthzModeEnabled });
 
   return (
     <div className="fixed-layout">
@@ -115,7 +116,9 @@ const FixedLayout = ({ children }: { children: React.ReactNode }) => {
         <div className="main-container">
           <SideBar />
           <section className="dynamic-section">
-            <section className="px-10 min-h-[calc(100vh-56px)]">{children}</section>
+            <section className="px-10 min-h-[calc(100vh-56px)]">
+              <DynamicSection>{children}</DynamicSection>
+            </section>
             <footer>
               <Footer />
             </footer>

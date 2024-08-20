@@ -18,6 +18,8 @@ interface BasicChainInfo {
   valPrefix: string;
   govV1: boolean;
   isCustomNetwork: boolean;
+  enableModules: EnableModule;
+  supportedWallets: string[];
 }
 
 interface Coin {
