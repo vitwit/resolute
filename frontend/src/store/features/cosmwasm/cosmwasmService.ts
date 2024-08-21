@@ -1,6 +1,7 @@
 'use client';
 
 import { axiosGetRequestWrapper } from '@/utils/RequestWrapper';
+import { addChainIDParam } from '@/utils/util';
 import { SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate';
 
 const getContractURL = (baseURL: string, address: string) =>
@@ -18,10 +19,12 @@ const getContractQueryURL = (
 
 export const getContract = async (
   baseURLs: string[],
-  address: string
+  address: string,
+  chainID: string
 ): Promise<Response> => {
   for (const url of baseURLs) {
-    const uri = getContractURL(url, address);
+    let uri = getContractURL(url, address);
+    uri = addChainIDParam(uri, chainID);
     try {
       const response = await fetch(uri);
       if (response.status === 500) {

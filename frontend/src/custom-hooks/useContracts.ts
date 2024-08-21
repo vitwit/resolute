@@ -68,14 +68,16 @@ const useContracts = () => {
   const getContractInfo = async ({
     address,
     baseURLs,
+    chainID,
   }: {
     baseURLs: string[];
     address: string;
+    chainID: string;
   }) => {
     try {
       setContractLoading(true);
       setContractError('');
-      const res = await getContract(baseURLs, address);
+      const res = await getContract(baseURLs, address, chainID);
       setContractError('');
       return {
         data: await res.json(),

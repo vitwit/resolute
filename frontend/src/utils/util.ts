@@ -603,6 +603,7 @@ export const isNetworkError = (errMsg: string) => {
 };
 
 export const addChainIDParam = (uri: string, chainID: string) => {
+  console.log(uri, chainID)
   let updatedURI: string;
   if (uri.includes('?')) {
     updatedURI = `${uri}&chain=${chainID.toLowerCase()}`;
