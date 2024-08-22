@@ -1,7 +1,4 @@
-import { dialogBoxPaperPropStyles } from '@/utils/commonStyles';
-import { CLOSE_ICON_PATH } from '@/utils/constants';
-import { CircularProgress, Dialog, DialogContent } from '@mui/material';
-import Image from 'next/image';
+import { CircularProgress } from '@mui/material';
 import React, { useState } from 'react';
 import { useAppDispatch } from '@/custom-hooks/StateHooks';
 import { setContract } from '@/store/features/cosmwasm/cosmwasmSlice';
@@ -29,13 +26,10 @@ const DialogSearchContract = (props: DialogSearchContractI) => {
     setSearchTerm('');
     setSearchResult(null);
   };
-  const [isEnterManually, setIsEnterManually] = useState(true);
   const [searchResult, setSearchResult] = useState<ContractInfoResponse | null>(
     null
   );
-  const onSelect = (value: boolean) => {
-    setIsEnterManually(value);
-  };
+
   const [searchTerm, setSearchTerm] = useState('');
   const { getContractInfo, contractLoading, contractError } = useContracts();
 
@@ -72,74 +66,62 @@ const DialogSearchContract = (props: DialogSearchContractI) => {
   return (
     <CustomDialog
       open={open}
-      onClose={onClose}
+      onClose={handleClose}
       title="Search Contract"
       description="Provide the contract address to search. Once found select the
     contract to use it."
     >
       <div className="w-[890px] text-white pb-16">
         <div className="search-contract">
-          {isEnterManually ? (
-            <>
-              <form
-                onSubmit={(e) => onSearchContract(e)}
-                className="w-full flex justify-between gap-4"
-              >
-                <SearchInputField
-                  searchTerm={searchTerm}
-                  setSearchTerm={(value: string) => setSearchTerm(value)}
-                />
-                <button type="submit" className="primary-gradient search-btn">
-                  Search
-                </button>
-              </form>
-              <div className="w-full space-y-6 h-10">
-                {contractLoading ? (
-                  <div className="flex-center-center gap-2">
-                    <CircularProgress sx={{ color: 'white' }} size={18} />
-                    <div className="italic font-extralight text-[14px]">
-                      Searching for contract{' '}
-                      <span className="dots-flashing"></span>
+          <form
+            onSubmit={(e) => onSearchContract(e)}
+            className="w-full flex justify-between gap-4"
+          >
+            <SearchInputField
+              searchTerm={searchTerm}
+              setSearchTerm={(value: string) => setSearchTerm(value)}
+            />
+            <button type="submit" className="primary-gradient search-btn">
+              Search
+            </button>
+          </form>
+          <div className="w-full space-y-6 h-10">
+            {contractLoading ? (
+              <div className="flex-center-center gap-2">
+                <CircularProgress sx={{ color: 'white' }} size={18} />
+                <div className="italic font-extralight text-[14px]">
+                  Searching for contract <span className="dots-flashing"></span>
+                </div>
+              </div>
+            ) : (
+              <>
+                {searchResult ? (
+                  <div className="space-y-2">
+                    <div className="font-semibold">Search Result:</div>
+                    <div
+                      onClick={() => onSelectContract()}
+                      className="contract-item"
+                    >
+                      <div className="w-[20%] truncate font-semibold">
+                        {shortenName(searchResult?.contract_info?.label, 20)}
+                      </div>
+                      <CommonCopy
+                        message={searchResult?.address}
+                        style="!bg-transparent"
+                        plainIcon={true}
+                      />
                     </div>
                   </div>
                 ) : (
                   <>
-                    {searchResult ? (
-                      <div className="space-y-2">
-                        <div className="font-semibold">Search Result:</div>
-                        <div
-                          onClick={() => onSelectContract()}
-                          className="contract-item"
-                        >
-                          <div className="w-[20%] truncate font-semibold">
-                            {shortenName(
-                              searchResult?.contract_info?.label,
-                              20
-                            )}
-                          </div>
-                          <CommonCopy
-                            message={searchResult?.address}
-                            style="!bg-transparent"
-                            plainIcon={true}
-                          />
-                        </div>
-                      </div>
-                    ) : (
-                      <>
-                        {contractError ? (
-                          <div className="search-error">
-                            Error: {contractError}
-                          </div>
-                        ) : null}
-                      </>
-                    )}
+                    {contractError ? (
+                      <div className="search-error">Error: {contractError}</div>
+                    ) : null}
                   </>
                 )}
-              </div>
-            </>
-          ) : (
-            <div>Coming Soon...</div>
-          )}
+              </>
+            )}
+          </div>
         </div>
       </div>
     </CustomDialog>

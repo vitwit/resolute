@@ -54,12 +54,21 @@ const MoreOptions = ({
   );
   const isAuthzMode = useAppSelector((state) => state.authz.authzModeEnabled);
 
-  const changePath = (type: string) => {
+  const changeTransfersPath = (type: string) => {
     const path = selectedNetwork
       ? `/transfers/${selectedNetwork.toLowerCase()}?type=${type}`
       : `/transfers?type=${type}`;
     router.push(path);
   };
+
+  const changeContractsPath = (tab: string) => {
+    const queryParams = tab ? `?tab=${tab}` : '';
+    const path = selectedNetwork
+      ? `/cosmwasm/${selectedNetwork.toLowerCase()}${queryParams}`
+      : `/cosmwasm${queryParams}`;
+    router.push(path);
+  };
+
   return (
     <>
       {item.name.toLowerCase() === 'transfers' ? (
@@ -69,7 +78,7 @@ const MoreOptions = ({
             <div className="flex gap-2 items-center pl-3">
               <div className="w-5"></div>
               <div
-                onClick={() => changePath('single')}
+                onClick={() => changeTransfersPath('single')}
                 className="cursor-pointer hover:font-semibold"
               >
                 Single
@@ -78,17 +87,13 @@ const MoreOptions = ({
             <div className="flex gap-2 items-center pl-3">
               <div className="w-5"></div>
               <Tooltip
-                title={
-                  isAuthzMode
-                    ? 'Authz is not supporting Multiple'
-                    : null
-                }
+                title={isAuthzMode ? 'Authz is not supporting Multiple' : null}
                 placement="top-end"
               >
                 <div
                   onClick={() => {
                     if (!isAuthzMode) {
-                      changePath('multi-send');
+                      changeTransfersPath('multi-send');
                     }
                   }}
                   className={`hover:font-semibold ${isAuthzMode ? 'opacity-20 !cursor-not-allowed' : 'cursor-pointer'}`}
@@ -100,16 +105,12 @@ const MoreOptions = ({
             <div className="flex gap-2 items-center pl-3">
               <div className="w-5"></div>
               <Tooltip
-                title={
-                  isAuthzMode
-                    ? 'Authz is not supporting IBC Swap'
-                    : null
-                }
+                title={isAuthzMode ? 'Authz is not supporting IBC Swap' : null}
                 placement="top-end"
               >
                 <div
                   onClick={() => {
-                    if (!isAuthzMode) changePath('ibc-swap');
+                    if (!isAuthzMode) changeTransfersPath('ibc-swap');
                   }}
                   className={`hover:font-semibold ${isAuthzMode ? 'opacity-20 !cursor-not-allowed' : 'cursor-pointer'}`}
                 >
@@ -144,6 +145,35 @@ const MoreOptions = ({
                   Feegrant Mode
                 </Link>
                 <FeegrantButton />
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : null}
+      {item.name.toLowerCase() === 'smart contracts' ? (
+        <div key={item.name} className="space-y-2">
+          <MenuItem key={item.name} itemData={item} pathName={selectedPart} />
+          <div className="text-[12px] font-medium space-y-4">
+            <div className="flex gap-2 items-center pl-3">
+              <div className="w-5"></div>
+              <div
+                onClick={() => {
+                  changeContractsPath('');
+                }}
+                className="cursor-pointer hover:font-semibold"
+              >
+                Query / Execute
+              </div>
+            </div>
+            <div className="flex gap-2 items-center pl-3">
+              <div className="w-5"></div>
+              <div
+                onClick={() => {
+                  changeContractsPath('codes');
+                }}
+                className="cursor-pointer hover:font-semibold"
+              >
+                Codes
               </div>
             </div>
           </div>

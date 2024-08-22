@@ -1,7 +1,6 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useAppSelector } from '@/custom-hooks/StateHooks';
-import { useRouter, useSearchParams } from 'next/navigation';
 import Contract from '../components/single-contract/Contract';
 import PageHeader from '@/components/common/PageHeader';
 import { COSMWASM_DESCRIPTION } from '@/utils/constants';

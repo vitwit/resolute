@@ -51,10 +51,10 @@ export const SIDEBAR_MENU_OPTIONS: MenuItemI[] = [
   {
     name: 'Smart Contracts',
     icon: '/sidebar-menu-icons/smart-contracts-icon.svg',
-    path: 'cosmwasm',
+    path: '/cosmwasm',
     authzSupported: false,
     isMetaMaskSupported: false,
-    multipleOptions: false,
+    multipleOptions: true,
   },
   // {
   //   name: 'MultiOps',
