@@ -1,11 +1,11 @@
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { getAllContractsByCode } from '@/store/features/cosmwasm/cosmwasmSlice';
 import { TxStatus } from '@/types/enums';
-import { CircularProgress } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import React, { useEffect } from 'react';
 import ContractsList from './ContractsList';
 import PageHeader from '@/components/common/PageHeader';
+import ContractsLoading from '../loaders/ContractsLoading';
 
 const Contracts = ({
   codeId,
@@ -57,17 +57,7 @@ const Contracts = ({
       </div>
       <div>
         {contractsLoading === TxStatus.PENDING ? (
-          <div className="flex justify-center items-center h-1/2">
-            <div className="flex gap-4 items-center">
-              <CircularProgress size={24} sx={{ color: 'white' }} />
-              <div>
-                <span className="italic font-extralight">
-                  Fetching Contracts
-                </span>
-                <span className="dots-flashing"></span>
-              </div>
-            </div>
-          </div>
+          <ContractsLoading />
         ) : contracts?.length ? (
           <ContractsList contracts={contracts} chainID={chainID} />
         ) : (

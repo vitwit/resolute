@@ -1,10 +1,10 @@
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { getAllCodes } from '@/store/features/cosmwasm/cosmwasmSlice';
 import { TxStatus } from '@/types/enums';
-import { CircularProgress } from '@mui/material';
 import React, { useEffect } from 'react';
 import CodesList from './CodesList';
 import PageHeader from '@/components/common/PageHeader';
+import CodesLoading from '../loaders/CodesLoading';
 
 const Codes = ({
   chainID,
@@ -29,17 +29,9 @@ const Codes = ({
   return (
     <div className="space-y-10">
       <PageHeader title="Codes" description="List of codes" />
-      <div className="">
+      <div className="px-6">
         {codesLoading === TxStatus.PENDING ? (
-          <div className="flex justify-center items-center h-1/2">
-            <div className="flex gap-4 items-center">
-              <CircularProgress size={24} sx={{ color: 'white' }} />
-              <div>
-                <span className="italic font-extralight">Fetching Codes</span>
-                <span className="dots-flashing"></span>
-              </div>
-            </div>
-          </div>
+          <CodesLoading />
         ) : codes?.length ? (
           <CodesList codes={codes} chainID={chainID} />
         ) : (
