@@ -1,25 +1,39 @@
-import CommonCopy from '@/components/CommonCopy';
+import Copy from '@/components/common/Copy';
+import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
 
-const ContractItem = ({ contract }: { contract: string }) => {
+const ContractItem = ({
+  contract,
+  chainLogo,
+}: {
+  contract: string;
+  chainLogo: string;
+}) => {
   return (
-    <tr>
-      <td>
-        <CommonCopy
-          message={contract}
-          style="w-fit text-white"
-          plainIcon={true}
+    <div className="flex justify-between items-center">
+      <div className="flex gap-2">
+        <Image
+          src={chainLogo}
+          width={24}
+          height={24}
+          alt="logo"
+          className="w-6 h-6"
         />
-      </td>
-      <td>
+        <div className="flex items-center gap-2">
+          <p className="text-b1">{contract}</p>
+          <Copy content={contract} />
+        </div>
+      </div>
+      <div className="flex gap-6">
         <Link href={`?contract=${contract}`}>
-          <button className="select-btn primary-gradient">
-            Select Contract
-          </button>
+          <button className="primary-btn">Execute</button>
         </Link>
-      </td>
-    </tr>
+        <Link href={`?contract=${contract}`}>
+          <button className="primary-btn">Query</button>
+        </Link>
+      </div>
+    </div>
   );
 };
 

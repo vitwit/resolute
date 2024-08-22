@@ -41,7 +41,7 @@ const Codes = ({
             </div>
           </div>
         ) : codes?.length ? (
-          <CodesList codes={codes} />
+          <CodesList codes={codes} chainID={chainID} />
         ) : (
           <div className="flex justify-center items-center h-1/2">
             <div className="text-[16px]">

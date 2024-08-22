@@ -1,6 +1,7 @@
-import CommonCopy from '@/components/CommonCopy';
+import Copy from '@/components/common/Copy';
 import { dialogBoxPaperPropStyles } from '@/utils/commonStyles';
 import { CLOSE_ICON_PATH } from '@/utils/constants';
+import { shortenAddress } from '@/utils/util';
 import { Dialog, DialogContent } from '@mui/material';
 import Image from 'next/image';
 import React from 'react';
@@ -52,8 +53,9 @@ const DialogAddressesList = ({
             <div className="divider-line"></div>
             <div className="flex flex-wrap gap-4">
               {addresses.map((address) => (
-                <div key={address}>
-                  <CommonCopy message={address} style="" plainIcon={true} />
+                <div className="flex items-center gap-2" key={address}>
+                  <div>{shortenAddress(address, 24)}</div>
+                  <Copy content={address} />
                 </div>
               ))}
             </div>
