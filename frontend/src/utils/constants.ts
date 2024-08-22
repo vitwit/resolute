@@ -352,6 +352,8 @@ export const IBC_SWAP_DESCRIPTION =
   'Swap tokens across various interchain networks';
 export const MULTISIG_DESCRIPTION =
   'A multisig account is an account that requires multiple signatures to sign transactions';
+export const COSMWASM_DESCRIPTION =
+  'CosmWasm is a smart contracting platform built for the Cosmos ecosystem.';
 export const IBC_SWAP_GRADIENT = `linear-gradient(
     180deg,
     rgba(68, 83, 223, 0.1) 12.5%,

@@ -48,6 +48,7 @@ interface GetQueryContractFunctionInputs {
   address: string;
   baseURLs: string[];
   queryData: string;
+  chainID: string;
 }
 
 interface QueryContractInfoInputs {
