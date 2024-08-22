@@ -251,4 +251,15 @@ input[type='checkbox'] {
   @apply flex justify-center items-center gap-2 px-4 py-2 rounded-lg h-8;
   background: rgba(255, 255, 255, 0.06);
 }
-
+.txn-history-card {
+  @apply flex flex-col justify-center items-center gap-2 p-4 rounded-2xl;
+  background: rgba(255, 255, 255, 0.02);
+}
+.count-type-card {
+  @apply flex flex-col items-start gap-10 w-full px-6 py-4 rounded-2xl;
+  background: rgba(255, 255, 255, 0.02);
+}
+.count-type-card-extend {
+  @apply flex flex-col items-start gap-4 w-full rounded-2xl;
+  background: rgba(255, 255, 255, 0.02);
+}
