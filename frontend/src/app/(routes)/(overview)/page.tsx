@@ -7,7 +7,6 @@ import { RootState } from '@/store/store';
 // import OverviewTable from './overview-components/OverviewTable';
 import WithoutConnectionIllustration from '@/components/illustrations/WithoutConnectionIllustration';
 import OverviewDashboard from './overview-components/OverviewDashboard';
-import RepeatTransaction from '@/components/common/RepeatTransaction';
 
 const Overview = () => {
   const nameToChainIDs = useAppSelector(
@@ -22,12 +21,11 @@ const Overview = () => {
 
   return (
     <div>
-      {/* {isWalletConnected ? (
+      {isWalletConnected ? (
         <OverviewDashboard chainIDs={chainIDs} />
       ) : (
         <WithoutConnectionIllustration />
-      )} */}
-      <RepeatTransaction />
+      )}
 
       {/* <OverviewDashboard chainIDs={chainIDs}/> */}
     </div>

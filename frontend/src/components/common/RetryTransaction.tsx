@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import TransactionHeader from './TransactionHeader';
 import Image from 'next/image';
 
-const RepeatTransaction = () => {
+const RetryTransaction = () => {
   const countTypeCards = [
     {
       title: 'Delegates',
@@ -49,7 +49,7 @@ const RepeatTransaction = () => {
 
   return (
     <div>
-      <TransactionHeader status="success" />
+      <TransactionHeader status="failed" />
       <div className="flex gap-10 w-full">
         <div className="flex-1 flex w-full">
           <div className="flex flex-col gap-6 w-full">
@@ -73,7 +73,6 @@ const RepeatTransaction = () => {
               </div>
             </div>
 
-            
             {countTypeCards.map((card, index) => (
               <div key={index} className="count-type-card-extend w-full">
                 <div className="count-type-card">
@@ -164,4 +163,4 @@ const RepeatTransaction = () => {
   );
 };
 
-export default RepeatTransaction;
+export default RetryTransaction;
