@@ -14,6 +14,8 @@ This module provides backend code for [Resolute](https://resolute.vitwit.com), a
 
 For configuration we use YAML file format. To configure `backend` and `database`, you need to add `config.yaml` file. Reference `example.yaml`. 
 
+To get the transactions history you need to add your chain details in `server/networks.json` file.
+
 ## Database setup
 
 This project uses Postgres database. Before starting the server make sure to initialize database tables. You can find schema [Here](https://github.com/vitwit/resolute/server/schema/schema.sql).
