@@ -4,6 +4,8 @@ import React, { useState } from 'react';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 // import ExecuteContract from './ExecuteContract';
 import Image from 'next/image';
+import QueryContract from './QueryContract';
+import ExecuteContract from './ExecuteContract';
 
 const ContractInfo = ({ chainID }: { chainID: string }) => {
   const selectedContractAddress = useAppSelector(
@@ -23,7 +25,6 @@ const ContractInfo = ({ chainID }: { chainID: string }) => {
     address: walletAddress,
     chainName,
   } = getChainInfo(chainID);
-
 
   return (
     <div className="space-y-12">
@@ -92,7 +93,7 @@ const ContractInfo = ({ chainID }: { chainID: string }) => {
             </div>
           ))}
         </div>
-        {/* <div>
+        <div>
           {selectedTab === 'Query Contract' ? (
             <QueryContract
               address={selectedContractAddress}
@@ -109,7 +110,7 @@ const ContractInfo = ({ chainID }: { chainID: string }) => {
               chainName={chainName}
             />
           )}
-        </div> */}
+        </div>
       </div>
     </div>
   );

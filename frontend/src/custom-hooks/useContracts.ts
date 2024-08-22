@@ -96,17 +96,25 @@ const useContracts = () => {
   const getContractMessages = async ({
     address,
     baseURLs,
+    chainID,
     queryMsg = dummyQuery,
   }: {
     address: string;
     baseURLs: string[];
+    chainID: string;
     queryMsg?: any;
   }) => {
     let messages: string[] = [];
     try {
       setMessagesLoading(true);
       setMessagesError('');
-      await queryContract(baseURLs, address, btoa(JSON.stringify(queryMsg)));
+      const res = await queryContract(
+        baseURLs,
+        address,
+        btoa(JSON.stringify(queryMsg)),
+        chainID
+      );
+      console.log('res.....', res);
       return {
         messages: [],
       };
@@ -133,12 +141,14 @@ const useContracts = () => {
     queryMsg,
     extractedMessages,
     msgName,
+    chainID,
   }: {
     address: string;
     baseURLs: string[];
     queryMsg: any;
     msgName: string;
     extractedMessages: string[];
+    chainID: string;
   }) => {
     setMessageInputsLoading(true);
     setMessageInputsError('');
@@ -147,7 +157,12 @@ const useContracts = () => {
       [key: string]: any;
     }): Promise<void> => {
       try {
-        await queryContract(baseURLs, address, btoa(JSON.stringify(queryMsg)));
+        await queryContract(
+          baseURLs,
+          address,
+          btoa(JSON.stringify(queryMsg)),
+          chainID
+        );
         return;
       } catch (error: any) {
         const errMsg = error.message;
@@ -183,11 +198,17 @@ const useContracts = () => {
     address,
     baseURLs,
     queryData,
+    chainID,
   }: GetQueryContractFunctionInputs) => {
     try {
-      const respose = await queryContract(baseURLs, address, btoa(queryData));
+      const respose = await queryContract(
+        baseURLs,
+        address,
+        btoa(queryData),
+        chainID
+      );
       return {
-        data: await respose.json(),
+        data: respose,
       };
       /* eslint-disable @typescript-eslint/no-explicit-any */
     } catch (error: any) {
