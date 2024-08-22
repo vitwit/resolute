@@ -45,8 +45,12 @@ $ yarn
 
 ## Environment variables
 
-Create .env file and set multisig backend URI `NEXT_PUBLIC_APP_API_URI`
+Rename `.env.example` to `.env` and set multisig backend URI `NEXT_PUBLIC_APP_API_URI`, 
 You can setup your own multisig server in [Set up multisig server](./MULTISIG_SERVER_README.md).
+
+Set Squid ID `NEXT_PUBLIC_SQUID_ID`, You can get Squid ID from here [Squid ID](https://squidrouter.typeform.com/integrator-id?typeform-source=docs.squidrouter.com)
+
+To use Cosmwasm contracts set `NEXT_PUBLIC_DUMMY_WALLET_MNEMONIC`.
 
 ## Start in DEV Mode
 Runs the app in the development mode.<br />
