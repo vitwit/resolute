@@ -232,3 +232,23 @@ input[type='checkbox'] {
 .custom-radio-button-checked {
   @apply h-[6px] w-[6px] bg-white rounded-full;
 }
+
+/* TransactionHistory */
+.search-Txn-input {
+  @apply w-full border-none cursor-text focus:outline-none bg-transparent placeholder:text-[#FFFFFF30] placeholder:font-normal text-[#ffffff] flex-1 text-[14px];
+}
+.search-Txn-field {
+  @apply py-4 px-6 bg-[#FFFFFF05] rounded-full flex w-full;
+}
+.v-line {
+  @apply w-[0.25px] h-6 bg-[#FFFFFF80] opacity-20;
+}
+.txn-card {
+  @apply flex justify-between gap-2 p-6 rounded-2xl;
+  background: rgba(255, 255, 255, 0.04);
+}
+.txn-permission-card {
+  @apply flex justify-center items-center gap-2 px-4 py-2 rounded-lg h-8;
+  background: rgba(255, 255, 255, 0.06);
+}
+
