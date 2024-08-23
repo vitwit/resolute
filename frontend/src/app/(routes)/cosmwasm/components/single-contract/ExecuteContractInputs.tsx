@@ -81,7 +81,7 @@ const ExecuteContractInputs = (props: ExecuteContractInputsI) => {
   return (
     <div className="query-input-wrapper">
       <div className="space-y-4">
-        <div className="font-light">
+        <div className="text-b1-light">
           Execution Messages:
           {messagesLoading ? (
             <span className="italic">
@@ -97,7 +97,7 @@ const ExecuteContractInputs = (props: ExecuteContractInputsI) => {
             <div
               onClick={() => handleSelectMessage(msg)}
               key={msg}
-              className={`query-shortcut-msg ${selectedMessage === msg ? 'primary-gradient' : ''}`}
+              className={`selected-msgs ${selectedMessage === msg ? 'bg-[#ffffff14] border-transparent' : 'border-[#ffffff26]'}`}
             >
               {msg}
             </div>
