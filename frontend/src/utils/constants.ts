@@ -18,7 +18,7 @@ export const SUPPORTED_WALLETS = [
 export const USD_CURRENCY = 'usd';
 export const GAS_FEE = 860000;
 export const ADD_NETWORK_TEMPLATE_URL =
-  'https://raw.githubusercontent.com/vitwit/resolute/52aa50f4ba52cb65a2a483bedfbbca76fd39a47b/frontend/public/add-network-template.json';
+  'https://raw.githubusercontent.com/vitwit/resolute/7436d1f8b545a67e6137cea75be8380c42264d46/frontend/public/add-network-template.json';
 export const PROPOSAL_STATUS_VOTING_PERIOD = 'PROPOSAL_STATUS_VOTING_PERIOD';
 export const COSMOS_CHAIN_ID = 'cosmoshub-4';
 export const OFFCHAIN_VERIFICATION_MESSAGE =
@@ -381,3 +381,5 @@ export const TRANSFERS_TYPES: Record<
 };
 export const ALL_NETWORKS_GRADIENT =
   'linear-gradient(180deg, #6155b275 0.5%, #12131C80 100%)';
+export const AUTHZ = 'authz';
+export const FEEGRANT = 'feegrant';

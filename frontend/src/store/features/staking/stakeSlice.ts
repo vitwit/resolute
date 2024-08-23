@@ -92,6 +92,8 @@ interface StakingState {
     chains: Chains;
     hasDelegations: boolean;
     hasUnbonding: boolean;
+    undelegationsLoading: number;
+    totalUndelegationsAmount: number;
   };
   /* eslint-disable @typescript-eslint/no-explicit-any */
   witvalNonCosmosValidators: {
@@ -100,7 +102,7 @@ interface StakingState {
   };
   allValidators: Record<string, any>;
   filteredValidators: Record<string, any>;
-  searchQuery: string,
+  searchQuery: string;
 }
 
 const initialState: StakingState = {
@@ -116,6 +118,8 @@ const initialState: StakingState = {
     delegationsLoading: 0,
     hasUnbonding: false,
     hasDelegations: false,
+    undelegationsLoading: 0,
+    totalUndelegationsAmount: 0,
   },
   witvalNonCosmosValidators: {
     chains: {},
@@ -196,8 +200,7 @@ export const txRestake = createAsyncThunk(
     data: TxReStakeInputs | TxAuthzExecInputs,
     { rejectWithValue, fulfillWithValue, dispatch }
   ) => {
-    const { chainID, address, rest, aminoConfig, prefix } =
-      data.basicChainInfo;
+    const { chainID, address, rest, aminoConfig, prefix } = data.basicChainInfo;
     try {
       const result = await signAndBroadcast(
         chainID,
@@ -206,7 +209,8 @@ export const txRestake = createAsyncThunk(
         data.msgs,
         399999 + Math.ceil(399999 * 0.1 * (data.msgs?.length || 1)),
         data.memo,
-        `${data.basicChainInfo.feeAmount * 10 ** data.basicChainInfo.decimals}${data.denom
+        `${data.basicChainInfo.feeAmount * 10 ** data.basicChainInfo.decimals}${
+          data.denom
         }`,
         rest,
         data?.feegranter?.length ? data.feegranter : undefined,
@@ -289,7 +293,8 @@ export const txDelegate = createAsyncThunk(
         msgs,
         GAS_FEE,
         '',
-        `${data.basicChainInfo.feeAmount * 10 ** data.basicChainInfo.decimals}${data.denom
+        `${data.basicChainInfo.feeAmount * 10 ** data.basicChainInfo.decimals}${
+          data.denom
         }`,
         data.basicChainInfo.rest,
         data?.feegranter?.length ? data.feegranter : undefined,
@@ -349,12 +354,11 @@ export const txDelegate = createAsyncThunk(
           );
         }
 
-        trackEvent('STAKING', 'SUCCESS', 'DELEGATE')
+        trackEvent('STAKING', 'SUCCESS', 'DELEGATE');
 
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
-        trackEvent('STAKING', 'FAILED', 'DELEGATE')
-
+        trackEvent('STAKING', 'FAILED', 'DELEGATE');
 
         return rejectWithValue(result?.rawLog);
       }
@@ -393,7 +397,8 @@ export const txReDelegate = createAsyncThunk(
         msgs,
         GAS_FEE,
         '',
-        `${data.basicChainInfo.feeAmount * 10 ** data.basicChainInfo.decimals}${data.denom
+        `${data.basicChainInfo.feeAmount * 10 ** data.basicChainInfo.decimals}${
+          data.denom
         }`,
         data.basicChainInfo.rest,
         data?.feegranter?.length ? data.feegranter : undefined,
@@ -438,12 +443,11 @@ export const txReDelegate = createAsyncThunk(
           );
         }
 
-        trackEvent('STAKING', 'SUCCESS', 'REDELEGATE')
+        trackEvent('STAKING', 'SUCCESS', 'REDELEGATE');
 
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
-        trackEvent('STAKING', 'FAILED', 'REDELEGATE')
-
+        trackEvent('STAKING', 'FAILED', 'REDELEGATE');
 
         return rejectWithValue(result?.rawLog);
       }
@@ -476,7 +480,8 @@ export const txUnDelegate = createAsyncThunk(
         msgs,
         GAS_FEE,
         '',
-        `${data.basicChainInfo.feeAmount * 10 ** data.basicChainInfo.decimals}${data.denom
+        `${data.basicChainInfo.feeAmount * 10 ** data.basicChainInfo.decimals}${
+          data.denom
         }`,
         data.basicChainInfo.rest,
         data?.feegranter?.length ? data.feegranter : undefined,
@@ -531,12 +536,11 @@ export const txUnDelegate = createAsyncThunk(
           );
         }
 
-        trackEvent('STAKING', 'SUCCESS', 'UNDELEGATE')
-
+        trackEvent('STAKING', 'SUCCESS', 'UNDELEGATE');
 
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
-        trackEvent('STAKING', 'FAILED', 'UNDELEGATE')
+        trackEvent('STAKING', 'FAILED', 'UNDELEGATE');
 
         return rejectWithValue(result?.rawLog);
       }
@@ -575,7 +579,8 @@ export const txCancelUnbonding = createAsyncThunk(
         msgs,
         GAS_FEE,
         '',
-        `${data.basicChainInfo.feeAmount * 10 ** data.basicChainInfo.decimals}${data.denom
+        `${data.basicChainInfo.feeAmount * 10 ** data.basicChainInfo.decimals}${
+          data.denom
         }`,
         data.basicChainInfo.rest,
         data?.feegranter?.length ? data.feegranter : undefined,
@@ -619,11 +624,11 @@ export const txCancelUnbonding = createAsyncThunk(
           dispatch(getUnbonding(inputData));
         }
 
-        trackEvent('STAKING', 'SUCCESS', 'CANCEL_UNBOND')
+        trackEvent('STAKING', 'SUCCESS', 'CANCEL_UNBOND');
 
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
-        trackEvent('STAKING', 'FAILED', 'CANCEL_UNBOND')
+        trackEvent('STAKING', 'FAILED', 'CANCEL_UNBOND');
 
         return rejectWithValue(result?.rawLog);
       }
@@ -665,7 +670,7 @@ export const getValidators = createAsyncThunk(
         data.baseURLs,
         data.chainID,
         data?.status,
-        data?.pagination,
+        data?.pagination
       );
       return {
         chainID: data.chainID,
@@ -700,9 +705,9 @@ export const getAllValidators = createAsyncThunk(
           data?.status,
           nextKey
             ? {
-              key: nextKey,
-              limit: limit,
-            }
+                key: nextKey,
+                limit: limit,
+              }
             : {}
         );
         validators.push(...response.data.validators);
@@ -785,9 +790,9 @@ export const getDelegations = createAsyncThunk(
           data.chainID,
           nextKey
             ? {
-              key: nextKey,
-              limit: limit,
-            }
+                key: nextKey,
+                limit: limit,
+              }
             : {}
         );
         delegations.push(...(response.data?.delegation_responses || []));
@@ -829,9 +834,9 @@ export const getAuthzDelegations = createAsyncThunk(
           data.chainID,
           nextKey
             ? {
-              key: nextKey,
-              limit: limit,
-            }
+                key: nextKey,
+                limit: limit,
+              }
             : {}
         );
         delegations.push(...(response.data?.delegation_responses || []));
@@ -1069,6 +1074,8 @@ export const stakeSlice = createSlice({
         delegationsLoading: 0,
         hasUnbonding: false,
         hasDelegations: false,
+        undelegationsLoading: 0,
+        totalUndelegationsAmount: 0,
       };
     },
     resetCancelUnbondingTx: (
@@ -1214,7 +1221,7 @@ export const stakeSlice = createSlice({
           } else if (
             validator.status !== 'BOND_STATUS_BONDED' &&
             !state.chains[chainID].validators.inactive[
-            validator.operator_address
+              validator.operator_address
             ]
           ) {
             state.chains[chainID].validators.inactive[
@@ -1394,7 +1401,7 @@ export const stakeSlice = createSlice({
             });
           });
           state.chains[chainID].unbonding.totalUnbonded = totalUnbonded;
-          state.totalUndelegationsAmount +=totalUnbonded
+          state.totalUndelegationsAmount += totalUnbonded;
           if (unbonding_responses[0].entries.length) {
             state.chains[chainID].unbonding.hasUnbonding = true;
             state.hasUnbonding = true;
@@ -1416,6 +1423,7 @@ export const stakeSlice = createSlice({
 
     builder
       .addCase(getAuthzUnbonding.pending, (state, action) => {
+        state.authz.undelegationsLoading++;
         const { chainID } = action.meta.arg;
         if (!state.authz.chains[chainID])
           state.authz.chains[chainID] = cloneDeep(state.defaultState);
@@ -1423,6 +1431,7 @@ export const stakeSlice = createSlice({
         state.authz.chains[chainID].unbonding.errMsg = '';
       })
       .addCase(getAuthzUnbonding.fulfilled, (state, action) => {
+        state.authz.undelegationsLoading--;
         const { chainID } = action.meta.arg;
         const unbonding_responses = action.payload.data.unbonding_responses;
         let totalUnbonded = 0.0;
@@ -1433,6 +1442,7 @@ export const stakeSlice = createSlice({
             });
           });
           state.authz.chains[chainID].unbonding.totalUnbonded = totalUnbonded;
+          state.authz.totalUndelegationsAmount += totalUnbonded;
           if (unbonding_responses[0].entries.length) {
             state.authz.chains[chainID].unbonding.hasUnbonding = true;
             state.authz.hasUnbonding = true;
@@ -1446,6 +1456,7 @@ export const stakeSlice = createSlice({
         state.authz.chains[chainID].unbonding.errMsg = '';
       })
       .addCase(getAuthzUnbonding.rejected, (state, action) => {
+        state.authz.undelegationsLoading--;
         const { chainID } = action.meta.arg;
         state.authz.chains[chainID].unbonding.status = TxStatus.REJECTED;
         state.authz.chains[chainID].unbonding.errMsg =
@@ -1459,7 +1470,7 @@ export const stakeSlice = createSlice({
           state.chains[chainID] = cloneDeep(initialState.defaultState);
         state.chains[chainID].validator.status = TxStatus.PENDING;
         const valoperAddress = action.meta?.arg?.valoperAddress;
-        state.chains[chainID].validator[valoperAddress] = TxStatus.PENDING
+        state.chains[chainID].validator[valoperAddress] = TxStatus.PENDING;
         state.chains[chainID].validator.errMsg = '';
       })
       .addCase(getValidator.fulfilled, (state, action) => {
@@ -1469,15 +1480,15 @@ export const stakeSlice = createSlice({
           action.payload.data.validator;
 
         const valoperAddress = action.meta?.arg?.valoperAddress;
-        state.chains[chainID].validator[valoperAddress] = action?.payload?.data?.validator
-
+        state.chains[chainID].validator[valoperAddress] =
+          action?.payload?.data?.validator;
       })
       .addCase(getValidator.rejected, (state, action) => {
         const chainID = action.meta?.arg?.chainID;
         state.chains[chainID].validator.status = TxStatus.REJECTED;
         state.chains[chainID].validator.errMsg = '';
         const valoperAddress = action.meta?.arg?.valoperAddress;
-        state.chains[chainID].validator[valoperAddress] = TxStatus.REJECTED
+        state.chains[chainID].validator[valoperAddress] = TxStatus.REJECTED;
       });
 
     builder
@@ -1517,37 +1528,37 @@ export const stakeSlice = createSlice({
           },
         };
       })
-      .addCase(getTotalDelegationsCount.rejected, () => { });
+      .addCase(getTotalDelegationsCount.rejected, () => {});
 
     builder
-      .addCase(getWitvalPolygonValidator.pending, () => { })
+      .addCase(getWitvalPolygonValidator.pending, () => {})
       .addCase(getWitvalPolygonValidator.fulfilled, (state, action) => {
         state.witvalNonCosmosValidators.chains = {
           ...state.witvalNonCosmosValidators.chains,
           polygon: action.payload.data,
         };
       })
-      .addCase(getWitvalPolygonValidator.rejected, () => { });
+      .addCase(getWitvalPolygonValidator.rejected, () => {});
 
     builder
-      .addCase(getWitvalPolygonDelegatorsCount.pending, () => { })
+      .addCase(getWitvalPolygonDelegatorsCount.pending, () => {})
       .addCase(getWitvalPolygonDelegatorsCount.fulfilled, (state, action) => {
         state.witvalNonCosmosValidators.delegators = {
           ...state.witvalNonCosmosValidators.delegators,
           polygon: action.payload?.data?.summary?.total,
         };
       })
-      .addCase(getWitvalPolygonDelegatorsCount.rejected, () => { });
+      .addCase(getWitvalPolygonDelegatorsCount.rejected, () => {});
 
     builder
-      .addCase(getWitvalOasisDelegations.pending, () => { })
+      .addCase(getWitvalOasisDelegations.pending, () => {})
       .addCase(getWitvalOasisDelegations.fulfilled, (state, action) => {
         state.witvalNonCosmosValidators.delegators = {
           ...state.witvalNonCosmosValidators.delegators,
           oasis: action.payload?.data,
         };
       })
-      .addCase(getWitvalOasisDelegations.rejected, () => { });
+      .addCase(getWitvalOasisDelegations.rejected, () => {});
 
     builder
       .addCase(txDelegate.pending, (state, action) => {
@@ -1644,7 +1655,9 @@ export const {
   resetCompleteState,
   resetAuthz,
   resetAuthzDelegations,
-  setValidators, setSearchQuery, filterValidators,
+  setValidators,
+  setSearchQuery,
+  filterValidators,
 } = stakeSlice.actions;
 
 export default stakeSlice.reducer;

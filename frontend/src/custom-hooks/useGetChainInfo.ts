@@ -83,6 +83,8 @@ const useGetChainInfo = () => {
     const chainLogo = network?.logos?.menu;
     const govV1 = network?.govV1;
     const isCustomNetwork = network?.isCustomNetwork;
+    const enableModules = network?.enableModules;
+    const supportedWallets = network?.supportedWallets;
 
     return {
       restURLs: config?.restURIs,
@@ -104,6 +106,8 @@ const useGetChainInfo = () => {
       valPrefix,
       govV1,
       isCustomNetwork,
+      enableModules,
+      supportedWallets,
     };
   };
 

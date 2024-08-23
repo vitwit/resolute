@@ -634,6 +634,8 @@ export const distSlice = createSlice({
       .addCase(txWithdrawAllRewards.pending, (state, action) => {
         const chainID = action.meta?.arg?.basicChainInfo.chainID;
         const isTxAll = action.meta.arg.isTxAll;
+        if (!state.chains[chainID])
+          state.chains[chainID] = cloneDeep(initialState.defaultState);
         state.chains[chainID].isTxAll = !!isTxAll;
         state.chains[chainID].tx.status = TxStatus.PENDING;
         state.chains[chainID].tx.txHash = '';
@@ -652,6 +654,8 @@ export const distSlice = createSlice({
     builder
       .addCase(txWithdrawValidatorCommission.pending, (state, action) => {
         const chainID = action.meta?.arg?.basicChainInfo.chainID;
+        if (!state.chains[chainID])
+          state.chains[chainID] = cloneDeep(initialState.defaultState);
         state.chains[chainID].txWithdrawCommission.status = TxStatus.PENDING;
         state.chains[chainID].txWithdrawCommission.errMsg = '';
       })
@@ -672,6 +676,8 @@ export const distSlice = createSlice({
         txWithdrawValidatorCommissionAndRewards.pending,
         (state, action) => {
           const chainID = action.meta?.arg?.basicChainInfo.chainID;
+          if (!state.chains[chainID])
+            state.chains[chainID] = cloneDeep(initialState.defaultState);
           state.chains[chainID].txWithdrawCommission.status = TxStatus.PENDING;
           state.chains[chainID].txWithdrawCommission.errMsg = '';
         }
@@ -697,6 +703,8 @@ export const distSlice = createSlice({
     builder
       .addCase(txSetWithdrawAddress.pending, (state, action) => {
         const chainID = action.meta?.arg?.basicChainInfo.chainID;
+        if (!state.chains[chainID])
+          state.chains[chainID] = cloneDeep(initialState.defaultState);
         state.chains[chainID].txSetWithdrawAddress.status = TxStatus.PENDING;
         state.chains[chainID].txSetWithdrawAddress.errMsg = '';
       })

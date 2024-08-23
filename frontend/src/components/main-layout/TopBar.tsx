@@ -1,17 +1,21 @@
 import Image from 'next/image';
+import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 import ProfileDialog from './ProfileDialog';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { setConnectWalletOpen } from '@/store/features/wallet/walletSlice';
 import { getConnectWalletLogo } from '@/utils/util';
 import { RESOLUTE_LOGO } from '@/constants/image-names';
+import { RootState } from '@/store/store';
 
 const TopBar = () => {
   const dispatch = useAppDispatch();
   const [profileOpen, setProfileOpen] = useState(false);
-  const walletConnected = useAppSelector((state) => state.wallet.connected);
-  const walletUserName = useAppSelector((state) => state.wallet.name);
   const [walletLogo, setWalletLogo] = useState('');
+
+  const { name: walletUserName, connected: walletConnected, isLoading: isWalletLoading } = useAppSelector(
+    (state: RootState) => state.wallet
+  );
 
   const onClose = () => {
     setProfileOpen(false);
@@ -29,10 +33,12 @@ const TopBar = () => {
     <header className="top-bar">
       <nav className="flex justify-between items-center px-4 py-2">
         <div>
-          <Image src={RESOLUTE_LOGO} width={120} height={32} alt="Resolute" />
+          <Link href="/" passHref>
+            <Image src={RESOLUTE_LOGO} width={120} height={32} alt="Resolute" />
+          </Link>
         </div>
         <div className="flex-1 flex justify-center items-center">
-          {!walletConnected && (
+          {isWalletLoading ? null : !walletConnected && (
             <div className="flex items-center gap-6">
               <div className="secondary-text text-center">
                 Connect your wallet now to access your account on Resolute
@@ -78,7 +84,6 @@ const TopBar = () => {
               width={20}
               height={20}
               alt="discord-logo"
-              // className="w-6 h-6"
             />
           </a>
           {walletConnected && (

@@ -83,6 +83,7 @@ function StakingUnDelegations({
                         />
                       </div>
                       <div className="">
+
                         <button
                           onClick={() =>
                             cancelUnbonding(
@@ -90,12 +91,21 @@ function StakingUnDelegations({
                               get(ud, 'delegator_address'),
                               get(ud, 'validator_address'),
                               get(e, 'creation_height'),
-                              Number(get(e, 'balance'))
+                              Number(staking
+                                .getAmountObjectWithDecimal(
+                                  Number(get(e, 'balance')),
+                                  key
+                                )
+                                .amount)
                             )
                           }
+                          disabled={staking.cancelUnbdongTxLoading(key)}
                           className="primary-btn"
                         >
-                          Cancel
+                          {
+                            staking.cancelUnbdongTxLoading(key) ? 'Pending....' : 'Cancel'
+                          }
+
                         </button>
                       </div>
                     </div>

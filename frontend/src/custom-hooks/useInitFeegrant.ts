@@ -29,15 +29,18 @@ const useInitFeegrant = ({
 
       chainIDs.forEach((chainID) => {
         if (!fetchedChains.current[chainID]) {
-          const { address, baseURL, restURLs } = getChainInfo(chainID);
+          const { address, baseURL, restURLs, enableModules } =
+            getChainInfo(chainID);
           const feegrantInputs = {
             baseURLs: restURLs,
             address,
             baseURL,
             chainID,
           };
-          dispatch(getGrantsByMe(feegrantInputs));
-          dispatch(getGrantsToMe(feegrantInputs));
+          if (enableModules.feegrant) {
+            dispatch(getGrantsByMe(feegrantInputs));
+            dispatch(getGrantsToMe(feegrantInputs));
+          }
           fetchedChains.current[chainID] = true; // Mark this chain as fetched
         }
         if (!fetchedChains.current[chainID]) {
