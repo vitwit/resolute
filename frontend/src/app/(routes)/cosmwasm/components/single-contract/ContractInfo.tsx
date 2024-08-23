@@ -66,15 +66,17 @@ const ContractInfo = ({ chainID }: { chainID: string }) => {
         </div>
       </div>
       <div className="space-y-10 pb-10">
-        <div className="tabs">
+        <div className="tabs flex gap-6">
           {tabs.map((tab) => (
-            <div key={tab} className="flex flex-col justify-center">
+            <div key={tab} className="w-full justify-between gap-10">
               <div
-                className={
-                  selectedTab.toLowerCase() === tab.toLowerCase()
-                    ? 'menu-item font-semibold'
-                    : 'menu-item font-normal'
-                }
+                className={`selected-filters
+                  ${selectedTab.toLowerCase() === tab.toLowerCase()
+                    ? // ? 'menu-item font-semibold'
+                      // : 'menu-item font-normal'
+                      'bg-[#ffffff14] border-transparent'
+                    : 'border-[#ffffff26]'}
+                `}
                 onClick={() => {
                   setSelectedTab(tab);
                 }}
@@ -84,8 +86,10 @@ const ContractInfo = ({ chainID }: { chainID: string }) => {
               <div
                 className={
                   selectedTab.toLowerCase() === tab.toLowerCase()
-                    ? 'rounded-full h-[3px] primary-gradient'
-                    : 'rounded-full h-[3px] bg-transparent'
+                    ? // ? 'rounded-full h-[3px] primary-gradient'
+                      // : 'rounded-full h-[3px] bg-transparent'
+                      'bg-[#ffffff14] border-transparent'
+                    : 'border-[#ffffff26]'
                 }
               ></div>
             </div>
@@ -127,7 +131,7 @@ const ContractInfoAttribute = ({
     <>
       {value ? (
         <div className="space-y-2 bg-[#FFFFFF0D] rounded-lg p-4 justify-center items-center text-center">
-          <div className='text-b1-light'>{name}</div>
+          <div className="text-b1-light">{name}</div>
           <div className="text-h2 !font-bold truncate">{value}</div>
         </div>
       ) : null}

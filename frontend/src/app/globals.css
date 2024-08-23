@@ -232,3 +232,7 @@ input[type='checkbox'] {
 .custom-radio-button-checked {
   @apply h-[6px] w-[6px] bg-white rounded-full;
 }
+.selected-filters {
+  @apply flex justify-center items-center gap-4 px-4 py-[10.5px] rounded-lg border-[0.25px]  hover:bg-[#ffffff14] hover:border-transparent;
+}
+
