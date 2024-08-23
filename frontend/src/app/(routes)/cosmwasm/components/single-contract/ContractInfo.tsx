@@ -1,8 +1,6 @@
 import { useAppSelector } from '@/custom-hooks/StateHooks';
 import React, { useState } from 'react';
-// import QueryContract from './QueryContract';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
-// import ExecuteContract from './ExecuteContract';
 import Image from 'next/image';
 import QueryContract from './QueryContract';
 import ExecuteContract from './ExecuteContract';
@@ -27,7 +25,7 @@ const ContractInfo = ({ chainID }: { chainID: string }) => {
   } = getChainInfo(chainID);
 
   return (
-    <div className="space-y-12">
+    <div className="space-y-10">
       <div className="space-y-6">
         <div className="pb-4 border-b-[1px] border-[#ffffff1e] font-bold text-[18px]">
           {selectedContractInfo?.label || selectedContractAddress}
@@ -38,14 +36,14 @@ const ContractInfo = ({ chainID }: { chainID: string }) => {
             <Image
               onClick={() => setInfoOpen((prev) => !prev)}
               className="cursor-pointer"
-              src={'/expand-icon.svg'}
+              src={infoOpen ? '/expand-close.svg' : '/expand-open.svg'}
               height={24}
               width={24}
               alt="Expand"
             />
           </div>
           {infoOpen ? (
-            <div className="flex gap-10 flex-wrap">
+            <div className="gap-10 grid grid-cols-4 justify-between">
               <ContractInfoAttribute name="Network" value={chainID} />
               <ContractInfoAttribute
                 name="From Code"
@@ -93,7 +91,7 @@ const ContractInfo = ({ chainID }: { chainID: string }) => {
             </div>
           ))}
         </div>
-        <div>
+        <div className="">
           {selectedTab === 'Query Contract' ? (
             <QueryContract
               address={selectedContractAddress}
@@ -128,9 +126,9 @@ const ContractInfoAttribute = ({
   return (
     <>
       {value ? (
-        <div className="space-y-2 text-[14px]">
-          <div>{name}</div>
-          <div className="bg-[#FFFFFF0D] rounded-lg px-4 py-2">{value}</div>
+        <div className="space-y-2 bg-[#FFFFFF0D] rounded-lg p-4 justify-center items-center text-center">
+          <div className='text-b1-light'>{name}</div>
+          <div className="text-h2 !font-bold truncate">{value}</div>
         </div>
       ) : null}
     </>

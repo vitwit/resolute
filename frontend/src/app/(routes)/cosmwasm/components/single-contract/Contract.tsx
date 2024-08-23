@@ -60,26 +60,26 @@ const Contract = ({ chainID }: { chainID: string }) => {
   return (
     <div className="h-full flex flex-col gap-10">
       <div>
+        <div className={`text-b1-light justify-end flex mb-2`}>
+          Don&apos;t have a contract? then deploy it
+          <span
+            onClick={() => {
+              setSelectedContract({
+                address: '',
+                name: '',
+              });
+            }}
+            className="!font-bold text-b1 underline underline-offset-[3px] cursor-pointer ml-1"
+          >
+            here
+          </span>
+        </div>
         <div className="space-y-6">
           <SearchContract
             chainID={chainID}
             selectedContract={selectedContract}
             handleSelectContract={handleSelectContract}
           />
-          <div className={`text-[18px]`}>
-            Don&apos;t have a contract? then deploy it{' '}
-            <span
-              onClick={() => {
-                setSelectedContract({
-                  address: '',
-                  name: '',
-                });
-              }}
-              className="font-bold underline underline-offset-[3px] cursor-pointer"
-            >
-              here
-            </span>{' '}
-          </div>
         </div>
       </div>
       {contractLoading ? (
