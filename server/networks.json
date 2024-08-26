@@ -6,7 +6,8 @@
     "rpcURI": "",
     "restURIs": [
       "https://apis.mintscan.io/cosmos/lcd"
-    ]
+    ],
+    "sourceEnd": "mintscan" 
   },
   {
     "chainId": "akashnet-2",
@@ -15,7 +16,8 @@
     "rpcURI": "",
     "restURIs": [
       "https://apis.mintscan.io/akash/lcd"
-    ]
+    ],
+    "sourceEnd": "mintscan" 
   },
   {
     "chainId": "archway-1",
@@ -24,7 +26,8 @@
     "rpcURI": "",
     "restURIs": [
       "https://apis.mintscan.io/archway/lcd"
-    ]
+    ],
+    "sourceEnd": "mintscan" 
   },
   {
     "chainId": "axelar",
@@ -33,7 +36,8 @@
     "rpcURI": "",
     "restURIs": [
       "https://apis.mintscan.io/axelar/lcd"
-    ]
+    ],
+    "sourceEnd": "mintscan" 
   },
   {
     "chainId": "celestia",
@@ -42,7 +46,8 @@
     "rpcURI": "",
     "restURIs": [
       "https://apis.mintscan.io/celestia/lcd"
-    ]
+    ],
+    "sourceEnd": "mintscan" 
   },
   {
     "chainId": "dydx-mainnet-1",
@@ -51,7 +56,8 @@
     "rpcURI": "",
     "restURIs": [
       "https://apis.mintscan.io/dydx/lcd"
-    ]
+    ],
+    "sourceEnd": "mintscan" 
   },
   {
     "chainId": "osmosis-1",
@@ -60,7 +66,8 @@
     "rpcURI": "",
     "restURIs": [
       "https://apis.mintscan.io/osmosis/lcd"
-    ]
+    ],
+    "sourceEnd": "mintscan" 
   },
   {
     "chainId": "passage-2",
@@ -72,7 +79,8 @@
       "https://rest-passage.ecostake.com",
       "https://passage-api.polkachu.com",
       "https://api-passage-ia.cosmosia.notional.ventures"
-    ]
+    ],
+    "sourceEnd": "" 
   },
   {
     "chainId": "dymension_1100-1",
@@ -84,7 +92,8 @@
       "https://dymension.api.kjnodes.com",
       "https://api.dymension.nodestake.org",
       "https://dymension-api.lavenderfive.com:443"
-    ]
+    ],
+    "sourceEnd": "" 
   },
   {
     "chainId": "umee-1",
@@ -96,7 +105,8 @@
       "https://api-umee-ia.cosmosia.notional.ventures",
       "https://umee-api.polkachu.com",
       "https://api.resolute.vitwit.com/umee_api"
-    ]
+    ],
+    "sourceEnd": "" 
   },
   {
     "chainId": "quasar-1",
@@ -107,7 +117,8 @@
       "https://quasar-rest.publicnode.com",
       "https://quasar-api.polkachu.com",
       "https://quasar-mainnet-lcd.autostake.com:443"
-    ]
+    ],
+    "sourceEnd": "" 
   },
   {
     "chainId": "comdex-1",
@@ -118,7 +129,8 @@
       "https://rest.comdex.one",
       "https://comdex-api.polkachu.com",
       "https://comdex-rest.publicnode.com"
-    ]
+    ],
+    "sourceEnd": "" 
   },
   {
     "chainId": "gravity-bridge-3",
@@ -129,7 +141,8 @@
       "https://gravitybridge-api.lavenderfive.com",
       "https://gravity-api.polkachu.com",
       "https://api-gravitybridge-ia.cosmosia.notional.ventures"
-    ]
+    ],
+    "sourceEnd": "" 
   },
   {
     "chainId": "mars-1",
@@ -139,7 +152,8 @@
     "restURIs": [
       "https://mars-api.lavenderfive.com:443",
       "https://rest.marsprotocol.io:443"
-    ]
+    ],
+    "sourceEnd": "" 
   },
   {
     "chainId": "archway-1",
@@ -150,7 +164,8 @@
       "https://api.mainnet.archway.io",
       "https://archway-api.lavenderfive.com:443",
       "https://api.archway.nodestake.top"
-    ]
+    ],
+    "sourceEnd": "" 
   },
   {
     "chainId": "crescent-1",
@@ -161,7 +176,8 @@
       "https://mainnet.crescent.network:1317",
       "https://crescent-api.polkachu.com",
       "https://crescent-mainnet-lcd.autostake.com:443"
-    ]
+    ],
+    "sourceEnd": "" 
   },
   {
     "chainId": "agoric-3",
@@ -172,7 +188,8 @@
       "https://agoric-api.polkachu.com",
       "https://api-agoric-ia.cosmosia.notional.ventures",
       "https://agoric-rpc.stakeandrelax.net"
-    ]
+    ],
+    "sourceEnd": "" 
   },
   {
     "chainId": "desmos-mainnet",
@@ -183,7 +200,8 @@
       "https://api.mainnet.desmos.network",
       "https://desmos-api.lavenderfive.com",
       "https://api.resolute.vitwit.com/desmos_api"
-    ]
+    ],
+    "sourceEnd": "" 
   },
   {
     "chainId": "evmos_9001-2",
@@ -194,7 +212,8 @@
       "https://evmos-api.polkachu.com",
       "https://api.evmos.silentvalidator.com",
       "https://rest.evmos.tcnetwork.io"
-    ]
+    ],
+    "sourceEnd": "" 
   },
   {
     "chainId": "juno-1",
@@ -205,7 +224,8 @@
       "https://juno-api.polkachu.com",
       "https://juno-rest.kingnodes.com",
       "https://api-juno-01.stakeflow.io"
-    ]
+    ],
+    "sourceEnd": "" 
   },
   {
     "chainId": "omniflixhub-1",
@@ -217,7 +237,8 @@
       "https://omniflix-rest.publicnode.com",
       "https://omniflixhub-api.lavenderfive.com",
       "https://api.resolute.vitwit.com/omniflix_api"
-    ]
+    ],
+    "sourceEnd": "" 
   },
   {
     "chainId": "quicksilver-2",
@@ -228,7 +249,8 @@
       "https://quicksilver-rest.staketab.org",
       "https://quicksilver-api.lavenderfive.com:443",
       "https://quicksilver-rest.publicnode.com"
-    ]
+    ],
+    "sourceEnd": "" 
   },
   {
     "chainId": "regen-1",
@@ -239,7 +261,8 @@
       "https://regen-mainnet-lcd.autostake.com:443",
       "https://api-regen-ia.cosmosia.notional.ventures",
       "https://regen-rest.publicnode.com"
-    ]
+    ],
+    "sourceEnd": "" 
   },
   {
     "chainId": "stargaze-1",
@@ -250,7 +273,8 @@
       "https://stargaze-api.polkachu.com",
       "https://stargaze-rest.publicnode.com",
       "https://api-stargaze-ia.cosmosia.notional.ventures"
-    ]
+    ],
+    "sourceEnd": "" 
   },
   {
     "chainId": "stargaze-1",
@@ -261,6 +285,7 @@
       "https://stargaze-api.polkachu.com",
       "https://stargaze-rest.publicnode.com",
       "https://api-stargaze-ia.cosmosia.notional.ventures"
-    ]
+    ],
+    "sourceEnd": "" 
   }
 ]

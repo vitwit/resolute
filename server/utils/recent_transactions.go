@@ -13,7 +13,7 @@ import (
 // 	RestURIs []string `json:"restURIs"`
 // }
 
-func GetChainAPIs(chainId string) ([]string, error) {
+func GetChainAPIs(chainId string) (*config.ChainConfig, error) {
 
 	data := config.GetChainAPIs()
 	// wd, _ := os.Getwd()
@@ -40,11 +40,13 @@ func GetChainAPIs(chainId string) ([]string, error) {
 		}
 	}
 
+	fmt.Println("result============================", result.SourceEnd, result.ChainId)
+
 	if result == nil {
 		return nil, errors.New("chain id not found")
 	}
 
-	return result.RestURIs, nil
+	return result, nil
 }
 
 func CreateRequestURI(api string, module string, address string) string {

@@ -122,16 +122,31 @@ func getTransactions(chainId string, address string, limit string, offset string
 	if err != nil {
 		log.Fatal(err)
 	}
-	bearerToken := config.NUMIA_BEARER_TOKEN.Token
-	var authorization = "Bearer " + bearerToken
-	networkURIs, err := utils.GetChainAPIs(chainId)
+
+	chainConfig, err := utils.GetChainAPIs(chainId)
+	var networkURIs = chainConfig.RestURIs
+
 	if err == nil {
 		requestURI := utils.CreateAllTxnsRequestURI(networkURIs[0], address, limit, offset)
+		fmt.Println("creq request URI", requestURI)
 		req, _ := http.NewRequest("GET", requestURI, nil)
 		if err != nil {
 			return nil, err
 		}
-		req.Header.Add("Authorization", authorization)
+
+		if chainConfig.SourceEnd == "mintscan" {
+
+			authorizationToken := fmt.Sprintf("Bearer %s", config.MINTSCAN_TOKEN.Token)
+			req.Header.Add("Authorization", authorizationToken) // Change this to your actual token
+		}
+
+		if chainConfig.SourceEnd == "numia" {
+			bearerToken := config.NUMIA_BEARER_TOKEN.Token
+			var authorization = "Bearer " + bearerToken
+
+			req.Header.Add("Authorization", authorization)
+		}
+
 		client := &http.Client{}
 		resp, err := client.Do(req)
 		if err != nil {
@@ -158,13 +173,29 @@ func getNetworkRecentTransactions(chainId string, module string, address string)
 	if err != nil {
 		log.Fatal(err)
 	}
-	bearerToken := config.NUMIA_BEARER_TOKEN.Token
-	var authorization = "Bearer " + bearerToken
-	networkURIs, err := utils.GetChainAPIs(chainId)
+
+	chainConfig, err := utils.GetChainAPIs(chainId)
+	var networkURIs = chainConfig.RestURIs
+
+	fmt.Println("===============================================")
+
 	if err == nil {
 		requestURI := utils.CreateRequestURI(networkURIs[0], module, address)
 		req, _ := http.NewRequest("GET", requestURI, nil)
-		req.Header.Add("Authorization", authorization)
+
+		if chainConfig.SourceEnd == "mintscan" {
+			fmt.Println("ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd")
+			fmt.Println(config.MINTSCAN_TOKEN)
+			authorizationToken := fmt.Sprintf("Bearer %s", config.MINTSCAN_TOKEN.Token)
+			req.Header.Add("Authorization", authorizationToken) // Change this to your actual token
+		}
+
+		if chainConfig.SourceEnd == "numia" {
+			bearerToken := config.NUMIA_BEARER_TOKEN.Token
+			var authorization = "Bearer " + bearerToken
+			req.Header.Add("Authorization", authorization)
+		}
+
 		client := &http.Client{}
 		resp, _ := client.Do(req)
 		defer resp.Body.Close()

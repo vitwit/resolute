@@ -48,6 +48,14 @@ export const SIDEBAR_MENU_OPTIONS: MenuItemI[] = [
     isMetaMaskSupported: false,
     multipleOptions: false,
   },
+  {
+    name: 'Transactions',
+    icon: '/sidebar-menu-icons/txn-history-icon.svg',
+    path: '/transactions',
+    authzSupported: false,
+    isMetaMaskSupported: false,
+    multipleOptions: true,
+  },
   // {
   //   name: 'Smart Contracts',
   //   icon: '/sidebar-menu-icons/smart-contracts-icon.svg',
