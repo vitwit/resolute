@@ -176,6 +176,17 @@ const MoreOptions = ({
                 Codes
               </div>
             </div>
+            <div className="flex gap-2 items-center pl-3">
+              <div className="w-5"></div>
+              <div
+                onClick={() => {
+                  changeContractsPath('deploy');
+                }}
+                className="cursor-pointer hover:font-semibold"
+              >
+                Deploy
+              </div>
+            </div>
           </div>
         </div>
       ) : null}
