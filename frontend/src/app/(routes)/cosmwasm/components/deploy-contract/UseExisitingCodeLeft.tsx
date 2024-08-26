@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import AttachFunds from '../single-contract/AttachFunds';
 import { SelectChangeEvent, TextField } from '@mui/material';
@@ -26,14 +26,6 @@ const UseExistingCodeLeft = (props: UseExistingCodeID) => {
   const [fundsInput, setFundsInput] = useState('');
   const handleAttachFundTypeChange = (event: SelectChangeEvent<string>) => {
     setAttachFundType(event.target.value);
-  };
-
-  const textFieldStyles = {
-    input: {
-      color: 'white',
-      fontSize: '14px',
-      padding: '8px',
-    },
   };
 
   return (
