@@ -4,7 +4,7 @@ const DeployContractTabs = () => {
   const tabs = ['Use Existing code ID', 'Upload  WASM file'];
   const [selectedTab, setSelectedTab] = useState('Use Existing code ID');
   return (
-    <div className="space-y-10 pb-10">
+    <div className="space-y-10">
       <div className="tabs flex gap-6">
         {tabs.map((tab) => (
           <div key={tab} className="w-full justify-between gap-10">
