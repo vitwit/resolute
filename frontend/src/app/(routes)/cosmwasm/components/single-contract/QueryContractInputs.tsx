@@ -3,6 +3,8 @@ import React, { useEffect, useState } from 'react';
 import { TxStatus } from '@/types/enums';
 import { queryInputStyles } from '../../styles';
 import MessageInputFields from './MessageInputFields';
+import { TOGGLE_OFF, TOGGLE_ON } from '@/constants/image-names';
+import Image from 'next/image';
 
 const QueryContractInputs = (props: QueryContractInputsI) => {
   const {
@@ -84,8 +86,8 @@ const QueryContractInputs = (props: QueryContractInputsI) => {
   return (
     <div className="query-input-wrapper">
       <div className="space-y-4">
-        <div className="font-light">
-          Queries:
+        <div className="text-b1-light">
+          Query Messages
           {messagesLoading ? (
             <span className="italic ">
               Fetching messages<span className="dots-flashing"></span>{' '}
@@ -99,7 +101,7 @@ const QueryContractInputs = (props: QueryContractInputsI) => {
             <div
               onClick={() => handleSelectMessage(msg)}
               key={msg}
-              className={`query-shortcut-msg ${selectedMessage === msg ? 'primary-gradient' : ''}`}
+              className={`selected-msgs ${selectedMessage === msg ? 'bg-[#ffffff14] border-transparent' : 'border-[#ffffff26]'}`}
             >
               {msg}
             </div>
@@ -137,14 +139,23 @@ const QueryContractInputs = (props: QueryContractInputsI) => {
             ? 'Enter query in JSON format:'
             : messageInputFields.length
               ? 'Enter field value to query:'
-              : 'Query:'}
+              : ''}
         </div>
         <div className="change-input-type-btn-wrapper">
           <button
-            className="change-input-type-btn w-[104px]"
+            className="change-input-type-btn w-[114px] flex items-center gap-2"
             onClick={() => setIsJSONInput((prev) => !prev)}
           >
-            {isJSONInput ? 'Enter Fields' : 'JSON Format'}
+            <span className="">
+              {isJSONInput ? 'Enter Fields' : 'JSON Format'}
+            </span>
+            <span>
+              {isJSONInput ? (
+                <Image src={TOGGLE_ON} width={20} height={14} alt="json-on" />
+              ) : (
+                <Image src={TOGGLE_OFF} width={20} height={14} alt="json-off" />
+              )}
+            </span>
           </button>
         </div>
       </div>
@@ -185,7 +196,7 @@ const QueryContractInputs = (props: QueryContractInputsI) => {
             onClick={formatJSON}
             className="format-json-btn"
           >
-            Format JSON
+            Format JSONssssn
           </button>
         </div>
       ) : messageInputsLoading ? (

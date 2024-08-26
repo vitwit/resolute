@@ -5,9 +5,9 @@ import { setContract } from '@/store/features/cosmwasm/cosmwasmSlice';
 import useContracts from '@/custom-hooks/useContracts';
 import { useRouter } from 'next/navigation';
 import { shortenName } from '@/utils/util';
-import CommonCopy from '@/components/CommonCopy';
 import SearchInputField from './SearchInputField';
 import CustomDialog from '@/components/common/CustomDialog';
+import Copy from '@/components/common/Copy';
 
 interface DialogSearchContractI {
   open: boolean;
@@ -73,17 +73,16 @@ const DialogSearchContract = (props: DialogSearchContractI) => {
     >
       <div className="w-[890px] text-white pb-16">
         <div className="search-contract">
-          <form
-            onSubmit={(e) => onSearchContract(e)}
-            className="w-full flex justify-between gap-4"
-          >
-            <SearchInputField
-              searchTerm={searchTerm}
-              setSearchTerm={(value: string) => setSearchTerm(value)}
-            />
-            <button type="submit" className="primary-gradient search-btn">
-              Search
-            </button>
+          <form onSubmit={(e) => onSearchContract(e)}>
+            <div className="flex items-center w-full gap-6">
+              <SearchInputField
+                searchTerm={searchTerm}
+                setSearchTerm={(value: string) => setSearchTerm(value)}
+              />
+              <button type="submit" className="primary-btn">
+                Search
+              </button>
+            </div>
           </form>
           <div className="w-full space-y-6 h-10">
             {contractLoading ? (
@@ -96,20 +95,30 @@ const DialogSearchContract = (props: DialogSearchContractI) => {
             ) : (
               <>
                 {searchResult ? (
-                  <div className="space-y-2">
-                    <div className="font-semibold">Search Result:</div>
+                  <div className="pt-6">
+                    <div className="text-b1-light">Search Result</div>
+                    <div className="divider-line"></div>
                     <div
                       onClick={() => onSelectContract()}
                       className="contract-item"
                     >
-                      <div className="w-[20%] truncate font-semibold">
-                        {shortenName(searchResult?.contract_info?.label, 20)}
+                      <div className="flex justify-between gap-10 pt-4">
+                        <div className="w-[20%] truncate text-b1">
+                          {shortenName(searchResult?.contract_info?.label, 20)}
+                        </div>
+                        {/* <CommonCopy
+                          message={searchResult?.address}
+                          style="!bg-transparent"
+                          plainIcon={true}
+                        /> */}
+                        <div className="flex items-center">
+                          <span className="w-[90%] truncate text-b1">
+                            {searchResult?.address}{' '}
+                          </span>
+                          <Copy content={searchResult?.address} />
+                        </div>
+                        <div className="primary-btn">Select</div>
                       </div>
-                      <CommonCopy
-                        message={searchResult?.address}
-                        style="!bg-transparent"
-                        plainIcon={true}
-                      />
                     </div>
                   </div>
                 ) : (

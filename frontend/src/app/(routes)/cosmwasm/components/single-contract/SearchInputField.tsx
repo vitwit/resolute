@@ -1,3 +1,4 @@
+import { SEARCH_ICON } from '@/constants/image-names';
 import Image from 'next/image';
 import React from 'react';
 
@@ -12,7 +13,7 @@ const SearchInputField = ({
     <div className="search-contract-field">
       <div>
         <Image
-          src="/search-icon.svg"
+          src={SEARCH_ICON}
           width={24}
           height={24}
           alt="Search"
