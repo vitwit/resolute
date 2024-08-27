@@ -7,7 +7,7 @@ import { ADD_ICON } from '@/constants/image-names';
 
 const UploadWasmRight = () => {
   const [attachPermissionType, setAttachPermissionType] = useState('everyone');
-  const handleattachPermissionTypeChange = (
+  const handleAttachPermissionTypeChange = (
     event: SelectChangeEvent<string>
   ) => {
     setAttachPermissionType(event.target.value);
@@ -27,7 +27,7 @@ const UploadWasmRight = () => {
             onChange={(evt) => {
               // console.log('event is triggered', evt.target.value);
 
-              handleattachPermissionTypeChange(evt);
+              handleAttachPermissionTypeChange(evt);
             }}
             sx={assetsDropDownStyle}
           >
