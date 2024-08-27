@@ -2,7 +2,6 @@ import PageHeader from '@/components/common/PageHeader';
 import { DEPLOY_CONTRACT_DESCRIPTION } from '@/utils/constants';
 import React from 'react';
 import DeployContractTabs from './DeployContractTabs';
-import UseExistingCode from './UseExistingCode';
 
 const DeployContract = () => {
   return (
