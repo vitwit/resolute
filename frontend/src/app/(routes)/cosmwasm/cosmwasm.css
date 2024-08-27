@@ -14,3 +14,25 @@
   @apply rounded-3xl px-6 py-[10.5px] flex items-center cursor-pointer h-[50vh];
   border: 0.25px dashed #ffffff20;
 }
+
+.query-input,
+.execute-input {
+  @apply relative flex-1 border-[1px] rounded-2xl border-[#ffffff1e] hover:border-[#ffffff50];
+}
+
+.query-btn,
+.execute-btn {
+  @apply absolute bottom-6 right-6 min-w-[85px];
+}
+
+.format-json-btn {
+  @apply h-8 border-[1px] border-[#FFFFFF33] rounded-full p-2 text-[12px] font-extralight top-4 right-4 absolute hover:border-[#ffffff50];
+}
+
+.query-output-box {
+  @apply text-[14px] border-[1px] border-[#FFFFFF26] p-6 rounded-2xl min-h-[380px] flex flex-col gap-4;
+}
+
+.provide-funds-input {
+  @apply border-[1px] border-[#ffffff1e] hover:border-[#ffffff50] rounded-2xl relative;
+}

@@ -5,7 +5,7 @@ import React from 'react';
 interface ToggleSwitchProps {
   checked: boolean;
   onChange: (checked: boolean) => void;
-  text: string;
+  text?: string;
   width?: number;
   height?: number;
 }
@@ -25,7 +25,7 @@ const ToggleSwitch = (props: ToggleSwitchProps) => {
         height={height}
         alt=""
       />
-      <div className="text-[14px] font-extralight">{text}</div>
+      {text ? <div className="text-[14px] font-extralight">{text}</div> : null}
     </button>
   );
 };

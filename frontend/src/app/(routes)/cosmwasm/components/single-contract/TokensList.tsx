@@ -1,6 +1,6 @@
 import { MenuItem, Select, SelectChangeEvent } from '@mui/material';
 import React from 'react';
-import { assetsDropDownStyle } from '../../styles';
+import { customSelectStyles } from '@/utils/commonStyles';
 
 interface TokensListI {
   assetsList: AssetInfo[];
@@ -30,13 +30,24 @@ const TokensList = (props: TokensListI) => {
   return (
     <div className="w-[25%]">
       <Select
-        className="bg-[#FFFFFF0D]"
+        className="bg-transparent border-[1px] border-[#ffffff14]"
         value={denom}
         label="Select Asset"
         onChange={handleSelectAsset}
-        sx={assetsDropDownStyle}
+        sx={customSelectStyles}
         placeholder="Select Asset"
         fullWidth
+        MenuProps={{
+          PaperProps: {
+            sx: {
+              backgroundColor: '#FFFFFF14',
+              backdropFilter: 'blur(15px)',
+              color: '#fffffff0',
+              borderRadius: '16px',
+              marginTop: '8px',
+            },
+          },
+        }}
       >
         {assetsList.map((asset) => (
           <MenuItem key={asset.coinMinimalDenom} value={asset.coinMinimalDenom}>
