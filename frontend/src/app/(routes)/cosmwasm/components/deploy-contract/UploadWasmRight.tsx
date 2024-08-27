@@ -17,7 +17,7 @@ const UploadWasmRight = () => {
     <div className="w-[50%] space-y-6">
       <div className="space-y-1">
         <div className="text-b1-light">Select Instantiate Permission</div>
-        <div className="flex flex-col gap-4 text-b1">
+        <div className="flex flex-col gap-4">
           <Select
             labelId="tx-type"
             className="bg-[#FFFFFF0D] w-full"
@@ -63,7 +63,7 @@ const UploadWasmRight = () => {
               }}
             />
           </div>
-          <div className="flex gap-1 items-center justify-center">
+          <div className="flex gap-1 items-center justify-center cursor-pointer">
             <Image src={ADD_ICON} width={16} height={16} alt="Add-icon" />
             <p className="text-b1">Add More</p>
           </div>

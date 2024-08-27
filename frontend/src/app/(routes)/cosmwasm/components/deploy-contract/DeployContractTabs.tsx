@@ -9,7 +9,7 @@ const DeployContractTabs = () => {
     <div className="space-y-10">
       <div className="tabs flex gap-6">
         {tabs.map((tab) => (
-          <div key={tab} className="w-full justify-between gap-10">
+          <div key={tab} className="w-full justify-between gap-10 text-b1">
             <div
               className={`selected-filters
                   ${
