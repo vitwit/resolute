@@ -10,7 +10,7 @@
 .search-contract-field {
   @apply py-4 px-6 bg-[#FFFFFF05] rounded-full flex w-full;
 }
-.upload-box {
+.upload-box-cosmwasm {
   @apply rounded-3xl px-6 py-[10.5px] flex items-center cursor-pointer h-[50vh];
   border: 0.25px dashed #ffffff20;
 }
