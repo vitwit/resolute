@@ -67,6 +67,29 @@ export const multiSelectDropDownStyle = {
   borderRadius: '16px',
   '& .MuiFormControl-root label': {
     display: 'none !important',
-    color: 'red'
+    color: 'red',
   },
+};
+
+export const customSelectStyles = {
+  '& .MuiOutlinedInput-input': {
+    color: '#fffffff0',
+  },
+  '& .MuiOutlinedInput-root': {
+    padding: '0px !important',
+    border: 'none',
+  },
+  '& .MuiSvgIcon-root': {
+    color: '#ffffff80',
+  },
+  '& .MuiOutlinedInput-notchedOutline': {
+    border: 'none !important',
+  },
+  '& .MuiTypography-body1': {
+    color: 'white',
+    fontSize: '12px',
+    fontWeight: 200,
+  },
+  borderRadius: '100px',
+  height: '40px'
 };

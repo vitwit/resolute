@@ -13,7 +13,7 @@ const ContractInfo = ({ chainID }: { chainID: string }) => {
     (state) => state.cosmwasm.chains?.[chainID]?.contractInfo
   );
   const tabs = ['Execute Contract', 'Query Contract'];
-  const [selectedTab, setSelectedTab] = useState('Execute Contract');
+  const [selectedTab, setSelectedTab] = useState(tabs[0]);
   const [infoOpen, setInfoOpen] = useState(false);
 
   const { getChainInfo } = useGetChainInfo();
@@ -25,14 +25,11 @@ const ContractInfo = ({ chainID }: { chainID: string }) => {
   } = getChainInfo(chainID);
 
   return (
-    <div className="space-y-10">
+    <div className="space-y-6">
       <div className="space-y-6">
-        <div className="pb-4 border-b-[1px] border-[#ffffff1e] font-bold text-[18px]">
-          {selectedContractInfo?.label || selectedContractAddress}
-        </div>
-        <div className="bg-[#ffffff0D] rounded-2xl p-6 space-y-6">
+        <div className="bg-[#FFFFFF05] rounded-2xl p-6 space-y-6">
           <div className="flex justify-between items-center">
-            <div className="text-[14px]">Contract Info</div>
+            <div className="text-[14px]">Contract Details</div>
             <Image
               onClick={() => setInfoOpen((prev) => !prev)}
               className="cursor-pointer"
@@ -43,7 +40,7 @@ const ContractInfo = ({ chainID }: { chainID: string }) => {
             />
           </div>
           {infoOpen ? (
-            <div className="gap-10 grid grid-cols-4 justify-between">
+            <div className="gap-10 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 justify-between">
               <ContractInfoAttribute name="Network" value={chainID} />
               <ContractInfoAttribute
                 name="From Code"
@@ -65,17 +62,17 @@ const ContractInfo = ({ chainID }: { chainID: string }) => {
           ) : null}
         </div>
       </div>
-      <div className="space-y-10 pb-10">
+      <div className="space-y-6">
         <div className="tabs flex gap-6">
           {tabs.map((tab) => (
-            <div key={tab} className="w-full justify-between gap-10">
+            <button key={tab} className="w-full justify-between gap-10">
               <div
                 className={`selected-filters
-                  ${selectedTab.toLowerCase() === tab.toLowerCase()
-                    ? // ? 'menu-item font-semibold'
-                      // : 'menu-item font-normal'
-                      'bg-[#ffffff14] border-transparent'
-                    : 'border-[#ffffff26]'}
+                  ${
+                    selectedTab.toLowerCase() === tab.toLowerCase()
+                      ? 'bg-[#FFFFFF14] border-transparent'
+                      : 'border-[#ffffff26]'
+                  }
                 `}
                 onClick={() => {
                   setSelectedTab(tab);
@@ -83,16 +80,7 @@ const ContractInfo = ({ chainID }: { chainID: string }) => {
               >
                 {tab}
               </div>
-              <div
-                className={
-                  selectedTab.toLowerCase() === tab.toLowerCase()
-                    ? // ? 'rounded-full h-[3px] primary-gradient'
-                      // : 'rounded-full h-[3px] bg-transparent'
-                      'bg-[#ffffff14] border-transparent'
-                    : 'border-[#ffffff26]'
-                }
-              ></div>
-            </div>
+            </button>
           ))}
         </div>
         <div className="">

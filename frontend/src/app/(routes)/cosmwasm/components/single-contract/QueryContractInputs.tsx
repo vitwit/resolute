@@ -3,8 +3,8 @@ import React, { useEffect, useState } from 'react';
 import { TxStatus } from '@/types/enums';
 import { queryInputStyles } from '../../styles';
 import MessageInputFields from './MessageInputFields';
-import { TOGGLE_OFF, TOGGLE_ON } from '@/constants/image-names';
-import Image from 'next/image';
+import ToggleSwitch from '@/components/common/ToggleSwitch';
+import CustomButton from '@/components/common/CustomButton';
 
 const QueryContractInputs = (props: QueryContractInputsI) => {
   const {
@@ -37,7 +37,7 @@ const QueryContractInputs = (props: QueryContractInputsI) => {
   // -----------------CHANGE HANDLERS----------------//
   // ------------------------------------------------//
   const handleInputMessageChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     index: number
   ) => {
     const input = e.target.value;
@@ -84,10 +84,10 @@ const QueryContractInputs = (props: QueryContractInputsI) => {
   }, [contractAddress]);
 
   return (
-    <div className="query-input-wrapper">
+    <div className="space-y-6">
       <div className="space-y-4">
         <div className="text-b1-light">
-          Query Messages
+          Query Messages:
           {messagesLoading ? (
             <span className="italic ">
               Fetching messages<span className="dots-flashing"></span>{' '}
@@ -116,7 +116,7 @@ const QueryContractInputs = (props: QueryContractInputsI) => {
         </div>
       ) : isJSONInput && contractMessageInputs?.length ? (
         <div className="space-y-4">
-          <div className="font-light">
+          <div className="text-b1-light">
             Suggested Inputs for{' '}
             <span className="font-bold">{selectedMessage}</span>:
           </div>
@@ -125,7 +125,7 @@ const QueryContractInputs = (props: QueryContractInputsI) => {
               <div
                 onClick={() => handleSelectedMessageInputChange(msg)}
                 key={msg}
-                className="query-shortcut-msg"
+                className="selected-msgs border-[#ffffff26]"
               >
                 {msg}
               </div>
@@ -133,30 +133,22 @@ const QueryContractInputs = (props: QueryContractInputsI) => {
           </div>
         </div>
       ) : null}
-      <div className="flex justify-between items-center font-extralight">
-        <div>
+      <div className="flex justify-between items-center">
+        <div className="text-b1-light">
           {isJSONInput
             ? 'Enter query in JSON format:'
             : messageInputFields.length
               ? 'Enter field value to query:'
               : ''}
         </div>
-        <div className="change-input-type-btn-wrapper">
-          <button
-            className="change-input-type-btn w-[114px] flex items-center gap-2"
-            onClick={() => setIsJSONInput((prev) => !prev)}
-          >
-            <span className="">
-              {isJSONInput ? 'Enter Fields' : 'JSON Format'}
-            </span>
-            <span>
-              {isJSONInput ? (
-                <Image src={TOGGLE_ON} width={20} height={14} alt="json-on" />
-              ) : (
-                <Image src={TOGGLE_OFF} width={20} height={14} alt="json-off" />
-              )}
-            </span>
-          </button>
+        <div className="flex items-center gap-3">
+          <div className="text-[#fffffff0] font-medium text-[14px]">
+            JSON Input
+          </div>
+          <ToggleSwitch
+            checked={isJSONInput}
+            onChange={() => setIsJSONInput((prev) => !prev)}
+          />
         </div>
       </div>
       {isJSONInput ? (
@@ -183,7 +175,7 @@ const QueryContractInputs = (props: QueryContractInputsI) => {
           <button
             onClick={() => onQuery(queryText)}
             disabled={queryLoading === TxStatus.PENDING}
-            className="primary-gradient query-btn"
+            className="primary-btn query-btn"
           >
             {queryLoading === TxStatus.PENDING ? (
               <CircularProgress size={18} sx={{ color: 'white' }} />
@@ -196,7 +188,7 @@ const QueryContractInputs = (props: QueryContractInputsI) => {
             onClick={formatJSON}
             className="format-json-btn"
           >
-            Format JSONssssn
+            Format JSON
           </button>
         </div>
       ) : messageInputsLoading ? (
@@ -212,21 +204,17 @@ const QueryContractInputs = (props: QueryContractInputsI) => {
       ) : !messageInputFields.length ? (
         <div>
           {selectedMessage?.length ? (
-            <div className="bg-[#ffffff0D] rounded-2xl p-6 space-y-6">
+            <div className="bg-[#FFFFFF14] rounded-2xl p-6 space-y-6">
               <div className="flex justify-between items-center">
                 <div className="text-[14px] font-medium">{selectedMessage}</div>
               </div>
-              <button
-                type="button"
-                onClick={() => onQuery(queryText)}
-                className="primary-gradient text-[12px] font-medium py-[6px] px-6 leading-[20px] rounded-lg h-10 w-20 flex-center-center"
-              >
-                {queryLoading === TxStatus.PENDING ? (
-                  <CircularProgress size={18} sx={{ color: 'white' }} />
-                ) : (
-                  'Query'
-                )}
-              </button>
+              <CustomButton
+                btnText="Query"
+                btnLoading={queryLoading === TxStatus.PENDING}
+                btnDisabled={queryLoading === TxStatus.PENDING}
+                btnOnClick={() => onQuery(queryText)}
+                btnType="button"
+              />
             </div>
           ) : (
             <div className="flex-center-center py-6">
@@ -235,7 +223,7 @@ const QueryContractInputs = (props: QueryContractInputsI) => {
                   Couldn&apos;t fetch messages, Please switch to JSON format
                 </div>
               ) : (
-                <div className="text-center">- Select a message to query -</div>
+                <div className="text-center text-b1-light">- Select a message to query -</div>
               )}
             </div>
           )}
