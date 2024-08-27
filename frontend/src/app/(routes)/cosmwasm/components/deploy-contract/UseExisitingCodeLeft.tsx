@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
 import AttachFunds from '../single-contract/AttachFunds';
 import { SelectChangeEvent, TextField } from '@mui/material';
