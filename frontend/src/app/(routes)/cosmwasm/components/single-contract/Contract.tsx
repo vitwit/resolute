@@ -7,6 +7,7 @@ import { useAppDispatch } from '@/custom-hooks/StateHooks';
 import { CircularProgress } from '@mui/material';
 import ContractInfo from './ContractInfo';
 import SearchContract from './SearchContract';
+import Link from 'next/link';
 
 const Contract = ({ chainID }: { chainID: string }) => {
   const dispatch = useAppDispatch();
@@ -19,7 +20,7 @@ const Contract = ({ chainID }: { chainID: string }) => {
   };
 
   const { getChainInfo } = useGetChainInfo();
-  const { restURLs } = getChainInfo(chainID);
+  const { restURLs, chainName } = getChainInfo(chainID);
 
   const { getContractInfo, contractError, contractLoading } = useContracts();
 
@@ -58,21 +59,16 @@ const Contract = ({ chainID }: { chainID: string }) => {
   }, [paramsContractAddress]);
 
   return (
-    <div className="h-full flex flex-col gap-10">
+    <div className="h-full flex flex-col gap-6">
       <div>
         <div className={`text-b1-light justify-end flex mb-2`}>
           Don&apos;t have a contract? then deploy it
-          <span
-            onClick={() => {
-              setSelectedContract({
-                address: '',
-                name: '',
-              });
-            }}
+          <Link
+            href={`/cosmwasm/${chainName.toLowerCase()}?tab=deploy`}
             className="!font-bold text-b1 underline underline-offset-[3px] cursor-pointer ml-1"
           >
             here
-          </span>
+          </Link>
         </div>
         <div className="space-y-6">
           <SearchContract

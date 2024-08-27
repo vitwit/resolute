@@ -220,13 +220,8 @@ const ExecuteContract = (props: ExecuteContractI) => {
         selectedMessage={selectedMessage}
         contractAddress={address}
       />
-      <div className="execute-output-box !p-0">
-        <div className="attach-funds-header">
-          <div className="text-[18px] font-bold">Attach Funds</div>
-          <div className="attach-funds-description">
-            Provide the list of funds you would like to attach.
-          </div>
-        </div>
+      <div className="space-y-6">
+        <div className="text-[18px] text-b1-light">Attach Funds</div>
         <div className="flex-1 overflow-y-scroll">
           <AttachFunds
             handleAttachFundTypeChange={handleAttachFundTypeChange}

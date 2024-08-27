@@ -36,34 +36,32 @@ const ProvideFundsJson = (props: ProvideFundsJsonI) => {
   };
 
   return (
-    <div className="provide-funds-input-wrapper">
-      <div className="provide-funds-input">
-        <TextField
-          value={fundsInput}
-          onChange={handleFundsChange}
-          placeholder={JSON.stringify(
-            [{ amount: '100000', denom: 'uosmo' }],
-            undefined,
-            2
-          )}
-          fullWidth
-          multiline
-          rows={7}
-          InputProps={{
-            sx: {
-              input: {
-                color: 'white',
-                fontSize: '14px',
-                padding: 2,
-              },
+    <div className="provide-funds-input">
+      <TextField
+        value={fundsInput}
+        onChange={handleFundsChange}
+        placeholder={JSON.stringify(
+          [{ amount: '100000', denom: 'uosmo' }],
+          undefined,
+          2
+        )}
+        fullWidth
+        multiline
+        rows={7}
+        InputProps={{
+          sx: {
+            input: {
+              color: 'white',
+              fontSize: '14px',
+              padding: 2,
             },
-          }}
-          sx={queryInputStyles}
-        />
-        <button type="button" onClick={formatJSON} className="format-json-btn">
-          Format JSON
-        </button>
-      </div>
+          },
+        }}
+        sx={queryInputStyles}
+      />
+      <button type="button" onClick={formatJSON} className="format-json-btn">
+        Format JSON
+      </button>
     </div>
   );
 };

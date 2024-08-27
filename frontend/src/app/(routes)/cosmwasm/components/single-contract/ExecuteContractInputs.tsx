@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { TxStatus } from '@/types/enums';
 import MessageInputFields from './MessageInputFields';
 import { queryInputStyles } from '../../styles';
+import ToggleSwitch from '@/components/common/ToggleSwitch';
 
 const ExecuteContractInputs = (props: ExecuteContractInputsI) => {
   const {
@@ -35,7 +36,7 @@ const ExecuteContractInputs = (props: ExecuteContractInputsI) => {
   // -----------------CHANGE HANDLERS----------------//
   // ------------------------------------------------//
   const handleInputMessageChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     index: number
   ) => {
     const input = e.target.value;
@@ -79,8 +80,8 @@ const ExecuteContractInputs = (props: ExecuteContractInputsI) => {
   }, [contractAddress]);
 
   return (
-    <div className="query-input-wrapper">
-      <div className="space-y-4">
+    <div className="space-y-6">
+      <div className="space-y-6">
         <div className="text-b1-light">
           Execution Messages:
           {messagesLoading ? (
@@ -94,54 +95,55 @@ const ExecuteContractInputs = (props: ExecuteContractInputsI) => {
         </div>
         <div className="flex gap-4 flex-wrap">
           {executeMessages?.map((msg) => (
-            <div
+            <button
               onClick={() => handleSelectMessage(msg)}
               key={msg}
               className={`selected-msgs ${selectedMessage === msg ? 'bg-[#ffffff14] border-transparent' : 'border-[#ffffff26]'}`}
             >
               {msg}
-            </div>
+            </button>
           ))}
         </div>
       </div>
       {isJSONInput && executeMessageInputs?.length ? (
         <div className="space-y-4">
-          <div className="font-light">
+          <div className="text-b1-light">
             Suggested Inputs for{' '}
             <span className="font-bold">{selectedMessage}</span>:
           </div>
           <div className="flex gap-4 flex-wrap">
             {executeMessageInputs?.map((msg) => (
-              <div
+              <button
                 onClick={() => handleSelectedMessageInputChange(msg)}
                 key={msg}
-                className="query-shortcut-msg"
+                className="selected-msgs border-[#ffffff26]"
               >
                 {msg}
-              </div>
+              </button>
             ))}
           </div>
         </div>
       ) : null}
-      <div className="flex justify-between items-center font-extralight">
-        <div>
+      <div className="flex justify-between items-center">
+        <div className="text-b1-light">
           {isJSONInput
             ? 'Enter execution message in JSON format:'
             : messageInputFields.length
               ? 'Enter fields to execute:'
               : 'Execution Input:'}
         </div>
-        <div className="change-input-type-btn-wrapper">
-          <button
-            className="change-input-type-btn w-[104px]"
-            onClick={() => setIsJSONInput((prev) => !prev)}
-          >
-            {isJSONInput ? 'Enter Fields' : 'JSON Format'}
-          </button>
+        <div className="flex items-center gap-3">
+          <div className="text-[#fffffff0] font-medium text-[14px]">
+            JSON Input
+          </div>
+          <ToggleSwitch
+            checked={isJSONInput}
+            onChange={() => setIsJSONInput((prev) => !prev)}
+          />
         </div>
       </div>
       {isJSONInput ? (
-        <div className="query-input">
+        <div className="execute-input">
           <TextField
             value={executeInput}
             name="queryField"
@@ -164,7 +166,7 @@ const ExecuteContractInputs = (props: ExecuteContractInputsI) => {
           <button
             onClick={() => onExecute(executeInput)}
             disabled={executionLoading === TxStatus.PENDING}
-            className="primary-gradient query-btn"
+            className="primary-btn execute-btn"
           >
             {executionLoading === TxStatus.PENDING ? (
               <CircularProgress size={18} sx={{ color: 'white' }} />
@@ -216,7 +218,7 @@ const ExecuteContractInputs = (props: ExecuteContractInputsI) => {
                   Couldn&apos;t fetch messages, Please switch to JSON format
                 </div>
               ) : (
-                <div className="text-center">
+                <div className="text-center text-b1-light">
                   - Select a message to execute -
                 </div>
               )}

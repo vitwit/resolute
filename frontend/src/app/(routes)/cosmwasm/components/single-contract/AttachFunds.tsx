@@ -7,9 +7,9 @@ import {
 } from '@mui/material';
 import React from 'react';
 import useContracts from '@/custom-hooks/useContracts';
-import { assetsDropDownStyle } from '../../styles';
 import SelectFunds from './SelectFunds';
 import ProvideFundsJson from './ProvideFundsJson';
+import { customSelectStyles } from '@/utils/commonStyles';
 
 interface AttachFundsI {
   handleAttachFundTypeChange: (event: SelectChangeEvent<string>) => void;
@@ -56,12 +56,28 @@ const AttachFunds = (props: AttachFundsI) => {
         </InputLabel>
         <Select
           labelId="tx-type"
-          className="bg-[#FFFFFF0D]"
+          className="bg-transparent border-[1px] border-[#ffffff14]"
           id="tx-type"
           value={attachFundType}
           label="Select Transaction"
           onChange={handleAttachFundTypeChange}
-          sx={assetsDropDownStyle}
+          sx={{
+            ...customSelectStyles,
+            '& .MuiSelect-select': {
+              color: '#fffffff0',
+            },
+          }}
+          MenuProps={{
+            PaperProps: {
+              sx: {
+                backgroundColor: '#FFFFFF14',
+                backdropFilter: 'blur(15px)',
+                color: '#fffffff0',
+                borderRadius: '16px',
+                marginTop: '8px',
+              },
+            },
+          }}
         >
           <MenuItem value={'no-funds'}>No Funds Attached</MenuItem>
           <MenuItem value={'select'}>Select Assets</MenuItem>

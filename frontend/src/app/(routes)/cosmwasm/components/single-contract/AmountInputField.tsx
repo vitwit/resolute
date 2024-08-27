@@ -2,6 +2,7 @@ import { InputAdornment, TextField } from '@mui/material';
 import React from 'react';
 import Image from 'next/image';
 import { customTextFieldStyles } from '@/utils/commonStyles';
+import { MINUS_ICON_DISABLED } from '@/constants/image-names';
 
 interface AmountInputFieldI {
   amount: string;
@@ -18,7 +19,7 @@ const AmountInputField = (props: AmountInputFieldI) => {
   return (
     <TextField
       name="sourceAmount"
-      className="rounded-lg bg-[#ffffff0D]"
+      className="rounded-lg"
       fullWidth
       required={false}
       size="small"
@@ -31,13 +32,12 @@ const AmountInputField = (props: AmountInputFieldI) => {
           input: {
             color: 'white !important',
             fontSize: '14px',
-            padding: 2,
           },
         },
         endAdornment: (
           <InputAdornment position="start">
             <div className="cursor-pointer" onClick={onDelete}>
-              <Image src="/delete-icon.svg" width={24} height={24} alt="" />
+              <Image src={MINUS_ICON_DISABLED} width={24} height={24} alt="" />
             </div>
           </InputAdornment>
         ),
