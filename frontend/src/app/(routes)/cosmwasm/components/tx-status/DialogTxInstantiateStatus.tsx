@@ -45,7 +45,7 @@ const DialogTxInstantiateStatus = ({ chainID }: { chainID: string }) => {
 
   useEffect(() => {
     if (txHash && txInstantiateStatus === TxStatus.IDLE) setOpen(true);
-  }, [txHash]);
+  }, [txHash, txInstantiateStatus]);
 
   return (
     <DialogTxnStatus handleClose={handleClose} open={open}>
@@ -54,7 +54,7 @@ const DialogTxInstantiateStatus = ({ chainID }: { chainID: string }) => {
           src={txResponse?.code === 0 ? TXN_SUCCESS_ICON : TXN_FAILED_ICON}
           height={60}
           width={60}
-          alt="Transaction Successful"
+          alt={txResponse?.code === 0 ? 'Transaction Successful' : 'Transaction Failed'}
         />
       </div>
       <div className="w-full">
