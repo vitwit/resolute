@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import UseExistingCode from './UseExistingCode';
+import UploadWasmFile from './UploadWasmFile';
 
 const DeployContractTabs = () => {
   const tabs = ['Use Existing code ID', 'Upload  WASM file'];
@@ -32,24 +34,13 @@ const DeployContractTabs = () => {
           </div>
         ))}
       </div>
-      {/* <div className="">
-        {selectedTab === 'Query Contract' ? (
-          <QueryContract
-            address={selectedContractAddress}
-            baseURLs={restURLs}
-            chainID={chainID}
-          />
+      <div className="">
+        {selectedTab === 'Use Existing code ID' ? (
+          <UseExistingCode />
         ) : (
-          <ExecuteContract
-            address={selectedContractAddress}
-            baseURLs={restURLs}
-            chainID={chainID}
-            rpcURLs={rpcURLs}
-            walletAddress={walletAddress}
-            chainName={chainName}
-          />
+          <UploadWasmFile />
         )}
-      </div> */}
+      </div>
     </div>
   );
 };

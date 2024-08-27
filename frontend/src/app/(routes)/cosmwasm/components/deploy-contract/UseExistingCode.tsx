@@ -1,8 +1,5 @@
 import React from 'react';
-
-import UploadWasmLeft from './UploadWasmLeft';
-import UploadWasmRight from './UploadWasmRight';
-import UseExistingCodeLeft from './UseExisitingCodeLeft';
+import UseExistingCodeLeft from './UseExistingCodeLeft';
 import UseExistingCodeRight from './UseExistingCodeRight';
 
 const UseExistingCode = () => {
@@ -12,11 +9,6 @@ const UseExistingCode = () => {
         <UseExistingCodeLeft chainID={''} chainName={''} />
         <UseExistingCodeRight msgs={[]} />
       </div>
-      <div className="flex gap-10">
-        <UploadWasmLeft />
-        <UploadWasmRight />
-      </div>
-
       <button className="primary-btn w-full">Instantiate</button>
     </div>
   );
