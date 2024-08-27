@@ -5,22 +5,23 @@ import { parseBalance } from '@/utils/denom';
 import { getIBCBalances } from '@/utils/ibc';
 import useGetChainInfo from './useGetChainInfo';
 
+/* eslint-disable react-hooks/rules-of-hooks */
 const useGetAssetsAmount = (chainIDs: string[]) => {
+  const isAuthzMode = useAppSelector((state) => state.authz.authzModeEnabled);
+
   const stakingChains = useAppSelector(
-    (state: RootState) => state.staking.chains
+    (state: RootState) => isAuthzMode? state.staking.authz.chains: state.staking.chains
   );
 
   const balanceChains = useAppSelector(
-    (state: RootState) => state.bank.balances
+    (state: RootState) => isAuthzMode ? state.bank.authz.balances : state.bank.balances
   );
   const rewardsChains = useAppSelector(
-    (state: RootState) => state.distribution.chains
+    (state: RootState) => isAuthzMode ? state.distribution.authzChains : state.distribution.chains
   );
   const tokensPriceInfo = useAppSelector(
     (state) => state.common.allTokensInfoState.info
   );
-
-
 
   const { getDenomInfo } = useGetChainInfo();
 
@@ -122,9 +123,9 @@ const useGetAssetsAmount = (chainIDs: string[]) => {
   }, [chainIDs, rewardsChains, getDenomInfo, tokensPriceInfo]);
 
   const allNetworks = useAppSelector((state) => state.common.allNetworksInfo);
-  
-   /* eslint-disable @typescript-eslint/no-explicit-any */
-  const totalAmountByChain : any = () => {
+
+  /* eslint-disable @typescript-eslint/no-explicit-any */
+  const totalAmountByChain: any = () => {
     /* eslint-disable @typescript-eslint/no-explicit-any */
     const totalAmountByChainObj: any = {}
 
@@ -200,7 +201,7 @@ const useGetAssetsAmount = (chainIDs: string[]) => {
       }
 
 
-     
+
       const logoUrl = allNetworks[chainID]?.logos?.menu
       const chainConfig = allNetworks[chainID]?.config
       totalAmountByChainObj[chainID] = {

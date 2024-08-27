@@ -111,6 +111,7 @@ const useAuthzExecHelper = () => {
     const grants: Authorization[] =
       authzChains?.[data.chainID]?.GrantsToMeAddressMapping?.[address] || [];
     let isExpired = false;
+    
     const haveGrant = grants.some((grant) => {
       if (
         grant.authorization['@type'] ===
@@ -118,6 +119,7 @@ const useAuthzExecHelper = () => {
         grant.authorization.msg === AUTHZ_DEPOSIT_MSG
       ) {
         isExpired = isTimeExpired(grant.expiration);
+        return !isExpired;
       } else return false;
     });
     if (isExpired) {

@@ -82,5 +82,6 @@ interface Network {
   airdropActions?: AirdropAction[];
   aminoConfig: AminoConfig;
   enableModules: EnableModule;
-  isDefaultNetwork: boolean;
+  isCustomNetwork: boolean;
+  supportedWallets: string[];
 }

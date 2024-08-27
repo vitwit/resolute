@@ -23,6 +23,8 @@ import DialogConfirmExitSession from './DialogConfirmExitSession';
 import useGetAccountInfo from '@/custom-hooks/useGetAccountInfo';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import Copy from '../common/Copy';
+import useAuthzGrants from '@/custom-hooks/useAuthzGrants';
+import useFeeGrants from '@/custom-hooks/useFeeGrants';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const Transition = forwardRef(function Transition(
@@ -39,6 +41,8 @@ const ProfileDialog = ({
   open: boolean;
   onClose: () => void;
 }) => {
+  const { disableAuthzMode } = useAuthzGrants();
+  const { disableFeegrantMode } = useFeeGrants();
   const selectedNetwork = useAppSelector(
     (state) => state.common.selectedNetwork
   );
@@ -76,6 +80,8 @@ const ProfileDialog = ({
     dispatch(stakingReset());
     dispatch(authzReset());
     dispatch(feegrantReset());
+    disableAuthzMode();
+    disableFeegrantMode();
     logout();
     setConfirmExitOpen(false);
     onClose();

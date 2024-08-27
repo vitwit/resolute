@@ -64,7 +64,7 @@ const Vote = ({
       txAuthzVote({
         grantee: address,
         proposalId: Number(proposalId),
-        option: voteOptionNumber[voteOption],
+        option: voteOptionNumber[voteOption.toLowerCase()],
         granter: authzGranter,
         chainID,
         memo: '',
