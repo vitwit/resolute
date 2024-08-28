@@ -4,19 +4,19 @@ import Image from 'next/image';
 import { customTextFieldStyles } from '@/utils/commonStyles';
 import { MINUS_ICON_DISABLED } from '@/constants/image-names';
 
-interface AmountInputFieldI {
-  amount: string;
+interface AddressInputFieldI {
+  address: string;
   handleChange: (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     index: number
   ) => void;
-  onDelete: () => void;
+  onDelete: (index: number) => void;
   index: number;
   disableDelete: boolean;
 }
 
-const AmountInputField = (props: AmountInputFieldI) => {
-  const { amount, handleChange, onDelete, index, disableDelete } = props;
+const AddressInputField = (props: AddressInputFieldI) => {
+  const { address, handleChange, onDelete, index, disableDelete } = props;
   return (
     <TextField
       name="sourceAmount"
@@ -25,20 +25,26 @@ const AmountInputField = (props: AmountInputFieldI) => {
       required={false}
       size="small"
       autoFocus={true}
-      placeholder="Enter Amount"
+      placeholder="Enter Address"
       sx={customTextFieldStyles}
-      value={amount}
+      value={address}
       InputProps={{
         sx: {
           input: {
             color: 'white !important',
             fontSize: '14px',
+            padding: 2,
           },
         },
         endAdornment: (
           <InputAdornment position="start">
             {disableDelete ? null : (
-              <div className="cursor-pointer" onClick={onDelete}>
+              <div
+                className="cursor-pointer"
+                onClick={() => {
+                  onDelete(index);
+                }}
+              >
                 <Image
                   src={MINUS_ICON_DISABLED}
                   width={24}
@@ -55,4 +61,4 @@ const AmountInputField = (props: AmountInputFieldI) => {
   );
 };
 
-export default AmountInputField;
+export default AddressInputField;

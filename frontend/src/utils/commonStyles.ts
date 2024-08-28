@@ -74,6 +74,7 @@ export const multiSelectDropDownStyle = {
 export const customSelectStyles = {
   '& .MuiOutlinedInput-input': {
     color: '#fffffff0',
+    fontSize: '14px'
   },
   '& .MuiOutlinedInput-root': {
     padding: '0px !important',
