@@ -17,6 +17,7 @@ const SelectMessage = ({
   fromAddress,
   availableBalance,
   cancelAddMsg,
+  isMultisig,
 }: {
   handleSelectMessage: (type: TxnMsgType) => void;
   txType: string;
@@ -26,6 +27,7 @@ const SelectMessage = ({
   fromAddress: string;
   availableBalance: number;
   cancelAddMsg: () => void;
+  isMultisig: boolean;
 }) => {
   return (
     <div className="w-[40%] space-y-6 flex flex-col pb-6 h-full">
@@ -56,6 +58,7 @@ const SelectMessage = ({
             availableBalance={availableBalance}
             cancelAddMsg={cancelAddMsg}
             chainID={chainID}
+            isMultisig={isMultisig}
           />
         )}
         {txType === 'Delegate' && (

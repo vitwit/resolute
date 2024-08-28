@@ -387,3 +387,5 @@ export const ALL_NETWORKS_GRADIENT =
   'linear-gradient(180deg, #6155b275 0.5%, #12131C80 100%)';
 export const AUTHZ = 'authz';
 export const FEEGRANT = 'feegrant';
+export const TXN_BUILDER_DESCRIPTION =
+  'Transaction builder allows to create single transaction with multiple messages of same or different type.';

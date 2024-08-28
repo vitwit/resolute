@@ -20,12 +20,20 @@ const useGetAllAssets = () => {
   const multisigBalances = useAppSelector(
     (state) => state.multisig.balance.balance
   );
+  const accountBalances = useAppSelector((state) => state.bank.balances);
 
-  const getAllAssets = (chainID: string, includeNative: boolean) => {
+  const getAllAssets = (
+    chainID: string,
+    includeNative: boolean,
+    isMultisig: boolean
+  ) => {
     const { chainName } = getChainInfo(chainID);
     const { minimalDenom: nativeMinimalDenom } = getDenomInfo(chainID);
     const allAssets: MultisigAsset[] = [];
-    multisigBalances.forEach((balance) => {
+    const balances = isMultisig
+      ? multisigBalances
+      : accountBalances?.[chainID].list;
+    balances.forEach((balance) => {
       const denomInfo = chainDenomsData[chainName.toLowerCase()]?.filter(
         (denomInfo) => {
           return denomInfo.denom === balance.denom;
