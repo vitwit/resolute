@@ -291,6 +291,9 @@ export const allNetworksLink = (pathParts: string[]): string => {
     if (pathParts.includes('builder')) {
       return '/transactions/builder';
     }
+    if (pathParts.includes('history')) {
+      return '/transactions/history';
+    }
   }
   return pathParts[1] === 'overview' || pathParts[1] === ''
     ? '/'
@@ -317,6 +320,9 @@ export const changeNetworkRoute = (
   }
   if (pathName.includes('builder')) {
     return '/transactions/builder/' + chainName.toLowerCase();
+  }
+  if (pathName.includes('history')) {
+    return '/transactions/history/' + chainName.toLowerCase();
   }
   const route = pathName === '/' ? '/overview' : '/' + pathName.split('/')?.[1];
   return `${route}/${chainName.toLowerCase()}`;

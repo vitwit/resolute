@@ -24,7 +24,7 @@ const PageMultiops = ({ paramChain }: { paramChain: string }) => {
   };
 
   return (
-    <div className="py-20 px-10 h-[calc(100vh-64px)] flex flex-col">
+    <div className="py-20 h-[calc(100vh-64px)] flex flex-col">
       <div className="flex-1 sticky top-0">
         <PageHeader
           title="Transaction Builder"
