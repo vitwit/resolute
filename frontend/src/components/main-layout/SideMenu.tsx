@@ -78,11 +78,7 @@ const MoreOptions = ({
             <div className="flex gap-2 items-center pl-3">
               <div className="w-5"></div>
               <Tooltip
-                title={
-                  isAuthzMode
-                    ? 'Authz is not supporting Multiple'
-                    : null
-                }
+                title={isAuthzMode ? 'Authz is not supporting Multiple' : null}
                 placement="top-end"
               >
                 <div
@@ -100,11 +96,7 @@ const MoreOptions = ({
             <div className="flex gap-2 items-center pl-3">
               <div className="w-5"></div>
               <Tooltip
-                title={
-                  isAuthzMode
-                    ? 'Authz is not supporting IBC Swap'
-                    : null
-                }
+                title={isAuthzMode ? 'Authz is not supporting IBC Swap' : null}
                 placement="top-end"
               >
                 <div
@@ -126,11 +118,9 @@ const MoreOptions = ({
           <div className="text-[12px] font-medium space-y-4">
             <div className="flex gap-2 items-center pl-3">
               <div className="w-5"></div>
-              <div
-                className="cursor-pointer hover:font-semibold"
-              >
+              <div className="cursor-pointer hover:font-semibold">
                 <Link
-                  href={`/transactions/${selectedNetwork.toLowerCase() || ''}/history`}
+                  href={`/transactions/history/${selectedNetwork.toLowerCase() || ''}`}
                   className="hover:font-semibold"
                 >
                   History
@@ -140,23 +130,18 @@ const MoreOptions = ({
             <div className="flex gap-2 items-center pl-3">
               <div className="w-5"></div>
               <Tooltip
-                title={
-                  isAuthzMode
-                    ? 'Authz is not supporting builder'
-                    : null
-                }
+                title={isAuthzMode ? 'Authz is not supporting builder' : null}
                 placement="top-end"
               >
                 <div
                   className={`hover:font-semibold ${isAuthzMode ? 'opacity-20 !cursor-not-allowed' : 'cursor-pointer'}`}
                 >
                   <Link
-                    href={`/transactions/${selectedNetwork.toLowerCase() || ''}/builder`}
+                    href={`/transactions/builder/${selectedNetwork.toLowerCase() || ''}`}
                     className="hover:font-semibold"
                   >
                     Builder
                   </Link>
-
                 </div>
               </Tooltip>
             </div>

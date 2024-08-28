@@ -67,6 +67,12 @@ const DialogSelectNetwork = () => {
       } else {
         dispatch(setSelectedNetwork({ chainName: '' }));
       }
+    } else if (pathParts.includes('builder') || pathParts.includes('history')) {
+      if (pathParts.length >= 4) {
+        dispatch(setSelectedNetwork({ chainName: pathParts[3].toLowerCase() }));
+      } else {
+        dispatch(setSelectedNetwork({ chainName: '' }));
+      }
     } else if (pathParts.length >= 3) {
       dispatch(setSelectedNetwork({ chainName: pathParts[2].toLowerCase() }));
     } else {

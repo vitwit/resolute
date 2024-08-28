@@ -287,6 +287,11 @@ export const allNetworksLink = (pathParts: string[]): string => {
       return '/settings';
     }
   }
+  if (pathParts.includes('transactions')) {
+    if (pathParts.includes('builder')) {
+      return '/transactions/builder';
+    }
+  }
   return pathParts[1] === 'overview' || pathParts[1] === ''
     ? '/'
     : pathParts[1] === 'validator'
@@ -309,6 +314,9 @@ export const changeNetworkRoute = (
       return '/settings/authz/new-authz';
     }
     return '/settings/authz/' + chainName.toLowerCase();
+  }
+  if (pathName.includes('builder')) {
+    return '/transactions/builder/' + chainName.toLowerCase();
   }
   const route = pathName === '/' ? '/overview' : '/' + pathName.split('/')?.[1];
   return `${route}/${chainName.toLowerCase()}`;
