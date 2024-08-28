@@ -75,7 +75,11 @@
 }
 .portfolio-card {
   @apply flex flex-col gap-2 px-6 py-4 rounded-2xl h-[92px];
-  background: rgba(255, 255, 255, 0.02);
+  background: linear-gradient(
+    45deg,
+    rgb(255 255 255 / 3%) 0%,
+    rgb(153 153 153 / 25%) 100%
+  );
 }
 .proposal-id-dashboard {
   @apply relative flex items-center justify-center font-bold rounded-lg w-12 text-[14px] tracking-[1.96px] h-[35px];

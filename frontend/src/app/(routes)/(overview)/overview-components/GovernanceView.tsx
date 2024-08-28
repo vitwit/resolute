@@ -19,7 +19,7 @@ const ProposalCard: React.FC<{ proposal: any }> = ({ proposal }) => {
     <Link
       href={`/governance/${get(proposal, 'chainName', '')}/${get(proposal, 'proposalInfo.proposalId', '')}`}
     >
-      <div className="flex flex-col justify-center items-start gap-2 p-4 rounded-2xl bg-[#ffffff05]">
+      <div className="justify-center items-start portfolio-card">
         <div className="flex gap-2">
           <div className="proposal-id-dashboard">
             <span className=" ">
