@@ -13,15 +13,14 @@ import Link from 'next/link';
 
 const TransactionHistoryDashboard = ({ chainID }: { chainID: string }) => {
   const [searchQuery, setSearchQuery] = useState('');
+  const txnHistory = useGetTransactions({ chainID })
 
   const handleSearchQueryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
+    txnHistory.fetchTransaction(e.target.value)
   };
 
-  useGetTransactions({ chainID })
-
-  const transactions = useAppSelector((state: RootState) => state.recentTransactions.txns?.data)
-  console.log('statke data', transactions)
+  const transactions = useAppSelector((state: RootState) => searchQuery?state.recentTransactions.txn?.data:state.recentTransactions.txns?.data)
 
   const networks = useAppSelector((state: RootState) => state.wallet.networks);
   const config = networks?.[chainID]?.network?.config;
@@ -38,7 +37,7 @@ const TransactionHistoryDashboard = ({ chainID }: { chainID: string }) => {
           />
         </div>
         <div className="flex flex-col gap-6 px-6">
-          {transactions.map((txn, index) => (
+          {transactions?.map((txn, index) => (
             <div key={index} className="flex gap-6">
               <div className="flex flex-col items-center gap-2">
                 <p className="text-small">{getLocalTime(txn?.timestamp)}</p>

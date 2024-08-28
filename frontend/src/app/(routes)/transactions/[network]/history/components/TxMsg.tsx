@@ -9,6 +9,7 @@ import {
     MSG_AUTHZ_EXEC,
     VOTE_TYPE_URL,
     MSG_AUTHZ_GRANT,
+    MSG_AUTHZ_REVOKE,
 } from '@/utils/constants';
 import { shortenAddress } from '@/utils/util';
 import NumberFormat from '@/components/common/NumberFormat';
@@ -130,6 +131,27 @@ const TxMsg: React.FC<TxMsgProps> = ({ msg, expandedIndex, chainID, toggleExpand
                         </div>
                     </div>
                 );
+            case MSG_AUTHZ_REVOKE:
+                return (
+                    <div className="flex justify-between px-6 w-full pb-4">
+                        <div className="flex flex-col gap-2">
+                            <p className="text-b1-light">Granter</p>
+                            <span className="text-b1">
+                                {shortenAddress(get(msg, 'granter', ''), 24)}
+                            </span>
+                        </div>
+                        <div className="flex flex-col gap-2">
+                            <p className="text-b1-light">Grantee</p>
+                            <span className="text-b1">
+                                {shortenAddress(get(msg, 'grantee', ''), 24)}
+                            </span>
+                        </div>
+                        <div className="flex flex-col gap-2">
+                            <p className="text-b1-light">Type</p>
+                            {getTypeURLName(get(msg, 'msg_type_url', ''))}
+                        </div>
+                    </div>
+                );
             case MSG_AUTHZ_GRANT:
                 return (<>
                     <div className="flex justify-between px-6 w-full pb-4">
@@ -147,31 +169,39 @@ const TxMsg: React.FC<TxMsgProps> = ({ msg, expandedIndex, chainID, toggleExpand
                         </div>
                         <div className="flex flex-col gap-2">
                             <p className="text-b1-light">Type</p>
-                            {get(msg, 'grant.authorization.authorization_type', '-')}
+                            {getTypeURLName(get(msg, 'grant.authorization.msg', '-'))}
                         </div>
                     </div>
+
                     <div className="flex justify-between px-6 w-full pb-4">
-                        <div className="flex flex-col gap-2">
-                            <p className="text-b1-light">Deny List</p>
-                            {
-                                get(msg, 'grant.authorization.deny_list.address', []).map((a: string, i: number) => (
-                                    <p key={i}>{shortenAddress(a, 24)}</p>
-                                ))
-                            }
-                        </div>
+                        {
+                            get(msg, 'grant.authorization.deny_list.address') && <div className="flex flex-col gap-2">
+                                <p className="text-b1-light">Deny List</p>
+                                {
+                                    get(msg, 'grant.authorization.deny_list.address', []).map((a: string, i: number) => (
+                                        <p key={i}>{shortenAddress(a, 24)}</p>
+                                    ))
+                                }
+                            </div> || null
+                        }
+
                         <div className="flex flex-col gap-2">
                             <p className="text-b1-light">Expiry</p>
                             {getLocalTime(get(msg, 'grant.expiration', '-'))}
                         </div>
-                        <div className="flex flex-col gap-2">
-                            <p className="text-b1-light">Max Tokens</p>
-                            <NumberFormat
-                                cls=''
-                                type='token'
-                                value={getAmount(Number(get(msg, 'grant.authorization.max_tokens.amount'))).amount}
-                                token={getAmount(Number(get(msg, 'grant.authorization.max_tokens.amount'))).denom}
-                            />
-                        </div>
+                        {
+                            get(msg, 'grant.authorization.max_tokens') &&
+                            <div className="flex flex-col gap-2">
+                                <p className="text-b1-light">Max Tokens</p>
+                                <NumberFormat
+                                    cls=''
+                                    type='token'
+                                    value={getAmount(Number(get(msg, 'grant.authorization.max_tokens.amount'))).amount}
+                                    token={getAmount(Number(get(msg, 'grant.authorization.max_tokens.amount'))).denom}
+                                />
+                            </div> || null
+                        }
+
                     </div>
                 </>
                 );
