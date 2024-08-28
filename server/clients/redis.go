@@ -68,3 +68,15 @@ func GetChain(chainId string) *config.ChainConfig {
 
 	return chain
 }
+
+func GetChains() []*config.ChainConfig {
+	var chains []*config.ChainConfig
+	data, _ := GetValue("chains")
+
+	e := json.Unmarshal([]byte(data), &chains)
+	if e != nil {
+		fmt.Println("Error while unmarshal chain info ", e.Error())
+	}
+
+	return chains
+}

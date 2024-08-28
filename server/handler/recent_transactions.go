@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/labstack/echo/v4"
+	"github.com/vitwit/resolute/server/clients"
 	"github.com/vitwit/resolute/server/config"
 	"github.com/vitwit/resolute/server/model"
 	"github.com/vitwit/resolute/server/txn_types"
@@ -117,12 +118,44 @@ func (h *Handler) GetAllTransactions(c echo.Context) error {
 	})
 }
 
-func (h *Handler) GetChainTxHash(c echo.Context) error {
-	chainId := c.Param("chainId")
-	address := c.Param("address")
+func (h *Handler) GetTxHash(c echo.Context) error {
 	txhash := c.Param("txhash")
 
-	res, err := getTransaction(chainId, address, txhash)
+	chains := clients.GetChains()
+
+	for _, chain := range chains {
+		res, err := getTransaction(chain.ChainId, txhash)
+		if err == nil {
+			parsedTxns, err := GetParsedTransaction(*res, chain.ChainId)
+			if err != nil {
+				log.Printf("Error parsing transactions: %v", err)
+				return c.JSON(http.StatusInternalServerError, model.ErrorResponse{
+					Status:  "error",
+					Message: "Failed to parse transactions",
+				})
+			}
+
+			responseData := TxnsData{
+				Data: parsedTxns,
+			}
+			return c.JSON(http.StatusOK, model.SuccessResponse{
+				Status: "success",
+				Data:   responseData,
+			})
+		}
+	}
+
+	return c.JSON(http.StatusOK, model.SuccessResponse{
+		Status: "success",
+		Data:   nil,
+	})
+}
+
+func (h *Handler) GetChainTxHash(c echo.Context) error {
+	chainId := c.Param("chainId")
+	txhash := c.Param("txhash")
+
+	res, err := getTransaction(chainId, txhash)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, model.ErrorResponse{
 			Status:  "error",
@@ -137,8 +170,6 @@ func (h *Handler) GetChainTxHash(c echo.Context) error {
 			Message: "Failed to parse transactions",
 		})
 	}
-
-	fmt.Println("ddddddddddddddd---------------------------------------------------------------------------")
 
 	responseData := TxnsData{
 		Data: parsedTxns,
@@ -200,7 +231,7 @@ func getTransactions(chainId string, address string, limit string, offset string
 	return nil, err
 }
 
-func getTransaction(chainId string, address string, txhash string) (*txn_types.SingleTxnRes, error) {
+func getTransaction(chainId string, txhash string) (*txn_types.SingleTxnRes, error) {
 	config, err := config.ParseConfig()
 	if err != nil {
 		log.Fatal(err)
@@ -210,7 +241,7 @@ func getTransaction(chainId string, address string, txhash string) (*txn_types.S
 	var networkURIs = chainConfig.RestURIs
 
 	if err == nil {
-		requestURI := utils.CreateTxnRequestURI(networkURIs[0], address, txhash)
+		requestURI := utils.CreateTxnRequestURI(networkURIs[0], txhash)
 		fmt.Println("creq request URI", requestURI)
 		req, _ := http.NewRequest("GET", requestURI, nil)
 		if err != nil {
@@ -218,7 +249,6 @@ func getTransaction(chainId string, address string, txhash string) (*txn_types.S
 		}
 
 		if chainConfig.SourceEnd == "mintscan" {
-
 			authorizationToken := fmt.Sprintf("Bearer %s", config.MINTSCAN_TOKEN.Token)
 			req.Header.Add("Authorization", authorizationToken) // Change this to your actual token
 		}
@@ -236,6 +266,12 @@ func getTransaction(chainId string, address string, txhash string) (*txn_types.S
 			return nil, err
 		}
 		defer resp.Body.Close()
+
+		// Check if the account exists
+		if resp.StatusCode != http.StatusOK {
+			return nil, fmt.Errorf("txn not found on chain hash %s", chainId)
+		}
+
 		body, err := io.ReadAll(resp.Body)
 		if err != nil {
 			return nil, err
