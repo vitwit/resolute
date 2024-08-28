@@ -1,6 +1,7 @@
 'use client';
 
 import { axiosGetRequestWrapper } from '@/utils/RequestWrapper';
+import { addChainIDParam } from '@/utils/util';
 import { SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate';
 
 const getContractURL = (baseURL: string, address: string) =>
@@ -18,10 +19,12 @@ const getContractQueryURL = (
 
 export const getContract = async (
   baseURLs: string[],
-  address: string
+  address: string,
+  chainID: string
 ): Promise<Response> => {
   for (const url of baseURLs) {
-    const uri = getContractURL(url, address);
+    let uri = getContractURL(url, address);
+    uri = addChainIDParam(uri, chainID);
     try {
       const response = await fetch(uri);
       if (response.status === 500) {
@@ -44,19 +47,28 @@ export const getContract = async (
 export const queryContract = async (
   baseURLs: string[],
   address: string,
-  queryData: string
+  queryData: string,
+  chainID: string
 ): Promise<Response> => {
   for (const url of baseURLs) {
-    const uri = getContractQueryURL(url, address, queryData);
+    let requestURI = getContractQueryURL(url, address, queryData);
+    requestURI = addChainIDParam(requestURI, chainID);
     try {
-      const response = await fetch(uri);
+      const response = await fetch(requestURI);
+      const responseJson = await response.json();
       if (response.status === 500) {
-        const errorBody = await response.json();
-        throw new Error(errorBody?.message || 'Failed to query contract', {
+        throw new Error(responseJson?.message || 'Failed to query contract', {
+          cause: 500,
+        });
+      } else if (
+        response.status === 400 &&
+        responseJson?.error.includes('expected')
+      ) {
+        throw new Error(responseJson?.error || 'Failed to query contract', {
           cause: 500,
         });
       } else if (response.ok) {
-        return response;
+        return responseJson;
       }
       /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     } catch (error: any) {
@@ -84,16 +96,20 @@ export const connectWithSigner = async (urls: string[], offlineSigner: any) => {
   throw new Error('Unable to connect to any RPC URLs');
 };
 
-export const getCodes = async (baseURLs: string[]) => {
-  return axiosGetRequestWrapper(baseURLs, codesURL);
+export const getCodes = async (baseURLs: string[], chainID: string) => {
+  const requestURI = addChainIDParam(codesURL, chainID);
+  return axiosGetRequestWrapper(baseURLs, requestURI);
 };
 
 export const getContractsByCode = async (
   baseURLs: string[],
-  codeId: string
+  codeId: string,
+  chainID: string
 ) => {
-  const uri = contractsByCodeURL(codeId);
-  return axiosGetRequestWrapper(baseURLs, uri);
+  let requestURI = contractsByCodeURL(codeId);
+  requestURI = addChainIDParam(requestURI, chainID);
+
+  return axiosGetRequestWrapper(baseURLs, requestURI);
 };
 
 const result = {

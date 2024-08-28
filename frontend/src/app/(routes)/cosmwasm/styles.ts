@@ -1,9 +1,4 @@
-export const dialogBoxPaperPropStyles = {
-  borderRadius: '16px',
-  background: '#1C1C1D',
-};
-
-export const customMUITextFieldStyles = {
+export const customTextFieldStyles = {
   '& .MuiTypography-body1': {
     color: 'white',
     fontSize: '12px',
@@ -14,83 +9,83 @@ export const customMUITextFieldStyles = {
   },
   '& .MuiOutlinedInput-root': {
     border: '1px solid transparent',
-    borderRadius: '16px',
+    borderRadius: '12px',
     color: 'white',
   },
   '& .Mui-focused': {
     border: '1px solid #ffffff4a',
-    borderRadius: '16px',
+    borderRadius: '12px',
+  },
+  '& .MuiInputAdornment-root': {
+    '& button': {
+      color: 'white',
+    },
+  },
+  '& .Mui-disabled': {
+    WebkitTextFillColor: '#ffffff !important',
   },
 };
 
-export const customTextFieldStyles = {
-  '& .MuiInputBase-input': {
-    color: '#fffffff0',
-    fontSize: '14px',
+export const assetsDropDownStyle = {
+  '& .MuiOutlinedInput-input': {
+    color: 'white',
+  },
+  '& .MuiOutlinedInput-root': {
+    padding: '0px !important',
+    border: 'none',
+  },
+  '& .MuiSvgIcon-root': {
+    color: 'white',
+  },
+  '& .MuiOutlinedInput-notchedOutline': {
+    border: 'none !important',
+  },
+  '& .MuiTypography-body1': {
+    color: 'white',
+    fontSize: '12px',
     fontWeight: 200,
-    fontFamily: 'Libre Franklin',
-    lineHeight: '21px',
+  },
+  borderRadius: '8px',
+};
+
+export const selectTxnStyles = {
+  '& .MuiOutlinedInput-input': {
+    color: 'white',
+  },
+  '& .MuiOutlinedInput-root': {
+    padding: '0px !important',
+    border: 'none',
+  },
+  '& .MuiSvgIcon-root': {
+    color: 'white',
+  },
+  '& .MuiOutlinedInput-notchedOutline': {
+    border: 'none !important',
+  },
+  '& .MuiTypography-body1': {
+    color: 'white',
+    fontSize: '12px',
+    fontWeight: 200,
+  },
+  borderRadius: '8px',
+};
+
+export const queryInputStyles = {
+  '& .MuiTypography-body1': {
+    color: 'white',
+    fontSize: '12px',
+    fontWeight: 200,
   },
   '& .MuiOutlinedInput-notchedOutline': {
     border: 'none',
   },
   '& .MuiOutlinedInput-root': {
-    border: '0.25px solid #ffffff10',
-    borderRadius: '100px',
-    height: '40px',
+    border: 'none',
+    borderRadius: '16px',
+    color: 'white',
   },
   '& .Mui-focused': {
-    border: '0.25px solid #ffffff4a',
-    borderRadius: '100px',
-  },
-};
-
-export const multiSelectDropDownStyle = {
-  '& .MuiOutlinedInput-input': {
-    color: 'white',
-  },
-  '& .MuiOutlinedInput-root': {
-    padding: '0px !important',
     border: 'none',
+    borderRadius: '16px',
   },
-  '& .MuiSvgIcon-root': {
-    color: 'white',
-  },
-  '& .MuiOutlinedInput-notchedOutline': {
-    border: 'none !important',
-  },
-  '& .MuiTypography-body1': {
-    color: 'white',
-    fontSize: '12px',
-    fontWeight: 200,
-  },
-  borderRadius: '16px',
-  '& .MuiFormControl-root label': {
-    display: 'none !important',
-    color: 'red',
-  },
-};
-
-export const customSelectStyles = {
-  '& .MuiOutlinedInput-input': {
-    color: '#fffffff0',
-    fontSize: '14px'
-  },
-  '& .MuiOutlinedInput-root': {
-    padding: '0px !important',
-    border: 'none',
-  },
-  '& .MuiSvgIcon-root': {
-    color: '#ffffff80',
-  },
-  '& .MuiOutlinedInput-notchedOutline': {
-    border: 'none !important',
-  },
-  '& .MuiTypography-body1': {
-    color: 'white',
-    fontSize: '12px',
-    fontWeight: 200,
-  },
-  borderRadius: '100px',
-  height: '40px'
 };

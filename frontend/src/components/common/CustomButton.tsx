@@ -14,6 +14,7 @@ interface CustomButtonProps {
   /* eslint-disable @typescript-eslint/no-explicit-any */
   btnOnClick?: any;
   btnType?: 'submit' | 'button';
+  form?: string;
 }
 
 const CustomButton = ({
@@ -23,6 +24,7 @@ const CustomButton = ({
   btnDisabled,
   btnOnClick,
   btnType,
+  form,
 }: CustomButtonProps) => {
   return (
     <button
@@ -30,6 +32,7 @@ const CustomButton = ({
       disabled={btnDisabled}
       type={btnType || 'button'}
       onClick={btnOnClick}
+      form={form}
     >
       {btnLoading ? (
         <div className="flex justify-center items-center gap-2">
