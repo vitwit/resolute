@@ -18,6 +18,7 @@ import { txAuthzRevoke } from '@/store/features/authz/authzSlice';
 import { TxStatus } from '@/types/enums';
 import { RootState } from '@/store/store';
 import { groupBy } from 'lodash';
+import { shortenAddress } from '@/utils/util';
 
 const GrantedByMe = ({ chainIDs }: { chainIDs: string[] }) => {
   const [revokeDialogOpen, setRevokeDialogOpen] = useState(false);
@@ -150,7 +151,7 @@ const AuthzGrant: React.FC<AddressGrants> = ({ chainID, address, grants }) => {
             <p className="text-b1-light capitalize">{chainName}</p>
           </div>
           <div className="flex gap-2 items-center h-8">
-            <p className="truncate text-b1">{address}</p>
+            <p className="truncate text-b1">{shortenAddress(address, 30)}</p>
             <Copy content={address} />
           </div>
         </div>
