@@ -154,6 +154,11 @@ func proxyHandler1(c echo.Context) error {
 	}
 
 	chanDetails := clients.GetChain(c.QueryParam("chain"))
+
+	if chanDetails == nil {
+		return c.String(http.StatusInternalServerError, "Failed to get the server")
+	}
+
 	// URL to which the POST request will be sent
 	targetURL := chanDetails.RestURI + "/cosmos/tx/v1beta1/txs"
 
@@ -195,6 +200,9 @@ func proxyHandler(c echo.Context) error {
 
 	chanDetails := clients.GetChain(c.QueryParam("chain"))
 
+	if chanDetails == nil {
+		return c.String(http.StatusInternalServerError, "Failed to get the server")
+	}
 	// Construct the target URL based on the incoming request
 	targetBase := chanDetails.RestURI // Change this to your target service base URL
 

@@ -49,34 +49,58 @@ func GetValue(key string) (string, error) {
 }
 
 func GetChain(chainId string) *config.ChainConfig {
+	data, err := GetValue("chains")
+	if err != nil {
+		fmt.Println("Error fetching chains from Redis:", err)
+		return nil
+	}
+
+	if data == "" {
+		fmt.Println("No chains found in Redis")
+		return nil
+	}
+
 	var chains []config.ChainConfig
-	data, _ := GetValue("chains")
 
 	e := json.Unmarshal([]byte(data), &chains)
 	if e != nil {
 		fmt.Println("Error while unmarshal chain info ", e.Error())
+		return nil
 	}
-
-	var chain *config.ChainConfig
 
 	for _, c := range chains {
 		if c.ChainId == chainId {
-			chain = &c
-			break
+			return &c
 		}
 	}
 
-	return chain
+	return nil
 }
 
 func GetChains() []*config.ChainConfig {
-	var chains []*config.ChainConfig
-	data, _ := GetValue("chains")
 
+	data, err := GetValue("chains")
+	if err != nil {
+		fmt.Println("Error fetching chains from Redis:", err)
+		return nil
+	}
+
+	if data == "" {
+		fmt.Println("No chains found in Redis")
+		return nil
+	}
+
+	var chains []config.ChainConfig
 	e := json.Unmarshal([]byte(data), &chains)
 	if e != nil {
 		fmt.Println("Error while unmarshal chain info ", e.Error())
+		return nil
 	}
 
-	return chains
+	chainPointers := make([]*config.ChainConfig, len(chains))
+	for i := range chains {
+		chainPointers[i] = &chains[i]
+	}
+
+	return chainPointers
 }
