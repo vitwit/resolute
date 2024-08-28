@@ -127,7 +127,7 @@ const InstantiateContract = ({ chainID }: { chainID: string }) => {
   // ------------------------------------------//
   const onSubmit = (data: InstatiateContractInputs) => {
     const parsedCodeId = Number(data.codeId);
-    if (isNaN(parsedCodeId)) {
+    if (Number.isNaN(parsedCodeId)) {
       dispatch(
         setError({
           type: 'error',
