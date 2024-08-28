@@ -37,7 +37,7 @@ const AttachFunds = (props: AttachFundsI) => {
   const { getChainAssets } = useContracts();
   const { assetsList } = getChainAssets(chainName);
   const onDelete = (index: number) => {
-    if (index === 0) return;
+    if (funds.length === 1) return;
     const newFunds = funds.filter((_, i) => i !== index);
     setFunds(newFunds);
   };

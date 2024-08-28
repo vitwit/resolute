@@ -28,7 +28,7 @@ const DialogTxExecuteStatus = ({ chainID }: { chainID: string }) => {
     [minimalDenom, decimals, displayDenom]
   );
 
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
   const txExecuteStatus = useAppSelector(
     (state) => state.cosmwasm.chains?.[chainID]?.txExecute?.status
   );

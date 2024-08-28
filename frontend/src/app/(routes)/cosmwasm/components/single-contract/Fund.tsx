@@ -9,6 +9,7 @@ const Fund = ({
   index,
   funds,
   setFunds,
+  disableDelete,
 }: {
   assetsList: AssetInfo[];
   fund: FundInfo;
@@ -16,6 +17,7 @@ const Fund = ({
   index: number;
   funds: FundInfo[];
   setFunds: (value: React.SetStateAction<FundInfo[]>) => void;
+  disableDelete: boolean;
 }) => {
   const handleAmountChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -49,6 +51,7 @@ const Fund = ({
         handleChange={handleAmountChange}
         onDelete={onDelete}
         index={index}
+        disableDelete={disableDelete}
       />
     </div>
   );

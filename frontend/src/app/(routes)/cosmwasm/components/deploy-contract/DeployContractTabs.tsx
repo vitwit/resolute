@@ -1,46 +1,38 @@
-import React, { useState } from 'react';
-import UseExistingCode from './UseExistingCode';
-import UploadWasmFile from './UploadWasmFile';
+import React from 'react';
 
-const DeployContractTabs = () => {
+const DeployContractTabs = ({
+  selectedTab,
+  handleTabChange,
+}: {
+  selectedTab: number;
+  handleTabChange: (tab: number) => void;
+}) => {
   const tabs = ['Use Existing code ID', 'Upload  WASM file'];
-  const [selectedTab, setSelectedTab] = useState('Use Existing code ID');
   return (
-    <div className="space-y-10">
-      <div className="tabs flex gap-6">
-        {tabs.map((tab) => (
-          <div key={tab} className="w-full justify-between gap-10 text-b1">
-            <div
-              className={`selected-filters
+    <div className="tabs flex gap-6">
+      {tabs.map((tab, index) => (
+        <div key={tab} className="w-full justify-between gap-10 text-b1">
+          <div
+            className={`selected-filters cursor-pointer 
                   ${
-                    selectedTab.toLowerCase() === tab.toLowerCase()
+                    selectedTab === index
                       ? 'bg-[#ffffff14] border-transparent'
                       : 'border-[#ffffff26]'
                   }
                 `}
-              onClick={() => {
-                setSelectedTab(tab);
-              }}
-            >
-              {tab}
-            </div>
-            <div
-              className={
-                selectedTab.toLowerCase() === tab.toLowerCase()
-                  ? 'bg-[#ffffff14] border-transparent'
-                  : 'border-[#ffffff26]'
-              }
-            ></div>
+            onClick={() => handleTabChange(index)}
+          >
+            {tab}
           </div>
-        ))}
-      </div>
-      <div className="">
-        {selectedTab === 'Use Existing code ID' ? (
-          <UseExistingCode />
-        ) : (
-          <UploadWasmFile />
-        )}
-      </div>
+          <div
+            className={
+              selectedTab === index
+                ? 'bg-[#ffffff14] border-transparent'
+                : 'border-[#ffffff26]'
+            }
+          ></div>
+        </div>
+      ))}
     </div>
   );
 };

@@ -33,6 +33,7 @@ const SelectFunds = (props: SelectFundsI) => {
               index={index}
               funds={funds}
               setFunds={setFunds}
+              disableDelete={funds.length === 1}
             />
           ))}
           <div className="flex justify-center">
