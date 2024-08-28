@@ -14,6 +14,7 @@ interface CustomButtonProps {
   /* eslint-disable @typescript-eslint/no-explicit-any */
   btnOnClick?: any;
   btnType?: 'submit' | 'button';
+  isDelete?: boolean;
 }
 
 const CustomButton = ({
@@ -23,10 +24,11 @@ const CustomButton = ({
   btnDisabled,
   btnOnClick,
   btnType,
+  isDelete,
 }: CustomButtonProps) => {
   return (
     <button
-      className={`primary-btn ${btnStyles}`}
+      className={`${btnStyles} ${isDelete ? 'delete-btn' : 'primary-btn'}`}
       disabled={btnDisabled}
       type={btnType || 'button'}
       onClick={btnOnClick}
