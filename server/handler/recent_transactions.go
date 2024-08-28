@@ -117,6 +117,38 @@ func (h *Handler) GetAllTransactions(c echo.Context) error {
 	})
 }
 
+func (h *Handler) GetChainTxHash(c echo.Context) error {
+	chainId := c.Param("chainId")
+	address := c.Param("address")
+	txhash := c.Param("txhash")
+
+	res, err := getTransaction(chainId, address, txhash)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, model.ErrorResponse{
+			Status:  "error",
+			Message: "Failed to fetch transactions",
+		})
+	}
+	parsedTxns, err := GetParsedTransaction(*res, chainId)
+	if err != nil {
+		log.Printf("Error parsing transactions: %v", err)
+		return c.JSON(http.StatusInternalServerError, model.ErrorResponse{
+			Status:  "error",
+			Message: "Failed to parse transactions",
+		})
+	}
+
+	fmt.Println("ddddddddddddddd---------------------------------------------------------------------------")
+
+	responseData := TxnsData{
+		Data: parsedTxns,
+	}
+	return c.JSON(http.StatusOK, model.SuccessResponse{
+		Status: "success",
+		Data:   responseData,
+	})
+}
+
 func getTransactions(chainId string, address string, limit string, offset string) (*txn_types.TransactionResponses, error) {
 	config, err := config.ParseConfig()
 	if err != nil {
@@ -159,6 +191,57 @@ func getTransactions(chainId string, address string, limit string, offset string
 		}
 
 		var result txn_types.TransactionResponses
+		if err := json.Unmarshal(body, &result); err != nil {
+			return nil, err
+		}
+
+		return &result, nil
+	}
+	return nil, err
+}
+
+func getTransaction(chainId string, address string, txhash string) (*txn_types.SingleTxnRes, error) {
+	config, err := config.ParseConfig()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	chainConfig, err := utils.GetChainAPIs(chainId)
+	var networkURIs = chainConfig.RestURIs
+
+	if err == nil {
+		requestURI := utils.CreateTxnRequestURI(networkURIs[0], address, txhash)
+		fmt.Println("creq request URI", requestURI)
+		req, _ := http.NewRequest("GET", requestURI, nil)
+		if err != nil {
+			return nil, err
+		}
+
+		if chainConfig.SourceEnd == "mintscan" {
+
+			authorizationToken := fmt.Sprintf("Bearer %s", config.MINTSCAN_TOKEN.Token)
+			req.Header.Add("Authorization", authorizationToken) // Change this to your actual token
+		}
+
+		if chainConfig.SourceEnd == "numia" {
+			bearerToken := config.NUMIA_BEARER_TOKEN.Token
+			var authorization = "Bearer " + bearerToken
+
+			req.Header.Add("Authorization", authorization)
+		}
+
+		client := &http.Client{}
+		resp, err := client.Do(req)
+		if err != nil {
+			return nil, err
+		}
+		defer resp.Body.Close()
+		body, err := io.ReadAll(resp.Body)
+		if err != nil {
+			return nil, err
+		}
+
+		var result txn_types.SingleTxnRes
 		if err := json.Unmarshal(body, &result); err != nil {
 			return nil, err
 		}
@@ -245,6 +328,28 @@ func GetParsedTransactions(txns txn_types.TransactionResponses, chainId string) 
 	sort.Sort(ByTimestamp(parsedTxns))
 
 	return parsedTxns, nil
+
+}
+
+func GetParsedTransaction(txns txn_types.SingleTxnRes, chainId string) (txn_types.ParsedTxn, error) {
+	layout := "2006-01-02T15:04:05Z"
+	txn_response := txns.TxResponses
+	txn := txns.Txs
+	parsedTxn := txn_types.ParsedTxn{
+		Code:      txn_response.Code,
+		GasUsed:   txn_response.GasUsed,
+		GasWanted: txn_response.GasWanted,
+		Height:    txn_response.Height,
+		RawLog:    txn_response.RawLog,
+		Timestamp: parseTimestamp(txn_response.Timestamp, layout),
+		Fee:       txn.AuthInfo.Fee.Amount,
+		Txhash:    txn_response.Txhash,
+		Memo:      txn.Body.Memo,
+		Messages:  txn.Body.Messages,
+		ChainId:   chainId,
+	}
+
+	return parsedTxn, nil
 
 }
 

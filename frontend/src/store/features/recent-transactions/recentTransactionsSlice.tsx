@@ -27,6 +27,11 @@ interface RecentTransactionsState {
     status: TxStatus;
     error: string;
   };
+  txn: {
+    data?: ParsedTransaction[];
+    status: TxStatus;
+    error: string;
+  }
 }
 
 const initialState: RecentTransactionsState = {
@@ -40,6 +45,11 @@ const initialState: RecentTransactionsState = {
     status: TxStatus.INIT,
     error: '',
   },
+  txn: {
+    data: undefined,
+    status: TxStatus.INIT,
+    error: '',
+  }
 };
 
 export const getRecentTransactions = createAsyncThunk(
@@ -159,6 +169,66 @@ export const getAllTransactions = createAsyncThunk(
   }
 );
 
+export const getTransaction = createAsyncThunk(
+  'recent-txns/get-txn',
+  async (
+    data: {
+      address: string;
+      chainID: string;
+      txhash: string;
+    },
+    { rejectWithValue, dispatch }
+  ) => {
+    try {
+      const response = await recentTransactionsService.fetchTx(data);
+      let txns: ParsedTransaction[] = [];
+      const txnsData = response?.data?.data?.data
+      console.log('dddddddddddddddddddd', txnsData)
+      // txnsData.forEach((txn: ParsedTransaction) => {
+      const { txhash, messages } = txnsData;
+      if (messages[0]?.['@type'] === IBC_SEND_TYPE_URL) {
+        const ibcTx = getIBCTxn(txhash);
+        if (ibcTx) {
+          txns = [...txns, ibcTx];
+          if (ibcTx?.isIBCPending) {
+            dispatch(
+              trackTx({
+                chainID: ibcTx.chain_id,
+                txHash: ibcTx.txhash,
+              })
+            );
+          }
+        } else {
+          let formattedTxn = txnsData;
+          formattedTxn = { ...formattedTxn, isIBCPending: false };
+          formattedTxn = { ...formattedTxn, isIBCTxn: true };
+          txns = [...txns, formattedTxn];
+        }
+      } else {
+        let formattedTxn = txnsData;
+        formattedTxn = { ...formattedTxn, isIBCPending: false };
+        formattedTxn = { ...formattedTxn, isIBCTxn: false };
+
+        txns = [...txns, formattedTxn];
+      }
+      // });
+      // return {
+      //   data: {
+      //     data: txns,
+      //     total: response?.data?.data?.total,
+      //   },
+      // };
+      return { data: txns }
+    } catch (error) {
+      if (error instanceof AxiosError)
+        return rejectWithValue({
+          message: error?.response?.data?.message || ERR_UNKNOWN,
+        });
+      return rejectWithValue({ message: ERR_UNKNOWN });
+    }
+  }
+);
+
 export const txRepeatTransaction = createAsyncThunk(
   'recent-txns/repeat-txn',
   async (
@@ -173,8 +243,7 @@ export const txRepeatTransaction = createAsyncThunk(
         data.messages,
         GAS_FEE,
         '',
-        `${data.basicChainInfo.feeAmount * 10 ** data.basicChainInfo.decimals}${
-          data.basicChainInfo.feeCurrencies[0].coinDenom
+        `${data.basicChainInfo.feeAmount * 10 ** data.basicChainInfo.decimals}${data.basicChainInfo.feeCurrencies[0].coinDenom
         }`,
         data.basicChainInfo.rest,
         data?.feegranter?.length ? data.feegranter : undefined,
@@ -276,6 +345,22 @@ export const recentTransactionsSlice = createSlice({
       .addCase(getAllTransactions.rejected, (state, action) => {
         state.txns.status = TxStatus.REJECTED;
         state.txns.data = [];
+        const payload = action.payload as { message: string };
+        state.txns.error = payload.message || '';
+      });
+    builder
+      .addCase(getTransaction.pending, (state) => {
+        state.txn.status = TxStatus.PENDING;
+        state.txn.error = '';
+      })
+      .addCase(getTransaction.fulfilled, (state, action) => {
+        state.txn.status = TxStatus.IDLE;
+        state.txn.data = action?.payload?.data || {};
+        state.txns.error = '';
+      })
+      .addCase(getTransaction.rejected, (state, action) => {
+        state.txn.status = TxStatus.REJECTED;
+
         const payload = action.payload as { message: string };
         state.txns.error = payload.message || '';
       });

@@ -69,3 +69,7 @@ func CreateRequestURI(api string, module string, address string) string {
 func CreateAllTxnsRequestURI(api string, address string, limit string, offset string) string {
 	return fmt.Sprintf("%s/cosmos/tx/v1beta1/txs?events=message.sender='%s'&order_by=2&pagination.limit=%s&pagination.offset=%s", api, url.QueryEscape(address), url.QueryEscape(limit), url.QueryEscape(offset))
 }
+
+func CreateTxnRequestURI(api string, address string, txhash string) string {
+	return fmt.Sprintf("%s/cosmos/tx/v1beta1/txs/%s", api, txhash)
+}

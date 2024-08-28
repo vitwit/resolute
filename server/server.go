@@ -92,6 +92,7 @@ func main() {
 	e.GET("/accounts/:address/all-txns", h.GetAllMultisigTxns)
 	e.POST("/transactions", h.GetRecentTransactions)
 	e.GET("/txns/:chainId/:address", h.GetAllTransactions)
+	e.GET("/txns/:chainId/:address/:txhash", h.GetChainTxHash)
 
 	// users
 	e.POST("/users/:address/signature", h.CreateUserSignature)

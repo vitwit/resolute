@@ -1,45 +1,40 @@
 import React, { useState } from 'react';
 import TransactionHeader from './TransactionHeader';
 import Image from 'next/image';
+import { useAppSelector } from '@/custom-hooks/StateHooks';
+import { RootState } from '@/store/store';
+import { getLocalTime } from '@/utils/dataTime';
+import NumberFormat from '@/components/common/NumberFormat';
+import { get } from 'lodash';
+import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
+import TxMsg from './TxMsg';
 
-const Transaction = () => {
-  const countTypeCards = [
-    {
-      title: 'Delegates',
-      validatorLogo: '/akash1.png',
-      validatorName: 'Stakefish',
-      amount: '120 AKT',
-      autoClaimRewards: '120 AKT',
-    },
-    {
-      title: 'Delegates',
-      validatorLogo: '/akash2.png',
-      validatorName: 'Everstake',
-      amount: '150 AKT',
-      autoClaimRewards: '150 AKT',
-    },
-    {
-      title: 'Delegates',
-      validatorLogo: '/akash3.png',
-      validatorName: 'Cosmos',
-      amount: '200 AKT',
-      autoClaimRewards: '200 AKT',
-    },
-    {
-      title: 'Delegates',
-      validatorLogo: '/akash1.png',
-      validatorName: 'Stakefish',
-      amount: '120 AKT',
-      autoClaimRewards: '120 AKT',
-    },
-    {
-      title: 'Delegates',
-      validatorLogo: '/akash2.png',
-      validatorName: 'Everstake',
-      amount: '150 AKT',
-      autoClaimRewards: '150 AKT',
-    },
-  ];
+const Transaction = ({ chainName, hash }: { chainName: string, hash:string }) => {
+  const txnResult = useAppSelector(
+    (state: RootState) => state.recentTransactions.txn?.data?.[0]
+  );
+
+  const nameToChainsIDs = useAppSelector(
+    (state: RootState) => state.common.nameToChainIDs
+  );
+
+  const chainID = nameToChainsIDs[chainName]
+
+  const {
+    getChainInfo,
+    getDenomInfo,
+  } = useGetChainInfo();
+
+  const { chainLogo } = getChainInfo(chainID);
+
+  const getAmount = (amount: number) => {
+    const { decimals, displayDenom } = getDenomInfo(chainID);
+
+    return {
+      amount: (amount / 10 ** decimals).toFixed(6),
+      denom: displayDenom,
+    };
+  }
 
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
 
@@ -47,9 +42,11 @@ const Transaction = () => {
     setExpandedIndex(expandedIndex === index ? null : index);
   };
 
+  const msgs = txnResult?.messages
+
   return (
     <div>
-      <TransactionHeader status="failed" />
+      <TransactionHeader hash={hash} status={txnResult?.code === 0? 'success': 'failed'}/>
       <div className="flex gap-10 w-full">
         <div className="flex-1 flex w-full">
           <div className="flex flex-col gap-6 w-full">
@@ -58,66 +55,34 @@ const Transaction = () => {
                 <p className="text-b1-light">Network</p>
                 <div className="flex gap-2 items-center">
                   <Image
-                    src="/akash1.png"
+                    src={chainLogo}
                     width={24}
                     height={24}
                     alt="network-logo"
                     className="w-6 h-6"
                   />
-                  <p className="text-h2 font-bold">Akash</p>
+                  <p className="text-h2 font-bold">{chainName}</p>
                 </div>
               </div>
               <div className="txn-history-card">
                 <p className="text-b1-light">Fees</p>
-                <div className="text-h2 font-bold">120 AKT</div>
+                <div className="text-h2 font-bold">
+                  <NumberFormat
+                    cls=''
+                    type='token'
+                    value={getAmount(Number(get(txnResult, 'fee[0].amount', 0))).amount}
+                    token={getAmount(Number(get(txnResult, 'fee[0].amount', 0))).denom}
+                  />
+                </div>
               </div>
             </div>
-
-            {countTypeCards.map((card, index) => (
-              <div key={index} className="count-type-card-extend w-full">
-                <div className="count-type-card">
-                  <div
-                    className="flex justify-between w-full"
-                    onClick={() => toggleExpand(index)}
-                  >
-                    <p className="text-b1">{card.title}</p>
-                    <Image
-                      src="/down-arrow.svg"
-                      width={24}
-                      height={24}
-                      alt="drop-icon"
-                      className={`transition-transform duration-500 ease-in-out ${
-                        expandedIndex === index ? 'rotate-180' : ''
-                      }`}
-                    />
-                  </div>
-                </div>
-                {expandedIndex === index && (
-                  <div className="flex justify-between px-6 w-full pb-4">
-                    <div className="flex flex-col gap-2">
-                      <p className="text-b1-light">Validator</p>
-                      <div className="flex gap-2 items-center">
-                        <Image
-                          src={card.validatorLogo}
-                          width={24}
-                          height={24}
-                          alt="validator-logo"
-                        />
-                        <span className="text-b1">{card.validatorName}</span>
-                      </div>
-                    </div>
-                    <div className="flex flex-col gap-2">
-                      <div className="text-b1-light">Amount</div>
-                      <div className="text-b1">{card.amount}</div>
-                    </div>
-                    <div className="flex flex-col gap-2">
-                      <div className="text-b1-light">Auto Claim Rewards</div>
-                      <div className="text-b1">{card.autoClaimRewards}</div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            ))}
+            {
+              msgs?.map((msg, mIndex) => (
+                <TxMsg key={mIndex} msg={msg} mIndex={mIndex} 
+                chainID={chainID}
+                expandedIndex={expandedIndex} toggleExpand={toggleExpand} />
+              ))
+            }
           </div>
         </div>
 
@@ -127,9 +92,9 @@ const Transaction = () => {
             <div className="flex flex-col items-center gap-4 w-full">
               <p className="text-b1-light">Gas Used / Wanted</p>
               <div className="text-b1 font-bold">
-                <span>123,478,987</span>
+                <span>{txnResult?.gas_used || 0}</span>
                 <span>/</span>
-                <span>123,478,987</span>
+                <span>{txnResult?.gas_wanted || 0}</span>
               </div>
             </div>
           </div>
@@ -137,14 +102,14 @@ const Transaction = () => {
           <div className="txn-history-card w-[352px]">
             <div className="flex flex-col items-center gap-4 w-full">
               <p className="text-b1-light">TimeStamp</p>
-              <div className="text-b1 font-bold">24th March 2023, 11:34 pm</div>
+              <div className="text-b1 font-bold">{getLocalTime(txnResult?.timestamp || '')}</div>
             </div>
           </div>
 
           <div className="txn-history-card w-[352px]">
             <div className="flex flex-col items-center gap-4 w-full">
               <p className="text-b1-light">Height</p>
-              <div className="text-b1 font-bold">2123,478,987</div>
+              <div className="text-b1 font-bold">{txnResult?.height}</div>
             </div>
           </div>
 
@@ -152,8 +117,7 @@ const Transaction = () => {
             <div className="flex flex-col items-center gap-4 w-full">
               <p className="text-b1-light">Memo</p>
               <div className="text-b1 font-bold">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor.
+                {txnResult?.memo || '-'}
               </div>
             </div>
           </div>

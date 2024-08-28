@@ -14,6 +14,12 @@ const ALL_TXNS_URL = (
   offset: number
 ) => `/txns/${chainID}/${address}?limit=${limit}&offset=${offset}`;
 
+const TXN_URL = (
+  address: string,
+  chainID: string,
+  txhash: string,
+) => `/txns/${chainID}/${address}/${txhash}`;
+
 export const fetchRecentTransactions = ({
   payload,
   module,
@@ -39,7 +45,19 @@ export const fetchAllTransactions = ({
 }): Promise<AxiosResponse> =>
   Axios.get(`${BASE_URL}${ALL_TXNS_URL(address, chainID, limit, offset)}`);
 
+export const fetchTx = ({
+  address,
+  chainID,
+  txhash,
+}: {
+  address: string;
+  chainID: string;
+  txhash: string;
+}): Promise<AxiosResponse> =>
+  Axios.get(`${BASE_URL}${TXN_URL(address, chainID, txhash)}`);
+
 export default {
   recentTransactions: fetchRecentTransactions,
   allTransactions: fetchAllTransactions,
+  fetchTx: fetchTx
 };

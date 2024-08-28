@@ -31,7 +31,7 @@ const History = ({ chainNames }: { chainNames: string[] }) => {
     return chainIDs.length ? (
             <div>
                 <div className="text-h1">History</div>
-                <TransactionHistoryDashboard chainID={chainID}/>
+                <TransactionHistoryDashboard  chainID={chainID}/>
             </div>
     ) : (
         <ChainNotFound />

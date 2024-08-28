@@ -7,6 +7,9 @@ import useGetTransactions from '@/custom-hooks/useGetTransactions';
 import { useAppSelector } from '@/custom-hooks/StateHooks';
 import { RootState } from '@/store/store';
 import { getTypeURLName } from '@/utils/util';
+import NewTxnMsg from '@/components/NewTxnMsg';
+import { getLocalTime } from '@/utils/dataTime';
+import Link from 'next/link';
 
 const TransactionHistoryDashboard = ({ chainID }: { chainID: string }) => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -20,66 +23,9 @@ const TransactionHistoryDashboard = ({ chainID }: { chainID: string }) => {
   const transactions = useAppSelector((state: RootState) => state.recentTransactions.txns?.data)
   console.log('statke data', transactions)
 
-
-  // const transactions = [
-  //   {
-  //     date: '23rd March 2024',
-  //     hash: '9EE7829FA411244...',
-  //     amount: '1000 AKT',
-  //     recipient: 'pasg1h3v5dv7',
-  //     statusIcon: '/success-icon.svg',
-  //     status: 'success',
-  //     permissions: ['Send', 'Delegate', 'Vote'],
-  //   },
-  //   {
-  //     date: '21st March 2024',
-  //     hash: '8FE7829FA411244...',
-  //     amount: '500 AKT',
-  //     recipient: 'pasg2j4k8nd92',
-  //     statusIcon: '/success-icon.svg',
-  //     status: 'success',
-  //     permissions: ['Send', 'Delegate'],
-  //   },
-  //   {
-  //     date: '20th March 2024',
-  //     hash: '7CE8829FA411244...',
-  //     amount: '200 AKT',
-  //     recipient: 'pasg9x7v3fb9k',
-  //     statusIcon: '/failed-icon.svg',
-  //     status: 'failed',
-  //     permissions: [
-  //       'Send',
-  //       'Send',
-  //       'Vote',
-  //       'Delegate',
-  //       'Manage',
-  //       'Send',
-  //       'Vote',
-  //       'Delegate',
-  //       'Manage',
-  //     ],
-  //   },
-  //   {
-  //     date: '19th March 2024',
-  //     hash: '6BD7829FA411244...',
-  //     amount: '1500 AKT',
-  //     recipient: 'pasg6z8h2v1qp',
-  //     statusIcon: '/failed-icon.svg',
-  //     status: 'failed',
-  //     permissions: ['Send', 'Vote', 'Delegate', 'Manage'],
-  //   },
-  //   {
-  //     date: '18th March 2024',
-  //     hash: '5AC7829FA411244...',
-  //     amount: '800 AKT',
-  //     recipient: 'pasg4g5j9d6z',
-  //     statusIcon: '/success-icon.svg',
-  //     status: 'success',
-  //     permissions: ['Delegate', 'Vote'],
-  //   },
-  // ];
-
-
+  const networks = useAppSelector((state: RootState) => state.wallet.networks);
+  const config = networks?.[chainID]?.network?.config;
+  const currency = config?.currencies?.[0];
 
   return (
     <>
@@ -95,7 +41,7 @@ const TransactionHistoryDashboard = ({ chainID }: { chainID: string }) => {
           {transactions.map((txn, index) => (
             <div key={index} className="flex gap-6">
               <div className="flex flex-col items-center gap-2">
-                <p className="text-small">{txn?.timestamp || '-'}</p>
+                <p className="text-small">{getLocalTime(txn?.timestamp)}</p>
                 <p className="v-line"></p>
                 <Image
                   src={txn?.code === 0 ? '/success-icon.svg' : '/failed-icon.svg'}
@@ -106,21 +52,24 @@ const TransactionHistoryDashboard = ({ chainID }: { chainID: string }) => {
                 <p className="v-line"></p>
               </div>
 
-              <div className="txn-card flex-1">
-                <div className="space-y-6 w-[30%]">
+              <div className="txn-card flex-1 gap-10">
+                <div className="space-y-6 ">
                   <div className="flex">
-                    <p className="text-b1">{txn?.txhash}</p>
-                    <Copy content={txn?.txhash} />
+                    <Link
+                      className="capitalize"
+                      href={`history/${txn?.txhash}`}
+                    >
+                      <p className="text-b1">{txn?.txhash}</p>
+                      <Copy content={txn?.txhash} />
+                    </Link>
+
                   </div>
-                  <div>
-                    <span className="text-small">Sent</span>{' '}
-                    {/* <span className="text-b1">{txn.amount}</span>{' '} */}
-                    <span className="text-small">to </span>{' '}
-                    {/* <span className="text-b1">{txn.recipient}</span> */}
+                  <div className=''>
+                    <NewTxnMsg msgs={txn?.messages || []} currency={currency} failed={txn?.code !== 0} />
                   </div>
                 </div>
-                <br/>
-                <br/>
+                <br />
+                <br />
                 <div className="flex flex-wrap gap-4 w-[50%]">
                   {
                     txn?.messages?.map((msg, index) => (
@@ -129,11 +78,6 @@ const TransactionHistoryDashboard = ({ chainID }: { chainID: string }) => {
                       </div>
                     ))
                   }
-                  {/* <>
-                    {txn.permissions.map((permission, index) => (
-                     
-                    ))} 
-                  </>*/}
                 </div>
                 <div className="flex">
                   <button className="primary-btn">
