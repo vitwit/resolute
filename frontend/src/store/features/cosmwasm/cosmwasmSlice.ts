@@ -170,7 +170,7 @@ export const getAllCodes = createAsyncThunk(
     { rejectWithValue, dispatch }
   ) => {
     try {
-      const response = await getCodes(data.baseURLs);
+      const response = await getCodes(data.baseURLs, data.chainID);
       return {
         data: response.data,
         chainID: data.chainID,
@@ -195,7 +195,11 @@ export const getAllContractsByCode = createAsyncThunk(
     { rejectWithValue, dispatch }
   ) => {
     try {
-      const response = await getContractsByCode(data.baseURLs, data.codeId);
+      const response = await getContractsByCode(
+        data.baseURLs,
+        data.codeId,
+        data.chainID
+      );
       return {
         data: {
           contracts: response.data,
