@@ -184,8 +184,8 @@ const UploadWasmFile = ({ chainID }: { chainID: string }) => {
             style={{ display: 'none' }}
           />
           <div className="w-[50%] space-y-6">
-            <div className="space-y-1">
-              <div className="text-b1-light">Select Instantiate Permission</div>
+            <div className="space-y-0">
+              <div className="form-label-text">Select Instantiate Permission</div>
               <div className="flex flex-col gap-4">
                 <SelectPermissionType
                   handleAccessTypeChange={handleAccessTypeChange}
