@@ -9,7 +9,7 @@ import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { setChangeNetworkDialogOpen } from '@/store/features/common/commonSlice';
 import { setConnectWalletOpen } from '@/store/features/wallet/walletSlice';
 
-const page = () => {
+const Page = () => {
   const dispatch = useAppDispatch();
   const isWalletConnected = useAppSelector((state) => state.wallet.connected);
 
@@ -25,6 +25,7 @@ const page = () => {
       openChangeNetwork();
     }
   }, []);
+
   return (
     <div className="py-10 h-full flex flex-col">
       <PageHeader title="Settings" description={GENERAL_SETTINGS_DESCRIPTION} />
@@ -53,4 +54,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;
