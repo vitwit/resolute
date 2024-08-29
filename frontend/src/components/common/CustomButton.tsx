@@ -15,6 +15,7 @@ interface CustomButtonProps {
   btnOnClick?: any;
   btnType?: 'submit' | 'button';
   isDelete?: boolean;
+  form?: string;
 }
 
 const CustomButton = ({
@@ -25,6 +26,7 @@ const CustomButton = ({
   btnOnClick,
   btnType,
   isDelete,
+  form,
 }: CustomButtonProps) => {
   return (
     <button
@@ -32,6 +34,7 @@ const CustomButton = ({
       disabled={btnDisabled}
       type={btnType || 'button'}
       onClick={btnOnClick}
+      form={form}
     >
       {btnLoading ? (
         <div className="flex justify-center items-center gap-2">

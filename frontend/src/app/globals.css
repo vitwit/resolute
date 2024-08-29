@@ -213,7 +213,7 @@ input[type='checkbox'] {
   @apply flex flex-col items-start gap-4 w-full p-10;
   background: rgba(255, 255, 255, 0.02);
 }
-.profile-grid {
+.profile-grid, .txn-data {
   @apply flex flex-col justify-center items-center gap-2 p-4 rounded-2xl;
   background: rgba(255, 255, 255, 0.02);
 }
@@ -235,6 +235,13 @@ input[type='checkbox'] {
 .custom-radio-button-checked {
   @apply h-[6px] w-[6px] bg-white rounded-full;
 }
+.selected-filters {
+  @apply flex justify-center items-center gap-4 px-4 py-[10.5px] rounded-lg border-[0.25px] hover:bg-[#ffffff14] hover:border-transparent;
+}
+.selected-msgs {
+  @apply flex justify-center items-center gap-4 px-4 py-2 rounded-lg border-[0.25px] hover:bg-[#ffffff14] hover:border-transparent;
+}
+
 
 /* TransactionHistory */
 .search-Txn-input {

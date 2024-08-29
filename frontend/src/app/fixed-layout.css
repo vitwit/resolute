@@ -1,5 +1,11 @@
 .main {
   --main-bg-color: #09090a;
+  background: radial-gradient(
+      80% 48% at 50% 50%,
+      #4e2d954d 0%,
+      rgba(9, 9, 10, 0.3) 100%
+    )
+    fixed;
 }
 
 .fixed-layout {
@@ -15,7 +21,7 @@
 }
 
 .sidebar {
-  @apply overflow-hidden fixed top-[65px] px-6 w-[240px] bg-[var(--main-bg-color)] border-r-[1px] border-[#1c1c20] py-10 flex flex-col justify-between;
+  @apply overflow-hidden fixed top-[65px] px-6 w-[240px]  border-r-[1px] border-[#1c1c20] py-10 flex flex-col justify-between;
   height: calc(100vh - 60px) !important;
 }
 
@@ -42,11 +48,11 @@
 
 .dynamic-section {
   @apply ml-[240px] mt-[60px] w-full;
-  background: radial-gradient(
+  /* background: radial-gradient(
     50% 50% at 50% 50%,
     rgba(68, 83, 223, 0.2) 0%,
     rgba(9, 9, 10, 0.2) 100%
-  );
+  ); */
 }
 
 .menu-item {
