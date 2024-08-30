@@ -26,9 +26,9 @@ const TransactionHeader: React.FC<TransactionHeaderProps> = ({
   return (
     <div className="flex flex-col py-10 gap-10">
       <div className="flex flex-col gap-6">
-        <div className="secondary-btn" onClick={() => router.back()}>
+        <button className="secondary-btn" onClick={() => router.back()}>
           Go back
-        </div>
+        </button>
         <div className="flex justify-between items-end gap-6">
           <div className="flex gap-1 flex-col w-full">
             <div className="flex gap-1 items-center">

@@ -32,11 +32,13 @@ const Page = () => {
 
   return (
     <div>
-      <Transaction
-        hash={paramTxHash[0]}
-        chainName={arrChainNames[0]}
-        chainID={chainID}
-      />
+      {chainID && (
+        <Transaction
+          hash={paramTxHash[0]}
+          chainName={arrChainNames[0]}
+          chainID={chainID}
+        />
+      )}
     </div>
   );
 };
