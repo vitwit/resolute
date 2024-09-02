@@ -58,6 +58,9 @@ export const VOTE_TYPE_URL = '/cosmos.gov.v1beta1.MsgVote';
 export const MSG_AUTHZ_REVOKE = '/cosmos.authz.v1beta1.MsgRevoke';
 export const MSG_AUTHZ_EXEC = '/cosmos.authz.v1beta1.MsgExec';
 export const MSG_AUTHZ_GRANT = '/cosmos.authz.v1beta1.MsgGrant';
+export const MSG_GRANT_ALLOWANCE = '/cosmos.feegrant.v1beta1.MsgGrantAllowance';
+export const MSG_REVOKE_ALLOWANCE =
+  '/cosmos.feegrant.v1beta1.MsgRevokeAllowance';
 
 export const MULTI_TRANSFER_MSG_COUNT = 3;
 export const DELETE_TXN_DIALOG_IMAGE_PATH = '/delete-txn-popup-image.png';

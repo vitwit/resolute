@@ -7,12 +7,18 @@ import TransactionCard from './TransactionCard';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import DialogLoader from '@/components/common/DialogLoader';
 import { TxStatus } from '@/types/enums';
+import { Pagination } from '@mui/material';
+import { paginationComponentStyles } from '@/utils/commonStyles';
+import TxnsLoading from '../../loaders/TxnsLoading';
+
+const ITEMS_PER_PAGE = 5;
 
 const TransactionHistoryDashboard = ({ chainID }: { chainID: string }) => {
   const { getChainInfo, getDenomInfo } = useGetChainInfo();
   const { displayDenom, decimals, minimalDenom } = getDenomInfo(chainID);
   const basicChainInfo = getChainInfo(chainID);
 
+  const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
   const txnHistory = useGetTransactions({ chainID });
 
@@ -29,6 +35,9 @@ const TransactionHistoryDashboard = ({ chainID }: { chainID: string }) => {
   const txnRepeatStatus = useAppSelector(
     (state) => state.recentTransactions?.txnRepeat?.status
   );
+  const txnsLoading = useAppSelector(
+    (state) => state.recentTransactions.txns.status
+  );
   const loading = txnRepeatStatus === TxStatus.PENDING;
 
   const currency = {
@@ -36,6 +45,22 @@ const TransactionHistoryDashboard = ({ chainID }: { chainID: string }) => {
     coinDecimals: decimals,
     coinMinimalDenom: minimalDenom,
   };
+
+  const handlePageChange = (value: number) => {
+    const offset = (value - 1) * ITEMS_PER_PAGE;
+    txnHistory.fetchTransactions(ITEMS_PER_PAGE, offset);
+    setCurrentPage(value);
+  };
+
+  const totalCount = useAppSelector(
+    (state) => state.recentTransactions?.txns?.total
+  );
+
+  const pagesCount = Math.ceil(totalCount / ITEMS_PER_PAGE);
+  const showPagination =
+    transactions?.length &&
+    txnsLoading !== TxStatus.PENDING &&
+    pagesCount !== 0;
 
   return (
     <div className="flex flex-col py-10 gap-10">
@@ -55,6 +80,20 @@ const TransactionHistoryDashboard = ({ chainID }: { chainID: string }) => {
           />
         ))}
       </div>
+      {txnsLoading === TxStatus.PENDING ? <TxnsLoading /> : null}
+      {showPagination ? (
+        <div className="flex justify-end">
+          <Pagination
+            sx={paginationComponentStyles}
+            count={pagesCount}
+            page={currentPage}
+            shape="circular"
+            onChange={(_, value) => {
+              handlePageChange(value);
+            }}
+          />
+        </div>
+      ) : null}
       <DialogLoader open={loading} loadingText="Pending" />
     </div>
   );

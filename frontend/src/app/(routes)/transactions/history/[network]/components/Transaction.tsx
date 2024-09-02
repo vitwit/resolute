@@ -8,7 +8,7 @@ import NumberFormat from '@/components/common/NumberFormat';
 import { get } from 'lodash';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import TxMsg from './TxMsg';
-import { parseTxnData } from '@/utils/util';
+import { getTxnURL, parseTxnData } from '@/utils/util';
 import { buildMessages } from '@/utils/transaction';
 import { txRepeatTransaction } from '@/store/features/recent-transactions/recentTransactionsSlice';
 import DialogLoader from '@/components/common/DialogLoader';
@@ -18,15 +18,17 @@ const Transaction = ({
   chainName,
   hash,
   chainID,
+  isSearchPage = false,
 }: {
   chainName: string;
   hash: string;
   chainID: string;
+  isSearchPage?: boolean;
 }) => {
   const dispatch = useAppDispatch();
   const { getChainInfo, getDenomInfo } = useGetChainInfo();
   const basicChainInfo = getChainInfo(chainID);
-  const { chainLogo } = basicChainInfo;
+  const { chainLogo, explorerTxHashEndpoint } = basicChainInfo;
 
   const txnRepeatStatus = useAppSelector(
     (state) => state.recentTransactions?.txnRepeat?.status
@@ -76,6 +78,9 @@ const Transaction = ({
         status={success ? 'success' : 'failed'}
         onRepeatTxn={onRepeatTxn}
         disableAction={disableAction}
+        goBackUrl={`/transactions/history/${chainName.toLowerCase()}`}
+        isSearchPage={isSearchPage}
+        mintscanURL={getTxnURL(explorerTxHashEndpoint, hash || '')}
       />
       <div className="flex gap-10 w-full">
         <div className="flex-1 flex w-full">
@@ -91,7 +96,7 @@ const Transaction = ({
                     alt="network-logo"
                     className="w-6 h-6"
                   />
-                  <p className="text-h2 font-bold">{chainName}</p>
+                  <p className="text-h2 font-bold capitalize">{chainName}</p>
                 </div>
               </div>
               <div className="txn-history-card">
