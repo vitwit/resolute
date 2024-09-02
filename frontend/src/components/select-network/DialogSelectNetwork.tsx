@@ -10,11 +10,13 @@ import { Dialog, DialogContent } from '@mui/material';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import NetworkItem from '../select-network/NetworkItem';
 import SearchNetworkInput from './SearchNetworkInput';
+import useHandleRouteChange from '@/custom-hooks/routing/useHandleRouteChange';
 
 const DialogSelectNetwork = () => {
+  useHandleRouteChange();
   const dispatch = useAppDispatch();
   const pathName = usePathname();
   const searchParams = useSearchParams();
@@ -47,32 +49,6 @@ const DialogSelectNetwork = () => {
       selectedNetwork?.chainName?.toLowerCase() === chainName.toLowerCase()
     );
   };
-
-  useEffect(() => {
-    const pathParts = pathName.split('/') || [];
-    if (pathParts.includes('validator')) {
-      dispatch(setSelectedNetwork({ chainName: '' }));
-    } else if (pathParts.includes('feegrant') || pathParts.includes('authz')) {
-      if (pathParts.length >= 4) {
-        if (
-          pathParts.includes('new-feegrant') ||
-          pathParts.includes('new-authz')
-        ) {
-          dispatch(setSelectedNetwork({ chainName: '' }));
-        } else {
-          dispatch(
-            setSelectedNetwork({ chainName: pathParts[3].toLowerCase() })
-          );
-        }
-      } else {
-        dispatch(setSelectedNetwork({ chainName: '' }));
-      }
-    } else if (pathParts.length >= 3) {
-      dispatch(setSelectedNetwork({ chainName: pathParts[2].toLowerCase() }));
-    } else {
-      dispatch(setSelectedNetwork({ chainName: '' }));
-    }
-  }, [pathName]);
 
   const constructUrlWithQueryParams = (newChain: string) => {
     const queryParams = new URLSearchParams(Array.from(searchParams.entries()));

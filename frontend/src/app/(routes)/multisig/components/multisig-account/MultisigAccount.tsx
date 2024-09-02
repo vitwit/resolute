@@ -433,7 +433,7 @@ const DialogMultisigAssets = ({
     onClose();
   };
   const { getAllAssets } = useGetAllAssets();
-  const { allAssets } = getAllAssets(chainID, false);
+  const { allAssets } = getAllAssets(chainID, false, true);
   return (
     <Dialog
       onClose={handleClose}

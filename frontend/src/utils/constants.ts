@@ -55,6 +55,13 @@ export const IBC_SEND_TYPE_URL = '/ibc.applications.transfer.v1.MsgTransfer';
 export const DEPOSIT_TYPE_URL = '/cosmos.gov.v1beta1.MsgDeposit';
 export const SEND_TEMPLATE = 'https://api.resolute.vitwit.com/_static/send.csv';
 export const VOTE_TYPE_URL = '/cosmos.gov.v1beta1.MsgVote';
+export const MSG_AUTHZ_REVOKE = '/cosmos.authz.v1beta1.MsgRevoke';
+export const MSG_AUTHZ_EXEC = '/cosmos.authz.v1beta1.MsgExec';
+export const MSG_AUTHZ_GRANT = '/cosmos.authz.v1beta1.MsgGrant';
+export const MSG_GRANT_ALLOWANCE = '/cosmos.feegrant.v1beta1.MsgGrantAllowance';
+export const MSG_REVOKE_ALLOWANCE =
+  '/cosmos.feegrant.v1beta1.MsgRevokeAllowance';
+
 export const MULTI_TRANSFER_MSG_COUNT = 3;
 export const DELETE_TXN_DIALOG_IMAGE_PATH = '/delete-txn-popup-image.png';
 export const EMPTY_TXN = {
@@ -386,4 +393,6 @@ export const ALL_NETWORKS_GRADIENT =
   'linear-gradient(180deg, #6155b275 0.5%, #12131C80 100%)';
 export const AUTHZ = 'authz';
 export const FEEGRANT = 'feegrant';
+export const TXN_BUILDER_DESCRIPTION =
+  'Transaction builder allows to create single transaction with multiple messages of same or different type.';
 export const GENERAL_SETTINGS_DESCRIPTION = 'Settings to enhance your application’s functionality';

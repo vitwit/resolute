@@ -8,7 +8,7 @@ import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import { getRecentTransactions } from '@/store/features/recent-transactions/recentTransactionsSlice';
 import { dialogBoxPaperPropStyles } from '@/utils/commonStyles';
 import { IBC_SEND_TYPE_URL, SEND_TYPE_URL } from '@/utils/constants';
-import { getTxnURL, shortenMsg } from '@/utils/util';
+import { getTxnURL, getTxnURLOnResolute, shortenMsg } from '@/utils/util';
 import { Dialog, DialogContent } from '@mui/material';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -29,7 +29,7 @@ const TransactionStatusPopup = () => {
   const [isOpen, setIsOpen] = useState(false);
   const dispatch = useAppDispatch();
   const { getChainInfo, getDenomInfo } = useGetChainInfo();
-  const { explorerTxHashEndpoint = '' } = tx?.chainID
+  const { explorerTxHashEndpoint = '', chainName = '' } = tx?.chainID
     ? getChainInfo(tx.chainID)
     : {};
   const {
@@ -129,8 +129,8 @@ const TransactionStatusPopup = () => {
                 />
                 <Link
                   className="txn-receipt-btn"
-                  href={getTxnURL(
-                    explorerTxHashEndpoint,
+                  href={getTxnURLOnResolute(
+                    chainName,
                     tx?.transactionHash || ''
                   )}
                   target="_blank"

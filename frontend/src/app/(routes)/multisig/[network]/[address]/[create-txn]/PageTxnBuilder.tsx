@@ -201,6 +201,7 @@ const PageTxnBuilderEntry = ({
           loading={createRes.status === 'pending'}
           availableBalance={availableBalance}
           fromAddress={multisigAddress}
+          isMultisig={true}
         />
       ) : (
         <EmptyScreen
