@@ -18,15 +18,16 @@ interface SendFormProps {
   availableBalance: number;
   cancelAddMsg: () => void;
   chainID: string;
+  isMultisig: boolean;
 }
 
 const SendForm = (props: SendFormProps) => {
-  const { fromAddress, onSend, cancelAddMsg, chainID } = props;
+  const { fromAddress, onSend, cancelAddMsg, chainID, isMultisig } = props;
   const dispatch = useAppDispatch();
   const { getDenomInfo } = useGetChainInfo();
   const { displayDenom: nativeDisplayDenom } = getDenomInfo(chainID);
   const { getAllAssets, getParsedAsset } = useGetAllAssets();
-  const { allAssets } = getAllAssets(chainID, true);
+  const { allAssets } = getAllAssets(chainID, true, isMultisig);
   const {
     handleSubmit,
     control,

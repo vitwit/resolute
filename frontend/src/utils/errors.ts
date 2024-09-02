@@ -33,3 +33,4 @@ export const PERMISSION_NOT_SELECTED_ERROR =
   'Atleast one permission must be selected';
 export const FAILED_TO_FETCH = 'Failed to fetch';
 export const NETWORK_ERROR = 'Network error';
+export const ERR_TXN_NOT_FOUND = 'TXN not found';

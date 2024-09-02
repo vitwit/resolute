@@ -51,7 +51,7 @@ export const SIDEBAR_MENU_OPTIONS: MenuItemI[] = [
   {
     name: 'Transactions',
     icon: '/sidebar-menu-icons/txn-history-icon.svg',
-    path: '/transactions',
+    path: '/transactions/history',
     authzSupported: false,
     isMetaMaskSupported: false,
     multipleOptions: true,
