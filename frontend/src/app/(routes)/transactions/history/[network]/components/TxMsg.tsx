@@ -3,6 +3,7 @@ import { get } from 'lodash';
 import Image from 'next/image';
 import React from 'react';
 import {
+    SEND_TYPE_URL,
     DELEGATE_TYPE_URL,
     REDELEGATE_TYPE_URL,
     UNDELEGATE_TYPE_URL,
@@ -10,6 +11,8 @@ import {
     VOTE_TYPE_URL,
     MSG_AUTHZ_GRANT,
     MSG_AUTHZ_REVOKE,
+    MSG_REVOKE_ALLOWANCE,
+    MSG_GRANT_ALLOWANCE,
 } from '@/utils/constants';
 import { shortenAddress } from '@/utils/util';
 import NumberFormat from '@/components/common/NumberFormat';
@@ -60,6 +63,28 @@ const TxMsg: React.FC<TxMsgProps> = ({ msg, expandedIndex, chainID, toggleExpand
                                 type="token"
                                 value={getAmount(Number(get(msg, 'amount.amount', ''))).amount}
                                 token={getAmount(Number(get(msg, 'amount.amount', ''))).denom}
+                            />
+                        </div>
+                    </div>
+                );
+            case SEND_TYPE_URL:
+                return (
+                    <div className="flex justify-between px-6 w-full pb-4">
+                        <div className="flex flex-col gap-2">
+                            <p className="text-b1-light">From</p>
+                            <span className="text-b1">{shortenAddress(get(msg, 'from_address', ''), 24)}</span>
+                        </div>
+                        <div className="flex flex-col gap-2">
+                            <p className="text-b1-light">To</p>
+                            <span className="text-b1">{shortenAddress(get(msg, 'to_address', ''), 24)}</span>
+                        </div>
+                        <div className="flex flex-col gap-2">
+                            <p className="text-b1-light">Amount</p>
+                            <NumberFormat
+                                cls=""
+                                type="token"
+                                value={getAmount(Number(get(msg, 'amount[0].amount', ''))).amount}
+                                token={getAmount(Number(get(msg, 'amount[0].amount', ''))).denom}
                             />
                         </div>
                     </div>
@@ -151,6 +176,58 @@ const TxMsg: React.FC<TxMsgProps> = ({ msg, expandedIndex, chainID, toggleExpand
                             {getTypeURLName(get(msg, 'msg_type_url', ''))}
                         </div>
                     </div>
+                );
+            case MSG_REVOKE_ALLOWANCE:
+                return (
+                    <div className="flex justify-between px-6 w-full pb-4">
+                        <div className="flex flex-col gap-2">
+                            <p className="text-b1-light">Granter</p>
+                            <span className="text-b1">
+                                {shortenAddress(get(msg, 'granter', ''), 24)}
+                            </span>
+                        </div>
+                        <div className="flex flex-col gap-2">
+                            <p className="text-b1-light">Grantee</p>
+                            <span className="text-b1">
+                                {shortenAddress(get(msg, 'grantee', ''), 24)}
+                            </span>
+                        </div>
+                    </div>
+                );
+            case MSG_GRANT_ALLOWANCE:
+                return (
+                    <>
+                        <div className="flex justify-between px-6 w-full pb-4">
+                            <div className="flex flex-col gap-2">
+                                <p className="text-b1-light">Granter</p>
+                                <span className="text-b1">
+                                    {shortenAddress(get(msg, 'granter', ''), 24)}
+                                </span>
+                            </div>
+                            <div className="flex flex-col gap-2">
+                                <p className="text-b1-light">Grantee</p>
+                                <span className="text-b1">
+                                    {shortenAddress(get(msg, 'grantee', ''), 24)}
+                                </span>
+                            </div>
+                        </div>
+                        <div className="flex justify-between px-6 w-full pb-4">
+                            <div className="flex flex-col gap-2">
+                                <p className="text-b1-light">Expiry</p>
+                                {getLocalTime(get(msg, 'allowance.expiration', '-'))}
+                            </div>
+                            <div className="flex flex-col gap-2">
+                                <p className="text-b1-light">Spend Limit</p>
+                                <NumberFormat
+                                    cls=""
+                                    type="token"
+                                    value={getAmount(Number(get(msg, 'allowance.spend_limit[0].amount', ''))).amount}
+                                    token={getAmount(Number(get(msg, 'allowance.spend_limit[0].amount', ''))).denom}
+                                />
+                            </div>
+                        </div>
+                    </>
+
                 );
             case MSG_AUTHZ_GRANT:
                 return (<>
