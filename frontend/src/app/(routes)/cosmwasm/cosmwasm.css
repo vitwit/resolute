@@ -1,6 +1,10 @@
 .contract-card {
   @apply flex justify-start gap-10 p-6 rounded-2xl;
-  background: rgba(255, 255, 255, 0.02);
+  background: linear-gradient(
+    45deg,
+    rgb(255 255 255 / 3%) 0%,
+    rgb(153 153 153 / 25%) 100%
+  );
 }
 
 .search-contract-input {
@@ -35,4 +39,12 @@
 
 .provide-funds-input {
   @apply border-[1px] border-[#ffffff1e] hover:border-[#ffffff50] rounded-2xl relative;
+}
+.contract-info-card {
+  @apply space-y-2 bg-[#FFFFFF0D] rounded-lg p-4 justify-center items-center text-center;
+  background: linear-gradient(
+    45deg,
+    rgb(255 255 255 / 3%) 0%,
+    rgb(153 153 153 / 25%) 100%
+  );
 }

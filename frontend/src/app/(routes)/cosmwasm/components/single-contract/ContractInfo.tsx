@@ -118,7 +118,7 @@ const ContractInfoAttribute = ({
   return (
     <>
       {value ? (
-        <div className="space-y-2 bg-[#FFFFFF0D] rounded-lg p-4 justify-center items-center text-center">
+        <div className="contract-info-card">
           <div className="text-b1-light">{name}</div>
           <div className="text-h2 !font-bold truncate">{value}</div>
         </div>

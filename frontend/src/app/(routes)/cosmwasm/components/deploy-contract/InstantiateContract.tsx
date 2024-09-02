@@ -170,8 +170,8 @@ const InstantiateContract = ({ chainID }: { chainID: string }) => {
       <form onSubmit={handleSubmit(onSubmit)} id="instantiate-contract">
         <div className="flex gap-10">
           <div className="w-[50%] space-y-6">
-            <div className="space-y-1">
-              <p className="text-b1-light">Code ID</p>
+            <div className="">
+              <p className="form-label-text">Code ID</p>
               <CustomTextField
                 control={control}
                 name="codeId"
@@ -179,11 +179,11 @@ const InstantiateContract = ({ chainID }: { chainID: string }) => {
                 required={true}
               />
             </div>
-            <div className="space-y-1">
+            <div className="">
               <div className="flex w-full justify-between">
-                <p className="text-b1-light">Admin Address</p>
+                <p className="form-label-text">Admin Address</p>
                 <div
-                  className="flex gap-1 cursor-pointer"
+                  className="flex gap-1 cursor-pointer items-center"
                   onClick={() => {
                     if (watch('adminAddress') === walletAddres) {
                       setValue('adminAddress', '');
@@ -207,7 +207,7 @@ const InstantiateContract = ({ chainID }: { chainID: string }) => {
                       alt="before-check-icon"
                     />
                   )}
-                  <p className="text-b1-light">Assign me</p>
+                  <p className="text-b1">Assign me</p>
                 </div>
               </div>
               <CustomTextField
@@ -217,8 +217,8 @@ const InstantiateContract = ({ chainID }: { chainID: string }) => {
                 required={true}
               />
             </div>
-            <div className="space-y-1">
-              <p className="text-b1-light">Label</p>
+            <div className="">
+              <p className="form-label-text">Label</p>
               <CustomTextField
                 control={control}
                 name="label"
@@ -226,8 +226,8 @@ const InstantiateContract = ({ chainID }: { chainID: string }) => {
                 required={true}
               />
             </div>
-            <div className="space-y-1">
-              <div className="text-b1-light">Attach Funds</div>
+            <div className="">
+              <div className="form-label-text">Attach Funds</div>
               <AttachFunds
                 handleAttachFundTypeChange={handleAttachFundTypeChange}
                 attachFundType={attachFundType}
@@ -239,8 +239,8 @@ const InstantiateContract = ({ chainID }: { chainID: string }) => {
               />
             </div>
           </div>
-          <div className="w-[50%] space-y-1">
-            <p className="text-b1-light">Instantiate message</p>
+          <div className="w-[50%]">
+            <p className="form-label-text">Instantiate message</p>
             <div className="relative">
               <Controller
                 name="message"

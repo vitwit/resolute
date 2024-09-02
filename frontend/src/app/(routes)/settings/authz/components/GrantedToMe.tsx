@@ -14,6 +14,7 @@ import { RootState } from '@/store/store';
 import { groupBy } from 'lodash';
 import { enableAuthzMode } from '@/store/features/authz/authzSlice';
 import { exitFeegrantMode } from '@/store/features/feegrant/feegrantSlice';
+import { shortenAddress } from '@/utils/util';
 
 const GrantedToMe = ({ chainIDs }: { chainIDs: string[] }) => {
   const { getGrantsToMe } = useAuthzGrants();
@@ -128,7 +129,7 @@ const GrantToMeCard = ({
           )}
         </div>
         <div className="flex gap-2 items-center h-8">
-          <p className="truncate text-b1">{grant.address}</p>
+          <p className="truncate text-b1">{shortenAddress(grant.address, 30)}</p>
           <Copy content={grant.address} />
         </div>
       </div>
