@@ -62,7 +62,8 @@ const DialogConfirmDelete = ({
               btnLoading={loading}
               btnDisabled={loading}
               btnText="Delete"
-              btnStyles="w-full !border-[#D92101] !bg-[#D921011A] delete-multisig-btn"
+              btnStyles="w-full"
+              isDelete={true}
             />
           </div>
         </div>
