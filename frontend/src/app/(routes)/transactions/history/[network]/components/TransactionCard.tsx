@@ -1,10 +1,10 @@
 import React from 'react';
 import Copy from '@/components/common/Copy';
-import { getTypeURLName, parseTxnData, shortenString } from '@/utils/util';
+import { parseTxnData, shortenString } from '@/utils/util';
 import NewTxnMsg from '@/components/NewTxnMsg';
 import Link from 'next/link';
 import { useAppDispatch } from '@/custom-hooks/StateHooks';
-import { buildMessages } from '@/utils/transaction';
+import { buildMessages, formattedMsgType } from '@/utils/transaction';
 import { txRepeatTransaction } from '@/store/features/recent-transactions/recentTransactionsSlice';
 import CustomButton from '@/components/common/CustomButton';
 import TxnTimeStamp from './TxnTimeStamp';
@@ -39,7 +39,7 @@ const TransactionCard = ({
           <div className="flex justify-between w-[70%]">
             <div className="flex items-center gap-1">
               <Link
-                className="capitalize"
+                className="capitalize hover:underline"
                 href={`/transactions/history/${basicChainInfo.chainName.toLowerCase()}/${txHash}`}
               >
                 <p className="text-b1">{shortenString(txHash, 24)}</p>
@@ -50,7 +50,7 @@ const TransactionCard = ({
               {txn?.messages?.map((msg, index) => (
                 <div key={index} className="txn-permission-card">
                   <span className="text-b1">
-                    {getTypeURLName(msg?.['@type'])}
+                    {formattedMsgType(msg?.['@type'])}
                   </span>
                 </div>
               ))}

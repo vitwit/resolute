@@ -487,6 +487,13 @@ export const getTxnURL = (
   return cleanURL(explorerTxHashEndpoint) + '/' + hash;
 };
 
+export const getTxnURLOnResolute = (
+  chainName: string,
+  hash: string
+): string => {
+  return `/transactions/history/${chainName.toLowerCase()}/${hash}`;
+};
+
 export const parseAmount = (amount: Coin[], currency: Currency) => {
   return formatCoin(
     parseBalance(amount, currency.coinDecimals, currency.coinMinimalDenom),

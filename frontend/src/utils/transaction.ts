@@ -45,6 +45,8 @@ import {
   serializeMsgDeposit,
 } from '@/txns/gov/deposit';
 import { voteOptionNumber, voteOptions } from './constants';
+import { msgAuthzRevokeTypeUrl } from '@/txns/authz/revoke';
+import { revokeTypeUrl } from '@/txns/feegrant/revoke';
 
 export function NewTransaction(
   txResponse: ParsedTxResponse,
@@ -232,8 +234,12 @@ export const formattedMsgType = (msgType: string) => {
       return 'Exec Authz';
     case msgAuthzGrantTypeUrl:
       return 'Grant Authz';
+    case msgAuthzRevokeTypeUrl:
+      return 'Revoke Authz';
     case msgFeegrantGrantTypeUrl:
       return 'Grant Allowance';
+    case revokeTypeUrl:
+      return 'Revoke Allowance';
     case msgVoteTypeUrl:
       return 'Vote';
     case msgDepositTypeUrl:

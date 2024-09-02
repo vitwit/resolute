@@ -217,7 +217,7 @@ const TxMsg: React.FC<TxMsgProps> = ({ msg, expandedIndex, chainID, toggleExpand
     return (
         <div key={mIndex} className="count-type-card-extend w-full">
             <div className="count-type-card">
-                <div className="flex justify-between w-full" onClick={() => toggleExpand(mIndex)}>
+                <div className="flex justify-between w-full cursor-pointer" onClick={() => toggleExpand(mIndex)}>
                     <p className="text-b1">{getTypeURLName(msg?.['@type']) || msg?.['@type']}</p>
                     <Image
                         src="/down-arrow.svg"
