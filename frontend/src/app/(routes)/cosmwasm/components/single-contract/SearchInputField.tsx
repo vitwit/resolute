@@ -10,7 +10,7 @@ const SearchInputField = ({
   setSearchTerm: (value: string) => void;
 }) => {
   return (
-    <div className="search-contract-field">
+    <div className="search-contract-field gap-2">
       <div>
         <Image
           src={SEARCH_ICON}
