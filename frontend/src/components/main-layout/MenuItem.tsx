@@ -28,7 +28,11 @@ const MenuItem = (props: MenuItemProps) => {
     setIsExpanded(!isExpanded);
   };
   return (
-    <Link href={isEnableModule ? pageLink : ''} prefetch={false} className='w-full'>
+    <Link
+      href={isEnableModule ? pageLink : ''}
+      prefetch={false}
+      className="w-full"
+    >
       <Tooltip
         title={!isEnableModule ? `Authz is not supporting ${name}` : null}
         placement="top-end"
@@ -51,6 +55,7 @@ const MenuItem = (props: MenuItemProps) => {
           <div className="">
             {itemData.name.toLocaleLowerCase() === 'cosmwasm' ||
             itemData.name.toLocaleLowerCase() === 'transfers' ||
+            itemData.name.toLowerCase() === 'transactions' ||
             itemData.name.toLocaleLowerCase() === 'settings' ? (
               <div key={itemData.name} onClick={toggleExpand}>
                 {isExpanded ? (

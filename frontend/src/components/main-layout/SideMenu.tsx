@@ -140,7 +140,50 @@ const MoreOptions = ({
           )}
         </div>
       ) : null}
-
+      {item.name.toLowerCase() === 'transactions' ? (
+        <div key={item.name} className="space-y-2">
+          <div
+            key={item.name}
+            className="space-y-2 flex justify-between items-center cursor-pointer"
+            onClick={toggleExpand}
+          >
+            <MenuItem key={item.name} itemData={item} pathName={selectedPart} />
+          </div>
+          {isExpanded && (
+            <div className="text-[12px] font-medium space-y-4">
+              <div className="flex gap-2 items-center pl-3">
+                <div className="w-5"></div>
+                <div className="cursor-pointer hover:font-semibold">
+                  <Link
+                    href={`/transactions/history/${selectedNetwork.toLowerCase() || ''}`}
+                    className="hover:font-semibold"
+                  >
+                    History
+                  </Link>
+                </div>
+              </div>
+              <div className="flex gap-2 items-center pl-3">
+                <div className="w-5"></div>
+                <Tooltip
+                  title={isAuthzMode ? 'Authz is not supporting builder' : null}
+                  placement="top-end"
+                >
+                  <div
+                    className={`hover:font-semibold ${isAuthzMode ? 'opacity-20 !cursor-not-allowed' : 'cursor-pointer'}`}
+                  >
+                    <Link
+                      href={`/transactions/builder/${selectedNetwork.toLowerCase() || ''}`}
+                      className="hover:font-semibold"
+                    >
+                      Builder
+                    </Link>
+                  </div>
+                </Tooltip>
+              </div>
+            </div>
+          )}
+        </div>
+      ) : null}
       {item.name.toLowerCase() === 'settings' ? (
         <div className="space-y-2">
           <div
