@@ -1,6 +1,6 @@
 import { MenuItemI, SIDEBAR_MENU_OPTIONS } from '@/constants/sidebar-options';
 import { usePathname, useRouter } from 'next/navigation';
-import React from 'react';
+import React, { useState } from 'react';
 import MenuItem from './MenuItem';
 import { getSelectedPartFromURL } from '@/utils/util';
 import { useAppSelector } from '@/custom-hooks/StateHooks';
@@ -69,125 +69,166 @@ const MoreOptions = ({
     router.push(path);
   };
 
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  const toggleExpand = () => {
+    setIsExpanded(!isExpanded);
+  };
+
   return (
     <>
       {item.name.toLowerCase() === 'transfers' ? (
-        <div key={item.name} className="space-y-2">
-          <MenuItem key={item.name} itemData={item} pathName={selectedPart} />
-          <div className="text-[12px] font-medium space-y-4">
-            <div className="flex gap-2 items-center pl-3">
-              <div className="w-5"></div>
-              <div
-                onClick={() => changeTransfersPath('single')}
-                className="cursor-pointer hover:font-semibold"
-              >
-                Single
+        <div className="space-y-2 w-full ">
+          <div
+            key={item.name}
+            className="space-y-2 flex justify-between w-full items-center cursor-pointer"
+            onClick={toggleExpand}
+          >
+            <MenuItem key={item.name} itemData={item} pathName={selectedPart} />
+          </div>
+
+          {isExpanded && (
+            <div className="text-[12px] font-medium space-y-4">
+              <div className="flex gap-2 items-center pl-3">
+                <div className="w-5"></div>
+                <div
+                  onClick={() => changeTransfersPath('single')}
+                  className="cursor-pointer hover:font-semibold"
+                >
+                  Single
+                </div>
+              </div>
+              <div className="flex gap-2 items-center pl-3">
+                <div className="w-5"></div>
+                <Tooltip
+                  title={
+                    isAuthzMode ? 'Authz is not supporting Multiple' : null
+                  }
+                  placement="top-end"
+                >
+                  <div
+                    onClick={() => {
+                      if (!isAuthzMode) {
+                        changeTransfersPath('multi-send');
+                      }
+                    }}
+                    className={`hover:font-semibold ${isAuthzMode ? 'opacity-20 !cursor-not-allowed' : 'cursor-pointer'}`}
+                  >
+                    Multiple
+                  </div>
+                </Tooltip>
+              </div>
+              <div className="flex gap-2 items-center pl-3">
+                <div className="w-5"></div>
+                <Tooltip
+                  title={
+                    isAuthzMode ? 'Authz is not supporting IBC Swap' : null
+                  }
+                  placement="top-end"
+                >
+                  <div
+                    onClick={() => {
+                      if (!isAuthzMode) changeTransfersPath('ibc-swap');
+                    }}
+                    className={`hover:font-semibold ${isAuthzMode ? 'opacity-20 !cursor-not-allowed' : 'cursor-pointer'}`}
+                  >
+                    IBC Swap
+                  </div>
+                </Tooltip>
               </div>
             </div>
-            <div className="flex gap-2 items-center pl-3">
-              <div className="w-5"></div>
-              <Tooltip
-                title={isAuthzMode ? 'Authz is not supporting Multiple' : null}
-                placement="top-end"
-              >
-                <div
-                  onClick={() => {
-                    if (!isAuthzMode) {
-                      changeTransfersPath('multi-send');
-                    }
-                  }}
-                  className={`hover:font-semibold ${isAuthzMode ? 'opacity-20 !cursor-not-allowed' : 'cursor-pointer'}`}
-                >
-                  Multiple
-                </div>
-              </Tooltip>
-            </div>
-            <div className="flex gap-2 items-center pl-3">
-              <div className="w-5"></div>
-              <Tooltip
-                title={isAuthzMode ? 'Authz is not supporting IBC Swap' : null}
-                placement="top-end"
-              >
-                <div
-                  onClick={() => {
-                    if (!isAuthzMode) changeTransfersPath('ibc-swap');
-                  }}
-                  className={`hover:font-semibold ${isAuthzMode ? 'opacity-20 !cursor-not-allowed' : 'cursor-pointer'}`}
-                >
-                  IBC Swap
-                </div>
-              </Tooltip>
-            </div>
-          </div>
+          )}
         </div>
       ) : null}
+
       {item.name.toLowerCase() === 'settings' ? (
-        <div key={item.name} className="space-y-2">
-          <MenuItem key={item.name} itemData={item} pathName={selectedPart} />
-          <div className="text-[12px] font-medium space-y-4">
-            <div className="flex gap-2 items-center pl-3">
-              <div className="w-5"></div>
-              <Link
-                href={`/settings/authz/${selectedNetwork.toLowerCase() || ''}`}
-                className="hover:font-semibold"
-              >
-                Authz Mode
-              </Link>
-              <AuthzButton />
-            </div>
-            <div className="flex gap-2 items-center pl-3">
-              <div className="w-5"></div>
-              <div className="flex items-center gap-2">
-                <Link
-                  href={`/settings/feegrant/${selectedNetwork.toLowerCase() || ''}`}
-                  className="hover:font-semibold"
-                >
-                  Feegrant Mode
-                </Link>
-                <FeegrantButton />
+        <div className="space-y-2">
+          <div
+            key={item.name}
+            className="space-y-2 flex justify-between items-center cursor-pointer"
+            onClick={toggleExpand}
+          >
+            <MenuItem key={item.name} itemData={item} pathName={selectedPart} />
+          </div>
+
+          {isExpanded && (
+            <div className="text-[12px] font-medium space-y-4">
+              <div className="flex gap-2 items-center pl-3">
+                <div className="w-5"></div>
+                <div className="flex items-center justify-between w-full">
+                  <Link
+                    href={`/settings/authz/${selectedNetwork.toLowerCase() || ''}`}
+                    className="hover:font-semibold"
+                  >
+                    Authz Mode
+                  </Link>
+                  <AuthzButton />
+                </div>
+              </div>
+              <div className="flex gap-2 items-center pl-3">
+                <div className="w-5"></div>
+                <div className="flex items-center justify-between w-full">
+                  <Link
+                    href={`/settings/feegrant/${selectedNetwork.toLowerCase() || ''}`}
+                    className="hover:font-semibold"
+                  >
+                    Feegrant Mode
+                  </Link>
+                  <FeegrantButton />
+                </div>
               </div>
             </div>
-          </div>
+          )}
         </div>
       ) : null}
-      {item.name.toLowerCase() === 'smart contracts' ? (
-        <div key={item.name} className="space-y-2">
-          <MenuItem key={item.name} itemData={item} pathName={selectedPart} />
-          <div className="text-[12px] font-medium space-y-4">
-            <div className="flex gap-2 items-center pl-3">
-              <div className="w-5"></div>
-              <div
-                onClick={() => {
-                  changeContractsPath('');
-                }}
-                className="cursor-pointer hover:font-semibold"
-              >
-                Query / Execute
-              </div>
-            </div>
-            <div className="flex gap-2 items-center pl-3">
-              <div className="w-5"></div>
-              <div
-                onClick={() => {
-                  changeContractsPath('codes');
-                }}
-                className="cursor-pointer hover:font-semibold"
-              >
-                Codes
-              </div>
-            </div>
-            <div className="flex gap-2 items-center pl-3">
-              <div className="w-5"></div>
-              <div
-                onClick={() => {
-                  changeContractsPath('deploy');
-                }}
-                className="cursor-pointer hover:font-semibold"
-              >
-                Deploy
-              </div>
-            </div>
+
+      {item.name.toLowerCase() === 'cosmwasm' ? (
+        <div className="space-y-2 w-full">
+          <div
+            key={item.name}
+            className="space-y-2 flex justify-between items-center cursor-pointer"
+            onClick={toggleExpand}
+          >
+            <MenuItem key={item.name} itemData={item} pathName={selectedPart} />
           </div>
+
+          {isExpanded && (
+            <div className="text-[12px] font-medium space-y-4">
+              <div className="flex gap-2 items-center pl-3">
+                <div className="w-5"></div>
+                <div
+                  onClick={() => {
+                    changeContractsPath('');
+                  }}
+                  className="cursor-pointer hover:font-semibold"
+                >
+                  Query / Execute
+                </div>
+              </div>
+              <div className="flex gap-2 items-center pl-3">
+                <div className="w-5"></div>
+                <div
+                  onClick={() => {
+                    changeContractsPath('codes');
+                  }}
+                  className="cursor-pointer hover:font-semibold"
+                >
+                  Codes
+                </div>
+              </div>
+              <div className="flex gap-2 items-center pl-3">
+                <div className="w-5"></div>
+                <div
+                  onClick={() => {
+                    changeContractsPath('deploy');
+                  }}
+                  className="cursor-pointer hover:font-semibold"
+                >
+                  Deploy
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       ) : null}
     </>
