@@ -4,12 +4,12 @@ import { tabLink } from '@/utils/util';
 import { Tooltip } from '@mui/material';
 import Image from 'next/image';
 import Link from 'next/link';
-import React, { useState } from 'react';
+import React from 'react';
 
 interface MenuItemProps {
   itemData: MenuItemI;
   pathName: string;
-  isExpanded?: Boolean;
+  isExpanded?: boolean;
 }
 
 const MenuItem = (props: MenuItemProps) => {
