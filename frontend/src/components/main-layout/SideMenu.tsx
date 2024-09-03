@@ -70,10 +70,17 @@ const MoreOptions = ({
   };
 
   const [isExpanded, setIsExpanded] = useState(false);
+  const [isTransfersSettingsExpanded, setIsTransfersSettingsExpanded] = useState(true);
 
   const toggleExpand = () => {
     setIsExpanded(!isExpanded);
   };
+
+
+  const toggleTransfersSettingsExpand = () => {
+    setIsTransfersSettingsExpanded(!isTransfersSettingsExpanded);
+  };
+
 
   return (
     <>
@@ -82,12 +89,12 @@ const MoreOptions = ({
           <div
             key={item.name}
             className="space-y-2 flex justify-between w-full items-center cursor-pointer"
-            onClick={toggleExpand}
+            onClick={toggleTransfersSettingsExpand}
           >
-            <MenuItem key={item.name} itemData={item} pathName={selectedPart} />
+            <MenuItem key={item.name} itemData={item} pathName={selectedPart} isExpanded={isTransfersSettingsExpanded}/>
           </div>
 
-          {isExpanded && (
+          {isTransfersSettingsExpanded && (
             <div className="text-[12px] font-medium space-y-4">
               <div className="flex gap-2 items-center pl-3">
                 <div className="w-5"></div>
@@ -147,7 +154,7 @@ const MoreOptions = ({
             className="space-y-2 flex justify-between items-center cursor-pointer"
             onClick={toggleExpand}
           >
-            <MenuItem key={item.name} itemData={item} pathName={selectedPart} />
+            <MenuItem key={item.name} itemData={item} pathName={selectedPart} isExpanded={isExpanded}/>
           </div>
           {isExpanded && (
             <div className="text-[12px] font-medium space-y-4">
@@ -189,12 +196,12 @@ const MoreOptions = ({
           <div
             key={item.name}
             className="space-y-2 flex justify-between items-center cursor-pointer"
-            onClick={toggleExpand}
+            onClick={toggleTransfersSettingsExpand}
           >
-            <MenuItem key={item.name} itemData={item} pathName={selectedPart} />
+            <MenuItem key={item.name} itemData={item} pathName={selectedPart} isExpanded={isTransfersSettingsExpanded} />
           </div>
 
-          {isExpanded && (
+          {isTransfersSettingsExpanded && (
             <div className="text-[12px] font-medium space-y-4">
               <div className="flex gap-2 items-center pl-3">
                 <div className="w-5"></div>
@@ -232,7 +239,7 @@ const MoreOptions = ({
             className="space-y-2 flex justify-between items-center cursor-pointer"
             onClick={toggleExpand}
           >
-            <MenuItem key={item.name} itemData={item} pathName={selectedPart} />
+            <MenuItem key={item.name} itemData={item} pathName={selectedPart} isExpanded={isExpanded} />
           </div>
 
           {isExpanded && (

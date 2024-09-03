@@ -9,10 +9,11 @@ import React, { useState } from 'react';
 interface MenuItemProps {
   itemData: MenuItemI;
   pathName: string;
+  isExpanded?: Boolean;
 }
 
 const MenuItem = (props: MenuItemProps) => {
-  const { itemData, pathName } = props;
+  const { itemData, pathName, isExpanded } = props;
   const routePath = pathName === 'overview' ? '/' : `/${pathName}`;
   const selectedNetwork = useAppSelector(
     (state) => state.common.selectedNetwork.chainName
@@ -22,11 +23,6 @@ const MenuItem = (props: MenuItemProps) => {
   const pageLink = tabLink(path, selectedNetwork);
   const isEnableModule = !isAuthzMode || itemData.authzSupported;
 
-  const [isExpanded, setIsExpanded] = useState(false);
-
-  const toggleExpand = () => {
-    setIsExpanded(!isExpanded);
-  };
   return (
     <Link
       href={isEnableModule ? pageLink : ''}
@@ -38,9 +34,9 @@ const MenuItem = (props: MenuItemProps) => {
         placement="top-end"
       >
         <div
-          className={`menu-item ${routePath === path ? 'menu-item-selected ' : 'font-medium'} ${isEnableModule ? '' : 'opacity-20 cursor-not-allowed'} `}
+          className={`menu-item ${routePath === path ? 'menu-item-selected ' : 'font-medium'} ${isEnableModule ? '' : 'opacity-20 cursor-not-allowed'} flex justify-between w-full `}
         >
-          <div className="flex gap-2 w-full">
+          <div className="flex gap-2">
             <Image
               src={icon}
               height={20}
@@ -52,12 +48,12 @@ const MenuItem = (props: MenuItemProps) => {
             <div className="menu-item-name">{name}</div>
           </div>
 
-          <div className="">
+          <div className="flex">
             {itemData.name.toLocaleLowerCase() === 'cosmwasm' ||
             itemData.name.toLocaleLowerCase() === 'transfers' ||
             itemData.name.toLowerCase() === 'transactions' ||
             itemData.name.toLocaleLowerCase() === 'settings' ? (
-              <div key={itemData.name} onClick={toggleExpand}>
+              <div key={itemData.name}>
                 {isExpanded ? (
                   <Image
                     src="/drop-down-icon.svg"
