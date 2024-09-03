@@ -57,7 +57,7 @@ export const SIDEBAR_MENU_OPTIONS: MenuItemI[] = [
     multipleOptions: true,
   },
   {
-    name: 'Smart Contracts',
+    name: 'Cosmwasm',
     icon: '/sidebar-menu-icons/smart-contracts-icon.svg',
     path: '/cosmwasm',
     authzSupported: false,
