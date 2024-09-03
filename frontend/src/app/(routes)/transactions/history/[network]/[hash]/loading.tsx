@@ -1,10 +1,10 @@
 'use client';
 
-import PageLoading from '@/components/common/PageLoading';
 import React from 'react';
+import TransactionLoading from '../../loaders/TransactionLoading';
 
 const loading = () => {
-  return <PageLoading />;
+  return <TransactionLoading />;
 };
 
 export default loading;

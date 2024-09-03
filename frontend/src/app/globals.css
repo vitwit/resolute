@@ -213,7 +213,8 @@ input[type='checkbox'] {
   @apply flex flex-col items-start gap-4 w-full p-10;
   background: rgba(255, 255, 255, 0.02);
 }
-.profile-grid, .txn-data {
+.profile-grid,
+.txn-data {
   @apply flex flex-col justify-center items-center gap-2 p-4 rounded-2xl;
   background: rgba(255, 255, 255, 0.02);
 }
@@ -242,6 +243,13 @@ input[type='checkbox'] {
   @apply flex justify-center items-center gap-4 px-4 py-2 rounded-lg border-[0.25px] hover:bg-[#ffffff14] hover:border-transparent;
 }
 
+.shimmer {
+  @apply bg-[#252525] animate-pulse;
+}
+
+.shimmer-line {
+  @apply bg-[#252525] animate-pulse rounded h-5;
+}
 
 /* TransactionHistory */
 .search-Txn-input {

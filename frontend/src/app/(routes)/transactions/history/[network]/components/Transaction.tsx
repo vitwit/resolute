@@ -13,6 +13,7 @@ import { buildMessages } from '@/utils/transaction';
 import { txRepeatTransaction } from '@/store/features/recent-transactions/recentTransactionsSlice';
 import DialogLoader from '@/components/common/DialogLoader';
 import { TxStatus } from '@/types/enums';
+import CustomDialog from '@/components/common/CustomDialog';
 
 const Transaction = ({
   chainName,
@@ -44,6 +45,8 @@ const Transaction = ({
   const formattedMessages = messages ? buildMessages(messages) : [];
   const disableAction = formattedMessages.length === 0 || !success;
 
+  const [viewRawOpen, setViewRawOpen] = useState(false);
+
   const onRepeatTxn = () => {
     dispatch(
       txRepeatTransaction({
@@ -63,7 +66,7 @@ const Transaction = ({
     };
   };
 
-  const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
+  const [expandedIndex, setExpandedIndex] = useState<number | null>(0);
 
   const toggleExpand = (index: number) => {
     setExpandedIndex(expandedIndex === index ? null : index);
@@ -117,6 +120,17 @@ const Transaction = ({
                 </div>
               </div>
             </div>
+            <div className="w-full flex justify-between">
+              <div className="text-b1-light">Messages: {msgs?.length}</div>
+              <div>
+                <button
+                  onClick={() => setViewRawOpen(true)}
+                  className="secondary-btn"
+                >
+                  View JSON
+                </button>
+              </div>
+            </div>
             {msgs?.map((msg, mIndex) => (
               <TxMsg
                 key={mIndex}
@@ -168,6 +182,19 @@ const Transaction = ({
         </div>
       </div>
       <DialogLoader open={loading} loadingText="Pending" />
+      <CustomDialog
+        open={viewRawOpen}
+        onClose={() => setViewRawOpen(false)}
+        title="Raw Transaction"
+      >
+        <div className="w-[800px] bg-black h-[400px] max-h-[400px] overflow-y-scroll p-2">
+          {txnResult ? (
+            <pre>{JSON.stringify(txnResult, undefined, 2)}</pre>
+          ) : (
+            <div className="text-center">- No Data -</div>
+          )}
+        </div>
+      </CustomDialog>
     </div>
   );
 };
