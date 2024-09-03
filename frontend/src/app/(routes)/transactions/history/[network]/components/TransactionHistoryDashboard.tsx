@@ -16,8 +16,8 @@ const ITEMS_PER_PAGE = 5;
 
 const TransactionHistoryDashboard = ({ chainID }: { chainID: string }) => {
   useInitTransactions({chainID})
-  const { getChainInfo, getDenomInfo } = useGetChainInfo();
-  const { displayDenom, decimals, minimalDenom } = getDenomInfo(chainID);
+  const { getChainInfo } = useGetChainInfo();
+  
   const basicChainInfo = getChainInfo(chainID);
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -41,13 +41,6 @@ const TransactionHistoryDashboard = ({ chainID }: { chainID: string }) => {
     (state) => state.recentTransactions.txns.status
   );
   const loading = txnRepeatStatus === TxStatus.PENDING;
-
-  const currency = {
-    coinDenom: displayDenom,
-    coinDecimals: decimals,
-    coinMinimalDenom: minimalDenom,
-  };
-
   const handlePageChange = (value: number) => {
     const offset = (value - 1) * ITEMS_PER_PAGE;
     txnHistory.fetchTransactions(ITEMS_PER_PAGE, offset);
@@ -77,7 +70,7 @@ const TransactionHistoryDashboard = ({ chainID }: { chainID: string }) => {
           <TransactionCard
             key={txn.txhash}
             txn={txn}
-            currency={currency}
+            // currency={currency}
             basicChainInfo={basicChainInfo}
           />
         ))}
