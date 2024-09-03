@@ -10,10 +10,12 @@ import { TxStatus } from '@/types/enums';
 import { Pagination } from '@mui/material';
 import { paginationComponentStyles } from '@/utils/commonStyles';
 import TxnsLoading from '../../loaders/TxnsLoading';
+import useInitTransactions from '@/custom-hooks/useInitTransactions';
 
 const ITEMS_PER_PAGE = 5;
 
 const TransactionHistoryDashboard = ({ chainID }: { chainID: string }) => {
+  useInitTransactions({chainID})
   const { getChainInfo, getDenomInfo } = useGetChainInfo();
   const { displayDenom, decimals, minimalDenom } = getDenomInfo(chainID);
   const basicChainInfo = getChainInfo(chainID);

@@ -184,45 +184,41 @@ export const getTransaction = createAsyncThunk(
       let txns: ParsedTransaction[] = [];
       const txnsData = response?.data?.data?.data;
       const { txhash, messages } = txnsData;
-      if (messages[0]?.['@type'] === IBC_SEND_TYPE_URL) {
-        const ibcTx = getIBCTxn(txhash);
-        if (ibcTx) {
-          txns = [...txns, ibcTx];
-          if (ibcTx?.isIBCPending) {
-            dispatch(
-              trackTx({
-                chainID: ibcTx.chain_id,
-                txHash: ibcTx.txhash,
-              })
-            );
+      if (txnsData) {
+        if (messages[0]?.['@type'] === IBC_SEND_TYPE_URL) {
+          const ibcTx = getIBCTxn(txhash);
+          if (ibcTx) {
+            txns = [...txns, ibcTx];
+            if (ibcTx?.isIBCPending) {
+              dispatch(
+                trackTx({
+                  chainID: ibcTx.chain_id,
+                  txHash: ibcTx.txhash,
+                })
+              );
+            }
+          } else {
+            let formattedTxn = txnsData;
+            formattedTxn = { ...formattedTxn, isIBCPending: false };
+            formattedTxn = { ...formattedTxn, isIBCTxn: true };
+            txns = [...txns, formattedTxn];
           }
         } else {
           let formattedTxn = txnsData;
           formattedTxn = { ...formattedTxn, isIBCPending: false };
-          formattedTxn = { ...formattedTxn, isIBCTxn: true };
+          formattedTxn = { ...formattedTxn, isIBCTxn: false };
+
           txns = [...txns, formattedTxn];
         }
       } else {
-        let formattedTxn = txnsData;
-        formattedTxn = { ...formattedTxn, isIBCPending: false };
-        formattedTxn = { ...formattedTxn, isIBCTxn: false };
-
-        txns = [...txns, formattedTxn];
+        throw new Error(ERR_TXN_NOT_FOUND);
       }
-      // });
-      // return {
-      //   data: {
-      //     data: txns,
-      //     total: response?.data?.data?.total,
-      //   },
-      // };
+
       return { data: txns };
-    } catch (error) {
-      if (error instanceof AxiosError)
-        return rejectWithValue({
-          message: error?.response?.data?.message || ERR_UNKNOWN,
-        });
-      return rejectWithValue({ message: ERR_UNKNOWN });
+      /* eslint-disable @typescript-eslint/no-explicit-any */
+    } catch (error: any) {
+      const errMsg = error?.message || ERR_TXN_NOT_FOUND;
+      return rejectWithValue(errMsg);
     }
   }
 );
@@ -387,14 +383,13 @@ export const recentTransactionsSlice = createSlice({
       })
       .addCase(getTransaction.fulfilled, (state, action) => {
         state.txn.status = TxStatus.IDLE;
-        state.txn.data = action?.payload?.data || {};
+        state.txn.data = action?.payload?.data || [];
         state.txns.error = '';
       })
       .addCase(getTransaction.rejected, (state, action) => {
         state.txn.status = TxStatus.REJECTED;
-
-        const payload = action.payload as { message: string };
-        state.txns.error = payload.message || '';
+        state.txn.data = [];
+        state.txn.error = action.error.message || 'Failed to fetch transaction';
       });
     builder
       .addCase(getAnyChainTransaction.pending, (state) => {

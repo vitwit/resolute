@@ -33,6 +33,9 @@ const SearchTransaction = () => {
   const txnResult = useAppSelector(
     (state) => state.recentTransactions.txn?.data?.[0]
   );
+  const txnStatus = useAppSelector(
+    (state) => state.recentTransactions.txn.status
+  );
   const { txHash = '' } = txnResult ? parseTxnData(txnResult) : {};
 
   const [chainID, setChainID] = useState('');
@@ -76,7 +79,7 @@ const SearchTransaction = () => {
           ) : null}
         </>
       )}
-      <TransactionNotFound />
+      {txnStatus === TxStatus.REJECTED ? <TransactionNotFound /> : null}
     </div>
   );
 };
