@@ -1,7 +1,7 @@
 'use client';
 
 import { TxStatus } from '@/types/enums';
-import { ERR_UNKNOWN } from '@/utils/errors';
+import { ERR_TXN_NOT_FOUND, ERR_UNKNOWN } from '@/utils/errors';
 import { PayloadAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { AxiosError } from 'axios';
 import recentTransactionsService from './recentTransactionsService';
@@ -27,6 +27,11 @@ interface RecentTransactionsState {
     status: TxStatus;
     error: string;
   };
+  txn: {
+    data?: ParsedTransaction[];
+    status: TxStatus;
+    error: string;
+  };
 }
 
 const initialState: RecentTransactionsState = {
@@ -37,6 +42,11 @@ const initialState: RecentTransactionsState = {
     status: TxStatus.INIT,
   },
   txnRepeat: {
+    status: TxStatus.INIT,
+    error: '',
+  },
+  txn: {
+    data: undefined,
     status: TxStatus.INIT,
     error: '',
   },
@@ -155,6 +165,93 @@ export const getAllTransactions = createAsyncThunk(
           message: error?.response?.data?.message || ERR_UNKNOWN,
         });
       return rejectWithValue({ message: ERR_UNKNOWN });
+    }
+  }
+);
+
+export const getTransaction = createAsyncThunk(
+  'recent-txns/get-txn',
+  async (
+    data: {
+      address: string;
+      chainID: string;
+      txhash: string;
+    },
+    { rejectWithValue, dispatch }
+  ) => {
+    try {
+      const response = await recentTransactionsService.fetchTx(data);
+      let txns: ParsedTransaction[] = [];
+      const txnsData = response?.data?.data?.data;
+      const { txhash, messages } = txnsData;
+      if (txnsData) {
+        if (messages[0]?.['@type'] === IBC_SEND_TYPE_URL) {
+          const ibcTx = getIBCTxn(txhash);
+          if (ibcTx) {
+            txns = [...txns, ibcTx];
+            if (ibcTx?.isIBCPending) {
+              dispatch(
+                trackTx({
+                  chainID: ibcTx.chain_id,
+                  txHash: ibcTx.txhash,
+                })
+              );
+            }
+          } else {
+            let formattedTxn = txnsData;
+            formattedTxn = { ...formattedTxn, isIBCPending: false };
+            formattedTxn = { ...formattedTxn, isIBCTxn: true };
+            txns = [...txns, formattedTxn];
+          }
+        } else {
+          let formattedTxn = txnsData;
+          formattedTxn = { ...formattedTxn, isIBCPending: false };
+          formattedTxn = { ...formattedTxn, isIBCTxn: false };
+
+          txns = [...txns, formattedTxn];
+        }
+      } else {
+        throw new Error(ERR_TXN_NOT_FOUND);
+      }
+
+      return { data: txns };
+      /* eslint-disable @typescript-eslint/no-explicit-any */
+    } catch (error: any) {
+      const errMsg = error?.message || ERR_TXN_NOT_FOUND;
+      return rejectWithValue(errMsg);
+    }
+  }
+);
+
+export const getAnyChainTransaction = createAsyncThunk(
+  'recent-txns/get-any-chain-txn',
+  async (
+    data: {
+      txhash: string;
+    },
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await recentTransactionsService.fetchAnyChainTx(
+        data.txhash
+      );
+      let txns: ParsedTransaction[] = [];
+      const txnsData = response?.data?.data?.data;
+      let formattedTxn = txnsData;
+      if (txnsData) {
+        formattedTxn = { ...formattedTxn, isIBCPending: false };
+        formattedTxn = { ...formattedTxn, isIBCTxn: false };
+      } else {
+        throw new Error(ERR_TXN_NOT_FOUND);
+      }
+
+      txns = [...txns, formattedTxn];
+
+      return { data: txns };
+      /* eslint-disable @typescript-eslint/no-explicit-any */
+    } catch (error: any) {
+      const errMsg = error?.message || ERR_TXN_NOT_FOUND;
+      return rejectWithValue(errMsg);
     }
   }
 );
@@ -278,6 +375,36 @@ export const recentTransactionsSlice = createSlice({
         state.txns.data = [];
         const payload = action.payload as { message: string };
         state.txns.error = payload.message || '';
+      });
+    builder
+      .addCase(getTransaction.pending, (state) => {
+        state.txn.status = TxStatus.PENDING;
+        state.txn.error = '';
+      })
+      .addCase(getTransaction.fulfilled, (state, action) => {
+        state.txn.status = TxStatus.IDLE;
+        state.txn.data = action?.payload?.data || [];
+        state.txns.error = '';
+      })
+      .addCase(getTransaction.rejected, (state, action) => {
+        state.txn.status = TxStatus.REJECTED;
+        state.txn.data = [];
+        state.txn.error = action.error.message || 'Failed to fetch transaction';
+      });
+    builder
+      .addCase(getAnyChainTransaction.pending, (state) => {
+        state.txn.status = TxStatus.PENDING;
+        state.txn.error = '';
+      })
+      .addCase(getAnyChainTransaction.fulfilled, (state, action) => {
+        state.txn.status = TxStatus.IDLE;
+        state.txn.data = action?.payload?.data || [];
+        state.txns.error = '';
+      })
+      .addCase(getAnyChainTransaction.rejected, (state, action) => {
+        state.txn.status = TxStatus.REJECTED;
+        state.txn.data = [];
+        state.txn.error = action.error.message || 'Failed to fetch transaction';
       });
     builder
       .addCase(txRepeatTransaction.pending, (state) => {

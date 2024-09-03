@@ -92,6 +92,8 @@ func main() {
 	e.GET("/accounts/:address/all-txns", h.GetAllMultisigTxns)
 	e.POST("/transactions", h.GetRecentTransactions)
 	e.GET("/txns/:chainId/:address", h.GetAllTransactions)
+	e.GET("/txns/:chainId/:address/:txhash", h.GetChainTxHash)
+	e.GET("/search/txns/:txhash", h.GetTxHash)
 
 	// users
 	e.POST("/users/:address/signature", h.CreateUserSignature)
@@ -152,6 +154,11 @@ func proxyHandler1(c echo.Context) error {
 	}
 
 	chanDetails := clients.GetChain(c.QueryParam("chain"))
+
+	if chanDetails == nil {
+		return c.String(http.StatusInternalServerError, "Failed to get the server")
+	}
+
 	// URL to which the POST request will be sent
 	targetURL := chanDetails.RestURI + "/cosmos/tx/v1beta1/txs"
 
@@ -193,6 +200,9 @@ func proxyHandler(c echo.Context) error {
 
 	chanDetails := clients.GetChain(c.QueryParam("chain"))
 
+	if chanDetails == nil {
+		return c.String(http.StatusInternalServerError, "Failed to get the server")
+	}
 	// Construct the target URL based on the incoming request
 	targetBase := chanDetails.RestURI // Change this to your target service base URL
 

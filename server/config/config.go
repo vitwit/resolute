@@ -122,6 +122,7 @@ type ChainConfig struct {
 	RestURI     string   `json:"restURI"`
 	RpcURI      string   `json:"rpcURI"`
 	CheckStatus bool     `json:"checkStatus"`
+	SourceEnd   string   `json:"sourceEnd"`
 }
 
 func GetChainAPIs() []*ChainConfig {

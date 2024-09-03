@@ -74,7 +74,7 @@ export const multiSelectDropDownStyle = {
 export const customSelectStyles = {
   '& .MuiOutlinedInput-input': {
     color: '#fffffff0',
-    fontSize: '14px'
+    fontSize: '14px',
   },
   '& .MuiOutlinedInput-root': {
     padding: '0px !important',
@@ -92,5 +92,30 @@ export const customSelectStyles = {
     fontWeight: 200,
   },
   borderRadius: '100px',
-  height: '40px'
+  height: '40px',
+};
+
+export const paginationComponentStyles = {
+  '& .MuiPaginationItem-page': {
+    '&:hover': {
+      backgroundColor: '#FFFFFF05',
+    },
+    fontSize: '12px',
+    minWidth: '24px',
+    height: '24px',
+    borderRadius: '4px',
+    color: '#ffffff80',
+    fontWeight: '200',
+  },
+  '& .Mui-selected': {
+    backgroundColor: '#FFFFFF05',
+    fontWeight: '600',
+    color: '#ffffff',
+  },
+  '& .MuiPaginationItem-icon': {
+    color: '#fff',
+  },
+  '& .MuiPaginationItem-ellipsis, & .MuiPaginationItem-ellipsisIcon': {
+    color: 'white',
+  },
 };

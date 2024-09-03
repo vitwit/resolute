@@ -16,12 +16,14 @@ const TxnBuilder = ({
   loading,
   availableBalance,
   fromAddress,
+  isMultisig,
 }: {
   chainID: string;
   onSubmit: (data: TxnBuilderForm) => void;
   loading: boolean;
   availableBalance: number;
   fromAddress: string;
+  isMultisig: boolean;
 }) => {
   const { getChainInfo, getDenomInfo } = useGetChainInfo();
   const basicChainInfo = getChainInfo(chainID);
@@ -84,6 +86,7 @@ const TxnBuilder = ({
         cancelAddMsg={() => {
           setTxType('');
         }}
+        isMultisig={isMultisig}
       />
       <div className="flex-1 space-y-6 flex flex-col min-h-full h-fit bg-[#FFFFFF05] rounded-2xl p-6">
         <div className="flex items-center justify-between">

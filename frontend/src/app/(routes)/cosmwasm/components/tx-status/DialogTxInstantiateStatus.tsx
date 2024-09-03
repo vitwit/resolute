@@ -13,7 +13,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 
 const DialogTxInstantiateStatus = ({ chainID }: { chainID: string }) => {
   const { getChainInfo, getDenomInfo } = useGetChainInfo();
-  const { explorerTxHashEndpoint } = getChainInfo(chainID);
+  const { explorerTxHashEndpoint, chainName } = getChainInfo(chainID);
   const {
     decimals = 0,
     displayDenom = '',
@@ -54,7 +54,11 @@ const DialogTxInstantiateStatus = ({ chainID }: { chainID: string }) => {
           src={txResponse?.code === 0 ? TXN_SUCCESS_ICON : TXN_FAILED_ICON}
           height={60}
           width={60}
-          alt={txResponse?.code === 0 ? 'Transaction Successful' : 'Transaction Failed'}
+          alt={
+            txResponse?.code === 0
+              ? 'Transaction Successful'
+              : 'Transaction Failed'
+          }
         />
       </div>
       <div className="w-full">
@@ -62,6 +66,7 @@ const DialogTxInstantiateStatus = ({ chainID }: { chainID: string }) => {
           explorer={explorerTxHashEndpoint || ''}
           txHash={txResponse?.transactionHash || ''}
           txSuccess={txResponse?.code === 0}
+          chainName={chainName}
         />
         <div className="divider-line mt-2 mb-6"></div>
         <div className="space-y-6">

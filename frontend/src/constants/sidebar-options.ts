@@ -49,6 +49,14 @@ export const SIDEBAR_MENU_OPTIONS: MenuItemI[] = [
     multipleOptions: false,
   },
   {
+    name: 'Transactions',
+    icon: '/sidebar-menu-icons/txn-history-icon.svg',
+    path: '/transactions/history',
+    authzSupported: false,
+    isMetaMaskSupported: false,
+    multipleOptions: true,
+  },
+  {
     name: 'Cosmwasm',
     icon: '/sidebar-menu-icons/smart-contracts-icon.svg',
     path: '/cosmwasm',

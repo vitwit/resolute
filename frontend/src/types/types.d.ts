@@ -4,6 +4,13 @@ interface Msg {
   value: any;
 }
 
+
+interface NewMsg {
+  ['@type']: string;
+  /*eslint-disable-next-line */
+  [key:string]: any;
+}
+
 type KeyLimitPagination = {
   key?: string;
   limit?: number;

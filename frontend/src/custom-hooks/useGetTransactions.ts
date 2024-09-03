@@ -1,6 +1,8 @@
-import { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from './StateHooks';
-import { getAllTransactions } from '@/store/features/recent-transactions/recentTransactionsSlice';
+import {
+  getAllTransactions,
+  getTransaction,
+} from '@/store/features/recent-transactions/recentTransactionsSlice';
 import useGetChainInfo from './useGetChainInfo';
 
 const useGetTransactions = ({ chainID }: { chainID: string }) => {
@@ -8,16 +10,6 @@ const useGetTransactions = ({ chainID }: { chainID: string }) => {
   const { getChainInfo } = useGetChainInfo();
   const { address } = getChainInfo(chainID);
   const txns = useAppSelector((state) => state.recentTransactions.txns.data);
-  useEffect(() => {
-    dispatch(
-      getAllTransactions({
-        address,
-        chainID,
-        limit: 5,
-        offset: 0,
-      })
-    );
-  }, []);
   const getTransactions = () => {
     return {
       txns,
@@ -34,7 +26,20 @@ const useGetTransactions = ({ chainID }: { chainID: string }) => {
       })
     );
   };
-  return { getTransactions, fetchTransactions };
+
+  const fetchTransaction = (txhash: string) => {
+    if (chainID) {
+      dispatch(
+        getTransaction({
+          address,
+          chainID,
+          txhash,
+        })
+      );
+    }
+  };
+
+  return { getTransactions, fetchTransactions, fetchTransaction };
 };
 
 export default useGetTransactions;

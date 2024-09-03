@@ -19,6 +19,7 @@ import { SUPPORTED_WALLETS } from './constants';
 import { FAILED_TO_FETCH } from './errors';
 import { FastAverageColor } from 'fast-average-color';
 import ReactGA from 'react-ga';
+import { getLocalTime } from '@/utils/dataTime';
 
 export const trackEvent = (category: string, action: string, label: string) => {
   ReactGA.event({
@@ -194,6 +195,34 @@ export function shortenMsg(Msg: string, maxCharacters: number) {
   return Msg.slice(0, maxCharacters) + '...';
 }
 
+export function shortenString(str: string, maxCharacters: number): string {
+  if (!str.length) {
+    return '';
+  }
+  if (maxCharacters >= str.length) {
+    return str;
+  }
+
+  const middle = Math.floor(str.length / 2);
+  let firstPart = str.slice(0, middle);
+  let lastPart = str.slice(middle);
+
+  maxCharacters -= 3;
+
+  while (maxCharacters < firstPart.length + lastPart.length) {
+    if (
+      (firstPart.length + lastPart.length) % 2 === 1 &&
+      firstPart.length > 0
+    ) {
+      firstPart = firstPart.slice(0, firstPart.length - 1);
+    } else {
+      lastPart = lastPart.slice(1);
+    }
+  }
+
+  return `${firstPart}...${lastPart}`;
+}
+
 export function shortenAddress(bech32: string, maxCharacters: number) {
   if (maxCharacters >= bech32?.length) {
     return bech32;
@@ -287,6 +316,14 @@ export const allNetworksLink = (pathParts: string[]): string => {
       return '/settings';
     }
   }
+  if (pathParts.includes('transactions')) {
+    if (pathParts.includes('builder')) {
+      return '/transactions/builder';
+    }
+    if (pathParts.includes('history')) {
+      return '/transactions/history';
+    }
+  }
   return pathParts[1] === 'overview' || pathParts[1] === ''
     ? '/'
     : pathParts[1] === 'validator'
@@ -309,6 +346,12 @@ export const changeNetworkRoute = (
       return '/settings/authz/new-authz';
     }
     return '/settings/authz/' + chainName.toLowerCase();
+  }
+  if (pathName.includes('builder')) {
+    return '/transactions/builder/' + chainName.toLowerCase();
+  }
+  if (pathName.includes('history')) {
+    return '/transactions/history/' + chainName.toLowerCase();
   }
   const route = pathName === '/' ? '/overview' : '/' + pathName.split('/')?.[1];
   return `${route}/${chainName.toLowerCase()}`;
@@ -442,6 +485,13 @@ export const getTxnURL = (
   hash: string
 ): string => {
   return cleanURL(explorerTxHashEndpoint) + '/' + hash;
+};
+
+export const getTxnURLOnResolute = (
+  chainName: string,
+  hash: string
+): string => {
+  return `/transactions/history/${chainName.toLowerCase()}/${hash}`;
 };
 
 export const parseAmount = (amount: Coin[], currency: Currency) => {
@@ -615,4 +665,17 @@ export const addChainIDParam = (uri: string, chainID: string) => {
 export const getFAC = () => {
   const fac = new FastAverageColor();
   return fac;
+};
+
+export const parseTxnData = (txn: ParsedTransaction) => {
+  const success = txn.code === 0 ? true : false;
+  const messages = txn.messages;
+  const txHash = txn.txhash;
+  const timeStamp = getLocalTime(txn.timestamp);
+  return {
+    success,
+    messages,
+    txHash,
+    timeStamp,
+  };
 };

@@ -84,3 +84,8 @@ type ParsedTxn struct {
 	Messages  []interface{} `json:"messages"`
 	ChainId   string        `json:"chain_id"`
 }
+
+type SingleTxnRes struct {
+	TxResponses TxResponse `json:"tx_response"`
+	Txs         Tx         `json:"tx"`
+}

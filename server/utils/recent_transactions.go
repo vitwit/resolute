@@ -13,7 +13,7 @@ import (
 // 	RestURIs []string `json:"restURIs"`
 // }
 
-func GetChainAPIs(chainId string) ([]string, error) {
+func GetChainAPIs(chainId string) (*config.ChainConfig, error) {
 
 	data := config.GetChainAPIs()
 	// wd, _ := os.Getwd()
@@ -40,11 +40,13 @@ func GetChainAPIs(chainId string) ([]string, error) {
 		}
 	}
 
+	fmt.Println("result============================", result.SourceEnd, result.ChainId)
+
 	if result == nil {
 		return nil, errors.New("chain id not found")
 	}
 
-	return result.RestURIs, nil
+	return result, nil
 }
 
 func CreateRequestURI(api string, module string, address string) string {
@@ -66,4 +68,8 @@ func CreateRequestURI(api string, module string, address string) string {
 
 func CreateAllTxnsRequestURI(api string, address string, limit string, offset string) string {
 	return fmt.Sprintf("%s/cosmos/tx/v1beta1/txs?events=message.sender='%s'&order_by=2&pagination.limit=%s&pagination.offset=%s", api, url.QueryEscape(address), url.QueryEscape(limit), url.QueryEscape(offset))
+}
+
+func CreateTxnRequestURI(api string, txhash string) string {
+	return fmt.Sprintf("%s/cosmos/tx/v1beta1/txs/%s", api, txhash)
 }
