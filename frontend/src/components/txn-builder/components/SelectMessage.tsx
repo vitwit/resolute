@@ -33,7 +33,7 @@ const SelectMessage = ({
     <div className="w-[40%] space-y-6 flex flex-col pb-6 h-full">
       <div className="space-y-6">
         <SectionHeader
-          title="Transaction Messages"
+          title=""
           description="Select and add the transaction messages you want to include"
         />
         <div className="flex gap-x-3 gap-y-3 flex-wrap">
