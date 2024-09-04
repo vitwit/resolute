@@ -118,7 +118,7 @@ const ProposalProjection = ({
                 <div className="text-[#E57575] flex flex-col justify-center items-center gap-4">
                   <div className="text-[18px] font-bold">{status}</div>
                   <div className="text-[14px] leading-[21px]">
-                    <li>{reason}</li>
+                    <li className="list-none">{reason}</li>
                   </div>
                 </div>
               ) : null}
