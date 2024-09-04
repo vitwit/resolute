@@ -1,13 +1,7 @@
-import { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from './StateHooks';
 import { RootState } from '@/store/store';
 import useGetChainInfo from './useGetChainInfo';
 import {
-  getAllValidators,
-  getAuthzDelegations,
-  getAuthzUnbonding,
-  getDelegations,
-  getUnbonding,
   getValidator,
   txCancelUnbonding,
   txDelegate,
@@ -16,29 +10,21 @@ import {
   txUnDelegate,
 } from '@/store/features/staking/stakeSlice';
 import {
-  getAuthzDelegatorTotalRewards,
-  getDelegatorTotalRewards,
   txWithdrawAllRewards,
 } from '@/store/features/distribution/distributionSlice';
-import { getAuthzBalances, getBalances } from '@/store/features/bank/bankSlice';
-// import useGetAssets from "./useGetAssets";
-// import { Interface } from "readline";
 import useGetAssetsAmount from './useGetAssetsAmount';
 import useGetTxInputs from './useGetTxInputs';
-import { isEmpty } from 'lodash';
 import useGetFeegranter from './useGetFeegranter';
 import { MAP_TXN_MSG_TYPES } from '@/utils/feegrant';
 import useGetAuthzAssetsAmount from './useGetAuthzAssetsAmount';
-import useAddressConverter from './useAddressConverter';
 import useAuthzStakingExecHelper from './useAuthzStakingExecHelper';
 import { UnbondingEncode } from '@/txns/staking/unbonding';
 import { TxStatus } from '@/types/enums';
 
 /* eslint-disable react-hooks/rules-of-hooks */
-const useStaking = ({ isSingleChain }: { isSingleChain: boolean }) => {
+const useStaking = ({  }: { isSingleChain: boolean }) => {
   const dispatch = useAppDispatch();
   const { getFeegranter } = useGetFeegranter();
-  const { convertAddress } = useAddressConverter();
   const { txAuthzDelegate, txAuthzReDelegate, txAuthzUnDelegate } =
     useAuthzStakingExecHelper();
   const { txAuthzRestake, txAuthzClaim, txAuthzCancelUnbond } =
@@ -52,21 +38,14 @@ const useStaking = ({ isSingleChain }: { isSingleChain: boolean }) => {
   );
   const chainIDs = Object.values(nameToChainIDs);
 
-  const isWalletConnected = useAppSelector(
-    (state: RootState) => state.wallet.connected
-  );
-
   const {
     getChainInfo,
     getDenomInfo,
-    //  getValueFromToken, getTokenValueByChainId
   } = useGetChainInfo();
 
   const rewardsChains = useAppSelector((state: RootState) =>
     isAuthzMode ? state.distribution.authzChains : state.distribution.chains
   );
-
-  // const totalData = useAppSelector((state: RootState) => state.staking)
 
   const [
     totalStakedAmount,
@@ -76,10 +55,7 @@ const useStaking = ({ isSingleChain }: { isSingleChain: boolean }) => {
   ] = isAuthzMode
       ? useGetAuthzAssetsAmount(chainIDs)
       : useGetAssetsAmount(chainIDs);
-
-  // const { getTokensByChainID } = useGetAssets();
-
-  // get total staking data data from the  state
+      
   const stakeData = useAppSelector((state: RootState) =>
     isAuthzMode ? state.staking.authz.chains : state.staking.chains
   );
@@ -112,63 +88,6 @@ const useStaking = ({ isSingleChain }: { isSingleChain: boolean }) => {
     txRestakeInputs,
     txAuthzRestakeMsgs,
   } = useGetTxInputs();
-
-  useEffect(() => {
-    if (chainIDs.length > 0 && isWalletConnected && !isSingleChain) {
-      chainIDs.forEach((chainID) => {
-        const { address, baseURL, restURLs } = getChainInfo(chainID);
-        const { minimalDenom } = getDenomInfo(chainID);
-        const authzGranterAddress = convertAddress(chainID, authzAddress);
-        const chainRequestData = {
-          baseURLs: restURLs,
-          address: isAuthzMode ? authzGranterAddress : address,
-          chainID,
-        };
-        // Fetch delegations
-        dispatch(
-          isAuthzMode
-            ? getAuthzDelegations(chainRequestData)
-            : getDelegations(chainRequestData)
-        ).then();
-
-        // Fetch available balances
-        dispatch(
-          isAuthzMode
-            ? getAuthzBalances({ ...chainRequestData, baseURL })
-            : getBalances({ ...chainRequestData, baseURL })
-        );
-
-        // Fetch rewards
-        dispatch(
-          isAuthzMode
-            ? getAuthzDelegatorTotalRewards({
-              ...chainRequestData,
-              baseURL,
-              denom: minimalDenom,
-            })
-            : getDelegatorTotalRewards({
-              ...chainRequestData,
-              baseURL,
-              denom: minimalDenom,
-            })
-        );
-
-        // Fetch unbonding delegations
-        dispatch(
-          isAuthzMode
-            ? getAuthzUnbonding(chainRequestData)
-            : getUnbonding(chainRequestData)
-        );
-
-        // Fetch all validators
-        if (
-          isEmpty(stakeData[chainID]?.validators?.active) ||
-          isEmpty(stakeData[chainID]?.validators?.inactive)
-        )
-          dispatch(getAllValidators({ baseURLs: restURLs, chainID }));
-      });
-    }
-  }, [isWalletConnected, isAuthzMode]);
 
   const fetchValidatorDetails = (valoperAddress: string, chainID: string) => {
     const { restURLs } = getChainInfo(chainID);

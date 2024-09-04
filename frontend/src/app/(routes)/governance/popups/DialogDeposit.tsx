@@ -2,7 +2,6 @@ import CustomButton from '@/components/common/CustomButton';
 import CustomDialog from '@/components/common/CustomDialog';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
-import { getAuthzBalances, getBalances } from '@/store/features/bank/bankSlice';
 import { parseBalance } from '@/utils/denom';
 import React, { useEffect, useState } from 'react';
 import AmountInputWrapper from '../utils-components/AmountInputWrapper';
@@ -12,7 +11,6 @@ import useAuthzExecHelper from '@/custom-hooks/useAuthzExecHelper';
 import useGetFeegranter from '@/custom-hooks/useGetFeegranter';
 import { txDeposit } from '@/store/features/gov/govSlice';
 import { MAP_TXN_MSG_TYPES } from '@/utils/feegrant';
-import useAddressConverter from '@/custom-hooks/useAddressConverter';
 
 const DialogDeposit = ({
   onClose,
@@ -33,18 +31,11 @@ const DialogDeposit = ({
   const { getChainInfo, getDenomInfo } = useGetChainInfo();
   const { getVoteTxInputs } = useGetTxInputs();
   const { txAuthzDeposit } = useAuthzExecHelper();
-  const { convertAddress } = useAddressConverter();
 
   const { decimals, minimalDenom, displayDenom } = getDenomInfo(chainID);
-  const {
-    address,
-    baseURL,
-    restURLs: baseURLs,
-    feeAmount,
-  } = getChainInfo(chainID);
+  const { feeAmount } = getChainInfo(chainID);
 
   const isAuthzMode = useAppSelector((state) => state.authz.authzModeEnabled);
-  const authzAddress = useAppSelector((state) => state.authz.authzAddress);
 
   const [availableBalance, setAvailableBalance] = useState(0);
   const [depositAmount, setDepositAmount] = useState('');
@@ -146,22 +137,6 @@ const DialogDeposit = ({
       })
     );
   };
-
-  useEffect(() => {
-    if (chainID) {
-      const authzGranterAddress = convertAddress(chainID, authzAddress);
-      dispatch(
-        isAuthzMode
-          ? getAuthzBalances({
-              address: authzGranterAddress,
-              baseURL,
-              baseURLs,
-              chainID,
-            })
-          : getBalances({ chainID, address, baseURL, baseURLs })
-      );
-    }
-  }, [chainID]);
 
   useEffect(() => {
     if (balance) {

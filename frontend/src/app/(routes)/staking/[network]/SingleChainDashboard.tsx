@@ -6,12 +6,10 @@ import StakingUnDelegations from '../components/StakingUnDelegations';
 import StakingDelegations from '../components/StakingDelegations';
 import ValidatorTable from '../components/ValidatorTable';
 import { useAppSelector } from '@/custom-hooks/StateHooks';
-import useInitStaking from '@/custom-hooks/useInitStaking';
 import PageHeader from '@/components/common/PageHeader';
 import NewDelegationButton from './NewDelegationButton';
 
 const SingleStakingDashboard = ({ chainID }: { chainID: string }) => {
-  useInitStaking(chainID);
   const staking = useSingleStaking(chainID);
   const {
     totalStakedAmount,
