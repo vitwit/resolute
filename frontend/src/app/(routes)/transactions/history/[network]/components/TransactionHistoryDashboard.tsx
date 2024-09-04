@@ -12,7 +12,7 @@ import { paginationComponentStyles } from '@/utils/commonStyles';
 import TxnsLoading from '../../loaders/TxnsLoading';
 import useInitTransactions from '@/custom-hooks/useInitTransactions';
 
-const ITEMS_PER_PAGE = 5;
+const ITEMS_PER_PAGE = 7;
 
 const TransactionHistoryDashboard = ({ chainID }: { chainID: string }) => {
   useInitTransactions({chainID})

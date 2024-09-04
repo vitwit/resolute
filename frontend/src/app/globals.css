@@ -259,10 +259,10 @@ input[type='checkbox'] {
   @apply py-4 px-6 bg-[#FFFFFF05] rounded-full flex w-full;
 }
 .v-line {
-  @apply w-[0.25px] h-6 bg-[#FFFFFF80] opacity-20;
+  @apply w-[0.25px] h-2 bg-[#FFFFFF80] opacity-20;
 }
 .txn-card {
-  @apply flex justify-between gap-2 px-6 py-2 rounded-2xl;
+  @apply flex justify-between gap-2 px-6  py-4 rounded-2xl;
   background: linear-gradient(
     45deg,
     rgb(255 255 255 / 3%) 0%,
