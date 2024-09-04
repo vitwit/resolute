@@ -5,10 +5,7 @@ import { Controller, useForm } from 'react-hook-form';
 import CustomAutoComplete from '../components/CustomAutoComplete';
 import useStaking from '@/custom-hooks/txn-builder/useStaking';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
-import {
-  getAllValidators,
-  getDelegations,
-} from '@/store/features/staking/stakeSlice';
+import { getDelegations } from '@/store/features/staking/stakeSlice';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import { TxStatus } from '@/types/enums';
 import { formatCoin } from '@/utils/util';
@@ -130,7 +127,6 @@ const RedelegateForm = (props: ReDelegateProps) => {
 
   useEffect(() => {
     if (chainID) {
-      dispatch(getAllValidators({ chainID, baseURLs }));
       dispatch(getDelegations({ chainID, baseURLs, address: fromAddress }));
     }
   }, []);

@@ -8,6 +8,7 @@ import {
   COIN_GECKO_IDS,
   OASIS_CONFIG,
   POLYGON_CONFIG,
+  VITWIT_VALIDATOR_NAMES,
   WITVAL,
 } from '@/utils/constants';
 
@@ -47,12 +48,20 @@ const useGetValidatorInfo = () => {
       const validator = Object.values(
         stakingData?.[chainID]?.validators.active
       ).find((v) => {
-        // For few networks supported by Vitwit Validator, Moniker name is still Witval, so considering that validator also
         const isMatchingMoniker =
           v.description.moniker.trim().toLowerCase() ===
           moniker.trim().toLowerCase();
-        const isWitval = v.description.moniker.trim().toLowerCase() === WITVAL;
-        return isMatchingMoniker || isWitval;
+
+        if (isMatchingMoniker) {
+          return true;
+        }
+
+        // Otherwise, check if it matches the Witval moniker
+        // For few networks supported by Vitwit Validator, Moniker name is still Witval, so considering that validator also
+        const isWitval =
+          v.description.moniker.trim().toLowerCase() === WITVAL &&
+          moniker.trim().toLowerCase() === WITVAL;
+        return isWitval;
       });
 
       if (validator) {
@@ -125,15 +134,15 @@ const useGetValidatorInfo = () => {
           ? (totalStaked * usdPriceInfo.usd).toString()
           : '-';
 
-        if (!validatorDescription && description) {
+        if (!validatorDescription?.length && description?.length) {
           validatorDescription = description;
         }
 
-        if (!validatorWebsite && website) {
+        if (!validatorWebsite?.length && website?.length) {
           validatorWebsite = website;
         }
 
-        if (!validatorIdentity && identity) {
+        if (!validatorIdentity?.length && identity?.length) {
           validatorIdentity = identity;
         }
 
@@ -189,7 +198,7 @@ const useGetValidatorInfo = () => {
       }
       totalNetworks += 1;
     });
-    if (moniker.toLowerCase() === WITVAL) {
+    if (VITWIT_VALIDATOR_NAMES.includes(moniker.toLowerCase())) {
       {
         const {
           commission,

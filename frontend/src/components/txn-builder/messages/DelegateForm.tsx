@@ -1,12 +1,10 @@
 import { customMUITextFieldStyles } from '@/app/(routes)/multiops/styles';
 import { InputAdornment, TextField } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import CustomAutoComplete from '../components/CustomAutoComplete';
 import useStaking from '@/custom-hooks/txn-builder/useStaking';
-import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
-import { getAllValidators } from '@/store/features/staking/stakeSlice';
-import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
+import { useAppSelector } from '@/custom-hooks/StateHooks';
 import { TxStatus } from '@/types/enums';
 import { Decimal } from '@cosmjs/math';
 import { formatCoin } from '@/utils/util';
@@ -31,9 +29,6 @@ const DelegateForm = (props: DelegateFormProps) => {
     availableBalance,
     cancelAddMsg,
   } = props;
-  const dispatch = useAppDispatch();
-  const { getChainInfo } = useGetChainInfo();
-  const { restURLs: baseURLs } = getChainInfo(chainID);
   const { getValidators } = useStaking();
   const { validatorsList } = getValidators({ chainID });
   const [selectedOption, setSelectedOption] = useState<ValidatorOption | null>(
@@ -56,12 +51,6 @@ const DelegateForm = (props: DelegateFormProps) => {
     setValue('validator', option?.address || '');
     setSelectedOption(option);
   };
-
-  useEffect(() => {
-    if (chainID) {
-      dispatch(getAllValidators({ chainID, baseURLs }));
-    }
-  }, []);
 
   const onSubmit = (data: {
     amount: string;

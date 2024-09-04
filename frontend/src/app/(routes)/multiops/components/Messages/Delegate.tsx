@@ -1,4 +1,4 @@
-import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
+import { useAppSelector } from '@/custom-hooks/StateHooks';
 import { RootState } from '@/store/store';
 import React, { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -10,7 +10,6 @@ import {
   TextField,
 } from '@mui/material';
 import { autoCompleteStyles, autoCompleteTextFieldStyles } from '../../styles';
-import { getAllValidators } from '@/store/features/staking/stakeSlice';
 import AddressField from '../AddressField';
 import AmountInputField from '../AmountInputField';
 import { TxStatus } from '@/types/enums';
@@ -26,14 +25,12 @@ interface DelegateProps {
 }
 
 const Delegate: React.FC<DelegateProps> = (props) => {
-  const dispatch = useAppDispatch();
   const {
     chainID,
     address,
     onDelegate,
     currency,
     availableBalance,
-    baseURLs,
     feeAmount,
   } = props;
   const {
@@ -109,15 +106,6 @@ const Delegate: React.FC<DelegateProps> = (props) => {
       });
     }
   };
-
-  useEffect(() => {
-    dispatch(
-      getAllValidators({
-        baseURLs: baseURLs,
-        chainID,
-      })
-    );
-  }, [chainID]);
 
   return (
     <form
@@ -228,10 +216,7 @@ const Delegate: React.FC<DelegateProps> = (props) => {
           </div>
         </div>
       </div>
-      <button
-        type="submit"
-        className="add-txn-btn primary-gradient"
-      >
+      <button type="submit" className="add-txn-btn primary-gradient">
         Add
       </button>
     </form>
