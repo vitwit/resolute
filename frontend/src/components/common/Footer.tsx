@@ -88,7 +88,7 @@ const Footer = () => {
         ecosystem and validator operations​ (Vitwit)​.
       </div>
       <div className='divider-line'></div>
-      <div className="text-[12px] font-extralight text-center w-full">
+      <div className="text-[12px] font-extralight leading-[12px] text-center w-full">
         All rights reserved at @ Vitwit 2024
       </div>
     </div>
