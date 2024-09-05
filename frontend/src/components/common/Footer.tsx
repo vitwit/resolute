@@ -25,7 +25,7 @@ const Footer = () => {
               width={24}
               height={24}
               alt="telegram-logo"
-              // className="w-6 h-6"
+              className="w-6 h-6"
             />
           </a>
           <a
@@ -67,19 +67,6 @@ const Footer = () => {
               className="w-6 h-6"
             />
           </a>
-          <a
-            href="https://discord.gg/ZgMeDeXj"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-             <Image
-              src="/discord-logo.png"
-              width={24}
-              height={24}
-              alt="discord-logo"
-              className="w-6 h-6"
-            />
-          </a>
         </div>
       </div>
       <div className="text-[12px] font-extralight">
@@ -87,7 +74,7 @@ const Footer = () => {
         blockchain, and cloud solutions, with a focus on <br /> the Cosmos
         ecosystem and validator operations​ (Vitwit)​.
       </div>
-      <div className='divider-line'></div>
+      <div className="divider-line"></div>
       <div className="text-[12px] font-extralight leading-[12px] text-center w-full">
         All rights reserved at @ Vitwit 2024
       </div>
