@@ -62,7 +62,7 @@ func (c *Cron) CoinsPriceInfoList() {
 	}
 
 	coinIds := make([]string, 0)
-	coinNameToDenom := make(map[string]string, 0)
+	coinNameToDenom := make(map[string][]string, 0)
 
 	for rows.Next() {
 		var priceInfo schema.PriceInfo
@@ -75,7 +75,7 @@ func (c *Cron) CoinsPriceInfoList() {
 
 		coinIds = append(coinIds, priceInfo.CoingeckoName)
 
-		coinNameToDenom[priceInfo.CoingeckoName] = priceInfo.Denom
+		coinNameToDenom[priceInfo.CoingeckoName] = append(coinNameToDenom[priceInfo.CoingeckoName], priceInfo.Denom)
 	}
 
 	if len(coinIds) > 0 {
@@ -88,10 +88,13 @@ func (c *Cron) CoinsPriceInfoList() {
 
 		for k, v := range priceInfo {
 			val, _ := json.Marshal(v)
-			_, err = c.db.Exec("UPDATE price_info SET info=$1,last_updated=$2 WHERE denom=$3", val, time.Now(), coinNameToDenom[k])
-			if err != nil {
-				utils.ErrorLogger.Printf("failed to update price information for denom = %s : %s\n", k, err.Error())
+			for _, denom := range coinNameToDenom[k] {
+				_, err = c.db.Exec("UPDATE price_info SET info=$1,last_updated=$2 WHERE denom=$3", val, time.Now(), denom)
+				if err != nil {
+					utils.ErrorLogger.Printf("failed to update price information for denom = %s : %s\n", k, err.Error())
+				}
 			}
+
 		}
 	}
 }
