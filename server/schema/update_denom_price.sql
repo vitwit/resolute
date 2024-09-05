@@ -81,6 +81,8 @@ WITH new_data AS (
     ('wynd', 'wynd', true, NOW(), '{}'::jsonb),
     ('bJUNO', 'backbone-labs-staked-juno', true, NOW(), '{}'::jsonb),
     ('usdc', 'usd-coin', true, NOW(), '{}'::jsonb),
+    ('uusdc', 'usd-coin', true, NOW(), '{}'::jsonb),
+    ('erc20/tether/usdt', 'tether', true, NOW(), '{}'::jsonb),
     ('ukava', 'kava', true, NOW(), '{}'::jsonb),
     ('hard', 'kava-lend', true, NOW(), '{}'::jsonb),
     ('swp', 'kava-swap', true, NOW(), '{}'::jsonb),
