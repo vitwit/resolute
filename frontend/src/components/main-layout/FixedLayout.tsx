@@ -30,6 +30,9 @@ import Footer from '../common/Footer';
 import useInitFeegrant from '@/custom-hooks/useInitFeegrant';
 import useInitAuthz from '@/custom-hooks/useInitAuthz';
 import DynamicSection from './DynamicSection';
+import { TxStatus } from '@/types/enums';
+import { CircularProgress } from '@mui/material';
+import CustomLoader from '../common/CustomLoader';
 
 const FixedLayout = ({ children }: { children: React.ReactNode }) => {
   const dispatch = useAppDispatch();
@@ -43,6 +46,7 @@ const FixedLayout = ({ children }: { children: React.ReactNode }) => {
   const chainIDs = Object.keys(nameToChainIDs).map(
     (chainName) => nameToChainIDs[chainName]
   );
+  const walletState = useAppSelector((state) => state.wallet.status);
   useShortCuts();
 
   const tryConnectWallet = async (walletName: string) => {
@@ -117,7 +121,16 @@ const FixedLayout = ({ children }: { children: React.ReactNode }) => {
           <SideBar />
           <section className="dynamic-section">
             <section className="px-10 min-h-[calc(100vh-56px)]">
-              <DynamicSection>{children}</DynamicSection>
+              {walletState === TxStatus.PENDING ? (
+                <div className="w-full mx-auto my-[20%] opacity-60">
+                  <CustomLoader
+                    loadingText="Fetching wallet details"
+                    textStyles="italic text-[#fffffff0]"
+                  />
+                </div>
+              ) : (
+                <DynamicSection>{children}</DynamicSection>
+              )}
             </section>
             <footer>
               <Footer />
