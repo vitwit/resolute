@@ -42,7 +42,7 @@ const ReDelegatePopup: React.FC<PopupProps> = ({
     validator
   );
   const denom = singleStake.getDenomWithChainID(chainID);
-  const staking = useStaking({ isSingleChain: true });
+  const staking = useStaking();
   const allVals = singleStake.getValidators()?.active;
   const stakeModule = staking.getAllDelegations();
   const val = stakeModule[chainID]?.validators?.active?.[validator];

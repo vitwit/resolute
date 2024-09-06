@@ -18,7 +18,7 @@ function StakingUnDelegations({
   undelegations: Chains;
   isSingleChain?: boolean;
 }) {
-  const staking = useStaking({ isSingleChain: true });
+  const staking = useStaking();
 
   const nameToChainIDs = useAppSelector(
     (state: RootState) => state.wallet.nameToChainIDs

@@ -9,14 +9,11 @@ import {
   txRestake,
   txUnDelegate,
 } from '@/store/features/staking/stakeSlice';
-import {
-  txWithdrawAllRewards,
-} from '@/store/features/distribution/distributionSlice';
+import { txWithdrawAllRewards } from '@/store/features/distribution/distributionSlice';
 import useGetAssetsAmount from './useGetAssetsAmount';
 import useGetTxInputs from './useGetTxInputs';
 import useGetFeegranter from './useGetFeegranter';
 import { MAP_TXN_MSG_TYPES } from '@/utils/feegrant';
-import useGetAuthzAssetsAmount from './useGetAuthzAssetsAmount';
 import useAuthzStakingExecHelper from './useAuthzStakingExecHelper';
 import { UnbondingEncode } from '@/txns/staking/unbonding';
 import { TxStatus } from '@/types/enums';
@@ -38,10 +35,7 @@ const useStaking = () => {
   );
   const chainIDs = Object.values(nameToChainIDs);
 
-  const {
-    getChainInfo,
-    getDenomInfo,
-  } = useGetChainInfo();
+  const { getChainInfo, getDenomInfo } = useGetChainInfo();
 
   const rewardsChains = useAppSelector((state: RootState) =>
     isAuthzMode ? state.distribution.authzChains : state.distribution.chains
@@ -52,10 +46,8 @@ const useStaking = () => {
     availableAmount,
     rewardsAmount,
     totalUnStakedAmount,
-  ] = isAuthzMode
-      ? useGetAuthzAssetsAmount(chainIDs)
-      : useGetAssetsAmount(chainIDs);
-      
+  ] = useGetAssetsAmount(chainIDs);
+
   const stakeData = useAppSelector((state: RootState) =>
     isAuthzMode ? state.staking.authz.chains : state.staking.chains
   );
@@ -73,8 +65,10 @@ const useStaking = () => {
   );
 
   const cancelUnbdongTxLoading = (chainID: string) => {
-    return stakeData[chainID].cancelUnbondingTxStatus === TxStatus.PENDING ? true : false;
-  }
+    return stakeData[chainID].cancelUnbondingTxStatus === TxStatus.PENDING
+      ? true
+      : false;
+  };
 
   const totalUnbondedAmount = useAppSelector((state: RootState) =>
     isAuthzMode
