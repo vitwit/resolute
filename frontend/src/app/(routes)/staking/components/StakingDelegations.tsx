@@ -20,7 +20,7 @@ function StakingDelegations({
   delegations: Chains;
   isSingleChain: boolean;
 }) {
-  const staking = useStaking({ isSingleChain: isSingleChain });
+  const staking = useStaking();
   const validator = useValidator();
 
   // Function to get the commission rate of a validator

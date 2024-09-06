@@ -10,10 +10,7 @@ import {
   TextField,
 } from '@mui/material';
 import { autoCompleteStyles, autoCompleteTextFieldStyles } from '../../styles';
-import {
-  getAllValidators,
-  getDelegations,
-} from '@/store/features/staking/stakeSlice';
+import { getDelegations } from '@/store/features/staking/stakeSlice';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import AddressField from '../AddressField';
 import { TxStatus } from '@/types/enums';
@@ -48,7 +45,7 @@ const isValueExists = (
 };
 
 const Redelegate: React.FC<RedelegateProps> = (props) => {
-  const { chainID, address, onRedelegate, currency, baseURLs } = props;
+  const { chainID, address, onRedelegate, currency } = props;
   const { getChainInfo } = useGetChainInfo();
   const { restURLs } = getChainInfo(chainID);
   const dispatch = useAppDispatch();
@@ -185,12 +182,6 @@ const Redelegate: React.FC<RedelegateProps> = (props) => {
 
   useEffect(() => {
     dispatch(getDelegations({ address, chainID, baseURLs: restURLs }));
-    dispatch(
-      getAllValidators({
-        baseURLs: baseURLs,
-        chainID,
-      })
-    );
   }, [chainID]);
 
   return (
@@ -396,10 +387,7 @@ const Redelegate: React.FC<RedelegateProps> = (props) => {
           </div>
         </div>
       </div>
-      <button
-        type="submit"
-        className="add-txn-btn primary-gradient"
-      >
+      <button type="submit" className="add-txn-btn primary-gradient">
         Add
       </button>
     </form>

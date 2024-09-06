@@ -4,6 +4,7 @@ import CustomNetworkCard from './CustomNetworkCard';
 import EmptyScreen from '@/components/common/EmptyScreen';
 import { useAppDispatch } from '@/custom-hooks/StateHooks';
 import { setAddNetworkDialogOpen } from '@/store/features/common/commonSlice';
+import { NO_DATA_ILLUSTRATION } from '@/constants/image-names';
 
 const CustomNetworks = () => {
   const dispatch = useAppDispatch();
@@ -29,8 +30,11 @@ const CustomNetworks = () => {
         {!customNetworks?.length && (
           <div className="flex items-center justify-center w-full h-full">
             <EmptyScreen
-              title="Add Network"
-              description="No custom networks"
+              title="No custom networks"
+              description=""
+              bgImage={NO_DATA_ILLUSTRATION}
+              width={246}
+              height={264}
               btnText="Add Network"
               btnOnClick={() => {
                 dispatch(setAddNetworkDialogOpen(true));

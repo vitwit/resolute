@@ -25,29 +25,17 @@ import { setAllNetworksInfo } from '@/store/features/common/commonSlice';
 import useShortCuts from '@/custom-hooks/useShortCuts';
 import TransactionStatusPopup from '../txn-status-popups/TransactionStatusPopup';
 import IBCSwapTxStatus from '../IBCSwapTxStatus';
-import useFetchPriceInfo from '@/custom-hooks/useFetchPriceInfo';
 import Footer from '../common/Footer';
-import useInitFeegrant from '@/custom-hooks/useInitFeegrant';
-import useInitAuthz from '@/custom-hooks/useInitAuthz';
 import DynamicSection from './DynamicSection';
-import { TxStatus } from '@/types/enums';
-import { CircularProgress } from '@mui/material';
+import useInitApp from '@/custom-hooks/common/useInitApp';
 import CustomLoader from '../common/CustomLoader';
+import { TxStatus } from '@/types/enums';
 
 const FixedLayout = ({ children }: { children: React.ReactNode }) => {
   const dispatch = useAppDispatch();
-  const nameToChainIDs = useAppSelector((state) => state.wallet.nameToChainIDs);
-  const isFeegrantModeEnabled = useAppSelector(
-    (state) => state.feegrant.feegrantModeEnabled
-  );
-  const isAuthzModeEnabled = useAppSelector(
-    (state) => state.authz.authzModeEnabled
-  );
-  const chainIDs = Object.keys(nameToChainIDs).map(
-    (chainName) => nameToChainIDs[chainName]
-  );
-  const walletState = useAppSelector((state) => state.wallet.status);
   useShortCuts();
+
+  const walletState = useAppSelector((state) => state.wallet.status);
 
   const tryConnectWallet = async (walletName: string) => {
     if (walletName === 'metamask') {
@@ -109,9 +97,8 @@ const FixedLayout = ({ children }: { children: React.ReactNode }) => {
     };
   }, []);
 
-  useFetchPriceInfo();
-  useInitFeegrant({ chainIDs, shouldFetch: isFeegrantModeEnabled });
-  useInitAuthz({ chainIDs, shouldFetch: isAuthzModeEnabled });
+  // Initialize the application state
+  useInitApp();
 
   return (
     <div className="fixed-layout">

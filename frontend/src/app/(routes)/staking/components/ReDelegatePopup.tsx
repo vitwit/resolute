@@ -1,7 +1,7 @@
 'use client';
 
 import CustomDialog from '@/components/common/CustomDialog';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Image from 'next/image';
 import AddressField from './AddressField';
 import useSingleStaking from '@/custom-hooks/useSingleStaking';
@@ -11,9 +11,7 @@ import ValidatorLogo from './ValidatorLogo';
 import { WalletAddress } from '@/components/main-layout/SelectNetwork';
 import { Validator } from '@/types/staking';
 import ValidatorName from './ValidatorName';
-import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
-import { getAllValidators } from '@/store/features/staking/stakeSlice';
-import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
+import { useAppSelector } from '@/custom-hooks/StateHooks';
 import { TxStatus } from '@/types/enums';
 
 interface PopupProps {
@@ -29,9 +27,6 @@ const ReDelegatePopup: React.FC<PopupProps> = ({
   openPopup,
   openReDelegatePopup,
 }) => {
-  const dispatch = useAppDispatch();
-  const { getChainInfo } = useGetChainInfo();
-  const { restURLs } = getChainInfo(chainID);
   const validatorsLoading = useAppSelector(
     (state) => state.staking.chains?.[chainID]?.validators.status
   );
@@ -47,7 +42,7 @@ const ReDelegatePopup: React.FC<PopupProps> = ({
     validator
   );
   const denom = singleStake.getDenomWithChainID(chainID);
-  const staking = useStaking({ isSingleChain: true });
+  const staking = useStaking();
   const allVals = singleStake.getValidators()?.active;
   const stakeModule = staking.getAllDelegations();
   const val = stakeModule[chainID]?.validators?.active?.[validator];
@@ -86,10 +81,6 @@ const ReDelegatePopup: React.FC<PopupProps> = ({
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
   };
-
-  useEffect(() => {
-    if (chainID) dispatch(getAllValidators({ baseURLs: restURLs, chainID }));
-  }, [chainID]);
 
   return (
     <>

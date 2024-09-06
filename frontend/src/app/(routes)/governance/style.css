@@ -100,7 +100,7 @@
 }
 
 .proposal-description-markdown {
-  @apply opacity-80;
+  @apply opacity-90 text-[#fffffff0];
 }
 
 .proposal-description-markdown p,

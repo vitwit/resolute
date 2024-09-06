@@ -1,6 +1,5 @@
 import useStaking from '@/custom-hooks/txn-builder/useStaking';
-import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import ValidatorLogo from '@/app/(routes)/staking/components/ValidatorLogo';
 import {
   customAutoCompleteStyles,
@@ -14,9 +13,8 @@ import {
   Paper,
   TextField,
 } from '@mui/material';
-import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
+import { useAppSelector } from '@/custom-hooks/StateHooks';
 import { TxStatus } from '@/types/enums';
-import { getAllValidators } from '@/store/features/staking/stakeSlice';
 /** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react';
 import { REMOVE_ICON_OUTLINED } from '@/constants/image-names';
@@ -35,9 +33,6 @@ const ValidatorAutoComplete = ({
   chainID: string;
   handleSelectValidators: (data: string[]) => void;
 }) => {
-  const dispatch = useAppDispatch();
-  const { getChainInfo } = useGetChainInfo();
-  const { restURLs: baseURLs } = getChainInfo(chainID);
   const { getValidators } = useStaking();
   const { validatorsList } = getValidators({ chainID });
   const [selectedOptions, setSelectedOptions] = useState<ValidatorOption[]>([]);
@@ -66,10 +61,6 @@ const ValidatorAutoComplete = ({
     const validators = updatedValidators.map((validator) => validator.address);
     handleSelectValidators(validators);
   };
-
-  useEffect(() => {
-    if (chainID?.length) dispatch(getAllValidators({ chainID, baseURLs }));
-  }, []);
 
   return (
     <div className="space-y-4">

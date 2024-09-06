@@ -43,7 +43,7 @@ const NewDelegationDialog: React.FC<PopupProps> = ({
   const denom = singleStake.getDenomWithChainID(chainID);
 
   // Custom hook to get staking information
-  const staking = useStaking({ isSingleChain: true });
+  const staking = useStaking();
 
   const availableAmount = singleStake.getAvaiailableAmount(chainID);
 

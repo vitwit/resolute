@@ -36,7 +36,7 @@ const DialogConfirmExitSession = ({
             className="absolute top-6 right-6 hover:bg-[#ffffff10] w-8 h-8 rounded-full flex items-center justify-center"
             onClick={onClose}
           >
-            <Image src="close.svg" width={20} height={20} alt="close-icon" />
+            <Image src="/close.svg" width={20} height={20} alt="close-icon" />
           </button>
           <div className="px-10 py-20 space-y-10">
             <div className="flex flex-col items-center gap-6">

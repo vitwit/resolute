@@ -3,7 +3,6 @@ import { RootState } from '@/store/store';
 import useGetChainInfo from './useGetChainInfo';
 import { getValidator } from '@/store/features/staking/stakeSlice';
 import useGetAssetsAmount from './useGetAssetsAmount';
-import useGetAuthzAssetsAmount from './useGetAuthzAssetsAmount';
 
 /* eslint-disable react-hooks/rules-of-hooks */
 const useSingleStaking = (chainID: string) => {
@@ -28,9 +27,7 @@ const useSingleStaking = (chainID: string) => {
     availableAmount,
     rewardsAmount,
     totalUnStakedAmount,
-  ] = isAuthzMode
-    ? useGetAuthzAssetsAmount([chainID])
-    : useGetAssetsAmount([chainID]);
+  ] = useGetAssetsAmount([chainID]);
 
   // const { getTokensByChainID } = useGetAssets();
 

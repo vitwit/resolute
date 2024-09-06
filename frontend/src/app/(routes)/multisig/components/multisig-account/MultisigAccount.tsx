@@ -10,10 +10,7 @@ import {
   resetUpdateTxnState,
   setVerifyDialogOpen,
 } from '@/store/features/multisig/multisigSlice';
-import {
-  getAllValidators,
-  getDelegations,
-} from '@/store/features/staking/stakeSlice';
+import { getDelegations } from '@/store/features/staking/stakeSlice';
 import { useEffect, useState } from 'react';
 import MultisigAccountHeader from './MultisigAccountHeader';
 import Copy from '@/components/common/Copy';
@@ -101,7 +98,6 @@ const MultisigAccount = ({
           chainID,
         })
       );
-      dispatch(getAllValidators({ baseURLs: restURLs, chainID }));
       dispatch(multisigByAddress({ address: multisigAddress }));
       dispatch(getMultisigAccounts(walletAddress));
     }

@@ -14,7 +14,7 @@ import { setChangeNetworkDialogOpen } from '@/store/features/common/commonSlice'
 
 const StakingDashboard = () => {
   const dispatch = useAppDispatch();
-  const staking = useStaking({ isSingleChain: false });
+  const staking = useStaking();
   const {
     totalStakedAmount,
     rewardsAmount,

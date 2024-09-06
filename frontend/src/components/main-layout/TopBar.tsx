@@ -13,9 +13,11 @@ const TopBar = () => {
   const [profileOpen, setProfileOpen] = useState(false);
   const [walletLogo, setWalletLogo] = useState('');
 
-  const { name: walletUserName, connected: walletConnected, isLoading: isWalletLoading } = useAppSelector(
-    (state: RootState) => state.wallet
-  );
+  const {
+    name: walletUserName,
+    connected: walletConnected,
+    isLoading: isWalletLoading,
+  } = useAppSelector((state: RootState) => state.wallet);
 
   const onClose = () => {
     setProfileOpen(false);
@@ -38,16 +40,18 @@ const TopBar = () => {
           </Link>
         </div>
         <div className="flex-1 flex justify-center items-center">
-          {isWalletLoading ? null : !walletConnected && (
-            <div className="flex items-center gap-6">
-              <div className="secondary-text text-center">
-                Connect your wallet now to access your account on Resolute
-              </div>
-              <button onClick={connectWalletOpen} className="primary-btn">
-                Connect Wallet
-              </button>
-            </div>
-          )}
+          {isWalletLoading
+            ? null
+            : !walletConnected && (
+                <div className="flex items-center gap-6">
+                  <div className="secondary-text text-center">
+                    Connect your wallet now to access your account on Resolute
+                  </div>
+                  <button onClick={connectWalletOpen} className="primary-btn">
+                    Connect Wallet
+                  </button>
+                </div>
+              )}
         </div>
         <div className="flex items-center gap-4">
           <a
@@ -74,18 +78,7 @@ const TopBar = () => {
               alt="twitter"
             />
           </a>
-          <a
-            href="https://discord.com/invite/3DFmK7dG"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              src="/discord-logo.png"
-              width={20}
-              height={20}
-              alt="discord-logo"
-            />
-          </a>
+
           {walletConnected && (
             <div
               className="flex items-center gap-2 cursor-pointer px-4 py-2 bg-[#FFFFFF0A] rounded-full"

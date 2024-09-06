@@ -72,7 +72,7 @@ const PageMultisig = ({ chainName }: { chainName: string }) => {
 
   return (
     <div className="py-10 h-full flex flex-col min-h-[100vh]">
-      <div className="flex items-end w-full">
+      <div className="flex items-end w-full gap-6">
         <div className="flex-1">
           <PageHeader
             title="MultiSig"
