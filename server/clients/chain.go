@@ -2,6 +2,7 @@ package clients
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -10,13 +11,17 @@ import (
 	"github.com/vitwit/resolute/server/config"
 )
 
-func GetStatus(url string) (bool, error) {
+func GetStatus(url string, chainId string) (bool, error) {
 	config, err := config.ParseConfig()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	authorizationToken := fmt.Sprintf("Bearer %s", config.MINTSCAN_TOKEN.Token)
+	chanDetails := GetChain(chainId)
+
+	if chanDetails == nil {
+		return false, errors.New("unable to get chain details")
+	}
 
 	urlString := fmt.Sprintf("%s/cosmos/auth/v1beta1/params", url)
 
@@ -24,11 +29,19 @@ func GetStatus(url string) (bool, error) {
 	req, err := http.NewRequest("GET", urlString, nil)
 	if err != nil {
 		return false, err
-
 	}
 
-	// Copy the Authorization header from the original request
-	req.Header.Set("Authorization", authorizationToken)
+	if chanDetails.SourceEnd == "mintscan" {
+		authorizationToken := fmt.Sprintf("Bearer %s", config.MINTSCAN_TOKEN.Token)
+		req.Header.Add("Authorization", authorizationToken)
+	}
+
+	if chanDetails.SourceEnd == "numia" {
+		bearerToken := config.NUMIA_BEARER_TOKEN.Token
+		var authorization = "Bearer " + bearerToken
+
+		req.Header.Add("Authorization", authorization)
+	}
 
 	// Perform the request
 	client := &http.Client{}
