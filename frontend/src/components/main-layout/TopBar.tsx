@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import ProfileDialog from './ProfileDialog';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { setConnectWalletOpen } from '@/store/features/wallet/walletSlice';
-import { getConnectWalletLogo } from '@/utils/util';
+import { getConnectWalletLogo, shortenString } from '@/utils/util';
 import { RESOLUTE_LOGO } from '@/constants/image-names';
 import { RootState } from '@/store/store';
 
@@ -85,7 +85,9 @@ const TopBar = () => {
               onClick={() => setProfileOpen(true)}
             >
               <Image src={walletLogo} height={20} width={20} alt="Wallet" />
-              <div className="text-[14px]">{walletUserName}</div>
+              <div className="text-[14px]">
+                {shortenString(walletUserName, 24)}
+              </div>
               <Image
                 src="/drop-down-icon.svg"
                 height={24}
