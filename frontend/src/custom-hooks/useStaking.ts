@@ -22,7 +22,7 @@ import { UnbondingEncode } from '@/txns/staking/unbonding';
 import { TxStatus } from '@/types/enums';
 
 /* eslint-disable react-hooks/rules-of-hooks */
-const useStaking = ({  }: { isSingleChain: boolean }) => {
+const useStaking = () => {
   const dispatch = useAppDispatch();
   const { getFeegranter } = useGetFeegranter();
   const { txAuthzDelegate, txAuthzReDelegate, txAuthzUnDelegate } =

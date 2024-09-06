@@ -23,8 +23,8 @@ const useValidator = () => {
         );
         if (
           ![
-            ...stakeData[chainID]?.validators?.activeSorted,
-            ...stakeData[chainID]?.validators?.inactiveSorted,
+            ...(stakeData[chainID]?.validators?.activeSorted || []),
+            ...(stakeData[chainID]?.validators?.inactiveSorted || []),
           ].includes(valoperAddress)
         ) {
           if (!stakeData[chainID]?.validator[valoperAddress])
