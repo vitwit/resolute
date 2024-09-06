@@ -55,12 +55,15 @@ const useGetAuthzAssetsAmount = (chainIDs: string[]) => {
       const usdDenomPrice = usdPriceInfo?.usd || 0;
 
       for (let i = 0; i < ibcBalances?.length; i++) {
+        const ibcUsdPriceInfo: TokenInfo | undefined =
+          tokensPriceInfo?.[ibcBalances?.[i]?.balance.denom]?.info;
+        const ibcUsdDenomPrice = ibcUsdPriceInfo?.usd || 0;
         totalIBCBalance +=
           parseBalance(
             [ibcBalances[i].balance],
             ibcBalances?.[i]?.decimals,
             ibcBalances?.[i]?.balance.denom
-          ) * usdDenomPrice;
+          ) * ibcUsdDenomPrice;
       }
 
       const balance = parseBalance(

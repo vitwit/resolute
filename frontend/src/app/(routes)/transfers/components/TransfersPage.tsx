@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import useInitBalances from '@/custom-hooks/useInitBalances';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import useSortedAssets from '@/custom-hooks/useSortedAssets';
 import { useSearchParams } from 'next/navigation';
@@ -21,8 +20,6 @@ const TransfersPage = ({ chainIDs }: { chainIDs: string[] }) => {
   const [transferType, setTransferType] = useState('single');
 
   const isAuthzMode = useAppSelector((state) => state.authz.authzModeEnabled);
-
-  useInitBalances({ chainIDs });
 
   const dispatch = useAppDispatch();
 

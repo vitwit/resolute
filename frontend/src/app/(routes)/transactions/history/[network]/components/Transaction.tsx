@@ -78,6 +78,7 @@ const Transaction = ({
     <div>
       <TransactionHeader
         hash={hash}
+        rawLog={txnResult?.raw_log}
         status={success ? 'success' : 'failed'}
         onRepeatTxn={onRepeatTxn}
         disableAction={disableAction}

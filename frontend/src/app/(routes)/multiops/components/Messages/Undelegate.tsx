@@ -1,9 +1,6 @@
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
-import {
-  getAllValidators,
-  getDelegations,
-} from '@/store/features/staking/stakeSlice';
+import { getDelegations } from '@/store/features/staking/stakeSlice';
 import React, { useEffect, useState } from 'react';
 import { Decimal } from '@cosmjs/math';
 import { Controller, useForm } from 'react-hook-form';
@@ -67,12 +64,6 @@ const Undelegate = (props: UnDelegateProps) => {
 
   useEffect(() => {
     dispatch(getDelegations({ address, chainID, baseURLs: restURLs }));
-    dispatch(
-      getAllValidators({
-        baseURLs: baseURLs,
-        chainID,
-      })
-    );
   }, [chainID]);
 
   const [selectedValBal, setSelectedValBal] = useState<StakeBal>({

@@ -4,7 +4,7 @@ import React, { useEffect } from 'react';
 import TopBar from './TopBar';
 import SideBar from './SideBar';
 import '@/app/fixed-layout.css';
-import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
+import { useAppDispatch } from '@/custom-hooks/StateHooks';
 import { networks } from '@/utils/chainsInfo';
 import {
   connectSnap,
@@ -25,24 +25,12 @@ import { setAllNetworksInfo } from '@/store/features/common/commonSlice';
 import useShortCuts from '@/custom-hooks/useShortCuts';
 import TransactionStatusPopup from '../txn-status-popups/TransactionStatusPopup';
 import IBCSwapTxStatus from '../IBCSwapTxStatus';
-import useFetchPriceInfo from '@/custom-hooks/useFetchPriceInfo';
 import Footer from '../common/Footer';
-import useInitFeegrant from '@/custom-hooks/useInitFeegrant';
-import useInitAuthz from '@/custom-hooks/useInitAuthz';
 import DynamicSection from './DynamicSection';
+import useInitApp from '@/custom-hooks/common/useInitApp';
 
 const FixedLayout = ({ children }: { children: React.ReactNode }) => {
   const dispatch = useAppDispatch();
-  const nameToChainIDs = useAppSelector((state) => state.wallet.nameToChainIDs);
-  const isFeegrantModeEnabled = useAppSelector(
-    (state) => state.feegrant.feegrantModeEnabled
-  );
-  const isAuthzModeEnabled = useAppSelector(
-    (state) => state.authz.authzModeEnabled
-  );
-  const chainIDs = Object.keys(nameToChainIDs).map(
-    (chainName) => nameToChainIDs[chainName]
-  );
   useShortCuts();
 
   const tryConnectWallet = async (walletName: string) => {
@@ -105,9 +93,8 @@ const FixedLayout = ({ children }: { children: React.ReactNode }) => {
     };
   }, []);
 
-  useFetchPriceInfo();
-  useInitFeegrant({ chainIDs, shouldFetch: isFeegrantModeEnabled });
-  useInitAuthz({ chainIDs, shouldFetch: isAuthzModeEnabled });
+  // Initialize the application state
+  useInitApp();
 
   return (
     <div className="fixed-layout">
