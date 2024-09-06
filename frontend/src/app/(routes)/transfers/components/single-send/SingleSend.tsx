@@ -213,7 +213,7 @@ const SingleSend = ({ sortedAssets }: { sortedAssets: ParsedAsset[] }) => {
               <Image src="/drop-down-icon.svg" height={24} width={24} alt="" />
             </div>
           </Box>
-          <div className="py-10 pt-12 px-6 flex gap-6 flex-col">
+          <div className="py-10 pt-8 px-6 flex gap-6 flex-col">
             <div>
               <div className="form-label-text">Select Asset</div>
               <AssetsDropDown

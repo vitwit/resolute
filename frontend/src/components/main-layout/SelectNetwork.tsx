@@ -73,9 +73,9 @@ const SelectNetwork = () => {
               {shortenName(selectedNetwork.chainName, 15) || 'All Networks'}
             </div>
             <Image
-              src="/drop-down-icon.svg"
-              width={24}
-              height={24}
+              src="/switch-icon.svg"
+              width={20}
+              height={20}
               alt="dropdown-icon"
               className="opacity-60"
             />

@@ -133,12 +133,13 @@ const ValidatorsAutoComplete = ({
       PaperComponent={({ children }) => (
         <Paper
           style={{
-            background: '#FFFFFF14',
+            background: '#1c1c1d',
             color: 'white',
             borderRadius: '16px',
-            backdropFilter: 'blur(15px)',
+            // backdropFilter: 'blur(20px)',
             marginTop: '8px',
             overflow: 'hidden',
+            boxShadow: '4px 4px 4px 4px rgba(17, 0, 0, 0.388)',
           }}
         >
           {dataLoading ? (

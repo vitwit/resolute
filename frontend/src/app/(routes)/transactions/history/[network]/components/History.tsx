@@ -4,6 +4,7 @@ import { RootState } from '@/store/store';
 import React from 'react';
 import TransactionHistoryDashboard from './TransactionHistoryDashboard';
 import { useParams } from 'next/navigation';
+import PageHeader from '@/components/common/PageHeader';
 
 const History = () => {
   const { network } = useParams();
@@ -22,7 +23,10 @@ const History = () => {
 
     return (
       <div>
-        <div className="text-h1">History</div>
+        <PageHeader
+          title="History"
+          description="Record of all your transactions, providing detailed insights into each transaction's date, time, amount, and status."
+        />
         <TransactionHistoryDashboard chainID={chainID} />
       </div>
     );

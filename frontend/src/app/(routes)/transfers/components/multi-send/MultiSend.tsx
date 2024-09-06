@@ -142,7 +142,7 @@ const MultiSend = ({ chainID }: { chainID: string }) => {
               <Image src="/drop-down-icon.svg" height={24} width={24} alt="" />
             </div>
           </Box>
-          <div className="py-10 pt-12 px-6 flex flex-col gap-6">
+          <div className="py-10 pt-8 px-6 flex flex-col gap-6">
             <form
               className={`flex flex-col justify-between ${msgs?.length ? 'gap-6' : 'gap-10'}`}
               onSubmit={handleSubmit(onSubmit)}
