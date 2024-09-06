@@ -26,6 +26,7 @@ import { formatAmount } from '@/utils/util';
 import DepositCollected from '../../utils-components/DepositCollected';
 import { PROPOSAL_STATUS_VOTING_PERIOD } from '@/utils/constants';
 import { TxStatus } from '@/types/enums';
+import useAddressConverter from '@/custom-hooks/useAddressConverter';
 
 const emptyTallyResult = {
   yes: '',
@@ -53,7 +54,11 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
   const dispatch = useAppDispatch();
   const router = useRouter();
 
+  const isAuthzMode = useAppSelector((state) => state.authz.authzModeEnabled);
+  const authzAddress = useAppSelector((state) => state.authz.authzAddress);
+
   const { getChainInfo, getDenomInfo } = useGetChainInfo();
+  const { convertAddress } = useAddressConverter();
   const {
     restURLs: baseURLs,
     baseURL,
@@ -62,6 +67,7 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
     chainLogo,
     address,
   } = getChainInfo(chainID);
+  const authzGranterAddress = convertAddress(chainID, authzAddress);
 
   const proposalInfo = useAppSelector(
     (state: RootState) => state.gov.proposalDetails
@@ -203,21 +209,34 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
   const proposalTallyStatus = useAppSelector(
     (state) => state.gov.chains?.[chainID]?.tally.status
   );
+  const txVoteStatus = useAppSelector(
+    (state) => state.gov.chains?.[chainID]?.tx?.status
+  );
+
+  const fetchVotes = () => {
+    dispatch(
+      getVotes({
+        baseURL,
+        baseURLs,
+        proposalId: Number(proposalID),
+        voter: isAuthzMode ? authzGranterAddress : address,
+        chainID,
+        govV1,
+      })
+    );
+  };
 
   useEffect(() => {
-    if (isWalletConnected && address) {
-      dispatch(
-        getVotes({
-          baseURL,
-          baseURLs,
-          proposalId: Number(proposalID),
-          voter: address,
-          chainID,
-          govV1,
-        })
-      );
+    if (isWalletConnected) {
+      fetchVotes();
     }
-  }, [isWalletConnected]);
+  }, [isWalletConnected, isAuthzMode]);
+
+  useEffect(() => {
+    if (txVoteStatus === TxStatus.IDLE) {
+      fetchVotes();
+    }
+  }, [txVoteStatus]);
 
   return (
     <>

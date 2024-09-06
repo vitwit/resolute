@@ -293,18 +293,18 @@ export const getProposalsInVoting = createAsyncThunk(
             })
           );
         }
-        if (data?.voter?.length) {
-          dispatch(
-            getVotes({
-              baseURL: data?.baseURL,
-              baseURLs: data?.baseURLs,
-              proposalId,
-              voter: data?.voter,
-              chainID: data?.chainID,
-              govV1: data.govV1,
-            })
-          );
-        }
+        // if (data?.voter?.length) {
+        //   dispatch(
+        //     getVotes({
+        //       baseURL: data?.baseURL,
+        //       baseURLs: data?.baseURLs,
+        //       proposalId,
+        //       voter: data?.voter,
+        //       chainID: data?.chainID,
+        //       govV1: data.govV1,
+        //     })
+        //   );
+        // }
       });
 
       return {
@@ -338,11 +338,15 @@ export const getVotes = createAsyncThunk(
       return {
         chainID: data.chainID,
         data: response.data,
+        proposalId: data.proposalId,
       };
     } catch (error) {
       if (error instanceof AxiosError)
         return rejectWithValue({ message: error.message });
-      return rejectWithValue({ message: ERR_UNKNOWN });
+      return rejectWithValue({
+        message: ERR_UNKNOWN,
+        proposalId: data.proposalId,
+      });
     }
   }
 );
@@ -684,9 +688,31 @@ export const govSlice = createSlice({
       })
       .addCase(getVotes.rejected, (state, action) => {
         const chainID = action.meta?.arg?.chainID;
-        const payload = action.payload as { message: string };
+        const payload = action.payload as {
+          message: string;
+          proposalId: number;
+        };
         state.chains[chainID].votes.status = TxStatus.REJECTED;
         state.chains[chainID].votes.errMsg = payload.message || '';
+        const result: VotesData = {
+          status: TxStatus.IDLE,
+          errMsg: '',
+          proposals: state.chains[chainID].votes?.proposals || {},
+        };
+
+        const proposalId = Number(payload.proposalId).toString();
+
+        // Initialize the proposal with a valid ProposalVote object
+        result.proposals[proposalId] = {
+          vote: {
+            proposal_id: Number(proposalId),
+            voter: '',
+            option: '',
+            options: [],
+          },
+        };
+
+        state.chains[chainID].votes = result;
       });
 
     // tally

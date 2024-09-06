@@ -186,17 +186,14 @@ const useGetProposals = () => {
     if (voteData) {
       const voter = voteData?.voter || '';
       const option = voteData?.option || '';
-      if (
-        address.length &&
-        voter.length &&
-        option?.length &&
-        address === voter
-      ) {
-        let votedOption = voteOptions?.[option] || '';
-        if (!votedOption.length) {
-          votedOption = voteOptions?.[voteData?.options?.[0]?.option] || '';
+      if (address?.length && voter?.length && address === voter) {
+        if (option?.length && option !== 'VOTE_OPTION_UNSPECIFIED') {
+          const votedOption = voteOptions?.[option] || '';
+          return votedOption;
+        } else {
+          const votedOption = voteOptions?.[voteData?.options?.[0]?.option] || '';
+          return votedOption;
         }
-        return votedOption;
       }
     }
 
