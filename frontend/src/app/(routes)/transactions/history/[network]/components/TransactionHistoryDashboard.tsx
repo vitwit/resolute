@@ -11,13 +11,15 @@ import { Pagination } from '@mui/material';
 import { paginationComponentStyles } from '@/utils/commonStyles';
 import TxnsLoading from '../../loaders/TxnsLoading';
 import useInitTransactions from '@/custom-hooks/useInitTransactions';
+import { NO_DATA_ILLUSTRATION } from '@/constants/image-names';
+import EmptyScreen from '@/components/common/EmptyScreen';
 
-const ITEMS_PER_PAGE = 5;
+const ITEMS_PER_PAGE = 7;
 
 const TransactionHistoryDashboard = ({ chainID }: { chainID: string }) => {
-  useInitTransactions({chainID})
+  useInitTransactions({ chainID });
   const { getChainInfo } = useGetChainInfo();
-  
+
   const basicChainInfo = getChainInfo(chainID);
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -75,7 +77,21 @@ const TransactionHistoryDashboard = ({ chainID }: { chainID: string }) => {
           />
         ))}
       </div>
-      {txnsLoading === TxStatus.PENDING ? <TxnsLoading /> : null}
+      {txnsLoading === TxStatus.PENDING ? (
+        <TxnsLoading />
+      ) : (
+        <>
+          {transactions?.length === 0 ? (
+            <EmptyScreen
+              title="No Transactions"
+              description=""
+              bgImage={NO_DATA_ILLUSTRATION}
+              width={246}
+              height={264}
+            />
+          ) : null}
+        </>
+      )}
       {showPagination ? (
         <div className="flex justify-end">
           <Pagination

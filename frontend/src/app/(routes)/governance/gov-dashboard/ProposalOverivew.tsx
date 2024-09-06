@@ -229,52 +229,54 @@ const ProposalOverview = ({
                 </div>
               </div>
             </div>
-            <div className="space-y-2">
-              <div className="flex justify-between w-full">
-                <div className="text-b1">Current Status</div>
-                <div className="flex gap-4 items-end">
-                  <div className="flex items-center gap-2">
-                    <p className="yes-option"></p>
-                    <p className="text-[12px] font-extralight">Yes</p>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <p className="no-option"></p>
-                    <p className="text-[12px] font-extralight">No</p>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <p className="abstain-option"></p>
-                    <p className="text-[12px] font-extralight">Abstain</p>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <p className="veto-option"></p>
-                    <p className="text-[12px] font-extralight">Veto</p>
+            {isActive ? (
+              <div className="space-y-2">
+                <div className="flex justify-between w-full">
+                  <div className="text-b1">Current Status</div>
+                  <div className="flex gap-4 items-end">
+                    <div className="flex items-center gap-2">
+                      <p className="yes-option"></p>
+                      <p className="text-[12px] font-extralight">Yes</p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <p className="no-option"></p>
+                      <p className="text-[12px] font-extralight">No</p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <p className="abstain-option"></p>
+                      <p className="text-[12px] font-extralight">Abstain</p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <p className="veto-option"></p>
+                      <p className="text-[12px] font-extralight">Veto</p>
+                    </div>
                   </div>
                 </div>
+                <div className="w-full relative flex items-center rounded-full overflow-hidden h-2">
+                  {data.map((v, index) => (
+                    <Tooltip key={v.label} title={`${v.label}: ${v.value}%`}>
+                      <div
+                        className={`h-2`}
+                        style={{
+                          width: `${v.value}%`,
+                          background: v.color,
+                          position: index === 0 ? 'relative' : 'absolute',
+                          left:
+                            index === 0
+                              ? '0%'
+                              : `${data
+                                  .slice(0, index)
+                                  .reduce(
+                                    (acc, item) => acc + parseFloat(item.value),
+                                    0
+                                  )}%`,
+                        }}
+                      ></div>
+                    </Tooltip>
+                  ))}
+                </div>
               </div>
-              <div className="w-full relative flex items-center rounded-full overflow-hidden h-2">
-                {data.map((v, index) => (
-                  <Tooltip key={v.label} title={`${v.label}: ${v.value}%`}>
-                    <div
-                      className={`h-2`}
-                      style={{
-                        width: `${v.value}%`,
-                        background: v.color,
-                        position: index === 0 ? 'relative' : 'absolute',
-                        left:
-                          index === 0
-                            ? '0%'
-                            : `${data
-                                .slice(0, index)
-                                .reduce(
-                                  (acc, item) => acc + parseFloat(item.value),
-                                  0
-                                )}%`,
-                      }}
-                    ></div>
-                  </Tooltip>
-                ))}
-              </div>
-            </div>
+            ) : null}
 
             <div className="flex gap-2 flex-col">
               <div className="text-b1">Summary</div>

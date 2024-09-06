@@ -23,9 +23,19 @@ const MenuItem = (props: MenuItemProps) => {
   const pageLink = tabLink(path, selectedNetwork);
   const isEnableModule = !isAuthzMode || itemData.authzSupported;
 
+  const isNotDropDownModule = () => {
+    const dropdowmModules = [
+      'transfers',
+      'cosmwasm',
+      'transactions',
+      'settings',
+    ];
+    return !dropdowmModules.includes(itemData.name.toLocaleLowerCase());
+  };
+
   return (
     <Link
-      href={isEnableModule ? pageLink : ''}
+      href={isEnableModule ? (isNotDropDownModule() ? pageLink : '') : ''}
       prefetch={false}
       className="w-full"
     >
