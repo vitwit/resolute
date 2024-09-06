@@ -418,19 +418,6 @@ export const txVote = createAsyncThunk(
           })
         );
 
-        if (!data.isAuthzMode) {
-          dispatch(
-            getVotes({
-              baseURL: data?.basicChainInfo?.baseURL,
-              baseURLs: data?.basicChainInfo?.restURLs,
-              proposalId: data?.proposalId,
-              voter: data?.voter,
-              chainID: data?.chainID,
-              govV1: data?.basicChainInfo?.govV1,
-            })
-          );
-        }
-
         trackEvent('GOV', 'SUCCESS', 'VOTE');
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
