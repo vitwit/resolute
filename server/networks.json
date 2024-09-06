@@ -168,18 +168,6 @@
     "sourceEnd": "" 
   },
   {
-    "chainId": "crescent-1",
-    "restURI": "https://mainnet.crescent.network:1317",
-    "checkStatus": true,
-    "rpcURI": "",
-    "restURIs": [
-      "https://mainnet.crescent.network:1317",
-      "https://crescent-api.polkachu.com",
-      "https://crescent-mainnet-lcd.autostake.com:443"
-    ],
-    "sourceEnd": "" 
-  },
-  {
     "chainId": "agoric-3",
     "restURI": "https://agoric-api.polkachu.com",
     "checkStatus": true,
@@ -285,6 +273,56 @@
       "https://stargaze-api.polkachu.com",
       "https://stargaze-rest.publicnode.com",
       "https://api-stargaze-ia.cosmosia.notional.ventures"
+    ],
+    "sourceEnd": "" 
+  },
+  {
+    "chainId": "noble-1",
+    "restURI": "https://noble-api.polkachu.com",
+    "checkStatus": true,
+    "rpcURI": "",
+    "restURIs": [
+      "https://noble-api.polkachu.com",
+      "https://noble-api.lavenderfive.com:443"
+    ],
+    "sourceEnd": "" 
+  },
+  {
+    "chainId": "ssc-1",
+    "restURI": "https://saga-rest.publicnode.com",
+    "checkStatus": true,
+    "rpcURI": "",
+    "restURIs": [
+      "https://saga-rest.publicnode.com",
+      "https://api.saga.nodestake.org",
+      "https://saga.api.kjnodes.com",
+      "https://saga-api.lavenderfive.com:443"
+    ],
+    "sourceEnd": "" 
+  },
+  {
+    "chainId": "neutron-1",
+    "restURI": "https://neutron-api.lavenderfive.com",
+    "checkStatus": true,
+    "rpcURI": "",
+    "restURIs": [
+      "https://neutron-api.lavenderfive.com",
+      "https://lcd-neutron.whispernode.com",
+      "https://api-neutron.cosmos-spaces.cloud",
+      "https://neutron-rest.publicnode.com"
+    ],
+    "sourceEnd": "" 
+  },
+  {
+    "chainId": "sentinelhub-2",
+    "restURI": "https://lcd-sentinel.whispernode.com",
+    "checkStatus": true,
+    "rpcURI": "",
+    "restURIs": [
+      "https://lcd-sentinel.whispernode.com",
+      "https://api.sentinel.quokkastake.io",
+      "https://sentinel-api.validatornode.com",
+      "https://api-sentinel.chainvibes.com"
     ],
     "sourceEnd": "" 
   }
