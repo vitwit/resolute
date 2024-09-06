@@ -10,6 +10,7 @@ import {
   getGovTallyParams,
   getProposalTally,
   getDepositParams,
+  getVotes,
 } from '@/store/features/gov/govSlice';
 import { get } from 'lodash';
 import { getLocalTime, getTimeDifferenceToFutureDate } from '@/utils/dataTime';
@@ -59,6 +60,7 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
     govV1,
     chainName,
     chainLogo,
+    address,
   } = getChainInfo(chainID);
 
   const proposalInfo = useAppSelector(
@@ -81,6 +83,7 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
   const proposalStatus = useAppSelector(
     (state) => state.gov.proposalInfo.status
   );
+  const isWalletConnected = useAppSelector((state) => state.wallet.connected);
 
   const totalVotes = ['yes', 'no', 'abstain', 'no_with_veto'].reduce(
     (sum, key) =>
@@ -201,6 +204,21 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
     (state) => state.gov.chains?.[chainID]?.tally.status
   );
 
+  useEffect(() => {
+    if (isWalletConnected && address) {
+      dispatch(
+        getVotes({
+          baseURL,
+          baseURLs,
+          proposalId: Number(proposalID),
+          voter: address,
+          chainID,
+          govV1,
+        })
+      );
+    }
+  }, [isWalletConnected]);
+
   return (
     <>
       {proposalStatus === 'pending' ? (
@@ -209,7 +227,7 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
         <>
           {/* Banner */}
           {isProposal2daysgo() ? (
-            <div className="fixed w-full bg-[#ffc13c] gap-2 px-6 py-3 ml-[-40px] flex items-center">
+            <div className="fixed w-full bg-[#ffc13c] gap-2 px-6 py-3 ml-[-40px] flex items-center z-10">
               <Image
                 src="/infoblack.svg"
                 width={24}

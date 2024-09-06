@@ -6,6 +6,9 @@ import Image from 'next/image';
 import React, { useState } from 'react';
 import DialogDeposit from '../popups/DialogDeposit';
 import DialogVote from '../popups/DialogVote';
+import useGetProposals from '@/custom-hooks/governance/useGetProposals';
+import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
+import { getColorForVoteOption } from '@/utils/util';
 
 const ProposalItem = ({
   chainLogo,
@@ -29,6 +32,11 @@ const ProposalItem = ({
   chainID: string;
 }) => {
   const dispatch = useAppDispatch();
+  const { getChainInfo } = useGetChainInfo();
+  const { address } = getChainInfo(chainID);
+  const { getVote } = useGetProposals();
+  const alreadyVotedOption = getVote({ address, chainID, proposalId });
+
   const [depositDialogOpen, setDepositDialogOpen] = useState(false);
   const [voteDialogOpen, setVoteDialogOpen] = useState(false);
 
@@ -120,6 +128,25 @@ const ProposalItem = ({
                   {chainName} Network
                 </p>
               </div>
+              {!selectedProposal && (
+                <div className="flex items-center gap-1">
+                  {alreadyVotedOption?.length ? (
+                    <div className="flex justify-end italic">
+                      <div className="text-[12px] flex items-end gap-[2px]">
+                        <div className="font-light text-[#ffffff80]">You have voted</div>
+                        <div
+                          style={{
+                            color: getColorForVoteOption(alreadyVotedOption),
+                          }}
+                          className="capitalize font-bold"
+                        >
+                          {alreadyVotedOption}
+                        </div>
+                      </div>
+                    </div>
+                  ) : null}
+                </div>
+              )}
             </div>
           </div>
         </div>

@@ -293,18 +293,18 @@ export const getProposalsInVoting = createAsyncThunk(
             })
           );
         }
-        // if (data?.voter?.length) {
-        //   dispatch(
-        //     getVotes({
-        //       baseURL: data?.baseURL,
-        //       baseURLs: data?.baseURLs,
-        //       proposalId,
-        //       voter: data?.voter,
-        //       chainID: data?.chainID,
-        //       govV1: data.govV1,
-        //     })
-        //   );
-        // }
+        if (data?.voter?.length) {
+          dispatch(
+            getVotes({
+              baseURL: data?.baseURL,
+              baseURLs: data?.baseURLs,
+              proposalId,
+              voter: data?.voter,
+              chainID: data?.chainID,
+              govV1: data.govV1,
+            })
+          );
+        }
       });
 
       return {
@@ -414,10 +414,23 @@ export const txVote = createAsyncThunk(
           })
         );
 
-        trackEvent('GOV', 'SUCCESS', 'VOTE')
+        if (!data.isAuthzMode) {
+          dispatch(
+            getVotes({
+              baseURL: data?.basicChainInfo?.baseURL,
+              baseURLs: data?.basicChainInfo?.restURLs,
+              proposalId: data?.proposalId,
+              voter: data?.voter,
+              chainID: data?.chainID,
+              govV1: data?.basicChainInfo?.govV1,
+            })
+          );
+        }
+
+        trackEvent('GOV', 'SUCCESS', 'VOTE');
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
-        trackEvent('GOV', 'FAILED', 'VOTE')
+        trackEvent('GOV', 'FAILED', 'VOTE');
         dispatch(
           setError({
             type: 'error',
@@ -485,14 +498,12 @@ export const txDeposit = createAsyncThunk(
       );
 
       if (code === 0) {
-        trackEvent('GOV', 'SUCCESS', 'DEPOSIT')
-
+        trackEvent('GOV', 'SUCCESS', 'DEPOSIT');
 
         dispatch(setTxAndHash({ tx: tx, hash: transactionHash }));
         return fulfillWithValue({ txHash: transactionHash });
       } else {
-        trackEvent('GOV', 'FAILED', 'DEPOSIT')
-
+        trackEvent('GOV', 'FAILED', 'DEPOSIT');
 
         dispatch(setError({ type: 'error', message: rawLog || '' }));
         return rejectWithValue(rawLog);
