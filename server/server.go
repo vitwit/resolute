@@ -171,8 +171,18 @@ func proxyHandler1(c echo.Context) error {
 	// Set the Content-Type header
 	req.Header.Set("Content-Type", "application/json")
 
-	authorizationToken := fmt.Sprintf("Bearer %s", config.MINTSCAN_TOKEN.Token)
-	req.Header.Add("Authorization", authorizationToken) // Change this to your actual token
+	if chanDetails.SourceEnd == "mintscan" {
+		authorizationToken := fmt.Sprintf("Bearer %s", config.MINTSCAN_TOKEN.Token)
+
+		req.Header.Add("Authorization", authorizationToken)
+	}
+
+	if chanDetails.SourceEnd == "numia" {
+		bearerToken := config.NUMIA_BEARER_TOKEN.Token
+		var authorization = "Bearer " + bearerToken
+
+		req.Header.Add("Authorization", authorization)
+	}
 
 	// Create a new HTTP client and send the request
 	client := &http.Client{}
@@ -224,9 +234,19 @@ func proxyHandler(c echo.Context) error {
 		}
 	}
 	req.Header.Set("Content-Type", "application/json")
+
 	// Add Authorization header
-	authorizationToken := fmt.Sprintf("Bearer %s", config.MINTSCAN_TOKEN.Token)
-	req.Header.Add("Authorization", authorizationToken) // Change this to your actual token
+	if chanDetails.SourceEnd == "mintscan" {
+		authorizationToken := fmt.Sprintf("Bearer %s", config.MINTSCAN_TOKEN.Token)
+		req.Header.Add("Authorization", authorizationToken) // Change this to your actual token
+	}
+
+	if chanDetails.SourceEnd == "numia" {
+		bearerToken := config.NUMIA_BEARER_TOKEN.Token
+		var authorization = "Bearer " + bearerToken
+
+		req.Header.Add("Authorization", authorization)
+	}
 
 	// Make the request
 	client := &http.Client{}
