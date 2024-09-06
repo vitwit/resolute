@@ -48,6 +48,7 @@ const GovDashboard = ({ chainIDs }: { chainIDs: string[] }) => {
         proposal?.chainID === chainID &&
         proposal?.proposalId === proposalId
       ) {
+        toggleAnimation(false);
         return null;
       }
       toggleAnimation(true);
@@ -78,7 +79,7 @@ const GovDashboard = ({ chainIDs }: { chainIDs: string[] }) => {
         );
       });
       setFilteredProposals(filtered);
-    }, 500);
+    }, 100);
   };
 
   const handleFiltersChange = (days: number) => {

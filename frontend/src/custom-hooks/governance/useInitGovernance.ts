@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useAppDispatch } from '../StateHooks';
+import { useAppDispatch, useAppSelector } from '../StateHooks';
 import useGetChainInfo from '../useGetChainInfo';
 import {
   getProposalsInDeposit,
@@ -9,6 +9,7 @@ import {
 const useInitGovernance = ({ chainIDs }: { chainIDs: string[] }) => {
   const dispatch = useAppDispatch();
   const { getChainInfo } = useGetChainInfo();
+  const walletState = useAppSelector((state) => state.wallet.status)
 
   useEffect(() => {
     chainIDs.forEach((chainID) => {
@@ -36,7 +37,7 @@ const useInitGovernance = ({ chainIDs }: { chainIDs: string[] }) => {
         })
       );
     });
-  }, [chainIDs]);
+  }, [chainIDs, walletState]);
 };
 
 export default useInitGovernance;
