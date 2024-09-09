@@ -3,12 +3,15 @@ import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { setError } from '@/store/features/common/commonSlice';
 import { HandleSelectProposalEvent, SelectedProposal } from '@/types/gov';
 import Image from 'next/image';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import DialogDeposit from '../popups/DialogDeposit';
 import DialogVote from '../popups/DialogVote';
 import useGetProposals from '@/custom-hooks/governance/useGetProposals';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import { getColorForVoteOption } from '@/utils/util';
+import { getVotes } from '@/store/features/gov/govSlice';
+import useAddressConverter from '@/custom-hooks/useAddressConverter';
+import { TxStatus } from '@/types/enums';
 
 const ProposalItem = ({
   chainLogo,
@@ -33,14 +36,52 @@ const ProposalItem = ({
 }) => {
   const dispatch = useAppDispatch();
   const { getChainInfo } = useGetChainInfo();
-  const { address } = getChainInfo(chainID);
+  const { address, baseURL, restURLs: baseURLs, govV1 } = getChainInfo(chainID);
   const { getVote } = useGetProposals();
-  const alreadyVotedOption = getVote({ address, chainID, proposalId });
+  const isAuthzMode = useAppSelector((state) => state.authz.authzModeEnabled);
+  const authzAddress = useAppSelector((state) => state.authz.authzAddress);
+  const { convertAddress } = useAddressConverter();
+  const authzGranterAddress = convertAddress(chainID, authzAddress);
 
   const [depositDialogOpen, setDepositDialogOpen] = useState(false);
   const [voteDialogOpen, setVoteDialogOpen] = useState(false);
 
   const isWalletConnected = useAppSelector((state) => state.wallet.connected);
+
+  const alreadyVotedOption = getVote({
+    address: isAuthzMode ? authzGranterAddress : address,
+    chainID,
+    proposalId,
+  });
+  const txVoteStatus = useAppSelector(
+    (state) => state.gov.chains?.[chainID]?.tx?.status
+  );
+
+  const fetchVotes = () => {
+    dispatch(
+      getVotes({
+        baseURL,
+        baseURLs,
+        proposalId: Number(proposalId),
+        voter: isAuthzMode ? authzGranterAddress : address,
+        chainID,
+        govV1,
+      })
+    );
+  }
+
+  useEffect(() => {
+    if (isWalletConnected) {
+      fetchVotes();
+    }
+  }, [isWalletConnected, isAuthzMode]);
+
+  useEffect(() => {
+    if(txVoteStatus === TxStatus.IDLE) {
+      fetchVotes();
+    }
+  }, [txVoteStatus])
+
   return (
     <div className="flex flex-col w-full justify-between cursor-pointer">
       <div
@@ -132,8 +173,10 @@ const ProposalItem = ({
                 <div className="flex items-center gap-1">
                   {alreadyVotedOption?.length ? (
                     <div className="flex justify-end italic">
-                      <div className="text-[12px] flex items-end gap-[2px]">
-                        <div className="font-light text-[#ffffff80]">You have voted</div>
+                      <div className="text-[12px] flex items-end gap-[3px]">
+                        <div className="font-light text-[#ffffff80]">
+                          You have voted
+                        </div>
                         <div
                           style={{
                             color: getColorForVoteOption(alreadyVotedOption),
