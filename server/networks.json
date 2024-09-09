@@ -276,6 +276,19 @@
     "sourceEnd": "" 
   },
   {
+    "chainId": "ssc-1",
+    "restURI": "https://saga-rest.publicnode.com",
+    "checkStatus": true,
+    "rpcURI": "",
+    "restURIs": [
+      "https://saga-rest.publicnode.com",
+      "https://api.saga.nodestake.org",
+      "https://saga.api.kjnodes.com",
+      "https://saga-api.lavenderfive.com:443"
+    ],
+    "sourceEnd": "" 
+  },
+  {
     "chainId": "neutron-1",
     "restURI": "https://neutron-api.lavenderfive.com",
     "checkStatus": true,

@@ -1941,5 +1941,83 @@ export const networks: Network[] = [
         gradient: 'linear-gradient(180deg, #10a7ef 0%, #12131C80 100%)',
       },
     },
-  }
+  },
+  {
+    enableModules: {
+      authz: false,
+      feegrant: false,
+      group: false,
+    },
+    aminoConfig: {
+      authz: true,
+      feegrant: true,
+      group: false,
+    },
+    showAirdrop: false,
+    logos: {
+      menu: 'https://raw.githubusercontent.com/cosmos/chain-registry/master/saga/images/saga.png',
+      toolbar:
+        'https://raw.githubusercontent.com/cosmos/chain-registry/master/saga/images/saga.png',
+    },
+    supportedWallets: ['KEPLR'],
+    keplrExperimental: true,
+    leapExperimental: false,
+    isTestnet: false,
+    isCustomNetwork: false,
+    explorerTxHashEndpoint: 'https://www.mintscan.io/saga/txs/',
+    govV1: false,
+    config: {
+      chainId: 'ssc-1',
+      chainName: 'saga',
+      rest: 'https://api.beta.resolute.vitwit.com',
+      rpc: 'https://api.beta.resolute.vitwit.com',
+      restURIs: ['https://api.beta.resolute.vitwit.com'],
+      rpcURIs: [
+        'https://rpc.mainnet.archway.io',
+        'https://archway-rpc.lavenderfive.com:443',
+        'https://rpc.archway.nodestake.top',
+      ],
+      currencies: [
+        {
+          coinDenom: 'SAGA',
+          coinMinimalDenom: 'usaga',
+          coinDecimals: 6,
+        },
+      ],
+      bech32Config: {
+        bech32PrefixAccAddr: 'saga',
+        bech32PrefixAccPub: 'sagapub',
+        bech32PrefixValAddr: 'sagavaloper',
+        bech32PrefixValPub: 'sagavaloperpub',
+        bech32PrefixConsAddr: 'sagavalcons',
+        bech32PrefixConsPub: 'sagavalconspub',
+      },
+      feeCurrencies: [
+        {
+          coinDenom: 'SAGA',
+          coinMinimalDenom: 'usaga',
+          coinDecimals: 6,
+          gasPriceStep: {
+            low: 0.01,
+            average: 0.025,
+            high: 0.04,
+          },
+        },
+      ],
+      bip44: {
+        coinType: 118,
+      },
+      stakeCurrency: {
+        coinDenom: 'STAKE',
+        coinMinimalDenom: 'usaga',
+        coinDecimals: 6,
+      },
+      image:
+        'https://raw.githubusercontent.com/cosmos/chain-registry/master/saga/images/saga.png',
+      theme: {
+        primaryColor: '#040404',
+        gradient: 'linear-gradient(180deg, #040404 0%, #12131C80 100%)',
+      },
+    },
+  },
 ];
