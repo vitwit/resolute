@@ -4,11 +4,13 @@ package main
 
 import (
 	"bytes"
+	"compress/gzip"
 	"encoding/json"
 	"io"
 	"io/ioutil"
 	"net/http"
 
+	"github.com/andybalholm/brotli"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/labstack/gommon/log"
@@ -171,8 +173,18 @@ func proxyHandler1(c echo.Context) error {
 	// Set the Content-Type header
 	req.Header.Set("Content-Type", "application/json")
 
-	authorizationToken := fmt.Sprintf("Bearer %s", config.MINTSCAN_TOKEN.Token)
-	req.Header.Add("Authorization", authorizationToken) // Change this to your actual token
+	if chanDetails.SourceEnd == "mintscan" {
+		authorizationToken := fmt.Sprintf("Bearer %s", config.MINTSCAN_TOKEN.Token)
+
+		req.Header.Add("Authorization", authorizationToken)
+	}
+
+	if chanDetails.SourceEnd == "numia" {
+		bearerToken := config.NUMIA_BEARER_TOKEN.Token
+		var authorization = "Bearer " + bearerToken
+
+		req.Header.Add("Authorization", authorization)
+	}
 
 	// Create a new HTTP client and send the request
 	client := &http.Client{}
@@ -224,9 +236,19 @@ func proxyHandler(c echo.Context) error {
 		}
 	}
 	req.Header.Set("Content-Type", "application/json")
+
 	// Add Authorization header
-	authorizationToken := fmt.Sprintf("Bearer %s", config.MINTSCAN_TOKEN.Token)
-	req.Header.Add("Authorization", authorizationToken) // Change this to your actual token
+	if chanDetails.SourceEnd == "mintscan" {
+		authorizationToken := fmt.Sprintf("Bearer %s", config.MINTSCAN_TOKEN.Token)
+		req.Header.Add("Authorization", authorizationToken) // Change this to your actual token
+	}
+
+	if chanDetails.SourceEnd == "numia" {
+		bearerToken := config.NUMIA_BEARER_TOKEN.Token
+		var authorization = "Bearer " + bearerToken
+
+		req.Header.Add("Authorization", authorization)
+	}
 
 	// Make the request
 	client := &http.Client{}
@@ -237,14 +259,49 @@ func proxyHandler(c echo.Context) error {
 	}
 	defer resp.Body.Close()
 
-	c.Response().WriteHeader(resp.StatusCode)
+	// Check the content encoding and decode accordingly
+	var reader io.ReadCloser
+	switch resp.Header.Get("Content-Encoding") {
+	case "gzip":
+		reader, err = gzip.NewReader(resp.Body)
+		if err != nil {
+			log.Printf("Failed to create gzip reader: %v", err)
+			return c.String(http.StatusInternalServerError, "Failed to decompress response")
+		}
+		defer reader.Close()
+	case "br":
+		reader = ioutil.NopCloser(brotli.NewReader(resp.Body))
+		defer reader.Close()
+	default:
+		reader = resp.Body
+	}
 
-	// Copy the response body to the original response
-	_, err = io.Copy(c.Response().Writer, resp.Body)
+	// Read the decompressed or raw body
+	bodyBytes, err := ioutil.ReadAll(reader)
 	if err != nil {
 		log.Printf("Failed to read response body: %v", err)
 		return c.String(http.StatusInternalServerError, "Failed to read response body")
 	}
 
+	// Set content type and response
+	c.Response().Header().Set("Content-Type", resp.Header.Get("Content-Type"))
+	c.Response().WriteHeader(resp.StatusCode)
+	_, err = c.Response().Writer.Write(bodyBytes)
+	if err != nil {
+		log.Printf("Failed to write response body: %v", err)
+		return c.String(http.StatusInternalServerError, "Failed to write response body")
+	}
+
 	return nil
+
+	// c.Response().WriteHeader(resp.StatusCode)
+
+	// // Copy the response body to the original response
+	// _, err = io.Copy(c.Response().Writer, resp.Body)
+	// if err != nil {
+	// 	log.Printf("Failed to read response body: %v", err)
+	// 	return c.String(http.StatusInternalServerError, "Failed to read response body")
+	// }
+
+	// return nil
 }

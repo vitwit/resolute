@@ -19,7 +19,7 @@ export const networks: Network[] = [
         'https://raw.githubusercontent.com/vitwit/chain-registry/master/agoric/images/bld.png',
     },
     isCustomNetwork: false,
-    supportedWallets:[],
+    supportedWallets: [],
     keplrExperimental: false,
     leapExperimental: false,
     isTestnet: false,
@@ -31,9 +31,7 @@ export const networks: Network[] = [
       rest: 'https://api.beta.resolute.vitwit.com',
       rpc: 'https://api.beta.resolute.vitwit.com',
       restURIs: [
-        'https://agoric-api.polkachu.com',
-        'https://api-agoric-ia.cosmosia.notional.ventures',
-        'https://api.agoric.stakewith.us',
+        'https://api.beta.resolute.vitwit.com'
       ],
       rpcURIs: [
         'https://agoric-rpc.polkachu.com',
@@ -272,7 +270,7 @@ export const networks: Network[] = [
     leapExperimental: true,
     isTestnet: false,
     govV1: true,
-    isCustomNetwork:false,
+    isCustomNetwork: false,
     supportedWallets: [],
     explorerTxHashEndpoint: 'https://www.mintscan.io/desmos/txs/',
     config: {
@@ -281,9 +279,7 @@ export const networks: Network[] = [
       rest: 'https://api.beta.resolute.vitwit.com',
       rpc: 'https://api.beta.resolute.vitwit.com',
       restURIs: [
-        'https://api.mainnet.desmos.network',
-        'https://desmos-api.lavenderfive.com',
-        'https://api.resolute.vitwit.com/desmos_api',
+        'https://api.beta.resolute.vitwit.com'
       ],
       rpcURIs: [
         'https://rpc.mainnet.desmos.network',
@@ -409,7 +405,7 @@ export const networks: Network[] = [
         gradient: 'linear-gradient(180deg, #F2453560 0%, #12131C80 100%)',
       },
     },
-    isCustomNetwork:false,
+    isCustomNetwork: false,
     supportedWallets: []
   },
   {
@@ -488,7 +484,7 @@ export const networks: Network[] = [
         gradient: 'linear-gradient(180deg, #F2798360 0%, #12131C80 100%)',
       },
     },
-    isCustomNetwork:false,
+    isCustomNetwork: false,
     supportedWallets: [],
   },
   {
@@ -519,10 +515,7 @@ export const networks: Network[] = [
       rest: 'https://api.beta.resolute.vitwit.com',
       rpc: 'https://api.beta.resolute.vitwit.com',
       restURIs: [
-        'https://api-omniflixhub-ia.cosmosia.notional.ventures',
-        'https://omniflix-rest.publicnode.com',
-        'https://omniflixhub-api.lavenderfive.com',
-        'https://api.resolute.vitwit.com/omniflix_api',
+        'https://api.beta.resolute.vitwit.com'
       ],
       rpcURIs: [
         'https://rpc-omniflixhub-ia.cosmosia.notional.ventures',
@@ -573,7 +566,7 @@ export const networks: Network[] = [
           'linear-gradient(180deg, #D91E7560 0%, #12131C80 100%)',
       },
     },
-    isCustomNetwork:false,
+    isCustomNetwork: false,
     supportedWallets: []
   },
   {
@@ -682,10 +675,7 @@ export const networks: Network[] = [
       rest: 'https://api.beta.resolute.vitwit.com',
       rpc: 'https://api.beta.resolute.vitwit.com',
       restURIs: [
-        'https://api.passage.vitwit.com',
-        'https://rest-passage.ecostake.com',
-        'https://passage-api.polkachu.com',
-        'https://api-passage-ia.cosmosia.notional.ventures',
+        'https://api.beta.resolute.vitwit.com'
       ],
       rpcURIs: [
         'https://rpc.passage.vitwit.com',
@@ -740,7 +730,7 @@ export const networks: Network[] = [
           'linear-gradient(180deg, #72727360 0%, #12131C80 100%)',
       },
     },
-    isCustomNetwork:false,
+    isCustomNetwork: false,
     supportedWallets: []
   },
   {
@@ -852,10 +842,7 @@ export const networks: Network[] = [
       rest: 'https://api.beta.resolute.vitwit.com',
       rpc: 'https://api.beta.resolute.vitwit.com',
       restURIs: [
-        'https://quicksilver-rest.staketab.org',
-        'https://quicksilver-api.lavenderfive.com:443',
-        'https://quicksilver-rest.publicnode.com',
-        'https://api.resolute.vitwit.com/quicksilver_api',
+        'https://api.beta.resolute.vitwit.com'
       ],
       rpcURIs: [
         'https://quicksilver-rpc.staketab.org:443',
@@ -906,7 +893,7 @@ export const networks: Network[] = [
           'linear-gradient(180deg, #BFBFBF60 0%, #12131C80 100%)',
       },
     },
-    isCustomNetwork:false,
+    isCustomNetwork: false,
     supportedWallets: []
   },
   {
@@ -937,10 +924,7 @@ export const networks: Network[] = [
       rest: 'https://api.beta.resolute.vitwit.com',
       rpc: 'https://api.beta.resolute.vitwit.com',
       restURIs: [
-        'https://regen-mainnet-lcd.autostake.com:443',
-        'https://api-regen-ia.cosmosia.notional.ventures',
-        'https://regen-rest.publicnode.com',
-        'https://api.resolute.vitwit.com/regen_api',
+        'https://api.beta.resolute.vitwit.com'
       ],
       rpcURIs: [
         'https://regen-mainnet-rpc.autostake.com:443',
@@ -991,7 +975,7 @@ export const networks: Network[] = [
           'linear-gradient(180deg, #5ABF9060 0%, #12131C80 100%)',
       },
     },
-    isCustomNetwork:false,
+    isCustomNetwork: false,
     supportedWallets: []
   },
   {
@@ -1022,9 +1006,7 @@ export const networks: Network[] = [
       rest: 'https://api.beta.resolute.vitwit.com',
       rpc: 'https://api.beta.resolute.vitwit.com',
       restURIs: [
-        'https://stargaze-api.polkachu.com',
-        'https://stargaze-rest.publicnode.com',
-        'https://api-stargaze-ia.cosmosia.notional.ventures',
+        'https://api.beta.resolute.vitwit.com'
       ],
       rpcURIs: [
         'https://stargaze-rpc.polkachu.com',
@@ -1074,7 +1056,7 @@ export const networks: Network[] = [
           'linear-gradient(180deg, #9AD9CD60 0%, #12131C80 100%)',
       },
     },
-    isCustomNetwork:false,
+    isCustomNetwork: false,
     supportedWallets: []
   },
   {
@@ -1105,10 +1087,7 @@ export const networks: Network[] = [
       rest: 'https://api.beta.resolute.vitwit.com',
       rpc: 'https://api.beta.resolute.vitwit.com',
       restURIs: [
-        'https://dymension-mainnet-lcd.autostake.com:443',
-        'https://dymension.api.kjnodes.com',
-        'https://api.dymension.nodestake.org',
-        'https://dymension-api.lavenderfive.com:443',
+        'https://api.beta.resolute.vitwit.com'
       ],
       rpcURIs: [
         'https://rpc.dymension.nodestake.org',
@@ -1161,7 +1140,7 @@ export const networks: Network[] = [
           'linear-gradient(180deg, #e9c3a460 0%, #12131C80 100%)',
       },
     },
-    isCustomNetwork:false,
+    isCustomNetwork: false,
     supportedWallets: []
   },
   {
@@ -1192,10 +1171,7 @@ export const networks: Network[] = [
       rest: 'https://api.beta.resolute.vitwit.com',
       rpc: 'https://api.beta.resolute.vitwit.com',
       restURIs: [
-        'https://umee-lcd.quantnode.tech',
-        'https://api-umee-ia.cosmosia.notional.ventures',
-        'https://umee-api.polkachu.com',
-        'https://api.resolute.vitwit.com/umee_api',
+        'https://api.beta.resolute.vitwit.com'
       ],
       rpcURIs: [
         'https://umee-rpc.quantnode.tech',
@@ -1246,7 +1222,7 @@ export const networks: Network[] = [
           'linear-gradient(180deg, #C9ACF260 0%, #12131C80 100%)',
       },
     },
-    isCustomNetwork:false,
+    isCustomNetwork: false,
     supportedWallets: []
   },
   {
@@ -1358,9 +1334,7 @@ export const networks: Network[] = [
       rest: 'https://api.beta.resolute.vitwit.com',
       rpc: 'https://api.beta.resolute.vitwit.com',
       restURIs: [
-        'https://quasar-rest.publicnode.com',
-        'https://quasar-api.polkachu.com',
-        'https://quasar-mainnet-lcd.autostake.com:443',
+        'https://api.beta.resolute.vitwit.com'
       ],
       rpcURIs: [
         'https://quasar-rpc.publicnode.com:443',
@@ -1410,7 +1384,7 @@ export const networks: Network[] = [
           'linear-gradient(180deg, #6DD4EF60 0%, #12131C80 100%)',
       },
     },
-    isCustomNetwork:false,
+    isCustomNetwork: false,
     supportedWallets: []
   },
   {
@@ -1441,9 +1415,7 @@ export const networks: Network[] = [
       rest: 'https://api.beta.resolute.vitwit.com',
       rpc: 'https://api.beta.resolute.vitwit.com',
       restURIs: [
-        'https://rest.comdex.one',
-        'https://comdex-api.polkachu.com',
-        'https://comdex-rest.publicnode.com',
+        'https://api.beta.resolute.vitwit.com'
       ],
       rpcURIs: [
         'https://rpc.comdex.one',
@@ -1493,7 +1465,7 @@ export const networks: Network[] = [
           'linear-gradient(180deg, #F2415060 0%, #12131C80 100%)',
       },
     },
-    isCustomNetwork:false,
+    isCustomNetwork: false,
     supportedWallets: []
   },
   {
@@ -1524,9 +1496,7 @@ export const networks: Network[] = [
       rest: 'https://api.beta.resolute.vitwit.com',
       rpc: 'https://gravitybridge-rpc.lavenderfive.com',
       restURIs: [
-        'https://gravitybridge-api.lavenderfive.com',
-        'https://gravity-api.polkachu.com',
-        'https://api-gravitybridge-ia.cosmosia.notional.ventures',
+        'https://api.beta.resolute.vitwit.com'
       ],
       rpcURIs: [
         'https://gravitybridge-rpc.lavenderfive.com',
@@ -1576,7 +1546,7 @@ export const networks: Network[] = [
           'linear-gradient(180deg, #0339A660 0%, #12131C80 100%)',
       },
     },
-    isCustomNetwork:false,
+    isCustomNetwork: false,
     supportedWallets: []
   },
   {
@@ -1607,9 +1577,7 @@ export const networks: Network[] = [
       rest: 'https://api.beta.resolute.vitwit.com',
       rpc: 'https://api.beta.resolute.vitwit.com',
       restURIs: [
-        'https://rest.marsprotocol.io:443',
-        'https://mars-api.lavenderfive.com:443',
-        'https://api-gravitybridge-ia.cosmosia.notional.ventures',
+        'https://api.beta.resolute.vitwit.com'
       ],
       rpcURIs: [
         'https://rpc.marsprotocol.io:443',
@@ -1659,7 +1627,7 @@ export const networks: Network[] = [
           'linear-gradient(180deg, #F2522E60 0%, #12131C80 100%)',
       },
     },
-    isCustomNetwork:false,
+    isCustomNetwork: false,
     supportedWallets: []
   },
   {
@@ -1742,9 +1710,9 @@ export const networks: Network[] = [
   },
   {
     enableModules: {
-      authz: true,
-      feegrant: true,
-      group: true,
+      authz: false,
+      feegrant: false,
+      group: false,
     },
     aminoConfig: {
       authz: true,
@@ -1753,54 +1721,52 @@ export const networks: Network[] = [
     },
     showAirdrop: false,
     logos: {
-      menu: 'https://raw.githubusercontent.com/cosmos/chain-registry/master/crescent/images/cre.png',
+      menu: 'https://raw.githubusercontent.com/cosmos/chain-registry/master/noble/images/frnz.png',
       toolbar:
-        'https://raw.githubusercontent.com/cosmos/chain-registry/master/crescent/images/cre.png',
+        'https://raw.githubusercontent.com/cosmos/chain-registry/master/noble/images/frnz.png',
     },
+    supportedWallets: ['KEPLR'],
     keplrExperimental: true,
-    leapExperimental: true,
+    leapExperimental: false,
     isTestnet: false,
-    explorerTxHashEndpoint: 'https://www.mintscan.io/crescent/txs/',
+    isCustomNetwork: false,
+    explorerTxHashEndpoint: 'https://www.mintscan.io/noble/txs/',
     govV1: false,
     config: {
-      chainId: 'crescent-1',
-      chainName: 'Crescent',
+      chainId: 'noble-1',
+      chainName: 'noble',
       rest: 'https://api.beta.resolute.vitwit.com',
       rpc: 'https://api.beta.resolute.vitwit.com',
-      restURIs: [
-        'https://mainnet.crescent.network:1317',
-        'https://crescent-api.polkachu.com',
-        'https://crescent-mainnet-lcd.autostake.com:443',
-      ],
+      restURIs: ['https://api.beta.resolute.vitwit.com'],
       rpcURIs: [
-        'https://mainnet.crescent.network:26657',
-        'https://crescent-rpc.polkachu.com',
-        'https://crescent-mainnet-rpc.autostake.com:443',
+        'https://rpc.mainnet.archway.io',
+        'https://archway-rpc.lavenderfive.com:443',
+        'https://rpc.archway.nodestake.top',
       ],
       currencies: [
         {
-          coinDenom: 'CRE',
-          coinMinimalDenom: 'ucre',
+          coinDenom: 'USDC',
+          coinMinimalDenom: 'uusdc',
           coinDecimals: 6,
         },
       ],
       bech32Config: {
-        bech32PrefixAccAddr: 'cre',
-        bech32PrefixAccPub: 'crepub',
-        bech32PrefixValAddr: 'crevaloper',
-        bech32PrefixValPub: 'crevaloperpub',
-        bech32PrefixConsAddr: 'cregvalcons',
-        bech32PrefixConsPub: 'crevalconspub',
+        bech32PrefixAccAddr: 'noble',
+        bech32PrefixAccPub: 'noblepub',
+        bech32PrefixValAddr: 'noblevaloper',
+        bech32PrefixValPub: 'noblevaloperpub',
+        bech32PrefixConsAddr: 'noblevalcons',
+        bech32PrefixConsPub: 'noblevalconspub',
       },
       feeCurrencies: [
         {
-          coinDenom: 'CRE',
-          coinMinimalDenom: 'ucre',
+          coinDenom: 'USDC',
+          coinMinimalDenom: 'uusdc',
           coinDecimals: 6,
           gasPriceStep: {
             low: 0.01,
-            average: 0.025,
-            high: 0.03,
+            average: 0.01,
+            high: 0.02,
           },
         },
       ],
@@ -1808,19 +1774,250 @@ export const networks: Network[] = [
         coinType: 118,
       },
       stakeCurrency: {
-        coinDenom: 'CRE',
-        coinMinimalDenom: 'ucre',
+        coinDenom: 'USDC',
+        coinMinimalDenom: 'uusdc',
         coinDecimals: 6,
       },
       image:
-        'https://raw.githubusercontent.com/cosmos/chain-registry/master/crescent/images/cre.png',
+        'https://raw.githubusercontent.com/cosmos/chain-registry/master/noble/images/stake.png',
       theme: {
-        primaryColor: '#fff',
-        gradient:
-          'linear-gradient(180deg, #F2B47E60 0%, #12131C80 100%)',
+        primaryColor: '#a8bbfb',
+        gradient: 'linear-gradient(180deg, #F2440560 0%, #12131C80 100%)',
       },
     },
-    isCustomNetwork:false,
-    supportedWallets: []
+  },
+  {
+    enableModules: {
+      authz: false,
+      feegrant: false,
+      group: false,
+    },
+    aminoConfig: {
+      authz: true,
+      feegrant: true,
+      group: false,
+    },
+    showAirdrop: false,
+    logos: {
+      menu: 'https://raw.githubusercontent.com/cosmos/chain-registry/master/neutron/images/neutron-raw.png',
+      toolbar:
+        'https://raw.githubusercontent.com/cosmos/chain-registry/master/neutron/images/neutron-raw.png',
+    },
+    supportedWallets: ['KEPLR'],
+    keplrExperimental: true,
+    leapExperimental: false,
+    isTestnet: false,
+    isCustomNetwork: false,
+    explorerTxHashEndpoint: 'https://www.mintscan.io/neutron/txs/',
+    govV1: false,
+    config: {
+      chainId: 'neutron-1',
+      chainName: 'neutron',
+      rest: 'https://api.beta.resolute.vitwit.com',
+      rpc: 'https://api.beta.resolute.vitwit.com',
+      restURIs: ['https://api.beta.resolute.vitwit.com'],
+      rpcURIs: [
+        'https://rpc.mainnet.archway.io',
+        'https://archway-rpc.lavenderfive.com:443',
+        'https://rpc.archway.nodestake.top',
+      ],
+      currencies: [
+        {
+          coinDenom: 'NTRN',
+          coinMinimalDenom: 'untrn',
+          coinDecimals: 6,
+        },
+      ],
+      bech32Config: {
+        bech32PrefixAccAddr: 'neutron',
+        bech32PrefixAccPub: 'neutronpub',
+        bech32PrefixValAddr: 'neutronvaloper',
+        bech32PrefixValPub: 'neutronvaloperpub',
+        bech32PrefixConsAddr: 'neutronvalcons',
+        bech32PrefixConsPub: 'neutronvalconspub',
+      },
+      feeCurrencies: [
+        {
+          coinDenom: 'NTRN',
+          coinMinimalDenom: 'untrn',
+          coinDecimals: 6,
+          gasPriceStep: {
+            low: 0.0053,
+            average: 0.0053,
+            high: 0.0053,
+          },
+        },
+      ],
+      bip44: {
+        coinType: 118,
+      },
+      stakeCurrency: {
+        coinDenom: 'NTRN',
+        coinMinimalDenom: 'untrn',
+        coinDecimals: 6,
+      },
+      image:
+        'https://raw.githubusercontent.com/cosmos/chain-registry/master/neutron/images/neutron-raw.png',
+      theme: {
+        primaryColor: '#000000',
+        gradient: 'linear-gradient(180deg, #000000 0%, #12131C80 100%)',
+      },
+    },
+  },
+  {
+    enableModules: {
+      authz: false,
+      feegrant: false,
+      group: false,
+    },
+    aminoConfig: {
+      authz: true,
+      feegrant: true,
+      group: false,
+    },
+    showAirdrop: false,
+    logos: {
+      menu: 'https://raw.githubusercontent.com/cosmos/chain-registry/master/sentinel/images/dvpn.png',
+      toolbar:
+        'https://raw.githubusercontent.com/cosmos/chain-registry/master/sentinel/images/dvpn.png',
+    },
+    supportedWallets: ['KEPLR'],
+    keplrExperimental: true,
+    leapExperimental: false,
+    isTestnet: false,
+    isCustomNetwork: false,
+    explorerTxHashEndpoint: 'https://www.mintscan.io/sentinel/txs/',
+    govV1: false,
+    config: {
+      chainId: 'sentinelhub-2',
+      chainName: 'sentinel',
+      rest: 'https://api.beta.resolute.vitwit.com',
+      rpc: 'https://api.beta.resolute.vitwit.com',
+      restURIs: ['https://api.beta.resolute.vitwit.com'],
+      rpcURIs: [
+        'https://rpc.mainnet.archway.io',
+        'https://archway-rpc.lavenderfive.com:443',
+        'https://rpc.archway.nodestake.top',
+      ],
+      currencies: [
+        {
+          coinDenom: 'DVPN',
+          coinMinimalDenom: 'udvpn',
+          coinDecimals: 6,
+        },
+      ],
+      bech32Config: {
+        bech32PrefixAccAddr: 'sent',
+        bech32PrefixAccPub: 'sentpub',
+        bech32PrefixValAddr: 'sentvaloper',
+        bech32PrefixValPub: 'sentvaloperpub',
+        bech32PrefixConsAddr: 'sentvalcons',
+        bech32PrefixConsPub: 'sentvalconspub',
+      },
+      feeCurrencies: [
+        {
+          coinDenom: 'DVPN',
+          coinMinimalDenom: 'udvpn',
+          coinDecimals: 6,
+          gasPriceStep: {
+            low: 0.1,
+            average: 0.25,
+            high: 0.4,
+          },
+        },
+      ],
+      bip44: {
+        coinType: 118,
+      },
+      stakeCurrency: {
+        coinDenom: 'DVPN',
+        coinMinimalDenom: 'udvpn',
+        coinDecimals: 6,
+      },
+      image:
+        'https://raw.githubusercontent.com/cosmos/chain-registry/master/sentinel/images/dvpn.png',
+      theme: {
+        primaryColor: '#10a7ef',
+        gradient: 'linear-gradient(180deg, #10a7ef 0%, #12131C80 100%)',
+      },
+    },
+  },
+  {
+    enableModules: {
+      authz: false,
+      feegrant: false,
+      group: false,
+    },
+    aminoConfig: {
+      authz: true,
+      feegrant: true,
+      group: false,
+    },
+    showAirdrop: false,
+    logos: {
+      menu: 'https://raw.githubusercontent.com/cosmos/chain-registry/master/saga/images/saga.png',
+      toolbar:
+        'https://raw.githubusercontent.com/cosmos/chain-registry/master/saga/images/saga.png',
+    },
+    supportedWallets: ['KEPLR'],
+    keplrExperimental: true,
+    leapExperimental: false,
+    isTestnet: false,
+    isCustomNetwork: false,
+    explorerTxHashEndpoint: 'https://www.mintscan.io/saga/txs/',
+    govV1: false,
+    config: {
+      chainId: 'ssc-1',
+      chainName: 'saga',
+      rest: 'https://api.beta.resolute.vitwit.com',
+      rpc: 'https://api.beta.resolute.vitwit.com',
+      restURIs: ['https://api.beta.resolute.vitwit.com'],
+      rpcURIs: [
+        'https://rpc.mainnet.archway.io',
+        'https://archway-rpc.lavenderfive.com:443',
+        'https://rpc.archway.nodestake.top',
+      ],
+      currencies: [
+        {
+          coinDenom: 'SAGA',
+          coinMinimalDenom: 'usaga',
+          coinDecimals: 6,
+        },
+      ],
+      bech32Config: {
+        bech32PrefixAccAddr: 'saga',
+        bech32PrefixAccPub: 'sagapub',
+        bech32PrefixValAddr: 'sagavaloper',
+        bech32PrefixValPub: 'sagavaloperpub',
+        bech32PrefixConsAddr: 'sagavalcons',
+        bech32PrefixConsPub: 'sagavalconspub',
+      },
+      feeCurrencies: [
+        {
+          coinDenom: 'SAGA',
+          coinMinimalDenom: 'usaga',
+          coinDecimals: 6,
+          gasPriceStep: {
+            low: 0.01,
+            average: 0.025,
+            high: 0.04,
+          },
+        },
+      ],
+      bip44: {
+        coinType: 118,
+      },
+      stakeCurrency: {
+        coinDenom: 'STAKE',
+        coinMinimalDenom: 'usaga',
+        coinDecimals: 6,
+      },
+      image:
+        'https://raw.githubusercontent.com/cosmos/chain-registry/master/saga/images/saga.png',
+      theme: {
+        primaryColor: '#040404',
+        gradient: 'linear-gradient(180deg, #040404 0%, #12131C80 100%)',
+      },
+    },
   },
 ];

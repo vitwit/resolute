@@ -13,7 +13,7 @@ func (c *Cron) StartCheckUris() {
 	for _, c := range data {
 		for _, u := range c.RestURIs {
 			if c.CheckStatus {
-				status, _ := clients.GetStatus(u)
+				status, _ := clients.GetStatus(u, c.ChainId)
 				if status {
 					c.RestURI = u
 					break

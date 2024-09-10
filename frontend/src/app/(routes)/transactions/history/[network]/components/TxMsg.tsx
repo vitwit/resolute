@@ -7,6 +7,7 @@ import {
     DELEGATE_TYPE_URL,
     REDELEGATE_TYPE_URL,
     UNDELEGATE_TYPE_URL,
+    WITHDRAW_DELEGATE_REWARD,
     MSG_AUTHZ_EXEC,
     VOTE_TYPE_URL,
     MSG_AUTHZ_GRANT,
@@ -132,6 +133,23 @@ const TxMsg: React.FC<TxMsgProps> = ({ msg, expandedIndex, chainID, toggleExpand
                                 value={getAmount(Number(get(msg, 'amount.amount', ''))).amount}
                                 token={getAmount(Number(get(msg, 'amount.amount', ''))).denom}
                             />
+                        </div>
+                    </div>
+                );
+            case WITHDRAW_DELEGATE_REWARD:
+                return (
+                    <div className="flex justify-between px-6 w-full pb-4">
+                        <div className="flex flex-col gap-2">
+                            <p className="text-b1-light">Validator</p>
+                            <span className="text-b1">
+                                {shortenAddress(get(msg, 'validator_address', ''), 24)}
+                            </span>
+                        </div>
+                        <div className="flex flex-col gap-2">
+                            <p className="text-b1-light">Delegator</p>
+                            <span className="text-b1">
+                                {shortenAddress(get(msg, 'delegator_address', ''), 24)}
+                            </span>
                         </div>
                     </div>
                 );

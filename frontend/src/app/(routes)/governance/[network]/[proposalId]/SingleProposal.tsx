@@ -10,6 +10,7 @@ import {
   getGovTallyParams,
   getProposalTally,
   getDepositParams,
+  getVotes,
 } from '@/store/features/gov/govSlice';
 import { get } from 'lodash';
 import { getLocalTime, getTimeDifferenceToFutureDate } from '@/utils/dataTime';
@@ -25,6 +26,7 @@ import { formatAmount } from '@/utils/util';
 import DepositCollected from '../../utils-components/DepositCollected';
 import { PROPOSAL_STATUS_VOTING_PERIOD } from '@/utils/constants';
 import { TxStatus } from '@/types/enums';
+import useAddressConverter from '@/custom-hooks/useAddressConverter';
 
 const emptyTallyResult = {
   yes: '',
@@ -52,14 +54,20 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
   const dispatch = useAppDispatch();
   const router = useRouter();
 
+  const isAuthzMode = useAppSelector((state) => state.authz.authzModeEnabled);
+  const authzAddress = useAppSelector((state) => state.authz.authzAddress);
+
   const { getChainInfo, getDenomInfo } = useGetChainInfo();
+  const { convertAddress } = useAddressConverter();
   const {
     restURLs: baseURLs,
     baseURL,
     govV1,
     chainName,
     chainLogo,
+    address,
   } = getChainInfo(chainID);
+  const authzGranterAddress = convertAddress(chainID, authzAddress);
 
   const proposalInfo = useAppSelector(
     (state: RootState) => state.gov.proposalDetails
@@ -81,6 +89,7 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
   const proposalStatus = useAppSelector(
     (state) => state.gov.proposalInfo.status
   );
+  const isWalletConnected = useAppSelector((state) => state.wallet.connected);
 
   const totalVotes = ['yes', 'no', 'abstain', 'no_with_veto'].reduce(
     (sum, key) =>
@@ -200,6 +209,34 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
   const proposalTallyStatus = useAppSelector(
     (state) => state.gov.chains?.[chainID]?.tally.status
   );
+  const txVoteStatus = useAppSelector(
+    (state) => state.gov.chains?.[chainID]?.tx?.status
+  );
+
+  const fetchVotes = () => {
+    dispatch(
+      getVotes({
+        baseURL,
+        baseURLs,
+        proposalId: Number(proposalID),
+        voter: isAuthzMode ? authzGranterAddress : address,
+        chainID,
+        govV1,
+      })
+    );
+  };
+
+  useEffect(() => {
+    if (isWalletConnected) {
+      fetchVotes();
+    }
+  }, [isWalletConnected, isAuthzMode]);
+
+  useEffect(() => {
+    if (txVoteStatus === TxStatus.IDLE) {
+      fetchVotes();
+    }
+  }, [txVoteStatus]);
 
   return (
     <>
@@ -209,7 +246,7 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
         <>
           {/* Banner */}
           {isProposal2daysgo() ? (
-            <div className="fixed w-full bg-[#ffc13c] gap-2 px-6 py-3 ml-[-40px] flex items-center">
+            <div className="fixed w-full bg-[#ffc13c] gap-2 px-6 py-3 ml-[-40px] flex items-center z-10">
               <Image
                 src="/infoblack.svg"
                 width={24}

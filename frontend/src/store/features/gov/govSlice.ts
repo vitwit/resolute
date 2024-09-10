@@ -338,11 +338,15 @@ export const getVotes = createAsyncThunk(
       return {
         chainID: data.chainID,
         data: response.data,
+        proposalId: data.proposalId,
       };
     } catch (error) {
       if (error instanceof AxiosError)
         return rejectWithValue({ message: error.message });
-      return rejectWithValue({ message: ERR_UNKNOWN });
+      return rejectWithValue({
+        message: ERR_UNKNOWN,
+        proposalId: data.proposalId,
+      });
     }
   }
 );
@@ -414,10 +418,10 @@ export const txVote = createAsyncThunk(
           })
         );
 
-        trackEvent('GOV', 'SUCCESS', 'VOTE')
+        trackEvent('GOV', 'SUCCESS', 'VOTE');
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
-        trackEvent('GOV', 'FAILED', 'VOTE')
+        trackEvent('GOV', 'FAILED', 'VOTE');
         dispatch(
           setError({
             type: 'error',
@@ -485,14 +489,12 @@ export const txDeposit = createAsyncThunk(
       );
 
       if (code === 0) {
-        trackEvent('GOV', 'SUCCESS', 'DEPOSIT')
-
+        trackEvent('GOV', 'SUCCESS', 'DEPOSIT');
 
         dispatch(setTxAndHash({ tx: tx, hash: transactionHash }));
         return fulfillWithValue({ txHash: transactionHash });
       } else {
-        trackEvent('GOV', 'FAILED', 'DEPOSIT')
-
+        trackEvent('GOV', 'FAILED', 'DEPOSIT');
 
         dispatch(setError({ type: 'error', message: rawLog || '' }));
         return rejectWithValue(rawLog);
@@ -673,9 +675,31 @@ export const govSlice = createSlice({
       })
       .addCase(getVotes.rejected, (state, action) => {
         const chainID = action.meta?.arg?.chainID;
-        const payload = action.payload as { message: string };
+        const payload = action.payload as {
+          message: string;
+          proposalId: number;
+        };
         state.chains[chainID].votes.status = TxStatus.REJECTED;
         state.chains[chainID].votes.errMsg = payload.message || '';
+        const result: VotesData = {
+          status: TxStatus.IDLE,
+          errMsg: '',
+          proposals: state.chains[chainID].votes?.proposals || {},
+        };
+
+        const proposalId = Number(payload.proposalId).toString();
+
+        // Initialize the proposal with a valid ProposalVote object
+        result.proposals[proposalId] = {
+          vote: {
+            proposal_id: Number(proposalId),
+            voter: '',
+            option: '',
+            options: [],
+          },
+        };
+
+        state.chains[chainID].votes = result;
       });
 
     // tally

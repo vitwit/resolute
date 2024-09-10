@@ -20,6 +20,7 @@ import { FAILED_TO_FETCH } from './errors';
 import { FastAverageColor } from 'fast-average-color';
 import ReactGA from 'react-ga';
 import { getLocalTime } from '@/utils/dataTime';
+import { GOV_VOTE_OPTIONS } from '@/constants/gov-constants';
 
 export const trackEvent = (category: string, action: string, label: string) => {
   ReactGA.event({
@@ -678,4 +679,11 @@ export const parseTxnData = (txn: ParsedTransaction) => {
     txHash,
     timeStamp,
   };
+};
+
+export const getColorForVoteOption = (optionLabel: string) => {
+  const matchedOption = GOV_VOTE_OPTIONS.find(
+    (option) => option.label.toLowerCase() === optionLabel
+  );
+  return matchedOption ? matchedOption.selectedColor : '#ffffff';
 };

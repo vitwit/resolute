@@ -55,6 +55,7 @@ export const SEND_TYPE_URL = '/cosmos.bank.v1beta1.MsgSend';
 export const DELEGATE_TYPE_URL = '/cosmos.staking.v1beta1.MsgDelegate';
 export const UNDELEGATE_TYPE_URL = '/cosmos.staking.v1beta1.MsgUndelegate';
 export const REDELEGATE_TYPE_URL = '/cosmos.staking.v1beta1.MsgBeginRedelegate';
+export const WITHDRAW_DELEGATE_REWARD = '/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward'
 export const IBC_SEND_TYPE_URL = '/ibc.applications.transfer.v1.MsgTransfer';
 export const DEPOSIT_TYPE_URL = '/cosmos.gov.v1beta1.MsgDeposit';
 export const SEND_TEMPLATE = 'https://api.resolute.vitwit.com/_static/send.csv';

@@ -11,6 +11,9 @@ import { MAP_TXN_MSG_TYPES } from '@/utils/feegrant';
 import CustomButton from '@/components/common/CustomButton';
 import { setError } from '@/store/features/common/commonSlice';
 import { setConnectWalletOpen } from '@/store/features/wallet/walletSlice';
+import { getColorForVoteOption } from '@/utils/util';
+import useGetProposals from '@/custom-hooks/governance/useGetProposals';
+import useAddressConverter from '@/custom-hooks/useAddressConverter';
 
 const Vote = ({
   chainID,
@@ -23,6 +26,7 @@ const Vote = ({
 }) => {
   const { getFeegranter } = useGetFeegranter();
   const { getChainInfo, getDenomInfo } = useGetChainInfo();
+  const { convertAddress } = useAddressConverter();
   const [voteOption, setVoteOption] = useState('');
   const isWalletConnected = useAppSelector((state) => state.wallet.connected);
 
@@ -33,8 +37,8 @@ const Vote = ({
   const loading = useAppSelector(
     (state) => state.gov.chains?.[chainID]?.tx?.status
   );
-
   const isAuthzMode = useAppSelector((state) => state.authz.authzModeEnabled);
+  const authzAddress = useAppSelector((state) => state.authz.authzAddress);
   const authzGranter = useAppSelector((state) => state.authz.authzAddress);
   const { txAuthzVote } = useAuthzExecHelper();
 
@@ -43,6 +47,16 @@ const Vote = ({
   );
 
   const dispatch = useAppDispatch();
+  const basicChainInfo = getChainInfo(chainID);
+  const { address, aminoConfig, feeAmount, prefix, rest, rpc } = basicChainInfo;
+  const authzGranterAddress = convertAddress(chainID, authzAddress);
+  const { minimalDenom } = getDenomInfo(chainID);
+  const { getVote } = useGetProposals();
+  const alreadyVotedOption = getVote({
+    address: isAuthzMode ? authzGranterAddress : address,
+    chainID,
+    proposalId,
+  });
 
   const handleVote = () => {
     if (!isWalletConnected) {
@@ -55,10 +69,6 @@ const Vote = ({
       );
       return;
     }
-    const basicChainInfo = getChainInfo(chainID);
-    const { address, aminoConfig, feeAmount, prefix, rest, rpc } =
-      basicChainInfo;
-    const { minimalDenom } = getDenomInfo(chainID);
 
     if (isAuthzMode) {
       txAuthzVote({
@@ -98,6 +108,20 @@ const Vote = ({
 
   return (
     <div className="flex flex-col gap-6 w-full">
+      {alreadyVotedOption?.length ? (
+        <div className="flex justify-end italic">
+          <div className="text-[14px]">
+            <span className="font-light ">You have voted </span>
+            <span
+              style={{ color: getColorForVoteOption(alreadyVotedOption) }}
+              className="capitalize font-bold"
+            >
+              {alreadyVotedOption}
+            </span>
+          </div>
+        </div>
+      ) : null}
+
       <div className={`grid-cols-${colCount} grid gap-6`}>
         {GOV_VOTE_OPTIONS?.map((option) => (
           <button

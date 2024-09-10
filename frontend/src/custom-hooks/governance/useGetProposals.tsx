@@ -3,6 +3,7 @@ import useGetChainInfo from '../useGetChainInfo';
 import { get } from 'lodash';
 import { getTimeDifferenceToFutureDate } from '@/utils/dataTime';
 import { ProposalsData } from '@/types/gov';
+import { voteOptions } from '@/utils/constants';
 
 interface ProposalOverview extends ProposalsData {
   proposalInfo: ProposalsData['proposalInfo'] & {
@@ -13,6 +14,7 @@ interface ProposalOverview extends ProposalsData {
 const useGetProposals = () => {
   const { getChainInfo } = useGetChainInfo();
   const govState = useAppSelector((state) => state.gov.chains);
+
   const getProposals = ({
     chainIDs,
     showAll = false,
@@ -20,7 +22,7 @@ const useGetProposals = () => {
   }: {
     chainIDs: string[];
     showAll?: boolean;
-    deposits?:boolean
+    deposits?: boolean;
   }) => {
     const proposalsData: ProposalsData[] = [];
     chainIDs.forEach((chainID) => {
@@ -28,7 +30,7 @@ const useGetProposals = () => {
       const activeProposals = govState?.[chainID]?.active?.proposals || [];
       const depositProposals = govState?.[chainID]?.deposit?.proposals || [];
 
-      if (!deposits &&  Array.isArray(activeProposals)) {
+      if (!deposits && Array.isArray(activeProposals)) {
         activeProposals?.forEach((proposal) => {
           const proposalTitle = get(
             proposal,
@@ -121,6 +123,7 @@ const useGetProposals = () => {
     });
     return proposalsData;
   };
+
   const getProposalOverview = ({
     chainID,
     proposalId,
@@ -135,13 +138,13 @@ const useGetProposals = () => {
     const depositProposals = govState?.[chainID]?.deposit?.proposals;
     const proposal = isActive
       ? activeProposals?.find(
-        (proposal) =>
-          get(proposal, 'proposal_id', get(proposal, 'id', '')) === proposalId
-      )
+          (proposal) =>
+            get(proposal, 'proposal_id', get(proposal, 'id', '')) === proposalId
+        )
       : depositProposals?.find(
-        (proposal) =>
-          get(proposal, 'proposal_id', get(proposal, 'id', '')) === proposalId
-      );
+          (proposal) =>
+            get(proposal, 'proposal_id', get(proposal, 'id', '')) === proposalId
+        );
     const proposalTitle = get(
       proposal,
       'content.title',
@@ -169,7 +172,35 @@ const useGetProposals = () => {
       },
     };
   };
-  return { getProposals, getProposalOverview };
+
+  const getVote = ({
+    proposalId,
+    address,
+    chainID,
+  }: {
+    proposalId: string;
+    address: string;
+    chainID: string;
+  }) => {
+    const voteData = govState?.[chainID]?.votes?.proposals?.[proposalId]?.vote;
+    if (voteData) {
+      const voter = voteData?.voter || '';
+      const option = voteData?.option || '';
+      if (address?.length && voter?.length && address === voter) {
+        if (option?.length && option !== 'VOTE_OPTION_UNSPECIFIED') {
+          const votedOption = voteOptions?.[option] || '';
+          return votedOption;
+        } else {
+          const votedOption = voteOptions?.[voteData?.options?.[0]?.option] || '';
+          return votedOption;
+        }
+      }
+    }
+
+    return '';
+  };
+
+  return { getProposals, getProposalOverview, getVote };
 };
 
 export default useGetProposals;
