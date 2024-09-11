@@ -197,7 +197,7 @@
       lineinfile:
         path: "{{ user_home }}/.profile"
         line: |
-          export GOROOT=/usr/local/go 
+          export GOROOT=/usr/local/go
           export GOPATH={{ user_home }}/go
           export GOBIN=$GOPATH/bin
           export PATH=$PATH:/usr/local/go/bin:$GOBIN
