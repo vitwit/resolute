@@ -14,3 +14,4 @@ ssh_key_name="Specify the name assigned to your ssh key on digital ocean"
 
 3. Run the playbook using the command :
 ```ansible-playbook main.yml  -i inventory.ini```
+4. Enter the server ip:3000 to open the resolute frontend
