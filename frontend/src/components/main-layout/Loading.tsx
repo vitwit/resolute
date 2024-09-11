@@ -32,7 +32,7 @@ const TopBarLoading = () => {
 
 const SideBarLoading = () => {
   return (
-    <section className="sidebar">
+    <section className="sidebar !h-[calc(100vh-60px)] top-[65px]">
       <SelectNetworkLoading />
       <SideMenuLoading />
       <MenuItemLoading />
@@ -44,7 +44,7 @@ const SelectNetworkLoading = () => {
   return (
     <div className="fixed-top w-full">
       <div className="flex gap-2 items-center">
-        <div className="w-10 !h-8 rounded-full bg-[#252525]" />
+        <div className="w-8 !h-8 rounded-full bg-[#252525] animate-pulse" />
         <div className="flex-1">
           <div className="h-8 w-full rounded bg-[#252525] animate-pulse" />
         </div>

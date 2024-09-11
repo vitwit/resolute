@@ -84,6 +84,17 @@ interface AuthzState {
   multiChainAuthzGrantTx: {
     status: TxStatus;
   };
+  authzAlert: {
+    display: boolean;
+    send: {
+      grantsCount: number;
+      accountsCount: number;
+    },
+    ibcTransfer: {
+      grantsCount: number;
+      accountsCount: number;
+    }
+  }
 }
 
 const initialState: AuthzState = {
@@ -96,6 +107,17 @@ const initialState: AuthzState = {
   multiChainAuthzGrantTx: {
     status: TxStatus.INIT,
   },
+  authzAlert: {
+    display: false,
+    send: {
+      grantsCount: 0,
+      accountsCount: 0,
+    },
+    ibcTransfer: {
+      grantsCount: 0,
+      accountsCount: 0,
+    },
+  }
 };
 
 export const getGrantsToMe = createAsyncThunk(
