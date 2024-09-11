@@ -86,15 +86,7 @@ interface AuthzState {
   };
   authzAlert: {
     display: boolean;
-    send: {
-      grantsCount: number;
-      accountsCount: number;
-    },
-    ibcTransfer: {
-      grantsCount: number;
-      accountsCount: number;
-    }
-  }
+  };
 }
 
 const initialState: AuthzState = {
@@ -108,16 +100,8 @@ const initialState: AuthzState = {
     status: TxStatus.INIT,
   },
   authzAlert: {
-    display: false,
-    send: {
-      grantsCount: 0,
-      accountsCount: 0,
-    },
-    ibcTransfer: {
-      grantsCount: 0,
-      accountsCount: 0,
-    },
-  }
+    display: true,
+  },
 };
 
 export const getGrantsToMe = createAsyncThunk(
@@ -126,7 +110,7 @@ export const getGrantsToMe = createAsyncThunk(
     const response = await authzService.grantsToMe(
       data.baseURLs,
       data.address,
-      data.chainID,
+      data.chainID
     );
 
     return {
@@ -374,6 +358,11 @@ export const authzSlice = createSlice({
         status: TxStatus.INIT,
       };
     },
+    setAuthzAlert: (state, action: PayloadAction<boolean>) => {
+      if (state.authzAlert.display) {
+        state.authzAlert.display = action.payload;
+      }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -563,7 +552,12 @@ export const authzSlice = createSlice({
   },
 });
 
-export const { enableAuthzMode, exitAuthzMode, resetState, resetTxStatus } =
-  authzSlice.actions;
+export const {
+  enableAuthzMode,
+  exitAuthzMode,
+  resetState,
+  resetTxStatus,
+  setAuthzAlert,
+} = authzSlice.actions;
 
 export default authzSlice.reducer;

@@ -18,6 +18,20 @@ import useGetChainInfo from '../useGetChainInfo';
 import useFetchPriceInfo from '../useFetchPriceInfo';
 import useInitFeegrant from '../useInitFeegrant';
 import useInitAuthz from '../useInitAuthz';
+import { getAuthzAlertData, isAuthzAlertDataSet } from '@/utils/localStorage';
+
+const fetchAuthz = (isAuthzMode: boolean): boolean => {
+  if (isAuthzMode) {
+    return true;
+  }
+  if (
+    !isAuthzMode &&
+    ((isAuthzAlertDataSet() && getAuthzAlertData()) || !isAuthzAlertDataSet())
+  ) {
+    return true;
+  }
+  return false;
+};
 
 /* eslint-disable react-hooks/rules-of-hooks */
 const useInitApp = () => {
@@ -37,56 +51,57 @@ const useInitApp = () => {
   const isWalletConnected = useAppSelector(
     (state: RootState) => state.wallet.connected
   );
-
   const { getChainInfo, getDenomInfo } = useGetChainInfo();
 
   useEffect(() => {
     if (chainIDs.length > 0 && isWalletConnected) {
       chainIDs.forEach((chainID) => {
         const { address, baseURL, restURLs } = getChainInfo(chainID);
-        const { minimalDenom } = getDenomInfo(chainID);
-        const authzGranterAddress = convertAddress(chainID, authzAddress);
-        const chainRequestData = {
-          baseURLs: restURLs,
-          address: isAuthzMode ? authzGranterAddress : address,
-          chainID,
-        };
-        
-        // Fetch delegations
-        dispatch(
-          isAuthzMode
-            ? getAuthzDelegations(chainRequestData)
-            : getDelegations(chainRequestData)
-        ).then();
 
-        // Fetch available balances
-        dispatch(
-          isAuthzMode
-            ? getAuthzBalances({ ...chainRequestData, baseURL })
-            : getBalances({ ...chainRequestData, baseURL })
-        );
+        if (isWalletConnected) {
+          const authzGranterAddress = convertAddress(chainID, authzAddress);
+          const { minimalDenom } = getDenomInfo(chainID);
+          const chainRequestData = {
+            baseURLs: restURLs,
+            address: isAuthzMode ? authzGranterAddress : address,
+            chainID,
+          };
+          // Fetch delegations
+          dispatch(
+            isAuthzMode
+              ? getAuthzDelegations(chainRequestData)
+              : getDelegations(chainRequestData)
+          ).then();
 
-        // Fetch rewards
-        dispatch(
-          isAuthzMode
-            ? getAuthzDelegatorTotalRewards({
-                ...chainRequestData,
-                baseURL,
-                denom: minimalDenom,
-              })
-            : getDelegatorTotalRewards({
-                ...chainRequestData,
-                baseURL,
-                denom: minimalDenom,
-              })
-        );
+          // Fetch available balances
+          dispatch(
+            isAuthzMode
+              ? getAuthzBalances({ ...chainRequestData, baseURL })
+              : getBalances({ ...chainRequestData, baseURL })
+          );
 
-        // Fetch unbonding delegations
-        dispatch(
-          isAuthzMode
-            ? getAuthzUnbonding(chainRequestData)
-            : getUnbonding(chainRequestData)
-        );
+          // Fetch rewards
+          dispatch(
+            isAuthzMode
+              ? getAuthzDelegatorTotalRewards({
+                  ...chainRequestData,
+                  baseURL,
+                  denom: minimalDenom,
+                })
+              : getDelegatorTotalRewards({
+                  ...chainRequestData,
+                  baseURL,
+                  denom: minimalDenom,
+                })
+          );
+
+          // Fetch unbonding delegations
+          dispatch(
+            isAuthzMode
+              ? getAuthzUnbonding(chainRequestData)
+              : getUnbonding(chainRequestData)
+          );
+        }
 
         dispatch(getAllValidators({ baseURLs: restURLs, chainID }));
       });
@@ -95,7 +110,7 @@ const useInitApp = () => {
 
   useFetchPriceInfo();
   useInitFeegrant({ chainIDs, shouldFetch: isFeegrantModeEnabled });
-  useInitAuthz({ chainIDs, shouldFetch: isAuthzMode });
+  useInitAuthz({ chainIDs, shouldFetch: fetchAuthz(isAuthzMode) });
 };
 
 export default useInitApp;

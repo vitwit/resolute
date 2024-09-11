@@ -1,9 +1,16 @@
-import { useAppDispatch, useAppSelector } from './StateHooks';
 import { exitAuthzMode } from '@/store/features/authz/authzSlice';
 import { resetAuthz as resetBankAuthz } from '@/store/features/bank/bankSlice';
 import { resetAuthz as resetRewardsAuthz } from '@/store/features/distribution/distributionSlice';
 import { resetAuthz as resetStakingAuthz } from '@/store/features/staking/stakeSlice';
+import {
+  COSMOS_CHAIN_ID,
+  GENERIC_AUTHORIZATION_TYPE,
+  IBC_SEND_TYPE_URL,
+  SEND_AUTHORIZATION_TYPE,
+  SEND_TYPE_URL,
+} from '@/utils/constants';
 import { logoutAuthzMode } from '@/utils/localStorage';
+import { useAppDispatch, useAppSelector } from './StateHooks';
 
 export interface ChainAuthz {
   chainID: string;
@@ -14,6 +21,24 @@ export interface InterChainAuthzGrants {
   address: string;
   grants: ChainAuthz[];
 }
+
+const SEND = 'send';
+const IBC_TRANSFER = 'ibcTransfer';
+
+const getAuthzType = (grant: Authorization) => {
+  if (grant.authorization['@type'] === SEND_AUTHORIZATION_TYPE) {
+    return SEND;
+  }
+  if (grant.authorization['@type'] === GENERIC_AUTHORIZATION_TYPE) {
+    if (grant.authorization.msg === SEND_TYPE_URL) {
+      return SEND;
+    }
+    if (grant.authorization.msg === IBC_SEND_TYPE_URL) {
+      return IBC_TRANSFER;
+    }
+  }
+  return null;
+};
 
 const useAuthzGrants = () => {
   const authzChains = useAppSelector((state) => state.authz.chains);
@@ -39,7 +64,7 @@ const useAuthzGrants = () => {
         );
       }
 
-      if (!addressToChainAuthz[address]['cosmoshub-4']?.length) {
+      if (!addressToChainAuthz[address][COSMOS_CHAIN_ID]?.length) {
         for (const chainID of Object.keys(addressToChainAuthz[address])) {
           if (addressToChainAuthz[address][chainID].length) {
             keyAddress = addressToChainAuthz[address][chainID][0].granter;
@@ -97,6 +122,26 @@ const useAuthzGrants = () => {
     return grants;
   };
 
+  const getSendAuthzGrants = (chainIDs: string[]) => {
+    const sendGrantsData = { send: 0, ibcTransfer: 0 };
+    chainIDs &&
+      chainIDs.forEach((chainID) => {
+        Object.keys(
+          authzChains[chainID]?.GrantsByMeAddressMapping || {}
+        ).forEach((address) => {
+          authzChains[chainID].GrantsByMeAddressMapping[address].forEach((grant) => {
+            const authType = getAuthzType(grant);
+            if (authType === SEND) {
+              sendGrantsData.send = sendGrantsData.send + 1;
+            } else if (authType === IBC_TRANSFER) {
+              sendGrantsData.ibcTransfer = sendGrantsData.ibcTransfer + 1;
+            }
+          })
+        });
+      });
+    return sendGrantsData;
+  };
+
   const disableAuthzMode = () => {
     dispatch(resetBankAuthz());
     dispatch(resetRewardsAuthz());
@@ -110,6 +155,7 @@ const useAuthzGrants = () => {
     getGrantsToMe,
     getInterChainGrants,
     disableAuthzMode,
+    getSendAuthzGrants,
   };
 };
 
