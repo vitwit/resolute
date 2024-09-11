@@ -36,6 +36,10 @@ interface DefaultState {
     status: TxStatus;
     errMsg: string;
   };
+  txWithdrawSingleValCommission: {
+    status: TxStatus;
+    errMsg: string;
+  };
   txSetWithdrawAddress: {
     status: TxStatus;
     errMsg: string;

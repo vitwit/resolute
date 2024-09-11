@@ -21,6 +21,7 @@ import { msgUnDelegate } from '@/txns/staking/undelegate';
 import {
   txSetWithdrawAddress,
   txWithdrawAllRewards,
+  txWithdrawSingleValidatorCommissionAndRewards,
   txWithdrawValidatorCommission,
   txWithdrawValidatorCommissionAndRewards,
 } from '@/store/features/distribution/distributionSlice';
@@ -70,6 +71,13 @@ export interface AuthzExecHelpWithdrawRewardsAndCommission {
   grantee: string;
   granter: string;
   chainID: string;
+}
+
+export interface AuthzExecHelpWithdrawValidatorRewardsAndCommission {
+  grantee: string;
+  granter: string;
+  chainID: string;
+  validator: string;
 }
 
 export interface AuthzExecHelpSetWithdrawAddress {
@@ -150,6 +158,7 @@ const useAuthzStakingExecHelper = () => {
     getWithdrawCommissionAndRewardsMsgs,
     getSetWithdrawAddressMsg,
     getWithdrawCommissionMsgs,
+    getWithdrawValidatorCommisionAndRewardsMsgs,
   } = useGetDistributionMsgs();
 
   const isInvalidAction = (
@@ -493,6 +502,32 @@ const useAuthzStakingExecHelper = () => {
     );
   };
 
+  const txAuthzWithdrawValidatorRewardsAndCommission = (
+    data: AuthzExecHelpWithdrawValidatorRewardsAndCommission
+  ) => {
+    const { chainID, validator } = data;
+    const basicChainInfo = getChainInfo(chainID);
+    const address = convertAddress(chainID, data.granter);
+
+    const { minimalDenom } = getDenomInfo(chainID);
+    const msgs = getWithdrawValidatorCommisionAndRewardsMsgs({
+      chainID,
+      validator,
+    });
+    const msg = AuthzExecWithdrawRewardsAndCommissionMsg(data.grantee, msgs);
+
+    dispatch(
+      txWithdrawSingleValidatorCommissionAndRewards({
+        isAuthzMode: true,
+        basicChainInfo,
+        msgs: [msg],
+        memo: '',
+        denom: minimalDenom,
+        authzChainGranter: address,
+      })
+    );
+  };
+
   const txAuthzWithdrawCommission = (
     data: AuthzExecHelpWithdrawRewardsAndCommission
   ) => {
@@ -571,6 +606,7 @@ const useAuthzStakingExecHelper = () => {
     txAuthzWithdrawRewardsAndCommission,
     txAuthzSetWithdrawAddress,
     txAuthzWithdrawCommission,
+    txAuthzWithdrawValidatorRewardsAndCommission,
   };
 };
 
