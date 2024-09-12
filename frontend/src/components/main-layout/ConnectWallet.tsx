@@ -2,7 +2,6 @@ import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import {
   establishWalletConnection,
   setConnectWalletOpen,
-  setIsLoading,
 } from '@/store/features/wallet/walletSlice';
 import { networks } from '@/utils/chainsInfo';
 import { SUPPORTED_WALLETS } from '@/utils/constants';
