@@ -2,6 +2,7 @@ import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import {
   establishWalletConnection,
   setConnectWalletOpen,
+  setIsLoading,
 } from '@/store/features/wallet/walletSlice';
 import { networks } from '@/utils/chainsInfo';
 import { SUPPORTED_WALLETS } from '@/utils/constants';
@@ -37,7 +38,7 @@ const ConnectWallet = () => {
 
   const tryConnectWallet = async (walletName: string) => {
     if (walletName === 'metamask') {
-      // dispatch(setIsLoading());
+      dispatch(setIsLoading());
       try {
         for (let i = 0; i < networks.length; i++) {
           const chainId: string = networks[i].config.chainId;
