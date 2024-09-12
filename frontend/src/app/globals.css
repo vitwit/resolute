@@ -210,7 +210,7 @@ input[type='checkbox'] {
   @apply w-full border-none cursor-text focus:outline-none bg-transparent placeholder:text-[#FFFFFF30] placeholder:font-normal text-[#ffffff];
 }
 .footer-bg {
-  @apply flex flex-col items-start gap-4 w-full p-10;
+  @apply flex flex-col items-start gap-4 w-full px-10 py-16;
   background: rgba(255, 255, 255, 0.02);
 }
 .profile-grid,

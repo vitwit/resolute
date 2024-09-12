@@ -7,12 +7,14 @@ const Footer = () => {
     <div className="footer-bg mt-8">
       <div className="flex justify-between w-full">
         <div>
-          <Image
-            src={RESOLUTE_LOGO}
-            width={180}
-            height={55}
+          {/* <Image
+            src="resolute-logo-vitwit.svg"
+            width={100}
+            height={20}
             alt="resolute-logo"
-          />
+          /> */}
+          <p className="text-h1">RESOLUTE</p>
+          <p className="text-b1 opacity-50">Powered by vitwit</p>
         </div>
         <div className="flex gap-4 justify-end">
           <a
@@ -69,14 +71,9 @@ const Footer = () => {
           </a>
         </div>
       </div>
-      <div className="text-[12px] font-extralight">
-        Vitwit, founded in 2015 in Hyderabad, India, specializes in AI,
-        blockchain, and cloud solutions, with a focus on <br /> the Cosmos
-        ecosystem and validator operations​ (Vitwit)​.
-      </div>
-      <div className="divider-line"></div>
-      <div className="text-[12px] font-extralight leading-[12px] text-center w-full">
-        All rights reserved at @ Vitwit 2024
+      <div className="text-b1">
+        Vitwit is a leading Cosmos dev agency and validator company. Proudly serving as
+        one of the core contributors to the Cosmos SDK.
       </div>
     </div>
   );

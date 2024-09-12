@@ -37,16 +37,21 @@ const TopBar = () => {
       <div className="w-full flex flex-col justify-center items-center">
         <AuthzGrantsAlert />
         <nav className="flex justify-between items-center px-4 py-2">
-          <div>
-            <Link href="/" passHref>
-              <Image
-                src={RESOLUTE_LOGO}
-                width={120}
-                height={32}
-                alt="Resolute"
-              />
+          <div className="flex items-center space-x-1">
+            <Link href="/" legacyBehavior>
+              <a className="flex items-center space-x-1">
+                <Image
+                  src="/vitwit-logo.svg"
+                  width={35}
+                  height={21}
+                  alt="Resolute"
+                  
+                />
+                <span className="text-h1">RESOLUTE</span>
+              </a>
             </Link>
           </div>
+
           <div className="flex-1 flex justify-center items-center">
             {isWalletLoading
               ? null
