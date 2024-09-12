@@ -13,6 +13,7 @@ import {
 } from '@leapwallet/cosmos-snap-provider';
 import {
   establishWalletConnection,
+  setIsLoading,
   unsetIsLoading,
 } from '@/store/features/wallet/walletSlice';
 import {
@@ -37,11 +38,13 @@ const FixedLayout = ({ children }: { children: React.ReactNode }) => {
   const showAuthzAlert = useAppSelector(
     (state) => state.authz.authzAlert.display
   );
+  const isLoading = useAppSelector((state) => state.wallet.isLoading);
 
   const walletState = useAppSelector((state) => state.wallet.status);
 
   const tryConnectWallet = async (walletName: string) => {
     if (walletName === 'metamask') {
+      // dispatch(setIsLoading());
       try {
         for (let i = 0; i < networks.length; i++) {
           const chainId: string = networks[i].config.chainId;
@@ -115,7 +118,7 @@ const FixedLayout = ({ children }: { children: React.ReactNode }) => {
             <section
               className={`px-10 ${showAuthzAlert ? 'min-h-[calc(100vh-110px)]' : 'min-h-[calc(100vh-56px)]'}`}
             >
-              {walletState === TxStatus.PENDING ? (
+              {walletState === TxStatus.PENDING || isLoading ? (
                 <div className="w-full mx-auto my-[20%] opacity-60">
                   <CustomLoader
                     loadingText="Fetching wallet details"
