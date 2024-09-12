@@ -5,7 +5,7 @@ import { TOGGLE_OFF, TOGGLE_ON } from '@/constants/image-names';
 import useAuthzGrants from '@/custom-hooks/useAuthzGrants';
 import DialogAuthzGrants from './DialogAuthzGrants';
 
-const AuthzButton = () => {
+const AuthzButton = ({ disabled }: { disabled: boolean }) => {
   const isAuthzEnabled = useAppSelector(
     (state) => state.authz.authzModeEnabled
   );
@@ -26,6 +26,7 @@ const AuthzButton = () => {
             disableAuthzMode();
           }
         }}
+        disabled={disabled}
       >
         {isAuthzEnabled ? (
           <Image src={TOGGLE_ON} width={20} height={14} alt="authz-on" />

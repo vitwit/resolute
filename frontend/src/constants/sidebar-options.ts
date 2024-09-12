@@ -64,22 +64,6 @@ export const SIDEBAR_MENU_OPTIONS: MenuItemI[] = [
     isMetaMaskSupported: false,
     multipleOptions: true,
   },
-  // {
-  //   name: 'MultiOps',
-  //   icon: '/sidebar-menu-icons/txn-builder-icon.svg',
-  //   path: '/transaction-builder',
-  //   authzSupported: false,
-  //   isMetaMaskSupported: false,
-  //   multipleOptions: false,
-  // },
-  // {
-  //   name: 'History',
-  //   icon: '/sidebar-menu-icons/txn-history-icon.svg',
-  //   path: '/history',
-  //   authzSupported: true,
-  //   isMetaMaskSupported: true,
-  //   multipleOptions: false,
-  // },
   {
     name: 'Settings',
     icon: '/sidebar-menu-icons/settings-icon.svg',
