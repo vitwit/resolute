@@ -18,8 +18,8 @@ const SingleProposalLoading = () => {
               </div>
               <div className="divider-line"></div>
             </div>
-            <div className="w-[692px] h-[372px] animate-pulse bg-[#252525] rounded"></div>
-            <div className="w-[692px] h-[241px] animate-pulse bg-[#252525] rounded"></div>
+            <div className="w-[800px] h-[372px] animate-pulse bg-[#252525] rounded"></div>
+            <div className="w-[800px] h-[241px] animate-pulse bg-[#252525] rounded"></div>
           </div>
         </div>
 

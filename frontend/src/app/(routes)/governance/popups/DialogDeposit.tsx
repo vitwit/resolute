@@ -158,14 +158,14 @@ const DialogDeposit = ({
       styles="w-[800px]"
       description="Enter Your Deposit Details"
     >
-      <div className="space-y-10">
-        <div className="space-y-2">
-          <div className="flex items-center justify-between">
+      <div className="space-y-10 w-full">
+        <div className="space-y-2 w-full">
+          <div className="flex items-center justify-between w-full gap-10">
             <div className="text-[18px] font-bold max-w-[450px] truncate">
               {proposalTitle}
             </div>
             <div className="flex gap-1 items-center">
-              <span className="text-small-light">Deposit</span>
+              <span className="text-small-light !text-[14px]">Deposit</span>
               <p className="text-b1">ends in {endTime}</p>
             </div>
           </div>
