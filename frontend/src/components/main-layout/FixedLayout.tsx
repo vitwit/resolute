@@ -4,7 +4,7 @@ import React, { useEffect } from 'react';
 import TopBar from './TopBar';
 import SideBar from './SideBar';
 import '@/app/fixed-layout.css';
-import { useAppDispatch } from '@/custom-hooks/StateHooks';
+import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { networks } from '@/utils/chainsInfo';
 import {
   connectSnap,
@@ -28,15 +28,21 @@ import IBCSwapTxStatus from '../IBCSwapTxStatus';
 import Footer from '../common/Footer';
 import DynamicSection from './DynamicSection';
 import useInitApp from '@/custom-hooks/common/useInitApp';
+import CustomLoader from '../common/CustomLoader';
+import { TxStatus } from '@/types/enums';
 import useGetShowAuthzAlert from '@/custom-hooks/useGetShowAuthzAlert';
 
 const FixedLayout = ({ children }: { children: React.ReactNode }) => {
   const dispatch = useAppDispatch();
   useShortCuts();
   const showAuthzAlert = useGetShowAuthzAlert();
+  const isLoading = useAppSelector((state) => state.wallet.isLoading);
+
+  const walletState = useAppSelector((state) => state.wallet.status);
 
   const tryConnectWallet = async (walletName: string) => {
     if (walletName === 'metamask') {
+      // dispatch(setIsLoading());
       try {
         for (let i = 0; i < networks.length; i++) {
           const chainId: string = networks[i].config.chainId;
@@ -110,7 +116,16 @@ const FixedLayout = ({ children }: { children: React.ReactNode }) => {
             <section
               className={`px-10 ${showAuthzAlert ? 'min-h-[calc(100vh-110px)]' : 'min-h-[calc(100vh-56px)]'}`}
             >
-              <DynamicSection>{children}</DynamicSection>
+              {walletState === TxStatus.PENDING || isLoading ? (
+                <div className="w-full mx-auto my-[20%] opacity-60">
+                  <CustomLoader
+                    loadingText="Fetching wallet details"
+                    textStyles="italic text-[#fffffff0]"
+                  />
+                </div>
+              ) : (
+                <DynamicSection>{children}</DynamicSection>
+              )}
             </section>
             <footer>
               <Footer />

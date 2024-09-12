@@ -1,10 +1,10 @@
+import React from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { Tooltip } from '@mui/material';
 import { MenuItemI } from '@/constants/sidebar-options';
 import { useAppSelector } from '@/custom-hooks/StateHooks';
 import { tabLink } from '@/utils/util';
-import { Tooltip } from '@mui/material';
-import Image from 'next/image';
-import Link from 'next/link';
-import React from 'react';
 
 interface MenuItemProps {
   itemData: MenuItemI;
@@ -12,77 +12,63 @@ interface MenuItemProps {
   isExpanded?: boolean;
 }
 
-const MenuItem = (props: MenuItemProps) => {
-  const { itemData, pathName, isExpanded } = props;
-  const routePath = pathName === 'overview' ? '/' : `/${pathName}`;
+const MenuItem: React.FC<MenuItemProps> = ({
+  itemData,
+  pathName,
+  isExpanded,
+}) => {
   const selectedNetwork = useAppSelector(
     (state) => state.common.selectedNetwork.chainName
   );
   const isAuthzMode = useAppSelector((state) => state.authz.authzModeEnabled);
-  const { icon, name, path } = itemData;
-  const pageLink = tabLink(path, selectedNetwork);
-  const isEnableModule = !isAuthzMode || itemData.authzSupported;
 
-  const isNotDropDownModule = () => {
-    const dropdowmModules = [
-      'transfers',
-      'cosmwasm',
-      'transactions',
-      'settings',
-    ];
-    return !dropdowmModules.includes(itemData.name.toLocaleLowerCase());
-  };
+  const routePath = pathName === 'overview' ? '/' : `/${pathName}`;
+  const { icon, name, path, isMetaMaskSupported, authzSupported } = itemData;
+
+  const pageLink = tabLink(path, selectedNetwork);
+  const walletName = localStorage.getItem('WALLET_NAME');
+  const isMetamaskSupported = isMetaMaskSupported || walletName !== 'metamask';
+  const isEnableModule = !isAuthzMode || authzSupported;
+
+  const tooltipTitle = !isMetamaskSupported
+    ? "MetaMask doesn't support"
+    : !isEnableModule
+      ? `Authz is not supporting ${name}`
+      : null;
+
+  const isSelected = routePath === path;
+  const isDisabled = !(isEnableModule && isMetamaskSupported);
 
   return (
-    <Link
-      href={isEnableModule ? (isNotDropDownModule() ? pageLink : '') : ''}
-      prefetch={false}
-      className="w-full"
-    >
-      <Tooltip
-        title={!isEnableModule ? `Authz is not supporting ${name}` : null}
-        placement="top-end"
-      >
+    <Link href={isDisabled ? '' : pageLink} prefetch={false} className="w-full">
+      <Tooltip title={tooltipTitle} placement="top-end">
         <div
-          className={`menu-item ${routePath === path ? 'menu-item-selected ' : 'font-medium'} ${isEnableModule ? '' : 'opacity-20 cursor-not-allowed'} flex justify-between w-full `}
+          className={`menu-item ${isSelected ? 'menu-item-selected' : 'font-medium'} ${
+            isDisabled ? 'opacity-20 cursor-not-allowed' : ''
+          } flex justify-between w-full`}
         >
           <div className="flex gap-2">
             <Image
               src={icon}
               height={20}
               width={20}
-              alt="Dashboard"
+              alt={name}
               className="opacity-60"
             />
-
             <div className="menu-item-name">{name}</div>
           </div>
 
-          <div className="flex">
-            {itemData.name.toLocaleLowerCase() === 'cosmwasm' ||
-            itemData.name.toLocaleLowerCase() === 'transfers' ||
-            itemData.name.toLowerCase() === 'transactions' ||
-            itemData.name.toLocaleLowerCase() === 'settings' ? (
-              <div key={itemData.name}>
-                {isExpanded ? (
-                  <Image
-                    src="/drop-down-icon.svg"
-                    width={24}
-                    height={24}
-                    alt="collapse-icon"
-                    style={{ transform: 'rotate(180deg)' }}
-                  />
-                ) : (
-                  <Image
-                    src="/drop-down-icon.svg"
-                    width={24}
-                    height={24}
-                    alt="expand-icon"
-                  />
-                )}
-              </div>
-            ) : null}
-          </div>
+          {itemData.multipleOptions && (
+            <div>
+              <Image
+                src="/drop-down-icon.svg"
+                width={24}
+                height={24}
+                alt={isExpanded ? 'collapse-icon' : 'expand-icon'}
+                style={isExpanded ? { transform: 'rotate(180deg)' } : {}}
+              />
+            </div>
+          )}
         </div>
       </Tooltip>
     </Link>
