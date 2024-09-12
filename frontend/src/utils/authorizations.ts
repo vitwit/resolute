@@ -1,3 +1,4 @@
+import { IBC_SEND_TYPE_URL } from './constants';
 import { convertToSpacedName } from './util';
 
 interface AuthzMenuItem {
@@ -74,7 +75,7 @@ export function authzMsgTypes(): AuthzMenuItem[] {
     {
       txn: 'IBC Transfer',
       typeURL: '/ibc.applications.transfer.v1.MsgTransfer',
-    }
+    },
   ];
 }
 
@@ -152,6 +153,9 @@ export function getMsgNameFromAuthz(authorization: Authorization): string {
     case '/cosmos.bank.v1beta1.SendAuthorization':
       return 'Send';
     case '/cosmos.authz.v1beta1.GenericAuthorization':
+      if (authorization?.authorization?.msg === IBC_SEND_TYPE_URL) {
+        return 'IBC Transfer';
+      }
       return convertToSpacedName(
         getTypeURLName(authorization.authorization.msg)
       );
