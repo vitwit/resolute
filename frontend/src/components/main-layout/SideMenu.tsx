@@ -23,8 +23,14 @@ const DISABLED_FOR_AUTHZ_MODE = [
   'feegrant',
   'cosmwasm',
   'history',
-  'builder',
   'multi-send',
+  'txn-builder',
+];
+const DISABLED_FOR_FEEGRANT_MODE = [
+  'ibc-swap',
+  'authz',
+  'cosmwasm',
+  'history',
   'txn-builder',
 ];
 
@@ -66,6 +72,7 @@ const MoreOptions = ({
     (state) => state.common.selectedNetwork.chainName
   );
   const isAuthzMode = useAppSelector((state) => state.authz.authzModeEnabled);
+  const isFeegrantMode = useAppSelector((state) => state.feegrant.feegrantModeEnabled);
 
   const [isExpanded, setIsExpanded] = useState(false);
   const [isTransfersSettingsExpanded, setIsTransfersSettingsExpanded] =
@@ -96,6 +103,9 @@ const MoreOptions = ({
     }
     if (isAuthzMode && DISABLED_FOR_AUTHZ_MODE.includes(module)) {
       return { disabled: true, tooltip: `Authz is not supporting ${module}` };
+    }
+    if(isFeegrantMode && DISABLED_FOR_FEEGRANT_MODE.includes(module)) {
+      return { disabled: true, tooltip: `Feegrant is not supporting ${module}` };
     }
     return { disabled: false, tooltip: null };
   };
