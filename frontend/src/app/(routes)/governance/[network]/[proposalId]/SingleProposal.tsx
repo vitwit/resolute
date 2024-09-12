@@ -432,7 +432,9 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
                         />
                         <DialogDeposit
                           chainID={chainID}
-                          endTime={get(proposalInfo, 'deposit_end_time', '-')}
+                          endTime={getTimeDifferenceToFutureDate(
+                            get(proposalInfo, 'deposit_end_time')
+                          )}
                           onClose={() => setDepositDialogOpen(false)}
                           open={depositDialogOpen}
                           proposalId={proposalID}
