@@ -4,12 +4,10 @@ import TokenAllocation from './TokenAllocation';
 import BalanceSummary from './BalanceSummary';
 import GovernanceView from './GovernanceView';
 import PageHeader from '@/components/common/PageHeader';
-import { useAppSelector } from '@/custom-hooks/StateHooks';
+import useGetShowAuthzAlert from '@/custom-hooks/useGetShowAuthzAlert';
 
 const OverviewDashboard = ({ chainIDs }: { chainIDs: string[] }) => {
-  const showAuthzAlert = useAppSelector(
-    (state) => state.authz.authzAlert.display
-  );
+  const showAuthzAlert = useGetShowAuthzAlert();
   return (
     <div>
       <div className="flex pt-10 gap-10">

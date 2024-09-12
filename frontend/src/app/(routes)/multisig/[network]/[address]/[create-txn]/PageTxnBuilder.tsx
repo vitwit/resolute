@@ -20,6 +20,7 @@ import { COSMOS_CHAIN_ID } from '@/utils/constants';
 import { setError } from '@/store/features/common/commonSlice';
 import { useRouter } from 'next/navigation';
 import { parseBalance } from '@/utils/denom';
+import useGetShowAuthzAlert from '@/custom-hooks/useGetShowAuthzAlert';
 
 const PageTxnBuilder = ({
   paramChain,
@@ -34,9 +35,8 @@ const PageTxnBuilder = ({
   const chainName = paramChain.toLowerCase();
   const validChain = chainName in nameToChainIDs;
   const isWalletConnected = useAppSelector((state) => state.wallet.connected);
-  const showAuthzAlert = useAppSelector(
-    (state) => state.authz.authzAlert.display
-  );
+  const showAuthzAlert = useGetShowAuthzAlert();
+
   const connectWalletOpen = () => {
     dispatch(setConnectWalletOpen(true));
   };

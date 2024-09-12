@@ -12,6 +12,7 @@ import { txExecuteMultiMsg } from '@/store/features/multiops/multiopsSlice';
 import { parseBalance } from '@/utils/denom';
 import { getBalances } from '@/store/features/bank/bankSlice';
 import { TXN_BUILDER_DESCRIPTION } from '@/utils/constants';
+import useGetShowAuthzAlert from '@/custom-hooks/useGetShowAuthzAlert';
 
 const PageMultiops = ({ paramChain }: { paramChain: string }) => {
   const dispatch = useAppDispatch();
@@ -19,7 +20,7 @@ const PageMultiops = ({ paramChain }: { paramChain: string }) => {
   const chainName = paramChain.toLowerCase();
   const validChain = chainName in nameToChainIDs;
   const isWalletConnected = useAppSelector((state) => state.wallet.connected);
-  const showAuthzAlert = useAppSelector((state) => state.authz.authzAlert.display);
+  const showAuthzAlert = useGetShowAuthzAlert();
   const connectWalletOpen = () => {
     dispatch(setConnectWalletOpen(true));
   };

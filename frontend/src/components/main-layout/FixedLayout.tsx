@@ -4,7 +4,7 @@ import React, { useEffect } from 'react';
 import TopBar from './TopBar';
 import SideBar from './SideBar';
 import '@/app/fixed-layout.css';
-import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
+import { useAppDispatch } from '@/custom-hooks/StateHooks';
 import { networks } from '@/utils/chainsInfo';
 import {
   connectSnap,
@@ -28,13 +28,12 @@ import IBCSwapTxStatus from '../IBCSwapTxStatus';
 import Footer from '../common/Footer';
 import DynamicSection from './DynamicSection';
 import useInitApp from '@/custom-hooks/common/useInitApp';
+import useGetShowAuthzAlert from '@/custom-hooks/useGetShowAuthzAlert';
 
 const FixedLayout = ({ children }: { children: React.ReactNode }) => {
   const dispatch = useAppDispatch();
   useShortCuts();
-  const showAuthzAlert = useAppSelector(
-    (state) => state.authz.authzAlert.display
-  );
+  const showAuthzAlert = useGetShowAuthzAlert();
 
   const tryConnectWallet = async (walletName: string) => {
     if (walletName === 'metamask') {

@@ -27,6 +27,7 @@ import DepositCollected from '../../utils-components/DepositCollected';
 import { PROPOSAL_STATUS_VOTING_PERIOD } from '@/utils/constants';
 import { TxStatus } from '@/types/enums';
 import useAddressConverter from '@/custom-hooks/useAddressConverter';
+import useGetShowAuthzAlert from '@/custom-hooks/useGetShowAuthzAlert';
 
 const emptyTallyResult = {
   yes: '',
@@ -56,9 +57,8 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
 
   const isAuthzMode = useAppSelector((state) => state.authz.authzModeEnabled);
   const authzAddress = useAppSelector((state) => state.authz.authzAddress);
-  const showAuthzAlert = useAppSelector(
-    (state) => state.authz.authzAlert.display
-  );
+  const showAuthzAlert = useGetShowAuthzAlert();
+
 
   const { getChainInfo, getDenomInfo } = useGetChainInfo();
   const { convertAddress } = useAddressConverter();
