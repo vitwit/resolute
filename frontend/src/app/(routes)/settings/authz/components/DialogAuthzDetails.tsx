@@ -177,7 +177,7 @@ const DialogViewDetails = ({
                     ))}
 
                 <div className="flex gap-2 px-6">
-                  <p className="w-[100px] text-small-light">Expiry</p>
+                  <p className="w-[100px] text-small-light">Expires in</p>
                   <p className="text-b1">
                     {getTimeDifferenceToFutureDate(g?.expiration || '')}
                   </p>

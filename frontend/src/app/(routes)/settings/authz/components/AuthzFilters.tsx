@@ -4,7 +4,7 @@ import GrantedToMe from './GrantedToMe';
 
 
 const FeegrantFilters = ({ chainIDs }: { chainIDs: string[] }) => {
-  const [filter, setFilter] = useState('byMe');
+  const [filter, setFilter] = useState('toMe');
 
   const handleFiltersChange = (newFilter: string) => {
     setFilter(newFilter);

@@ -100,15 +100,20 @@ const GrantByMeCard: React.FC<GrantByMeCardProps> = ({
 
   return (
     <div className="grants-card justify-between gap-16 items-start w-full">
-      <div className="flex flex-col gap-2 w-[280px]">
-        <div className="flex gap-2 items-center">
-          <Image src={chainLogo} width={20} height={20} alt="network-logo" />
-          <p className="text-b1-light capitalize">{chainName}</p>
+      <div className="flex flex-col w-[280px]">
+        <div className="space-y-1">
+          <div className="flex gap-2 items-center">
+            <p className="text-b1-light capitalize">Grantee</p>
+          </div>
+          <div className="flex gap-2 items-center h-8">
+            <p className="truncate text-b1">{shortenAddress(address, 20)}</p>
+            <Copy content={address} />
+            <FeegrantTypeBadge isPeriodic={isPeriodic} />
+          </div>
         </div>
-        <div className="flex gap-2 items-center h-8">
-          <p className="truncate text-b1">{shortenAddress(address, 20)}</p>
-          <Copy content={address} />
-          <FeegrantTypeBadge isPeriodic={isPeriodic} />
+        <div className="flex gap-2 items-center">
+          <Image src={chainLogo} width={16} height={16} alt="network-logo" />
+          <p className="font-light text-[12px] capitalize text-[#ffffff80]">{chainName}</p>
         </div>
       </div>
       <div className="flex flex-col gap-2 flex-1">

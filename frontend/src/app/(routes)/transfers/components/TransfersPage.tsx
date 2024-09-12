@@ -24,6 +24,9 @@ const TransfersPage = ({ chainIDs }: { chainIDs: string[] }) => {
   const dispatch = useAppDispatch();
 
   const isWalletConnected = useAppSelector((state) => state.wallet.connected);
+  const showAuthzAlert = useAppSelector(
+    (state) => state.authz.authzAlert.display
+  );
 
   const connectWalletOpen = () => {
     dispatch(setConnectWalletOpen(true));
@@ -38,7 +41,9 @@ const TransfersPage = ({ chainIDs }: { chainIDs: string[] }) => {
   }, [paramsTransferType]);
 
   return (
-    <div className="space-y-10 flex flex-col py-10 min-h-[calc(100vh-64px)]">
+    <div
+      className={`space-y-10 flex flex-col py-10 ${showAuthzAlert ? 'min-h-[calc(100vh-118px)]' : 'min-h-[calc(100vh-64px)]'}`}
+    >
       <PageHeader
         title={TRANSFERS_TYPES?.[transferType].title}
         description={TRANSFERS_TYPES?.[transferType].description}

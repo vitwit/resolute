@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import '../../settings.css';
 import PageHeader from '@/components/common/PageHeader';
 import { GENERAL_SETTINGS_DESCRIPTION } from '@/utils/constants';
@@ -19,12 +19,6 @@ const Page = () => {
   const connectWalletOpen = () => {
     dispatch(setConnectWalletOpen(true));
   };
-
-  useEffect(() => {
-    if (isWalletConnected) {
-      openChangeNetwork();
-    }
-  }, []);
 
   return (
     <div className="py-10 h-full flex flex-col">

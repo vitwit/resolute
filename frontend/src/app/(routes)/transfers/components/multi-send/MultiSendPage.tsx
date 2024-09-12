@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import MultiSend from './MultiSend';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import EmptyScreen from '@/components/common/EmptyScreen';
@@ -15,11 +15,6 @@ const MultiSendPage = ({ chainID }: { chainID: string }) => {
     dispatch(setChangeNetworkDialogOpen({ open: true, showSearch: true }));
   };
 
-  useEffect(() => {
-    if (isWalletConnected && !selectedNetwork) {
-      openChangeNetwork();
-    }
-  }, []);
   return (
     <>
       {selectedNetwork && isWalletConnected ? (

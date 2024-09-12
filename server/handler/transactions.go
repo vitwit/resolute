@@ -74,7 +74,7 @@ func (h *Handler) CreateTransaction(c echo.Context) error {
 	var id int
 	err = h.DB.QueryRow(`INSERT INTO "transactions"("multisig_address","fee","status","last_updated","messages","memo", "title", "created_at") 
 	VALUES
-	 ($1,$2,$3,$4,$5,$6,$7) RETURNING "id"`,
+	 ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING "id"`,
 		address, feebz, model.Pending, time.Now(), msgsbz, req.Memo, req.Title, time.Now(),
 	).Scan(&id)
 	if err != nil {

@@ -34,6 +34,9 @@ import { TxStatus } from '@/types/enums';
 const FixedLayout = ({ children }: { children: React.ReactNode }) => {
   const dispatch = useAppDispatch();
   useShortCuts();
+  const showAuthzAlert = useAppSelector(
+    (state) => state.authz.authzAlert.display
+  );
 
   const walletState = useAppSelector((state) => state.wallet.status);
 
@@ -106,8 +109,12 @@ const FixedLayout = ({ children }: { children: React.ReactNode }) => {
       <main className="main">
         <div className="main-container">
           <SideBar />
-          <section className="dynamic-section">
-            <section className="px-10 min-h-[calc(100vh-56px)]">
+          <section
+            className={`dynamic-section ${showAuthzAlert ? 'mt-[114px]' : 'mt-[60px]'}`}
+          >
+            <section
+              className={`px-10 ${showAuthzAlert ? 'min-h-[calc(100vh-110px)]' : 'min-h-[calc(100vh-56px)]'}`}
+            >
               {walletState === TxStatus.PENDING ? (
                 <div className="w-full mx-auto my-[20%] opacity-60">
                   <CustomLoader
