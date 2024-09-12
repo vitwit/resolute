@@ -14,6 +14,7 @@ import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import SelectPermissionType from './SelectPermissionType';
 import AddAddresses from './AddAddresses';
 import CustomButton from '@/components/common/CustomButton';
+import useGetShowAuthzAlert from '@/custom-hooks/useGetShowAuthzAlert';
 
 interface UploadContractInput {
   wasmFile?: File;
@@ -40,9 +41,8 @@ const UploadWasmFile = ({ chainID }: { chainID: string }) => {
   const uploadContractStatus = useAppSelector(
     (state) => state.cosmwasm.chains?.[chainID]?.txUpload.status
   );
-  const showAuthzAlert = useAppSelector(
-    (state) => state.authz.authzAlert.display
-  );
+  const showAuthzAlert = useGetShowAuthzAlert();
+
   const uploadContractLoading = uploadContractStatus === TxStatus.PENDING;
 
   // ------------------------------------------------//

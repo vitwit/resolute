@@ -13,7 +13,6 @@ import {
 } from '@leapwallet/cosmos-snap-provider';
 import {
   establishWalletConnection,
-  setIsLoading,
   unsetIsLoading,
 } from '@/store/features/wallet/walletSlice';
 import {
@@ -31,13 +30,12 @@ import DynamicSection from './DynamicSection';
 import useInitApp from '@/custom-hooks/common/useInitApp';
 import CustomLoader from '../common/CustomLoader';
 import { TxStatus } from '@/types/enums';
+import useGetShowAuthzAlert from '@/custom-hooks/useGetShowAuthzAlert';
 
 const FixedLayout = ({ children }: { children: React.ReactNode }) => {
   const dispatch = useAppDispatch();
   useShortCuts();
-  const showAuthzAlert = useAppSelector(
-    (state) => state.authz.authzAlert.display
-  );
+  const showAuthzAlert = useGetShowAuthzAlert();
   const isLoading = useAppSelector((state) => state.wallet.isLoading);
 
   const walletState = useAppSelector((state) => state.wallet.status);
