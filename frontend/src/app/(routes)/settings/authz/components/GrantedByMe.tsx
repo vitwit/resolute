@@ -31,7 +31,7 @@ const GrantedByMe = ({ chainIDs }: { chainIDs: string[] }) => {
   const { getGrantsByMe } = useAuthzGrants();
 
   const authzGrants = getGrantsByMe(chainIDs);
-   /* eslint-disable @typescript-eslint/no-explicit-any */
+  /* eslint-disable @typescript-eslint/no-explicit-any */
   let grantsList: any[] = [];
   authzGrants.forEach((grant) => {
     const data = {
@@ -145,14 +145,19 @@ const AuthzGrant: React.FC<AddressGrants> = ({ chainID, address, grants }) => {
         className="grants-card justify-between gap-16 w-full items-start"
         key={chainID}
       >
-        <div className="flex flex-col gap-2 w-[280px]">
-          <div className="flex gap-2 items-center">
-            <Image src={chainLogo} width={20} height={20} alt="network-logo" />
-            <p className="text-b1-light capitalize">{chainName}</p>
+        <div className="flex flex-col w-[280px]">
+          <div className="space-y-1">
+            <div className="flex gap-2 items-center">
+              <p className="text-b1-light capitalize">Grantee</p>
+            </div>
+            <div className="flex gap-2 items-center h-8">
+              <p className="truncate text-b1">{shortenAddress(address, 30)}</p>
+              <Copy content={address} />
+            </div>
           </div>
-          <div className="flex gap-2 items-center h-8">
-            <p className="truncate text-b1">{shortenAddress(address, 30)}</p>
-            <Copy content={address} />
+          <div className="flex gap-2 items-center">
+            <Image src={chainLogo} width={16} height={16} alt="network-logo" />
+            <p className="font-light text-[12px] capitalize text-[#ffffff80]">{chainName}</p>
           </div>
         </div>
         <div className="flex flex-col gap-2 flex-1">
@@ -167,7 +172,7 @@ const AuthzGrant: React.FC<AddressGrants> = ({ chainID, address, grants }) => {
           <div className="h-[21px]" />
           <div className="flex gap-6 items-center">
             <button className="primary-btn" onClick={handleRevokeAll}>
-              Revoke All
+              Revoke
             </button>
             <div className="secondary-btn" onClick={handleViewDetails}>
               View Details

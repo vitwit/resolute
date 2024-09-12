@@ -56,6 +56,9 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
 
   const isAuthzMode = useAppSelector((state) => state.authz.authzModeEnabled);
   const authzAddress = useAppSelector((state) => state.authz.authzAddress);
+  const showAuthzAlert = useAppSelector(
+    (state) => state.authz.authzAlert.display
+  );
 
   const { getChainInfo, getDenomInfo } = useGetChainInfo();
   const { convertAddress } = useAddressConverter();
@@ -452,7 +455,7 @@ const SingleProposal: React.FC<SingleProposalProps> = ({
 
               {/* RightSide View */}
               <div
-                className={`flex flex-col h-[calc(100vh-144px)] overflow-y-scroll gap-6 ${isStatusVoting ? 'justify-between' : ''}`}
+                className={`flex flex-col overflow-y-scroll gap-6 ${isStatusVoting ? 'justify-between' : ''} ${showAuthzAlert ? 'h-[calc(100vh-158px)]' : 'h-[calc(100vh-144px)]'}`}
               >
                 {isStatusVoting ? (
                   <ProposalProjection

@@ -4,7 +4,7 @@ import PageHeader from '@/components/common/PageHeader';
 import { useAppDispatch } from '@/custom-hooks/StateHooks';
 import { setChangeNetworkDialogOpen } from '@/store/features/common/commonSlice';
 import { COSMWASM_DESCRIPTION } from '@/utils/constants';
-import React, { useEffect } from 'react';
+import React from 'react';
 
 const Cosmwasm = () => {
   const dispatch = useAppDispatch();
@@ -12,10 +12,6 @@ const Cosmwasm = () => {
   const openChangeNetwork = () => {
     dispatch(setChangeNetworkDialogOpen({ open: true, showSearch: true }));
   };
-
-  useEffect(() => {
-    openChangeNetwork();
-  }, []);
 
   return (
     <div className="py-10 h-full flex flex-col">

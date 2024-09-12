@@ -4,7 +4,7 @@ import React, { useEffect } from 'react';
 import TopBar from './TopBar';
 import SideBar from './SideBar';
 import '@/app/fixed-layout.css';
-import { useAppDispatch } from '@/custom-hooks/StateHooks';
+import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { networks } from '@/utils/chainsInfo';
 import {
   connectSnap,
@@ -32,6 +32,9 @@ import useInitApp from '@/custom-hooks/common/useInitApp';
 const FixedLayout = ({ children }: { children: React.ReactNode }) => {
   const dispatch = useAppDispatch();
   useShortCuts();
+  const showAuthzAlert = useAppSelector(
+    (state) => state.authz.authzAlert.display
+  );
 
   const tryConnectWallet = async (walletName: string) => {
     if (walletName === 'metamask') {
@@ -102,8 +105,12 @@ const FixedLayout = ({ children }: { children: React.ReactNode }) => {
       <main className="main">
         <div className="main-container">
           <SideBar />
-          <section className="dynamic-section">
-            <section className="px-10 min-h-[calc(100vh-56px)]">
+          <section
+            className={`dynamic-section ${showAuthzAlert ? 'mt-[114px]' : 'mt-[60px]'}`}
+          >
+            <section
+              className={`px-10 ${showAuthzAlert ? 'min-h-[calc(100vh-110px)]' : 'min-h-[calc(100vh-56px)]'}`}
+            >
               <DynamicSection>{children}</DynamicSection>
             </section>
             <footer>

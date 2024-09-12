@@ -69,7 +69,7 @@ const ValidatorHeader = (props: ValidatorHeaderProps) => {
       <div className="flex gap-6 justify-between flex-wrap">
         <StatsCard
           name="Total Staked Assets"
-          value={totalStakedAmount}
+          value={"$ "+totalStakedAmount}
           isLoading={isLoading}
         />
         <StatsCard
