@@ -597,10 +597,10 @@ export const networks: Network[] = [
       chainId: 'osmosis-1',
       chainName: 'Osmosis',
       rest: 'https://api.beta.resolute.vitwit.com',
-      rpc: 'https://rpc.osmosis.zone',
+      rpc: 'http://188.166.220.245:26657',
       restURIs: ['https://api.beta.resolute.vitwit.com'],
       rpcURIs: [
-        'https://rpc.osmosis.zone',
+        'http://188.166.220.245:26657',
         'https://rpc-osmosis.blockapsis.com',
         'https://osmosis-rpc.quickapi.com:443',
       ],
@@ -673,7 +673,7 @@ export const networks: Network[] = [
       chainId: 'passage-2',
       chainName: 'Passage',
       rest: 'https://api.beta.resolute.vitwit.com',
-      rpc: 'https://api.beta.resolute.vitwit.com',
+      rpc: 'https://rpc.passage.vitwit.com',
       restURIs: [
         'https://api.beta.resolute.vitwit.com'
       ],
@@ -922,12 +922,12 @@ export const networks: Network[] = [
       chainId: 'regen-1',
       chainName: 'Regen',
       rest: 'https://api.beta.resolute.vitwit.com',
-      rpc: 'https://api.beta.resolute.vitwit.com',
+      rpc: 'http://public-rpc.regen.vitwit.com:26657',
       restURIs: [
         'https://api.beta.resolute.vitwit.com'
       ],
       rpcURIs: [
-        'https://regen-mainnet-rpc.autostake.com:443',
+        'http://public-rpc.regen.vitwit.com:26657',
         'https://rpc-regen-ia.cosmosia.notional.ventures',
         'https://regen-rpc.publicnode.com:443',
         'https://api.resolute.vitwit.com/regen_rpc',
@@ -1169,12 +1169,12 @@ export const networks: Network[] = [
       chainId: 'umee-1',
       chainName: 'Umee',
       rest: 'https://api.beta.resolute.vitwit.com',
-      rpc: 'https://api.beta.resolute.vitwit.com',
+      rpc: 'https://umee-rpc.vitwit.com',
       restURIs: [
         'https://api.beta.resolute.vitwit.com'
       ],
       rpcURIs: [
-        'https://umee-rpc.quantnode.tech',
+        'https://umee-rpc.vitwit.com',
         'https://rpc-umee-ia.cosmosia.notional.ventures',
         'https://umee-rpc.polkachu.com',
         'https://api.resolute.vitwit.com/umee_rpc',
