@@ -49,6 +49,7 @@ export function logout() {
   localStorage.removeItem('CONNECTED');
   removeAllAuthTokens();
   removeWalletName();
+  removeAuthzAlertData();
 }
 
 export function setLocalNetwork(networkConfig: Network, chainID: string) {
@@ -270,6 +271,10 @@ export function getAuthzAlertData() {
 
 export function isAuthzAlertDataSet() {
   const authzAlertData = localStorage.getItem(AUTHZ_ALERT_KEY);
-  if(authzAlertData) return true;
+  if (authzAlertData) return true;
   return false;
+}
+
+export function removeAuthzAlertData() {
+  localStorage.removeItem(AUTHZ_ALERT_KEY);
 }

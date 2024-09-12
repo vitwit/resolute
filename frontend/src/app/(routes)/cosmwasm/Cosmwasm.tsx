@@ -13,10 +13,6 @@ const Cosmwasm = () => {
     dispatch(setChangeNetworkDialogOpen({ open: true, showSearch: true }));
   };
 
-  useEffect(() => {
-    openChangeNetwork();
-  }, []);
-
   return (
     <div className="py-10 h-full flex flex-col">
       <PageHeader title="Cosmwasm" description={COSMWASM_DESCRIPTION} />

@@ -20,12 +20,6 @@ const Page = () => {
     dispatch(setConnectWalletOpen(true));
   };
 
-  useEffect(() => {
-    if (isWalletConnected) {
-      openChangeNetwork();
-    }
-  }, []);
-
   return (
     <div className="py-10 h-full flex flex-col">
       <PageHeader title="Settings" description={GENERAL_SETTINGS_DESCRIPTION} />

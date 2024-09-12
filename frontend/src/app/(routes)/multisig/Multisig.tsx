@@ -18,12 +18,6 @@ const Multisig = () => {
     dispatch(setConnectWalletOpen(true));
   };
 
-  useEffect(() => {
-    if (isWalletConnected) {
-      openChangeNetwork();
-    }
-  }, []);
-
   return (
     <div className="py-10 h-full flex flex-col">
       <PageHeader title="MultiSig" description={MULTISIG_DESCRIPTION} />

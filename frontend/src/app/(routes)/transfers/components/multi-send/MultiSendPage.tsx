@@ -15,11 +15,6 @@ const MultiSendPage = ({ chainID }: { chainID: string }) => {
     dispatch(setChangeNetworkDialogOpen({ open: true, showSearch: true }));
   };
 
-  useEffect(() => {
-    if (isWalletConnected && !selectedNetwork) {
-      openChangeNetwork();
-    }
-  }, []);
   return (
     <>
       {selectedNetwork && isWalletConnected ? (

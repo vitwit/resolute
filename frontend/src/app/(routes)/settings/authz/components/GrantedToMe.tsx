@@ -120,7 +120,7 @@ const GrantToMeCard = ({
     >
       <div className="flex flex-col gap-2 w-[280px]">
         <div className="flex gap-2 items-center">
-          <p className="text-b1-light">Address</p>
+          <p className="text-b1-light">Granter</p>
           {isGranterSelected(convertToCosmosAddress(grant?.address)) && (
             <div className="flex space-x-0">
               <Image src={TICK_ICON} width={16} height={16} alt="used-icon" />
