@@ -4,7 +4,7 @@
 2. Run the command ```cp example_inventory.ini inventory.ini```
 3. In the ```inventory.ini``` file make all the required changes to the following fields
 
-```
+``` ini
 ansible_ssh_private_key_file= "Specify the full path to the ssh private key Example:~/.ssh/id_rsa"
 ssh_file_path="Specify the full path to id_rsa.pub Example: .ssh/id_rsa.pub"
 digital_ocean_api_token="Specify the digital ocean token"
