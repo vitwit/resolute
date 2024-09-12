@@ -31,9 +31,7 @@ export const networks: Network[] = [
       rest: 'https://api.beta.resolute.vitwit.com',
       rpc: 'https://api.beta.resolute.vitwit.com',
       restURIs: [
-        'https://agoric-api.polkachu.com',
-        'https://api-agoric-ia.cosmosia.notional.ventures',
-        'https://api.agoric.stakewith.us',
+        'https://api.beta.resolute.vitwit.com'
       ],
       rpcURIs: [
         'https://agoric-rpc.polkachu.com',
@@ -281,9 +279,7 @@ export const networks: Network[] = [
       rest: 'https://api.beta.resolute.vitwit.com',
       rpc: 'https://api.beta.resolute.vitwit.com',
       restURIs: [
-        'https://api.mainnet.desmos.network',
-        'https://desmos-api.lavenderfive.com',
-        'https://api.resolute.vitwit.com/desmos_api',
+        'https://api.beta.resolute.vitwit.com'
       ],
       rpcURIs: [
         'https://rpc.mainnet.desmos.network',
@@ -519,10 +515,7 @@ export const networks: Network[] = [
       rest: 'https://api.beta.resolute.vitwit.com',
       rpc: 'https://api.beta.resolute.vitwit.com',
       restURIs: [
-        'https://api-omniflixhub-ia.cosmosia.notional.ventures',
-        'https://omniflix-rest.publicnode.com',
-        'https://omniflixhub-api.lavenderfive.com',
-        'https://api.resolute.vitwit.com/omniflix_api',
+        'https://api.beta.resolute.vitwit.com'
       ],
       rpcURIs: [
         'https://rpc-omniflixhub-ia.cosmosia.notional.ventures',
@@ -682,10 +675,7 @@ export const networks: Network[] = [
       rest: 'https://api.beta.resolute.vitwit.com',
       rpc: 'https://api.beta.resolute.vitwit.com',
       restURIs: [
-        'https://api.passage.vitwit.com',
-        'https://rest-passage.ecostake.com',
-        'https://passage-api.polkachu.com',
-        'https://api-passage-ia.cosmosia.notional.ventures',
+        'https://api.beta.resolute.vitwit.com'
       ],
       rpcURIs: [
         'https://rpc.passage.vitwit.com',
@@ -852,10 +842,7 @@ export const networks: Network[] = [
       rest: 'https://api.beta.resolute.vitwit.com',
       rpc: 'https://api.beta.resolute.vitwit.com',
       restURIs: [
-        'https://quicksilver-rest.staketab.org',
-        'https://quicksilver-api.lavenderfive.com:443',
-        'https://quicksilver-rest.publicnode.com',
-        'https://api.resolute.vitwit.com/quicksilver_api',
+        'https://api.beta.resolute.vitwit.com'
       ],
       rpcURIs: [
         'https://quicksilver-rpc.staketab.org:443',
@@ -937,10 +924,7 @@ export const networks: Network[] = [
       rest: 'https://api.beta.resolute.vitwit.com',
       rpc: 'https://api.beta.resolute.vitwit.com',
       restURIs: [
-        'https://regen-mainnet-lcd.autostake.com:443',
-        'https://api-regen-ia.cosmosia.notional.ventures',
-        'https://regen-rest.publicnode.com',
-        'https://api.resolute.vitwit.com/regen_api',
+        'https://api.beta.resolute.vitwit.com'
       ],
       rpcURIs: [
         'https://regen-mainnet-rpc.autostake.com:443',
@@ -1022,9 +1006,7 @@ export const networks: Network[] = [
       rest: 'https://api.beta.resolute.vitwit.com',
       rpc: 'https://api.beta.resolute.vitwit.com',
       restURIs: [
-        'https://stargaze-api.polkachu.com',
-        'https://stargaze-rest.publicnode.com',
-        'https://api-stargaze-ia.cosmosia.notional.ventures',
+        'https://api.beta.resolute.vitwit.com'
       ],
       rpcURIs: [
         'https://stargaze-rpc.polkachu.com',
@@ -1105,10 +1087,7 @@ export const networks: Network[] = [
       rest: 'https://api.beta.resolute.vitwit.com',
       rpc: 'https://api.beta.resolute.vitwit.com',
       restURIs: [
-        'https://dymension-mainnet-lcd.autostake.com:443',
-        'https://dymension.api.kjnodes.com',
-        'https://api.dymension.nodestake.org',
-        'https://dymension-api.lavenderfive.com:443',
+        'https://api.beta.resolute.vitwit.com'
       ],
       rpcURIs: [
         'https://rpc.dymension.nodestake.org',
@@ -1192,10 +1171,7 @@ export const networks: Network[] = [
       rest: 'https://api.beta.resolute.vitwit.com',
       rpc: 'https://api.beta.resolute.vitwit.com',
       restURIs: [
-        'https://umee-lcd.quantnode.tech',
-        'https://api-umee-ia.cosmosia.notional.ventures',
-        'https://umee-api.polkachu.com',
-        'https://api.resolute.vitwit.com/umee_api',
+        'https://api.beta.resolute.vitwit.com'
       ],
       rpcURIs: [
         'https://umee-rpc.quantnode.tech',
@@ -1358,9 +1334,7 @@ export const networks: Network[] = [
       rest: 'https://api.beta.resolute.vitwit.com',
       rpc: 'https://api.beta.resolute.vitwit.com',
       restURIs: [
-        'https://quasar-rest.publicnode.com',
-        'https://quasar-api.polkachu.com',
-        'https://quasar-mainnet-lcd.autostake.com:443',
+        'https://api.beta.resolute.vitwit.com'
       ],
       rpcURIs: [
         'https://quasar-rpc.publicnode.com:443',
@@ -1441,9 +1415,7 @@ export const networks: Network[] = [
       rest: 'https://api.beta.resolute.vitwit.com',
       rpc: 'https://api.beta.resolute.vitwit.com',
       restURIs: [
-        'https://rest.comdex.one',
-        'https://comdex-api.polkachu.com',
-        'https://comdex-rest.publicnode.com',
+        'https://api.beta.resolute.vitwit.com'
       ],
       rpcURIs: [
         'https://rpc.comdex.one',
@@ -1524,9 +1496,7 @@ export const networks: Network[] = [
       rest: 'https://api.beta.resolute.vitwit.com',
       rpc: 'https://gravitybridge-rpc.lavenderfive.com',
       restURIs: [
-        'https://gravitybridge-api.lavenderfive.com',
-        'https://gravity-api.polkachu.com',
-        'https://api-gravitybridge-ia.cosmosia.notional.ventures',
+        'https://api.beta.resolute.vitwit.com'
       ],
       rpcURIs: [
         'https://gravitybridge-rpc.lavenderfive.com',
@@ -1607,9 +1577,7 @@ export const networks: Network[] = [
       rest: 'https://api.beta.resolute.vitwit.com',
       rpc: 'https://api.beta.resolute.vitwit.com',
       restURIs: [
-        'https://rest.marsprotocol.io:443',
-        'https://mars-api.lavenderfive.com:443',
-        'https://api-gravitybridge-ia.cosmosia.notional.ventures',
+        'https://api.beta.resolute.vitwit.com'
       ],
       rpcURIs: [
         'https://rpc.marsprotocol.io:443',
@@ -1973,5 +1941,83 @@ export const networks: Network[] = [
         gradient: 'linear-gradient(180deg, #10a7ef 0%, #12131C80 100%)',
       },
     },
-  }
+  },
+  {
+    enableModules: {
+      authz: false,
+      feegrant: false,
+      group: false,
+    },
+    aminoConfig: {
+      authz: true,
+      feegrant: true,
+      group: false,
+    },
+    showAirdrop: false,
+    logos: {
+      menu: 'https://raw.githubusercontent.com/cosmos/chain-registry/master/saga/images/saga.png',
+      toolbar:
+        'https://raw.githubusercontent.com/cosmos/chain-registry/master/saga/images/saga.png',
+    },
+    supportedWallets: ['KEPLR'],
+    keplrExperimental: true,
+    leapExperimental: false,
+    isTestnet: false,
+    isCustomNetwork: false,
+    explorerTxHashEndpoint: 'https://www.mintscan.io/saga/txs/',
+    govV1: false,
+    config: {
+      chainId: 'ssc-1',
+      chainName: 'saga',
+      rest: 'https://api.beta.resolute.vitwit.com',
+      rpc: 'https://api.beta.resolute.vitwit.com',
+      restURIs: ['https://api.beta.resolute.vitwit.com'],
+      rpcURIs: [
+        'https://rpc.mainnet.archway.io',
+        'https://archway-rpc.lavenderfive.com:443',
+        'https://rpc.archway.nodestake.top',
+      ],
+      currencies: [
+        {
+          coinDenom: 'SAGA',
+          coinMinimalDenom: 'usaga',
+          coinDecimals: 6,
+        },
+      ],
+      bech32Config: {
+        bech32PrefixAccAddr: 'saga',
+        bech32PrefixAccPub: 'sagapub',
+        bech32PrefixValAddr: 'sagavaloper',
+        bech32PrefixValPub: 'sagavaloperpub',
+        bech32PrefixConsAddr: 'sagavalcons',
+        bech32PrefixConsPub: 'sagavalconspub',
+      },
+      feeCurrencies: [
+        {
+          coinDenom: 'SAGA',
+          coinMinimalDenom: 'usaga',
+          coinDecimals: 6,
+          gasPriceStep: {
+            low: 0.01,
+            average: 0.025,
+            high: 0.04,
+          },
+        },
+      ],
+      bip44: {
+        coinType: 118,
+      },
+      stakeCurrency: {
+        coinDenom: 'STAKE',
+        coinMinimalDenom: 'usaga',
+        coinDecimals: 6,
+      },
+      image:
+        'https://raw.githubusercontent.com/cosmos/chain-registry/master/saga/images/saga.png',
+      theme: {
+        primaryColor: '#040404',
+        gradient: 'linear-gradient(180deg, #040404 0%, #12131C80 100%)',
+      },
+    },
+  },
 ];
