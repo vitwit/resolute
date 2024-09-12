@@ -13,6 +13,7 @@ import {
 } from '@leapwallet/cosmos-snap-provider';
 import {
   establishWalletConnection,
+  setIsLoading,
   unsetIsLoading,
 } from '@/store/features/wallet/walletSlice';
 import {
@@ -42,7 +43,7 @@ const FixedLayout = ({ children }: { children: React.ReactNode }) => {
 
   const tryConnectWallet = async (walletName: string) => {
     if (walletName === 'metamask') {
-      // dispatch(setIsLoading());
+      dispatch(setIsLoading());
       try {
         for (let i = 0; i < networks.length; i++) {
           const chainId: string = networks[i].config.chainId;
