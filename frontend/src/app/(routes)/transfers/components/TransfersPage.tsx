@@ -9,6 +9,7 @@ import EmptyScreen from '@/components/common/EmptyScreen';
 import PageHeader from '@/components/common/PageHeader';
 import { TRANSFERS_TYPES } from '@/utils/constants';
 import SingleSend from './single-send/SingleSend';
+import useGetShowAuthzAlert from '@/custom-hooks/useGetShowAuthzAlert';
 
 const TransfersPage = ({ chainIDs }: { chainIDs: string[] }) => {
   const [sortedAssets, authzSortedAssets] = useSortedAssets(chainIDs, {
@@ -24,9 +25,8 @@ const TransfersPage = ({ chainIDs }: { chainIDs: string[] }) => {
   const dispatch = useAppDispatch();
 
   const isWalletConnected = useAppSelector((state) => state.wallet.connected);
-  const showAuthzAlert = useAppSelector(
-    (state) => state.authz.authzAlert.display
-  );
+  const showAuthzAlert = useGetShowAuthzAlert();
+
 
   const connectWalletOpen = () => {
     dispatch(setConnectWalletOpen(true));

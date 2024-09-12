@@ -13,6 +13,7 @@ import AttachFunds from '../single-contract/AttachFunds';
 import { multiSendInputFieldStyles } from '@/app/(routes)/transfers/styles';
 import CustomButton from '@/components/common/CustomButton';
 import Image from 'next/image';
+import useGetShowAuthzAlert from '@/custom-hooks/useGetShowAuthzAlert';
 
 interface InstatiateContractInputs {
   codeId: string;
@@ -47,9 +48,8 @@ const InstantiateContract = ({ chainID }: { chainID: string }) => {
   const txInstantiateStatus = useAppSelector(
     (state) => state.cosmwasm.chains?.[chainID]?.txInstantiate?.status
   );
-  const showAuthzAlert = useAppSelector(
-    (state) => state.authz.authzAlert.display
-  );
+  const showAuthzAlert = useGetShowAuthzAlert();
+
 
   // ------------------------------------------------//
   // -----------------FORM HOOKS---------------------//
