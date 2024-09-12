@@ -5,7 +5,6 @@ import ProfileDialog from './ProfileDialog';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { setConnectWalletOpen } from '@/store/features/wallet/walletSlice';
 import { getConnectWalletLogo, shortenString } from '@/utils/util';
-import { RESOLUTE_LOGO } from '@/constants/image-names';
 import { RootState } from '@/store/store';
 import AuthzGrantsAlert from './AuthzGrantsAlert';
 

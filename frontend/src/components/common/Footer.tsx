@@ -1,6 +1,5 @@
 import React from 'react';
 import Image from 'next/image';
-import { RESOLUTE_LOGO } from '@/constants/image-names';
 
 const Footer = () => {
   return (
