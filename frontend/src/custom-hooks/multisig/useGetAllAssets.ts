@@ -28,7 +28,11 @@ const useGetAllAssets = () => {
     isMultisig: boolean
   ) => {
     const { chainName } = getChainInfo(chainID);
-    const { minimalDenom: nativeMinimalDenom } = getDenomInfo(chainID);
+    const {
+      minimalDenom: nativeMinimalDenom,
+      displayDenom,
+      decimals: nativeDecimals,
+    } = getDenomInfo(chainID);
     const allAssets: MultisigAsset[] = [];
     const balances = isMultisig
       ? multisigBalances
@@ -39,21 +43,37 @@ const useGetAllAssets = () => {
           return denomInfo.denom === balance.denom;
         }
       );
-      const { symbol, decimals, origin_denom } = denomInfo[0];
-      const assetInfo = {
-        amount: Number(balance.amount),
-        amountInDenom: parseBalance(
-          [{ amount: balance.amount, denom: origin_denom }],
-          decimals,
-          origin_denom
-        ),
-        decimals: decimals,
-        displayDenom: symbol,
-        minimalDenom: origin_denom,
-        ibcDenom: denomInfo[0].denom,
+      const isNativeDenom = balance.denom === nativeMinimalDenom;
+      if (!isNativeDenom && !denomInfo?.length) {
+        return;
+      }
+      const assetData = {
+        symbol: isNativeDenom ? displayDenom : denomInfo?.[0].symbol,
+        decimals: isNativeDenom ? nativeDecimals : denomInfo?.[0].decimals,
+        originDenom: isNativeDenom ? nativeMinimalDenom : denomInfo?.[0].denom,
+        ibcDenom: isNativeDenom ? nativeMinimalDenom : denomInfo?.[0].denom,
       };
-      if (includeNative || nativeMinimalDenom !== denomInfo[0].denom) {
-        allAssets.push(assetInfo);
+      if (
+        assetData.symbol &&
+        assetData.decimals &&
+        assetData.originDenom &&
+        assetData.ibcDenom
+      ) {
+        const assetInfo = {
+          amount: Number(balance.amount),
+          amountInDenom: parseBalance(
+            [{ amount: balance.amount, denom: assetData.originDenom }],
+            assetData.decimals,
+            assetData.originDenom
+          ),
+          decimals: assetData.decimals,
+          displayDenom: assetData.symbol,
+          minimalDenom: assetData.originDenom,
+          ibcDenom: assetData.ibcDenom,
+        };
+        if (includeNative || nativeMinimalDenom !== assetData.originDenom) {
+          allAssets.push(assetInfo);
+        }
       }
     });
     return { allAssets };
@@ -69,24 +89,37 @@ const useGetAllAssets = () => {
     denom: string;
   }) => {
     const { chainName } = getChainInfo(chainID);
+    const {
+      minimalDenom: nativeMinimalDenom,
+      displayDenom,
+      decimals: nativeDecimals,
+    } = getDenomInfo(chainID);
     const denomInfo = chainDenomsData[chainName.toLowerCase()]?.filter(
       (denomInfo) => {
         return denomInfo.denom === denom;
       }
     );
-    if (!denomInfo?.length) {
+    const isNativeDenom = denom === nativeMinimalDenom;
+    if (!denomInfo?.length && !isNativeDenom) {
       return { assetInfo: null };
     }
-    const { symbol, decimals, origin_denom } = denomInfo?.[0];
-    const assetInfo = {
-      amountInDenom: parseBalance(
-        [{ amount, denom: origin_denom }],
-        decimals,
-        origin_denom
-      ),
-      displayDenom: symbol,
+    const assetData = {
+      symbol: isNativeDenom ? displayDenom : denomInfo?.[0].symbol,
+      decimals: isNativeDenom ? nativeDecimals : denomInfo?.[0].decimals,
+      originDenom: isNativeDenom ? nativeMinimalDenom : denomInfo?.[0].denom,
     };
-    return { assetInfo };
+    if (assetData.decimals && assetData.symbol && assetData.originDenom) {
+      const assetInfo = {
+        amountInDenom: parseBalance(
+          [{ amount, denom: assetData.originDenom }],
+          assetData.decimals,
+          assetData.originDenom
+        ),
+        displayDenom: assetData.symbol,
+      };
+      return { assetInfo };
+    }
+    return { assetInfo: null };
   };
 
   return { getAllAssets, getParsedAsset };

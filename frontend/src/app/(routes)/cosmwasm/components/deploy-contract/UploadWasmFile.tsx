@@ -40,6 +40,9 @@ const UploadWasmFile = ({ chainID }: { chainID: string }) => {
   const uploadContractStatus = useAppSelector(
     (state) => state.cosmwasm.chains?.[chainID]?.txUpload.status
   );
+  const showAuthzAlert = useAppSelector(
+    (state) => state.authz.authzAlert.display
+  );
   const uploadContractLoading = uploadContractStatus === TxStatus.PENDING;
 
   // ------------------------------------------------//
@@ -119,7 +122,9 @@ const UploadWasmFile = ({ chainID }: { chainID: string }) => {
     );
   };
   return (
-    <div className="min-h-[calc(100vh-325px)] flex flex-col gap-10 justify-between">
+    <div
+      className={`flex flex-col gap-10 justify-between ${showAuthzAlert ? 'min-h-[calc(100vh-380px)]' : 'min-h-[calc(100vh-325px)]'}`}
+    >
       <form
         onSubmit={handleSubmit(onUpload)}
         className="flex-1 h-full flex flex-col gap-6"
@@ -185,7 +190,9 @@ const UploadWasmFile = ({ chainID }: { chainID: string }) => {
           />
           <div className="w-[50%] space-y-6">
             <div className="space-y-0">
-              <div className="form-label-text">Select Instantiate Permission</div>
+              <div className="form-label-text">
+                Select Instantiate Permission
+              </div>
               <div className="flex flex-col gap-4">
                 <SelectPermissionType
                   handleAccessTypeChange={handleAccessTypeChange}

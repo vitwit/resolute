@@ -19,12 +19,13 @@ const PageMultiops = ({ paramChain }: { paramChain: string }) => {
   const chainName = paramChain.toLowerCase();
   const validChain = chainName in nameToChainIDs;
   const isWalletConnected = useAppSelector((state) => state.wallet.connected);
+  const showAuthzAlert = useAppSelector((state) => state.authz.authzAlert.display);
   const connectWalletOpen = () => {
     dispatch(setConnectWalletOpen(true));
   };
 
   return (
-    <div className="py-10 h-[calc(100vh-64px)] flex flex-col">
+    <div className={`py-10 flex flex-col ${showAuthzAlert ? "h-[calc(100vh-118px)]":"h-[calc(100vh-64px)]"}`}>
       <div className="flex-1 sticky top-0">
         <PageHeader
           title="Transaction Builder"

@@ -5,7 +5,7 @@ import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { setChangeNetworkDialogOpen } from '@/store/features/common/commonSlice';
 import { setConnectWalletOpen } from '@/store/features/wallet/walletSlice';
 import { TXN_BUILDER_DESCRIPTION } from '@/utils/constants';
-import React, { useEffect } from 'react';
+import React from 'react';
 
 const Page = () => {
   const dispatch = useAppDispatch();
@@ -17,12 +17,6 @@ const Page = () => {
   const connectWalletOpen = () => {
     dispatch(setConnectWalletOpen(true));
   };
-
-  useEffect(() => {
-    if (isWalletConnected) {
-      openChangeNetwork();
-    }
-  }, []);
 
   return (
     <div className="py-10 h-full flex flex-col">

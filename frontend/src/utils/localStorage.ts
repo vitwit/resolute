@@ -6,6 +6,7 @@ const AUTHZ_VALUE = 'Authz_value';
 const FEEGRANT_KEY = 'feegrant_key';
 const FEEGRANT_VALUE = 'feegrant_value';
 const IBC_TXNS_KEY = 'IBC_Txns';
+const AUTHZ_ALERT_KEY = 'authz_alert';
 
 interface LocalNetworks {
   [key: string]: Network;
@@ -48,6 +49,7 @@ export function logout() {
   localStorage.removeItem('CONNECTED');
   removeAllAuthTokens();
   removeWalletName();
+  removeAuthzAlertData();
 }
 
 export function setLocalNetwork(networkConfig: Network, chainID: string) {
@@ -66,7 +68,10 @@ export function removeLocalNetwork(chainID: string) {
     const localNetworksParsed: LocalNetworks = JSON.parse(localNetworks);
     if (localNetworksParsed[chainID]) {
       delete localNetworksParsed[chainID];
-      localStorage.setItem('localNetworks', JSON.stringify(localNetworksParsed));
+      localStorage.setItem(
+        'localNetworks',
+        JSON.stringify(localNetworksParsed)
+      );
     }
   }
 }
@@ -249,4 +254,27 @@ export function updateIBCTransactionStatusInLocal(txHash: string) {
       localStorage.setItem(IBC_TXNS_KEY, JSON.stringify(parsedTransactions));
     }
   }
+}
+
+export function setAuthzAlertData(display: boolean) {
+  localStorage.setItem(AUTHZ_ALERT_KEY, JSON.stringify({ display }));
+}
+
+export function getAuthzAlertData() {
+  const authzAlertData = localStorage.getItem(AUTHZ_ALERT_KEY);
+  if (authzAlertData) {
+    return JSON.parse(authzAlertData).display;
+  }
+  localStorage.setItem(AUTHZ_ALERT_KEY, JSON.stringify({ display: true }));
+  return true;
+}
+
+export function isAuthzAlertDataSet() {
+  const authzAlertData = localStorage.getItem(AUTHZ_ALERT_KEY);
+  if (authzAlertData) return true;
+  return false;
+}
+
+export function removeAuthzAlertData() {
+  localStorage.removeItem(AUTHZ_ALERT_KEY);
 }

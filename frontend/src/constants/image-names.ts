@@ -43,3 +43,4 @@ export const TICK_ICON = '/icons/tick-icon.svg';
 export const DROP_DOWN_ICON_FILLED = '/icons/drop-down-arrow-filled.svg';
 export const REMOVE_ICON_OUTLINED = '/icons/remove-icon-outlined.svg';
 export const ADD_ICON_ROUNDED = '/icons/add-icon-rounded.svg';
+export const CANCEL_ICON_SOLID = '/icons/cancel-icon-solid.svg';

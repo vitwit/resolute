@@ -1,5 +1,5 @@
 import { SelectChangeEvent, TextField } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import useContracts from '@/custom-hooks/useContracts';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
@@ -46,6 +46,9 @@ const InstantiateContract = ({ chainID }: { chainID: string }) => {
 
   const txInstantiateStatus = useAppSelector(
     (state) => state.cosmwasm.chains?.[chainID]?.txInstantiate?.status
+  );
+  const showAuthzAlert = useAppSelector(
+    (state) => state.authz.authzAlert.display
   );
 
   // ------------------------------------------------//
@@ -160,13 +163,10 @@ const InstantiateContract = ({ chainID }: { chainID: string }) => {
     );
   };
 
-  // ------------------------------------------//
-  // ---------------SIDE EFFECT----------------//
-  // ------------------------------------------//
-  useEffect(() => {}, []);
-
   return (
-    <div className="min-h-[calc(100vh-325px)] flex flex-col gap-10 justify-between">
+    <div
+      className={`flex flex-col gap-10 justify-between ${showAuthzAlert ? 'min-h-[calc(100vh-380px)]' : 'min-h-[calc(100vh-325px)]'}`}
+    >
       <form onSubmit={handleSubmit(onSubmit)} id="instantiate-contract">
         <div className="flex gap-10">
           <div className="w-[50%] space-y-6">
