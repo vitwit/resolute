@@ -19,6 +19,7 @@ import { TxStatus } from '@/types/enums';
 import { RootState } from '@/store/store';
 import { groupBy } from 'lodash';
 import { shortenAddress } from '@/utils/util';
+import WithConnectionIllustration from '@/components/illustrations/withConnectionIllustration';
 
 const GrantedByMe = ({ chainIDs }: { chainIDs: string[] }) => {
   const [revokeDialogOpen, setRevokeDialogOpen] = useState(false);
@@ -81,7 +82,7 @@ const GrantedByMe = ({ chainIDs }: { chainIDs: string[] }) => {
         <>
           {!authzGrants?.length && (
             <>
-              <div>No grants by you</div>
+              <WithConnectionIllustration message="No grants by you" />
             </>
           )}
         </>
@@ -157,7 +158,9 @@ const AuthzGrant: React.FC<AddressGrants> = ({ chainID, address, grants }) => {
           </div>
           <div className="flex gap-2 items-center">
             <Image src={chainLogo} width={16} height={16} alt="network-logo" />
-            <p className="font-light text-[12px] capitalize text-[#ffffff80]">{chainName}</p>
+            <p className="font-light text-[12px] capitalize text-[#ffffff80]">
+              {chainName}
+            </p>
           </div>
         </div>
         <div className="flex flex-col gap-2 flex-1">

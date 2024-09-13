@@ -40,25 +40,30 @@ const FixedLayout = ({ children }: { children: React.ReactNode }) => {
   const isLoading = useAppSelector((state) => state.wallet.isLoading);
 
   const walletState = useAppSelector((state) => state.wallet.status);
+  const notSupoortedMetamaskChainIds = ['agoric-3', 'evmos_9001-2', 'desmos-mainnet']
 
   const tryConnectWallet = async (walletName: string) => {
     if (walletName === 'metamask') {
       dispatch(setIsLoading());
       try {
+        const snapInstalled = await getSnap();
+        if (!snapInstalled) {
+          await connectSnap(); // Initiates installation if not already present
+        }
+
         for (let i = 0; i < networks.length; i++) {
           const chainId: string = networks[i].config.chainId;
-          const snapInstalled = await getSnap();
-          if (!snapInstalled) {
-            await connectSnap(); // Initiates installation if not already present
+          if (notSupoortedMetamaskChainIds.indexOf(chainId) <= -1) {
+
+            try {
+              await experimentalSuggestChain(networks[i].config, {
+                force: false,
+              });
+            } catch (error) {
+              console.log('Error while connecting ', chainId);
+            }
           }
 
-          try {
-            await experimentalSuggestChain(networks[i].config, {
-              force: false,
-            });
-          } catch (error) {
-            console.log('Error while connecting ', chainId);
-          }
         }
       } catch (error) {
         console.log('trying to connect wallet ', error);
