@@ -20,7 +20,7 @@ const Page = () => {
         title="Transaction History"
         description={'Your transaction history'}
       />
-      <div className="flex-1 flex items-center justify-center mt-16 w-full">
+      <div className="flex-1 flex items-center justify-center mt-10 w-full">
         {isWalletConnected ? (
           <SearchTransaction />
         ) : (
