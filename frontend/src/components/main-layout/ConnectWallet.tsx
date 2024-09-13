@@ -128,7 +128,8 @@ const ConnectWallet = () => {
                   height={100}
                   alt={wallet.name}
                 />
-                <p className="text-b1">{wallet.name}</p>
+                <p className="text-b1">
+                  {wallet.name === "Metamask" ? "Metamask Snap":wallet.name}</p>
               </div>
             ))}
             <div className="p-6 h-[18px]"></div>

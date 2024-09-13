@@ -11,8 +11,8 @@ const Footer = () => {
             height={20}
             alt="resolute-logo"
           /> */}
-        <p className="text-h1">RESOLUTE</p>
-        <p className="text-b1 opacity-50">Powered by vitwit</p>
+        <p className="text-h1 !font-semibold tracking-[1.5px]">RESOLUTE</p>
+        <p className="text-b1 opacity-50">Powered by Vitwit</p>
       </div>
 
       <div className="text-b1">
@@ -33,9 +33,9 @@ const Footer = () => {
             alt="telegram-logo"
             // className="w-5 h-5"
           />
-          <p className="">telegram</p>
+          <p className="capitalize">telegram</p>
         </a>
-        <div className='v-line !h-10'></div>
+        <div className="v-line !h-10"></div>
         <a
           className="flex gap-2 items-center"
           href="https://github.com/vitwit/resolute"
@@ -49,9 +49,9 @@ const Footer = () => {
             alt="github-logo"
             // className="w-6 h-6"
           />
-          <p> github</p>
+          <p className="capitalize"> github</p>
         </a>
-        <div className='v-line !h-10'></div>
+        <div className="v-line !h-10"></div>
         <a
           className="flex gap-2 items-center"
           href="https://twitter.com/vitwit_"
@@ -65,9 +65,9 @@ const Footer = () => {
             alt="twitter-logo"
             // className="w-6 h-6"
           />
-          <p>twitter</p>
+          <p className="capitalize">twitter</p>
         </a>
-        <div className='v-line !h-10'></div>
+        <div className="v-line !h-10"></div>
         <a
           className="flex gap-2 items-center"
           href="https://www.youtube.com/@vitwit8623"
@@ -81,7 +81,7 @@ const Footer = () => {
             alt="youtube-logo"
             className="w-6 h-6"
           />
-          <p>youtube</p>
+          <p className="capitalize">youtube</p>
         </a>
       </div>
     </div>
