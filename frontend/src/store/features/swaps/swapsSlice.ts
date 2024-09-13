@@ -19,6 +19,8 @@ import { ERR_UNKNOWN } from '@/utils/errors';
 import { OfflineDirectSigner } from '@cosmjs/proto-signing';
 import { TxRaw } from 'cosmjs-types/cosmos/tx/v1beta1/tx';
 import { getBalances } from '../bank/bankSlice';
+import { trackEvent } from '@/utils/util';
+import { FAILED, SUCCESS } from '@/utils/constants';
 
 declare let window: WalletWindow;
 
@@ -75,6 +77,7 @@ export const txIBCSwap = createAsyncThunk(
       dispatch(setTx(txResponse.transactionHash));
 
       if (txResponse?.code === 0) {
+        trackEvent('TRANSFER', 'IBC_SWAP', SUCCESS);
         dispatch(
           getBalances({
             address: data.signerAddress,
@@ -83,6 +86,8 @@ export const txIBCSwap = createAsyncThunk(
             chainID: data.sourceChainID,
           })
         );
+      } else {
+        trackEvent('TRANSFER', 'IBC_SWAP', FAILED);
       }
 
       const txStatus = await trackTransactionStatus({
@@ -124,6 +129,7 @@ export const txIBCSwap = createAsyncThunk(
       return txStatus;
       /* eslint-disable @typescript-eslint/no-explicit-any */
     } catch (error: any) {
+      trackEvent('TRANSFER', 'IBC_SWAP', FAILED);
       const errMsg = error?.message || ERR_UNKNOWN;
       dispatch(
         setError({

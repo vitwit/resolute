@@ -21,7 +21,7 @@ import {
   TxDepositInputs,
   GovParamsResponse,
 } from '@/types/gov';
-import { GAS_FEE, PROPOSAL_STATUS_VOTING_PERIOD } from '@/utils/constants';
+import { FAILED, GAS_FEE, PROPOSAL_STATUS_VOTING_PERIOD, SUCCESS } from '@/utils/constants';
 import { signAndBroadcast } from '@/utils/signing';
 import { setError, setTxAndHash } from '../common/commonSlice';
 import { GovDepositMsg, GovVoteMsg } from '@/txns/gov';
@@ -418,10 +418,10 @@ export const txVote = createAsyncThunk(
           })
         );
 
-        trackEvent('GOV', 'SUCCESS', 'VOTE');
+        trackEvent('GOV', 'VOTE', SUCCESS);
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
-        trackEvent('GOV', 'FAILED', 'VOTE');
+        trackEvent('GOV', 'VOTE', FAILED);
         dispatch(
           setError({
             type: 'error',
@@ -432,6 +432,7 @@ export const txVote = createAsyncThunk(
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
+      trackEvent('GOV', 'VOTE', FAILED);
       dispatch(
         setError({
           type: 'error',
@@ -489,18 +490,17 @@ export const txDeposit = createAsyncThunk(
       );
 
       if (code === 0) {
-        trackEvent('GOV', 'SUCCESS', 'DEPOSIT');
-
+        trackEvent('GOV', 'DEPOSIT', SUCCESS);
         dispatch(setTxAndHash({ tx: tx, hash: transactionHash }));
         return fulfillWithValue({ txHash: transactionHash });
       } else {
-        trackEvent('GOV', 'FAILED', 'DEPOSIT');
-
+        trackEvent('GOV', 'DEPOSIT', FAILED);
         dispatch(setError({ type: 'error', message: rawLog || '' }));
         return rejectWithValue(rawLog);
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
+      trackEvent('GOV', 'DEPOSIT', FAILED);
       dispatch(
         setError({
           type: 'error',

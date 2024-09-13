@@ -6,7 +6,7 @@ import stakingService from './stakingService';
 import { ERR_UNKNOWN } from '../../../utils/errors';
 import { signAndBroadcast } from '../../../utils/signing';
 import cloneDeep from 'lodash/cloneDeep';
-import { GAS_FEE } from '../../../utils/constants';
+import { FAILED, GAS_FEE, SUCCESS } from '../../../utils/constants';
 import {
   GetDelegationsResponse,
   GetUnbondingResponse,
@@ -354,15 +354,15 @@ export const txDelegate = createAsyncThunk(
           );
         }
 
-        trackEvent('STAKING', 'SUCCESS', 'DELEGATE');
+        trackEvent('STAKING', 'DELEGATE', SUCCESS);
 
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
-        trackEvent('STAKING', 'FAILED', 'DELEGATE');
-
+        trackEvent('STAKING', 'DELEGATE', FAILED);
         return rejectWithValue(result?.rawLog);
       }
     } catch (error) {
+      trackEvent('STAKING', 'DELEGATE', FAILED);
       if (error instanceof AxiosError) return rejectWithValue(error.response);
     }
   }
@@ -443,15 +443,16 @@ export const txReDelegate = createAsyncThunk(
           );
         }
 
-        trackEvent('STAKING', 'SUCCESS', 'REDELEGATE');
+        trackEvent('STAKING', 'REDELEGATE', SUCCESS);
 
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
-        trackEvent('STAKING', 'FAILED', 'REDELEGATE');
+        trackEvent('STAKING', 'REDELEGATE', FAILED);
 
         return rejectWithValue(result?.rawLog);
       }
     } catch (error) {
+      trackEvent('STAKING', 'REDELEGATE', FAILED);
       if (error instanceof AxiosError) return rejectWithValue(error.response);
     }
   }
@@ -536,15 +537,16 @@ export const txUnDelegate = createAsyncThunk(
           );
         }
 
-        trackEvent('STAKING', 'SUCCESS', 'UNDELEGATE');
+        trackEvent('STAKING', 'UNDELEGATE', SUCCESS);
 
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
-        trackEvent('STAKING', 'FAILED', 'UNDELEGATE');
+        trackEvent('STAKING', 'UNDELEGATE', FAILED);
 
         return rejectWithValue(result?.rawLog);
       }
     } catch (error) {
+      trackEvent('STAKING', 'UNDELEGATE', FAILED);
       if (error instanceof AxiosError) return rejectWithValue(error.response);
     }
   }
@@ -624,16 +626,16 @@ export const txCancelUnbonding = createAsyncThunk(
           dispatch(getUnbonding(inputData));
         }
 
-        trackEvent('STAKING', 'SUCCESS', 'CANCEL_UNBOND');
+        trackEvent('STAKING', 'CANCEL_UNBONDING', SUCCESS);
 
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
-        trackEvent('STAKING', 'FAILED', 'CANCEL_UNBOND');
+        trackEvent('STAKING', 'CANCEL_UNBONDING', FAILED);
 
         return rejectWithValue(result?.rawLog);
       }
     } catch (error) {
-      console.log('Error while cancel unbonding the transaction ', error);
+      trackEvent('STAKING', 'CANCEL_UNBONDING', FAILED);
       if (error instanceof AxiosError) {
         dispatch(
           setError({

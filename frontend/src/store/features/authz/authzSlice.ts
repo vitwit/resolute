@@ -8,9 +8,10 @@ import { getAddressByPrefix } from '@/utils/address';
 import { signAndBroadcast } from '@/utils/signing';
 import { setError, setTxAndHash } from '../common/commonSlice';
 import { NewTransaction } from '@/utils/transaction';
-import { GAS_FEE } from '@/utils/constants';
+import { FAILED, GAS_FEE, SUCCESS } from '@/utils/constants';
 import { ERR_UNKNOWN } from '@/utils/errors';
 import { AxiosError } from 'axios';
+import { trackEvent } from '@/utils/util';
 
 interface ChainAuthz {
   grantsToMe: Authorization[];
@@ -202,12 +203,15 @@ export const txCreateAuthzGrant = createAsyncThunk(
             chainID: data.basicChainInfo.chainID,
           })
         );
+        trackEvent('AUTHZ', 'GRANT_AUTHZ', SUCCESS);
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
+        trackEvent('AUTHZ', 'GRANT_AUTHZ', FAILED);
         return rejectWithValue(result?.rawLog);
       }
       /* eslint-disable @typescript-eslint/no-explicit-any */
     } catch (error: any) {
+      trackEvent('AUTHZ', 'GRANT_AUTHZ', FAILED);
       return rejectWithValue(error?.message || ERR_UNKNOWN);
     }
   }
@@ -242,6 +246,7 @@ export const txAuthzExec = createAsyncThunk(
           data.basicChainInfo.chainID,
           data.basicChainInfo.cosmosAddress
         );
+        trackEvent('AUTHZ', 'EXEC_AUTHZ', SUCCESS);
         dispatch(
           setTxAndHash({
             hash: result?.transactionHash,
@@ -250,6 +255,7 @@ export const txAuthzExec = createAsyncThunk(
         );
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
+        trackEvent('AUTHZ', 'GRANT_AUTHZ', FAILED);
         dispatch(
           setError({
             type: 'error',
@@ -260,6 +266,7 @@ export const txAuthzExec = createAsyncThunk(
       }
       /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     } catch (error: any) {
+      trackEvent('AUTHZ', 'GRANT_AUTHZ', FAILED);
       dispatch(
         setError({
           type: 'error',
@@ -299,6 +306,7 @@ export const txAuthzRevoke = createAsyncThunk(
           data.basicChainInfo.chainID,
           data.basicChainInfo.cosmosAddress
         );
+        trackEvent('AUTHZ', 'GRANT_AUTHZ', SUCCESS);
         dispatch(
           setTxAndHash({
             tx: tx,
@@ -321,9 +329,11 @@ export const txAuthzRevoke = createAsyncThunk(
             message: result?.rawLog || '',
           })
         );
+        trackEvent('AUTHZ', 'REVOKE_AUTHZ', FAILED);
         return rejectWithValue(result?.rawLog);
       }
     } catch (error) {
+      trackEvent('AUTHZ', 'REVOKE_AUTHZ', FAILED);
       dispatch(
         setError({
           type: 'error',

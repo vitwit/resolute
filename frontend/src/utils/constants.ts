@@ -401,3 +401,5 @@ export const FEEGRANT = 'feegrant';
 export const TXN_BUILDER_DESCRIPTION =
   'Transaction builder allows to create single transaction with multiple messages of same or different type.';
 export const GENERAL_SETTINGS_DESCRIPTION = 'Settings to enhance your application’s functionality';
+export const SUCCESS = 'SUCCESS';
+export const FAILED = 'FAILED';
