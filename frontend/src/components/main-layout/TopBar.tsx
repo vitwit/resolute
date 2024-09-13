@@ -38,15 +38,15 @@ const TopBar = () => {
         <nav className="flex justify-between items-center px-4 py-2">
           <div className="flex items-center space-x-1">
             <Link href="/" legacyBehavior>
-              <a className="flex items-center space-x-1">
+              <a className="flex items-center gap-1">
                 <Image
                   src="/vitwit-logo.svg"
-                  width={35}
+                  width={32}
                   height={21}
                   alt="Resolute"
                   
                 />
-                <span className="text-h1">RESOLUTE</span>
+                <span className="text-h1 !font-semibold tracking-[1.5px]">RESOLUTE</span>
               </a>
             </Link>
           </div>
