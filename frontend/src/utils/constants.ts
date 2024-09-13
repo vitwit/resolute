@@ -15,7 +15,7 @@ export const SUPPORTED_WALLETS = [
   },
   {
     name: 'Metamask',
-    logo: '/metamask.png',
+    logo: '/metamask.svg',
   }
 ];
 
