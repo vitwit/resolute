@@ -15,6 +15,7 @@ import { groupBy } from 'lodash';
 import { enableAuthzMode } from '@/store/features/authz/authzSlice';
 import { exitFeegrantMode } from '@/store/features/feegrant/feegrantSlice';
 import { shortenAddress } from '@/utils/util';
+import WithConnectionIllustration from '@/components/illustrations/withConnectionIllustration';
 
 const GrantedToMe = ({ chainIDs }: { chainIDs: string[] }) => {
   const { getGrantsToMe } = useAuthzGrants();
@@ -52,7 +53,7 @@ const GrantedToMe = ({ chainIDs }: { chainIDs: string[] }) => {
         <>
           {!authzGrants?.length && (
             <>
-              <div>No grants to you</div>
+              <WithConnectionIllustration message="No grants to you" />
             </>
           )}
         </>
@@ -129,7 +130,9 @@ const GrantToMeCard = ({
           )}
         </div>
         <div className="flex gap-2 items-center h-8">
-          <p className="truncate text-b1">{shortenAddress(grant.address, 30)}</p>
+          <p className="truncate text-b1">
+            {shortenAddress(grant.address, 30)}
+          </p>
           <Copy content={grant.address} />
         </div>
       </div>
