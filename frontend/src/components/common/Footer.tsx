@@ -11,8 +11,8 @@ const Footer = () => {
             height={20}
             alt="resolute-logo"
           /> */}
-        <p className="text-h1">RESOLUTE</p>
-        <p className="text-b1 opacity-50">Powered by vitwit</p>
+        <p className="text-h1 !font-semibold tracking-[1.5px]">RESOLUTE</p>
+        <p className="text-b1 opacity-50">Powered by Vitwit</p>
       </div>
 
       <div className="text-b1">
