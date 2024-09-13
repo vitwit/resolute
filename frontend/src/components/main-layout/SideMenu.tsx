@@ -72,7 +72,9 @@ const MoreOptions = ({
     (state) => state.common.selectedNetwork.chainName
   );
   const isAuthzMode = useAppSelector((state) => state.authz.authzModeEnabled);
-  const isFeegrantMode = useAppSelector((state) => state.feegrant.feegrantModeEnabled);
+  const isFeegrantMode = useAppSelector(
+    (state) => state.feegrant.feegrantModeEnabled
+  );
 
   const [isExpanded, setIsExpanded] = useState(false);
   const [isTransfersSettingsExpanded, setIsTransfersSettingsExpanded] =
@@ -104,8 +106,11 @@ const MoreOptions = ({
     if (isAuthzMode && DISABLED_FOR_AUTHZ_MODE.includes(module)) {
       return { disabled: true, tooltip: `Authz is not supporting ${module}` };
     }
-    if(isFeegrantMode && DISABLED_FOR_FEEGRANT_MODE.includes(module)) {
-      return { disabled: true, tooltip: `Feegrant is not supporting ${module}` };
+    if (isFeegrantMode && DISABLED_FOR_FEEGRANT_MODE.includes(module)) {
+      return {
+        disabled: true,
+        tooltip: `Feegrant is not supporting ${module}`,
+      };
     }
     return { disabled: false, tooltip: null };
   };
@@ -213,15 +218,11 @@ const MoreOptions = ({
               >
                 <div className="w-5"></div>
                 <Tooltip
-                  title={
-                    isDisabled('txn-builder').tooltip
-                      ? 'Authz is not supporting builder'
-                      : null
-                  }
+                  title={isDisabled('txn-builder').tooltip}
                   placement="top-end"
                 >
                   <div
-                    className={`hover:font-semibold ${isAuthzMode ? 'opacity-20 !cursor-not-allowed' : 'cursor-pointer'}`}
+                    className={`hover:font-semibold ${isDisabled('txn-builder').disabled ? '!cursor-not-allowed' : 'cursor-pointer'}`}
                   >
                     <Link
                       href={
