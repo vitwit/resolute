@@ -597,10 +597,10 @@ export const networks: Network[] = [
       chainId: 'osmosis-1',
       chainName: 'Osmosis',
       rest: 'https://api.beta.resolute.vitwit.com',
-      rpc: 'http://188.166.220.245:26657',
+      rpc: 'https://osmosis-rpc.polkachu.com',
       restURIs: ['https://api.beta.resolute.vitwit.com'],
       rpcURIs: [
-        'http://188.166.220.245:26657',
+        'https://osmosis-rpc.polkachu.com',
         'https://rpc-osmosis.blockapsis.com',
         'https://osmosis-rpc.quickapi.com:443',
       ],
