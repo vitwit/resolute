@@ -38,23 +38,37 @@ const ConnectWallet = () => {
 
   const tryConnectWallet = async (walletName: string) => {
     if (walletName === 'metamask') {
+      const notSupoortedMetamaskChainIds = ['agoric-3', 'evmos_9001-2', 'desmos-mainnet']
       dispatch(setIsLoading());
+     
+      try {
+        const snapInstalled = await getSnap();
+        if (!snapInstalled) {
+          await connectSnap(); // Initiates installation if not already present
+        }
+      } catch (error) {
+        console.log('Unable to install snap', error)
+      }
+
       try {
         for (let i = 0; i < networks.length; i++) {
+          console.time("Function execution time");
+
           const chainId: string = networks[i].config.chainId;
-          const snapInstalled = await getSnap();
-          if (!snapInstalled) {
-            await connectSnap(); // Initiates installation if not already present
+          if (notSupoortedMetamaskChainIds.indexOf(chainId) <= -1) {
+            try {
+               await experimentalSuggestChain(networks[i].config, {
+                force: false,
+              });
+            } catch (error) {
+              console.log('Error while connecting ', chainId);
+            }
           }
 
-          try {
-            await experimentalSuggestChain(networks[i].config, {
-              force: false,
-            });
-          } catch (error) {
-            console.log('Error while connecting ', chainId);
-          }
+          console.timeEnd("Function execution time");
         }
+
+       
       } catch (error) {
         console.log('trying to connect wallet ', error);
       }
