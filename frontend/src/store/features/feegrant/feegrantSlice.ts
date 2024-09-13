@@ -5,10 +5,11 @@ import { cloneDeep } from 'lodash';
 import { getAddressByPrefix } from '@/utils/address';
 import { FeegrantRevokeMsg } from '@/txns/feegrant';
 import { signAndBroadcast } from '@/utils/signing';
-import { GAS_FEE } from '@/utils/constants';
+import { FAILED, GAS_FEE, SUCCESS } from '@/utils/constants';
 import { ERR_UNKNOWN } from '@/utils/errors';
 import { NewTransaction } from '@/utils/transaction';
 import { setTxAndHash } from '../common/commonSlice';
+import { trackEvent } from '@/utils/util';
 
 interface ChainAllowance {
   grantsToMe: Allowance[];
@@ -149,12 +150,15 @@ export const txCreateFeegrant = createAsyncThunk(
             chainID: data.basicChainInfo.chainID,
           })
         );
+        trackEvent('FEEGRANT', 'CREATE_FEEGRANT', SUCCESS);
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
+        trackEvent('FEEGRANT', 'CREATE_FEEGRANT', FAILED);
         return rejectWithValue(result?.rawLog);
       }
       /* eslint-disable @typescript-eslint/no-explicit-any */
     } catch (error: any) {
+      trackEvent('FEEGRANT', 'CREATE_FEEGRANT', FAILED);
       return rejectWithValue(error?.message || ERR_UNKNOWN);
     }
   }
@@ -198,6 +202,7 @@ export const txRevoke = createAsyncThunk(
             hash: result?.transactionHash,
           })
         );
+        trackEvent('FEEGRANT', 'REVOKE_FEEGRANT', SUCCESS);
         dispatch(
           getGrantsByMe({
             baseURLs: data.baseURLs,
@@ -207,10 +212,12 @@ export const txRevoke = createAsyncThunk(
         );
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
+        trackEvent('FEEGRANT', 'REVOKE_FEEGRANT', FAILED);
         return rejectWithValue(result?.rawLog);
       }
       /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     } catch (error: any) {
+      trackEvent('FEEGRANT', 'REVOKE_FEEGRANT', FAILED);
       console.log('error while revoke fee grant txn ', error);
       return rejectWithValue(error?.message);
     }

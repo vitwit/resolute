@@ -13,10 +13,12 @@ import {
 } from '../../../utils/errors';
 import {
   COSMOS_CHAIN_ID,
+  FAILED,
   MAX_SALT_VALUE,
   MIN_SALT_VALUE,
   MULTISIG_LEGACY_AMINO_PUBKEY_TYPE,
   OFFCHAIN_VERIFICATION_MESSAGE,
+  SUCCESS,
 } from '@/utils/constants';
 import { MultisigTxStatus, TxStatus } from '@/types/enums';
 import bankService from '@/store/features/bank/bankService';
@@ -39,6 +41,7 @@ import {
   getRandomNumber,
   isMultisigAccountMember,
   isNetworkError,
+  trackEvent,
 } from '@/utils/util';
 import authService from './../auth/authService';
 import { get } from 'lodash';
@@ -154,8 +157,10 @@ export const createAccount = createAsyncThunk(
         data.queryParams,
         data.data
       );
+      trackEvent('MULTISIG', 'CREATE_MULTISIG', SUCCESS);
       return response.data;
     } catch (error) {
+      trackEvent('MULTISIG', 'CREATE_MULTISIG', FAILED);
       if (error instanceof AxiosError)
         return rejectWithValue({
           message: error?.response?.data?.message || ERR_UNKNOWN,
@@ -219,8 +224,10 @@ export const deleteMultisig = createAsyncThunk(
         data.queryParams,
         data.data.address
       );
+      trackEvent('MULTISIG', 'DELETE_MULTISIG', SUCCESS);
       return response.data;
     } catch (error) {
+      trackEvent('MULTISIG', 'DELETE_MULTISIG', FAILED);
       if (error instanceof AxiosError)
         return rejectWithValue({ message: error.message });
       return rejectWithValue({ message: ERR_UNKNOWN });
@@ -237,8 +244,10 @@ export const deleteTxn = createAsyncThunk(
         data.data.address,
         data.data.id
       );
+      trackEvent('MULTISIG', 'DELETE_TXN', SUCCESS);
       return response.data;
     } catch (error) {
+      trackEvent('MULTISIG', 'DELETE_TXN', FAILED);
       if (error instanceof AxiosError)
         return rejectWithValue({ message: error.message });
       return rejectWithValue({ message: ERR_UNKNOWN });
@@ -287,9 +296,11 @@ export const createTxn = createAsyncThunk(
         data.data.address,
         data.data
       );
+      trackEvent('MULTISIG', 'CREATE_TXN', SUCCESS);
       return response.data;
       /* eslint-disable @typescript-eslint/no-explicit-any */
     } catch (error: any) {
+      trackEvent('MULTISIG', 'CREATE_TXN', FAILED);
       const errMsg = error?.response?.data?.message || ERR_UNKNOWN;
       return rejectWithValue({ message: errMsg });
     }
@@ -366,7 +377,9 @@ export const broadcastTransaction = createAsyncThunk(
             },
           })
         );
+        trackEvent('MULTISIG', 'BROADCAST_TXN', SUCCESS);
       } else {
+        trackEvent('MULTISIG', 'BROADCAST_TXN', FAILED);
         dispatch(
           setError({
             type: 'error',
@@ -394,6 +407,7 @@ export const broadcastTransaction = createAsyncThunk(
       };
       /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     } catch (error: any) {
+      trackEvent('MULTISIG', 'BROADCAST_TXN', FAILED);
       const errMsg = error?.message;
       dispatch(
         setError({
@@ -475,9 +489,11 @@ export const signTransaction = createAsyncThunk(
           signature: payload.signature,
         }
       );
+      trackEvent('MULTISIG', 'SIGN_TXN', SUCCESS);
       return response.data;
       /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     } catch (error: any) {
+      trackEvent('MULTISIG', 'SIGN_TXN', FAILED);
       let errMsg =
         error?.message || 'Error while signing the transaction, Try again.';
       if (isNetworkError(errMsg)) {
@@ -749,7 +765,7 @@ export const multisigSlice = createSlice({
         state.txns.status = TxStatus.IDLE;
         state.txns.error = '';
         state.txns.list = action.payload?.data || [];
-        state.txns.Count  = action.payload?.count || []
+        state.txns.Count = action.payload?.count || [];
       })
       .addCase(getTxns.rejected, (state, action) => {
         state.txns.status = TxStatus.REJECTED;

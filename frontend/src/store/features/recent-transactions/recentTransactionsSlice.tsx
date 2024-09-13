@@ -10,11 +10,12 @@ import {
   getIBCTxn,
   updateIBCTransactionStatusInLocal,
 } from '@/utils/localStorage';
-import { GAS_FEE, IBC_SEND_TYPE_URL } from '@/utils/constants';
+import { FAILED, GAS_FEE, IBC_SEND_TYPE_URL, SUCCESS } from '@/utils/constants';
 import { trackTx } from '../ibc/ibcSlice';
 import { NewTransaction } from '@/utils/transaction';
 import { setError, setTxAndHash } from '../common/commonSlice';
 import { signAndBroadcast } from '@/utils/signing';
+import { trackEvent } from '@/utils/util';
 
 interface RecentTransactionsState {
   txns: {
@@ -293,12 +294,15 @@ export const txRepeatTransaction = createAsyncThunk(
       );
 
       if (result?.code === 0) {
+        trackEvent('TRANSACTIONS', 'REPEAT_TRANSACTION', SUCCESS);
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
+        trackEvent('TRANSACTIONS', 'REPEAT_TRANSACTION', FAILED);
         return rejectWithValue(result?.rawLog);
       }
       /* eslint-disable @typescript-eslint/no-explicit-any */
     } catch (error: any) {
+      trackEvent('TRANSACTIONS', 'REPEAT_TRANSACTION', FAILED);
       const errMsg = error?.message || 'Failed to execute contract';
       dispatch(
         setError({
