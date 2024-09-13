@@ -87,31 +87,36 @@ export const establishWalletConnection = createAsyncThunk(
       const chainInfos: Record<string, ChainInfo> = {};
       const nameToChainIDs: Record<string, string> = {};
       let anyNetworkAddress = '';
+      const notSupoortedMetamaskChainIds = ['agoric-3', 'evmos_9001-2', 'desmos-mainnet']
       for (let i = 0; i < networks.length; i++) {
         if (data.walletName === 'metamask') {
+
           try {
             const chainId: string = networks[i].config.chainId;
-            const chainName: string = networks[i].config.chainName;
-            const walletInfo = await getKey(chainId);
-            if (walletInfo?.address.includes('cosmos')) {
-              walletName = walletInfo?.address;
+            if (notSupoortedMetamaskChainIds.indexOf(chainId) <= -1) {
+              const chainName: string = networks[i].config.chainName;
+              const walletInfo = await getKey(chainId);
+              if (walletInfo?.address.includes('cosmos')) {
+                walletName = walletInfo?.address;
+              }
+              isNanoLedger = false;
+
+              chainInfos[chainId] = {
+                walletInfo: {
+                  algo: walletInfo?.algo,
+                  bech32Address: walletInfo?.address,
+                  pubKey: Buffer.from(walletInfo?.pubkey).toString('base64'),
+                  isKeystone: '',
+                  isNanoLedger: isNanoLedger,
+                  name: walletName,
+                },
+                network: networks[i],
+              };
+
+              nameToChainIDs[chainName?.toLowerCase().split(' ').join('')] =
+                chainId;
             }
-            isNanoLedger = false;
 
-            chainInfos[chainId] = {
-              walletInfo: {
-                algo: walletInfo?.algo,
-                bech32Address: walletInfo?.address,
-                pubKey: Buffer.from(walletInfo?.pubkey).toString('base64'),
-                isKeystone: '',
-                isNanoLedger: isNanoLedger,
-                name: walletName,
-              },
-              network: networks[i],
-            };
-
-            nameToChainIDs[chainName?.toLowerCase().split(' ').join('')] =
-              chainId;
           } catch (error) {
             console.log(
               `unable to connect to network ${networks[i].config.chainName}: `,
