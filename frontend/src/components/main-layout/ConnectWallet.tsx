@@ -115,7 +115,7 @@ const ConnectWallet = () => {
                   alt={wallet.name}
                 />
                 <p className="text-b1">
-                  {wallet.name === "metamask"?"Metamask Snap":wallet.name}</p>
+                  {wallet.name === "Metamask" ? "Metamask Snap":wallet.name}</p>
               </div>
             ))}
             <div className="p-6 h-[18px]"></div>
