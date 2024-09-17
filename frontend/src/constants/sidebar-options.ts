@@ -53,7 +53,7 @@ export const SIDEBAR_MENU_OPTIONS: MenuItemI[] = [
     icon: '/sidebar-menu-icons/txn-history-icon.svg',
     path: '/transactions/history',
     authzSupported: false,
-    isMetaMaskSupported: false,
+    isMetaMaskSupported: true,
     multipleOptions: true,
   },
   {
