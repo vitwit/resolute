@@ -32,6 +32,10 @@ import useInitApp from '@/custom-hooks/common/useInitApp';
 import CustomLoader from '../common/CustomLoader';
 import { TxStatus } from '@/types/enums';
 import useGetShowAuthzAlert from '@/custom-hooks/useGetShowAuthzAlert';
+import { initializeGA } from '@/utils/util';
+
+
+declare let window: WalletWindow;
 
 const FixedLayout = ({ children }: { children: React.ReactNode }) => {
   const dispatch = useAppDispatch();
@@ -77,6 +81,13 @@ const FixedLayout = ({ children }: { children: React.ReactNode }) => {
       })
     );
   };
+
+  useEffect(() => {
+    if (!window.GA_INITIALIZED) {
+      initializeGA();
+      window.GA_INITIALIZED = true;
+    }
+  }, []);
 
   useEffect(() => {
     dispatch(setAllNetworksInfo());
