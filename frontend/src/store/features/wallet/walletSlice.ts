@@ -87,36 +87,44 @@ export const establishWalletConnection = createAsyncThunk(
       const chainInfos: Record<string, ChainInfo> = {};
       const nameToChainIDs: Record<string, string> = {};
       let anyNetworkAddress = '';
-      const notSupoortedMetamaskChainIds = ['agoric-3', 'evmos_9001-2', 'desmos-mainnet']
+      const notSupoortedMetamaskChainIds = [
+        'agoric-3',
+        'evmos_9001-2',
+        'desmos-mainnet',
+      ];
+
       for (let i = 0; i < networks.length; i++) {
+        const chainId = networks[i].config.chainId;
+
         if (data.walletName === 'metamask') {
-
           try {
-            const chainId: string = networks[i].config.chainId;
-            if (notSupoortedMetamaskChainIds.indexOf(chainId) <= -1) {
-              const chainName: string = networks[i].config.chainName;
+            if (notSupoortedMetamaskChainIds.indexOf(chainId) === -1) {
               const walletInfo = await getKey(chainId);
-              if (walletInfo?.address.includes('cosmos')) {
-                walletName = walletInfo?.address;
-              }
-              isNanoLedger = false;
-
-              chainInfos[chainId] = {
+              const chainInfo: ChainInfo = {
                 walletInfo: {
                   algo: walletInfo?.algo,
                   bech32Address: walletInfo?.address,
                   pubKey: Buffer.from(walletInfo?.pubkey).toString('base64'),
                   isKeystone: '',
-                  isNanoLedger: isNanoLedger,
-                  name: walletName,
+                  isNanoLedger: false,
+                  name: walletInfo?.address || '',
                 },
                 network: networks[i],
               };
 
-              nameToChainIDs[chainName?.toLowerCase().split(' ').join('')] =
-                chainId;
+              setConnected();
+              setWalletName(data.walletName);
+              dispatch(addChainInfo({ chainId, chainInfo }));
+              dispatch(
+                addNameToChainIDs({
+                  chainName: networks[i].config.chainName
+                    .toLowerCase()
+                    .split(' ')
+                    .join(''),
+                  chainId,
+                })
+              );
             }
-
           } catch (error) {
             console.log(
               `unable to connect to network ${networks[i].config.chainName}: `,
@@ -135,14 +143,11 @@ export const establishWalletConnection = createAsyncThunk(
             if (data.walletName === 'leap' && networks[i].leapExperimental) {
               await window.wallet.experimentalSuggestChain(networks[i].config);
             }
-            const chainId: string = networks[i].config.chainId;
-            const chainName: string = networks[i].config.chainName;
             await getWalletAmino(chainId);
             const walletInfo = await window.wallet.getKey(chainId);
             walletInfo.pubKey = Buffer.from(walletInfo?.pubKey).toString(
               'base64'
             );
-            delete walletInfo?.address;
             walletName = walletInfo?.name;
             isNanoLedger = walletInfo?.isNanoLedger || false;
             chainInfos[chainId] = {
@@ -151,14 +156,14 @@ export const establishWalletConnection = createAsyncThunk(
             };
             if (anyNetworkAddress === '')
               anyNetworkAddress = walletInfo?.bech32Address || '';
-            nameToChainIDs[chainName?.toLowerCase().split(' ').join('')] =
-              chainId;
+            nameToChainIDs[
+              networks[i].config.chainName.toLowerCase().split(' ').join('')
+            ] = chainId;
           } catch (error) {
             console.log(
               `unable to connect to network ${networks[i].config.chainName}: `,
               error
             );
-
             dispatch(
               setError({
                 type: 'error',
@@ -169,35 +174,39 @@ export const establishWalletConnection = createAsyncThunk(
         }
       }
 
-      if (Object.keys(chainInfos).length === 0) {
+      if (
+        data.walletName !== 'metamask' &&
+        Object.keys(chainInfos).length === 0
+      ) {
         dispatch(
           setError({
             type: 'error',
             message: 'Permission denied for all the networks',
           })
         );
-
         return rejectWithValue('Permission denied for all the networks');
       } else {
-        setConnected();
-        setWalletName(data.walletName);
+        if (data.walletName !== 'metamask') {
+          setConnected();
+          setWalletName(data.walletName);
 
-        const cosmosAddress = getAddressByPrefix(anyNetworkAddress, 'cosmos');
-        const authzMode = getAuthzMode(cosmosAddress);
-        if (authzMode.isAuthzModeOn)
-          dispatch(enableAuthzMode({ address: authzMode.authzAddress }));
-        const feegrantMode = getFeegrantMode(cosmosAddress);
-        if (feegrantMode.isFeegrantModeOn)
-          dispatch(
-            enableFeegrantMode({ address: feegrantMode.feegrantAddress })
-          );
+          const cosmosAddress = getAddressByPrefix(anyNetworkAddress, 'cosmos');
+          const authzMode = getAuthzMode(cosmosAddress);
+          if (authzMode.isAuthzModeOn)
+            dispatch(enableAuthzMode({ address: authzMode.authzAddress }));
+          const feegrantMode = getFeegrantMode(cosmosAddress);
+          if (feegrantMode.isFeegrantModeOn)
+            dispatch(
+              enableFeegrantMode({ address: feegrantMode.feegrantAddress })
+            );
 
-        return fulfillWithValue({
-          chainInfos,
-          nameToChainIDs,
-          walletName,
-          isNanoLedger,
-        });
+          return fulfillWithValue({
+            chainInfos,
+            nameToChainIDs,
+            walletName,
+            isNanoLedger,
+          });
+        }
       }
     }
   }
@@ -233,6 +242,30 @@ const walletSlice = createSlice({
     setConnectWalletOpen: (state, action: PayloadAction<boolean>) => {
       state.connectWalletOpen = action.payload;
     },
+    addChainInfo: (
+      state,
+      action: PayloadAction<{ chainId: string; chainInfo: ChainInfo }>
+    ) => {
+      const { chainId, chainInfo } = action.payload;
+      state.networks[chainId] = chainInfo;
+      state.connected = true;
+      state.isLoading = false;
+      state.status = TxStatus.IDLE;
+      if (!state.name?.length) {
+        const cosmosAddress = getAddressByPrefix(
+          chainInfo.walletInfo.name || '',
+          'cosmos'
+        );
+        state.name = cosmosAddress;
+      }
+    },
+    addNameToChainIDs: (
+      state,
+      action: PayloadAction<{ chainName: string; chainId: string }>
+    ) => {
+      const { chainName, chainId } = action.payload;
+      state.nameToChainIDs[chainName] = chainId;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -241,6 +274,12 @@ const walletSlice = createSlice({
         state.isLoading = true;
       })
       .addCase(establishWalletConnection.fulfilled, (state, action) => {
+        if (!action.payload) {
+          state.connected = true;
+          state.status = TxStatus.IDLE;
+          state.isLoading = false;
+          return;
+        }
         const networks = action.payload.chainInfos;
         const nameToChainIDs = action.payload.nameToChainIDs;
         state.networks = networks;
@@ -265,6 +304,8 @@ export const {
   unsetIsLoading,
   setConnectWalletOpen,
   setIsLoading,
+  addChainInfo,
+  addNameToChainIDs,
 } = walletSlice.actions;
 
 export default walletSlice.reducer;
