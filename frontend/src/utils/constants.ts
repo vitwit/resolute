@@ -19,6 +19,11 @@ export const SUPPORTED_WALLETS = [
   }
 ];
 
+export const NotSupportedMetamaskChainIds = [
+  'agoric-3',
+  'evmos_9001-2',
+  'desmos-mainnet',
+];
 export const USD_CURRENCY = 'usd';
 export const GAS_FEE = 860000;
 export const ADD_NETWORK_TEMPLATE_URL =
