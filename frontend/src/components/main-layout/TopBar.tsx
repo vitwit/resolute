@@ -7,6 +7,7 @@ import { setConnectWalletOpen } from '@/store/features/wallet/walletSlice';
 import { getConnectWalletLogo, shortenString } from '@/utils/util';
 import { RootState } from '@/store/store';
 import AuthzGrantsAlert from './AuthzGrantsAlert';
+import { RESOLUTE_LOGO } from '@/constants/image-names';
 
 const TopBar = () => {
   const dispatch = useAppDispatch();
@@ -38,16 +39,18 @@ const TopBar = () => {
         <nav className="flex justify-between items-center px-4 py-2">
           <div className="flex items-center space-x-1">
             <Link href="/" legacyBehavior>
-              <a className="flex items-center gap-1">
+              <div className="flex items-center gap-1">
                 <Image
-                  src="/vitwit-logo.svg"
+                  src={RESOLUTE_LOGO}
                   width={32}
                   height={21}
                   alt="Resolute"
-                  
+                  draggable={false}
                 />
-                <span className="text-h1 !font-semibold tracking-[1.5px]">RESOLUTE</span>
-              </a>
+                <span className="text-h1 !font-semibold tracking-[1.5px]">
+                  RESOLUTE
+                </span>
+              </div>
             </Link>
           </div>
 
@@ -97,7 +100,9 @@ const TopBar = () => {
                 onClick={() => setProfileOpen(true)}
               >
                 <Image src={walletLogo} height={20} width={20} alt="Wallet" />
-                <div className="text-[14px]">{shortenString(walletUserName, 24)}</div>
+                <div className="text-[14px]">
+                  {shortenString(walletUserName, 24)}
+                </div>
                 <Image
                   src="/drop-down-icon.svg"
                   height={24}

@@ -1,5 +1,6 @@
 import { RESOLUTE_LOGO } from '@/constants/image-names';
 import Image from 'next/image';
+import Link from 'next/link';
 import React from 'react';
 
 const Loading = () => {
@@ -21,8 +22,21 @@ const TopBarLoading = () => {
   return (
     <header className="top-bar">
       <nav>
-        <div>
-          <Image src={RESOLUTE_LOGO} width={120} height={32} alt="Resolute" />
+        <div className="flex items-center space-x-1">
+          <Link href="/">
+            <div className="flex items-center gap-1">
+              <Image
+                src={RESOLUTE_LOGO}
+                width={32}
+                height={21}
+                alt="Resolute"
+                draggable={false}
+              />
+              <span className="text-h1 !font-semibold tracking-[1.5px]">
+                RESOLUTE
+              </span>
+            </div>
+          </Link>
         </div>
         <div className="w-[170px] animate-pulse h-[40px] bg-[#252525] rounded" />
       </nav>
