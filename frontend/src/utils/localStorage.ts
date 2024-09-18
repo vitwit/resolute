@@ -50,6 +50,7 @@ export function logout() {
   removeAllAuthTokens();
   removeWalletName();
   removeAuthzAlertData();
+  localStorage.clear();
 }
 
 export function setLocalNetwork(networkConfig: Network, chainID: string) {
