@@ -12,6 +12,7 @@ import {
   getSnap,
 } from '@leapwallet/cosmos-snap-provider';
 import {
+  establishMetamaskConnection,
   establishWalletConnection,
   setIsLoading,
   unsetIsLoading,
@@ -33,7 +34,7 @@ import CustomLoader from '../common/CustomLoader';
 import { TxStatus } from '@/types/enums';
 import useGetShowAuthzAlert from '@/custom-hooks/useGetShowAuthzAlert';
 import { initializeGA } from '@/utils/util';
-
+import { NotSupportedMetamaskChainIds } from '@/utils/constants';
 
 declare let window: WalletWindow;
 
@@ -44,7 +45,6 @@ const FixedLayout = ({ children }: { children: React.ReactNode }) => {
   const isLoading = useAppSelector((state) => state.wallet.isLoading);
 
   const walletState = useAppSelector((state) => state.wallet.status);
-  const notSupoortedMetamaskChainIds = ['agoric-3', 'evmos_9001-2', 'desmos-mainnet']
 
   const tryConnectWallet = async (walletName: string) => {
     if (walletName === 'metamask') {
@@ -57,29 +57,33 @@ const FixedLayout = ({ children }: { children: React.ReactNode }) => {
 
         for (let i = 0; i < networks.length; i++) {
           const chainId: string = networks[i].config.chainId;
-          if (notSupoortedMetamaskChainIds.indexOf(chainId) <= -1) {
-
+          if (NotSupportedMetamaskChainIds.indexOf(chainId) <= -1) {
             try {
               await experimentalSuggestChain(networks[i].config, {
                 force: false,
               });
+              dispatch(
+                establishMetamaskConnection({
+                  walletName,
+                  network: networks[i],
+                })
+              );
             } catch (error) {
               console.log('Error while connecting ', chainId);
             }
           }
-
         }
       } catch (error) {
         console.log('trying to connect wallet ', error);
       }
+    } else {
+      dispatch(
+        establishWalletConnection({
+          walletName,
+          networks: [...networks, ...getLocalNetworks()],
+        })
+      );
     }
-
-    dispatch(
-      establishWalletConnection({
-        walletName,
-        networks: [...networks, ...getLocalNetworks()],
-      })
-    );
   };
 
   useEffect(() => {

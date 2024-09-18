@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { RootState } from '@/store/store';
 import {
   getAllValidators,
@@ -48,65 +48,101 @@ const useInitApp = () => {
   );
   const chainIDs = Object.values(nameToChainIDs);
 
+  const walletState = useAppSelector((state) => state.wallet);
   const isWalletConnected = useAppSelector(
     (state: RootState) => state.wallet.connected
   );
   const { getChainInfo, getDenomInfo } = useGetChainInfo();
 
+  const fetchedChains = useRef<{ [key: string]: boolean }>({});
+  const validatorsFetchedChains = useRef<{ [key: string]: boolean }>({});
+
   useEffect(() => {
     if (chainIDs.length > 0 && isWalletConnected) {
       chainIDs.forEach((chainID) => {
-        const { address, baseURL, restURLs } = getChainInfo(chainID);
+        if (!fetchedChains.current[chainID]) {
+          const { address, baseURL, restURLs } = getChainInfo(chainID);
 
-        if (isWalletConnected) {
-          const authzGranterAddress = convertAddress(chainID, authzAddress);
-          const { minimalDenom } = getDenomInfo(chainID);
-          const chainRequestData = {
-            baseURLs: restURLs,
-            address: isAuthzMode ? authzGranterAddress : address,
-            chainID,
-          };
-          // Fetch delegations
-          dispatch(
-            isAuthzMode
-              ? getAuthzDelegations(chainRequestData)
-              : getDelegations(chainRequestData)
-          ).then();
+          if (isWalletConnected && address.length) {
+            const authzGranterAddress = convertAddress(chainID, authzAddress);
+            const { minimalDenom } = getDenomInfo(chainID);
+            const chainRequestData = {
+              baseURLs: restURLs,
+              address: isAuthzMode ? authzGranterAddress : address,
+              chainID,
+            };
 
-          // Fetch available balances
-          dispatch(
-            isAuthzMode
-              ? getAuthzBalances({ ...chainRequestData, baseURL })
-              : getBalances({ ...chainRequestData, baseURL })
-          );
+            // Fetch delegations
+            dispatch(
+              isAuthzMode
+                ? getAuthzDelegations(chainRequestData)
+                : getDelegations(chainRequestData)
+            ).then();
 
-          // Fetch rewards
-          dispatch(
-            isAuthzMode
-              ? getAuthzDelegatorTotalRewards({
-                  ...chainRequestData,
-                  baseURL,
-                  denom: minimalDenom,
-                })
-              : getDelegatorTotalRewards({
-                  ...chainRequestData,
-                  baseURL,
-                  denom: minimalDenom,
-                })
-          );
+            // Fetch available balances
+            dispatch(
+              isAuthzMode
+                ? getAuthzBalances({ ...chainRequestData, baseURL })
+                : getBalances({ ...chainRequestData, baseURL })
+            );
 
-          // Fetch unbonding delegations
-          dispatch(
-            isAuthzMode
-              ? getAuthzUnbonding(chainRequestData)
-              : getUnbonding(chainRequestData)
-          );
+            // Fetch rewards
+            dispatch(
+              isAuthzMode
+                ? getAuthzDelegatorTotalRewards({
+                    ...chainRequestData,
+                    baseURL,
+                    denom: minimalDenom,
+                  })
+                : getDelegatorTotalRewards({
+                    ...chainRequestData,
+                    baseURL,
+                    denom: minimalDenom,
+                  })
+            );
+
+            // Fetch unbonding delegations
+            dispatch(
+              isAuthzMode
+                ? getAuthzUnbonding(chainRequestData)
+                : getUnbonding(chainRequestData)
+            );
+
+            // Fetch validators
+            dispatch(getAllValidators({ baseURLs: restURLs, chainID }));
+
+            // Mark chain as fetched
+            fetchedChains.current[chainID] = true;
+          }
         }
-
-        dispatch(getAllValidators({ baseURLs: restURLs, chainID }));
       });
     }
-  }, [isWalletConnected, isAuthzMode]);
+  }, [
+    isWalletConnected,
+    isAuthzMode,
+    chainIDs,
+    getChainInfo,
+    convertAddress,
+    getDenomInfo,
+    authzAddress,
+    dispatch,
+    walletState,
+  ]);
+
+  useEffect(() => {
+    if (chainIDs.length > 0) {
+      chainIDs.forEach((chainID) => {
+        if (!validatorsFetchedChains.current[chainID]) {
+          const { restURLs } = getChainInfo(chainID);
+          // Fetch validators
+          dispatch(getAllValidators({ baseURLs: restURLs, chainID }));
+
+          // Mark chain as fetched
+          validatorsFetchedChains.current[chainID] = true;
+        }
+      });
+    }
+  }, [chainIDs, walletState]);
 
   useFetchPriceInfo();
   useInitFeegrant({ chainIDs, shouldFetch: isFeegrantModeEnabled });
