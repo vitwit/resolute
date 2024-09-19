@@ -48,8 +48,8 @@ sudo -u postgres psql your_dbname < schema/schema.sql
     ```
 2. Run this command
     ```bash
-    # Replace your_data_basename with the actual database name
-    sudo -u postgres psql 'your_data_basename' < schema/update_denom_price.sql
+    # Replace your_database_name with the actual database name
+    sudo -u postgres psql 'your_database_name' < schema/update_denom_price.sql
     ```
 
 ## Quick Start
