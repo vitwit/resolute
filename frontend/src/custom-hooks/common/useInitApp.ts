@@ -59,7 +59,7 @@ const useInitApp = () => {
 
   useEffect(() => {
     if (chainIDs.length > 0 && isWalletConnected) {
-      chainIDs.forEach((chainID) => {
+      ['passage-2'].forEach((chainID) => {
         if (!fetchedChains.current[chainID]) {
           const { address, baseURL, restURLs } = getChainInfo(chainID);
 

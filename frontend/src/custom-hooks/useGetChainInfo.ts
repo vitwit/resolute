@@ -140,6 +140,22 @@ const useGetChainInfo = () => {
     return originDenomInfo;
   };
 
+  const getChainIDByCoinDenom = (displayDenom: string) => {
+    const chainIDs = Object.keys(networks);
+
+    for (const chainID of chainIDs) {
+      const config = networks[chainID].network.config;
+      const currency = config.stakeCurrency;
+      const { coinDenom } = currency;
+
+      if (coinDenom.toLowerCase() === displayDenom.toLowerCase()) {
+        return chainID;
+      }
+    }
+
+    return '';
+  };
+
   const isNativeTransaction = (chainID: string, toAddress: string) => {
     const { prefix } = getChainInfo(chainID);
     if (toAddress.startsWith(prefix)) return true;
@@ -271,6 +287,7 @@ const useGetChainInfo = () => {
     getNetworkTheme,
     convertToCosmosAddress,
     getCustomNetworks,
+    getChainIDByCoinDenom,
   };
 };
 
