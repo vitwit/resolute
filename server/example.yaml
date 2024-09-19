@@ -11,6 +11,7 @@ production:
     port: 1323
   coingecko:
     uri: "https://api.coingecko.com/api/v3/"
+  redisUri: "localhost:6379"
 
 dev:
   database:
@@ -23,3 +24,4 @@ dev:
     port: 1323
   coingecko:
     uri: "https://api.coingecko.com/api/v3/"
+  redisUri: "localhost:6379"
