@@ -55,6 +55,10 @@ Set Squid ID `NEXT_PUBLIC_SQUID_ID`, You can get Squid ID from here [Squid ID](h
 
 To use Cosmwasm contracts set `NEXT_PUBLIC_DUMMY_WALLET_MNEMONIC`.
 
+Set Squid ID `NEXT_PUBLIC_SQUID_ID`, You can get Squid ID from here [Squid ID](https://squidrouter.typeform.com/integrator-id?typeform-source=docs.squidrouter.com)
+
+To use Cosmwasm contracts set `NEXT_PUBLIC_DUMMY_WALLET_MNEMONIC`.
+
 ## Start in DEV Mode
 Runs the app in the development mode.<br />
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
