@@ -28,10 +28,10 @@ export const networks: Network[] = [
     config: {
       chainId: 'agoric-3',
       chainName: 'Agoric',
-      rest: 'https://api.beta.resolute.vitwit.com',
-      rpc: 'https://api.beta.resolute.vitwit.com',
+      rest: 'https://api.resolute.vitwit.com',
+      rpc: 'https://api.resolute.vitwit.com',
       restURIs: [
-        'https://api.beta.resolute.vitwit.com'
+        'https://api.resolute.vitwit.com'
       ],
       rpcURIs: [
         'https://agoric-rpc.polkachu.com',
@@ -119,9 +119,9 @@ export const networks: Network[] = [
     config: {
       chainId: 'akashnet-2',
       chainName: 'Akash',
-      rest: 'https://api.beta.resolute.vitwit.com',
+      rest: 'https://api.resolute.vitwit.com',
       rpc: 'https://akash-rpc.lavenderfive.com:443',
-      restURIs: ['https://api.beta.resolute.vitwit.com'],
+      restURIs: ['https://api.resolute.vitwit.com'],
       rpcURIs: [
         'https://akash-rpc.lavenderfive.com:443',
         'https://akash-rpc.polkachu.com',
@@ -198,9 +198,9 @@ export const networks: Network[] = [
     config: {
       chainId: 'cosmoshub-4',
       chainName: 'CosmosHub',
-      rest: 'https://api.beta.resolute.vitwit.com',
+      rest: 'https://api.resolute.vitwit.com',
       rpc: 'https://cosmos-rpc.polkachu.com',
-      restURIs: ['https://api.beta.resolute.vitwit.com'],
+      restURIs: ['https://api.resolute.vitwit.com'],
       rpcURIs: [
         'https://cosmos-rpc.polkachu.com',
         'https://rpc-cosmoshub.blockapsis.com',
@@ -276,10 +276,10 @@ export const networks: Network[] = [
     config: {
       chainId: 'desmos-mainnet',
       chainName: 'Desmos',
-      rest: 'https://api.beta.resolute.vitwit.com',
-      rpc: 'https://api.beta.resolute.vitwit.com',
+      rest: 'https://api.resolute.vitwit.com',
+      rpc: 'https://api.resolute.vitwit.com',
       restURIs: [
-        'https://api.beta.resolute.vitwit.com'
+        'https://api.resolute.vitwit.com'
       ],
       rpcURIs: [
         'https://rpc.mainnet.desmos.network',
@@ -355,9 +355,9 @@ export const networks: Network[] = [
     config: {
       chainId: 'evmos_9001-2',
       chainName: 'Evmos',
-      rest: 'https://api.beta.resolute.vitwit.com',
-      rpc: 'https://api.beta.resolute.vitwit.com',
-      restURIs: ['https://api.beta.resolute.vitwit.com'],
+      rest: 'https://api.resolute.vitwit.com',
+      rpc: 'https://api.resolute.vitwit.com',
+      restURIs: ['https://api.resolute.vitwit.com'],
       rpcURIs: [
         'https://rpc-evmos-ia.cosmosia.notional.ventures:443',
         'https://evmos-rpc.polkachu.com',
@@ -433,9 +433,9 @@ export const networks: Network[] = [
     config: {
       chainId: 'juno-1',
       chainName: 'Juno',
-      rest: 'https://api.beta.resolute.vitwit.com',
-      rpc: 'https://api.beta.resolute.vitwit.com',
-      restURIs: ['https://api.beta.resolute.vitwit.com'],
+      rest: 'https://api.resolute.vitwit.com',
+      rpc: 'https://api.resolute.vitwit.com',
+      restURIs: ['https://api.resolute.vitwit.com'],
       rpcURIs: [
         'https://juno-rpc.lavenderfive.com:443',
         'https://juno-rpc.polkachu.com',
@@ -512,10 +512,10 @@ export const networks: Network[] = [
     config: {
       chainId: 'omniflixhub-1',
       chainName: 'OmniflixHub',
-      rest: 'https://api.beta.resolute.vitwit.com',
-      rpc: 'https://api.beta.resolute.vitwit.com',
+      rest: 'https://api.resolute.vitwit.com',
+      rpc: 'https://api.resolute.vitwit.com',
       restURIs: [
-        'https://api.beta.resolute.vitwit.com'
+        'https://api.resolute.vitwit.com'
       ],
       rpcURIs: [
         'https://rpc-omniflixhub-ia.cosmosia.notional.ventures',
@@ -596,9 +596,9 @@ export const networks: Network[] = [
     config: {
       chainId: 'osmosis-1',
       chainName: 'Osmosis',
-      rest: 'https://api.beta.resolute.vitwit.com',
+      rest: 'https://api.resolute.vitwit.com',
       rpc: 'https://rpc.osmosis.zone',
-      restURIs: ['https://api.beta.resolute.vitwit.com'],
+      restURIs: ['https://api.resolute.vitwit.com'],
       rpcURIs: [
         'https://rpc.osmosis.zone',
         'https://rpc-osmosis.blockapsis.com',
@@ -672,10 +672,10 @@ export const networks: Network[] = [
     config: {
       chainId: 'passage-2',
       chainName: 'Passage',
-      rest: 'https://api.beta.resolute.vitwit.com',
-      rpc: 'https://api.beta.resolute.vitwit.com',
+      rest: 'https://api.resolute.vitwit.com',
+      rpc: 'https://api.resolute.vitwit.com',
       restURIs: [
-        'https://api.beta.resolute.vitwit.com'
+        'https://api.resolute.vitwit.com'
       ],
       rpcURIs: [
         'https://rpc.passage.vitwit.com',
@@ -760,9 +760,9 @@ export const networks: Network[] = [
     config: {
       chainId: 'dydx-mainnet-1',
       chainName: 'DYDX',
-      rest: 'https://api.beta.resolute.vitwit.com',
+      rest: 'https://api.resolute.vitwit.com',
       rpc: 'https://dydx-rpc.publicnode.com:443',
-      restURIs: ['https://api.beta.resolute.vitwit.com'],
+      restURIs: ['https://api.resolute.vitwit.com'],
       rpcURIs: [
         'https://dydx-rpc.publicnode.com:443',
         'https://dydx-dao-rpc.polkachu.com',
@@ -839,10 +839,10 @@ export const networks: Network[] = [
     config: {
       chainId: 'quicksilver-2',
       chainName: 'Quicksilver',
-      rest: 'https://api.beta.resolute.vitwit.com',
-      rpc: 'https://api.beta.resolute.vitwit.com',
+      rest: 'https://api.resolute.vitwit.com',
+      rpc: 'https://api.resolute.vitwit.com',
       restURIs: [
-        'https://api.beta.resolute.vitwit.com'
+        'https://api.resolute.vitwit.com'
       ],
       rpcURIs: [
         'https://quicksilver-rpc.staketab.org:443',
@@ -921,10 +921,10 @@ export const networks: Network[] = [
     config: {
       chainId: 'regen-1',
       chainName: 'Regen',
-      rest: 'https://api.beta.resolute.vitwit.com',
-      rpc: 'https://api.beta.resolute.vitwit.com',
+      rest: 'https://api.resolute.vitwit.com',
+      rpc: 'https://api.resolute.vitwit.com',
       restURIs: [
-        'https://api.beta.resolute.vitwit.com'
+        'https://api.resolute.vitwit.com'
       ],
       rpcURIs: [
         'https://regen-mainnet-rpc.autostake.com:443',
@@ -1003,10 +1003,10 @@ export const networks: Network[] = [
     config: {
       chainId: 'stargaze-1',
       chainName: 'Stargaze',
-      rest: 'https://api.beta.resolute.vitwit.com',
-      rpc: 'https://api.beta.resolute.vitwit.com',
+      rest: 'https://api.resolute.vitwit.com',
+      rpc: 'https://api.resolute.vitwit.com',
       restURIs: [
-        'https://api.beta.resolute.vitwit.com'
+        'https://api.resolute.vitwit.com'
       ],
       rpcURIs: [
         'https://stargaze-rpc.polkachu.com',
@@ -1084,10 +1084,10 @@ export const networks: Network[] = [
     config: {
       chainId: 'dymension_1100-1',
       chainName: 'Dymension',
-      rest: 'https://api.beta.resolute.vitwit.com',
-      rpc: 'https://api.beta.resolute.vitwit.com',
+      rest: 'https://api.resolute.vitwit.com',
+      rpc: 'https://api.resolute.vitwit.com',
       restURIs: [
-        'https://api.beta.resolute.vitwit.com'
+        'https://api.resolute.vitwit.com'
       ],
       rpcURIs: [
         'https://rpc.dymension.nodestake.org',
@@ -1168,10 +1168,10 @@ export const networks: Network[] = [
     config: {
       chainId: 'umee-1',
       chainName: 'Umee',
-      rest: 'https://api.beta.resolute.vitwit.com',
-      rpc: 'https://api.beta.resolute.vitwit.com',
+      rest: 'https://api.resolute.vitwit.com',
+      rpc: 'https://api.resolute.vitwit.com',
       restURIs: [
-        'https://api.beta.resolute.vitwit.com'
+        'https://api.resolute.vitwit.com'
       ],
       rpcURIs: [
         'https://umee-rpc.quantnode.tech',
@@ -1252,9 +1252,9 @@ export const networks: Network[] = [
     config: {
       chainId: 'celestia',
       chainName: 'Celestia',
-      rest: 'https://api.beta.resolute.vitwit.com',
+      rest: 'https://api.resolute.vitwit.com',
       rpc: 'https://public-celestia-rpc.numia.xyz',
-      restURIs: ['https://api.beta.resolute.vitwit.com'],
+      restURIs: ['https://api.resolute.vitwit.com'],
       rpcURIs: [
         'https://public-celestia-rpc.numia.xyz',
         'https://rpc.celestia.nodestake.top',
@@ -1331,10 +1331,10 @@ export const networks: Network[] = [
     config: {
       chainId: 'quasar-1',
       chainName: 'Quasar',
-      rest: 'https://api.beta.resolute.vitwit.com',
-      rpc: 'https://api.beta.resolute.vitwit.com',
+      rest: 'https://api.resolute.vitwit.com',
+      rpc: 'https://api.resolute.vitwit.com',
       restURIs: [
-        'https://api.beta.resolute.vitwit.com'
+        'https://api.resolute.vitwit.com'
       ],
       rpcURIs: [
         'https://quasar-rpc.publicnode.com:443',
@@ -1412,10 +1412,10 @@ export const networks: Network[] = [
     config: {
       chainId: 'comdex-1',
       chainName: 'Comdex',
-      rest: 'https://api.beta.resolute.vitwit.com',
-      rpc: 'https://api.beta.resolute.vitwit.com',
+      rest: 'https://api.resolute.vitwit.com',
+      rpc: 'https://api.resolute.vitwit.com',
       restURIs: [
-        'https://api.beta.resolute.vitwit.com'
+        'https://api.resolute.vitwit.com'
       ],
       rpcURIs: [
         'https://rpc.comdex.one',
@@ -1493,10 +1493,10 @@ export const networks: Network[] = [
     config: {
       chainId: 'gravity-bridge-3',
       chainName: 'GravityBridge',
-      rest: 'https://api.beta.resolute.vitwit.com',
+      rest: 'https://api.resolute.vitwit.com',
       rpc: 'https://gravitybridge-rpc.lavenderfive.com',
       restURIs: [
-        'https://api.beta.resolute.vitwit.com'
+        'https://api.resolute.vitwit.com'
       ],
       rpcURIs: [
         'https://gravitybridge-rpc.lavenderfive.com',
@@ -1574,10 +1574,10 @@ export const networks: Network[] = [
     config: {
       chainId: 'mars-1',
       chainName: 'MarsHub',
-      rest: 'https://api.beta.resolute.vitwit.com',
-      rpc: 'https://api.beta.resolute.vitwit.com',
+      rest: 'https://api.resolute.vitwit.com',
+      rpc: 'https://api.resolute.vitwit.com',
       restURIs: [
-        'https://api.beta.resolute.vitwit.com'
+        'https://api.resolute.vitwit.com'
       ],
       rpcURIs: [
         'https://rpc.marsprotocol.io:443',
@@ -1657,9 +1657,9 @@ export const networks: Network[] = [
     config: {
       chainId: 'archway-1',
       chainName: 'Archway',
-      rest: 'https://api.beta.resolute.vitwit.com',
-      rpc: 'https://api.beta.resolute.vitwit.com',
-      restURIs: ['https://api.beta.resolute.vitwit.com'],
+      rest: 'https://api.resolute.vitwit.com',
+      rpc: 'https://api.resolute.vitwit.com',
+      restURIs: ['https://api.resolute.vitwit.com'],
       rpcURIs: [
         'https://rpc.mainnet.archway.io',
         'https://archway-rpc.lavenderfive.com:443',
@@ -1735,9 +1735,9 @@ export const networks: Network[] = [
     config: {
       chainId: 'noble-1',
       chainName: 'noble',
-      rest: 'https://api.beta.resolute.vitwit.com',
-      rpc: 'https://api.beta.resolute.vitwit.com',
-      restURIs: ['https://api.beta.resolute.vitwit.com'],
+      rest: 'https://api.resolute.vitwit.com',
+      rpc: 'https://api.resolute.vitwit.com',
+      restURIs: ['https://api.resolute.vitwit.com'],
       rpcURIs: [
         'https://rpc.mainnet.archway.io',
         'https://archway-rpc.lavenderfive.com:443',
@@ -1813,9 +1813,9 @@ export const networks: Network[] = [
     config: {
       chainId: 'neutron-1',
       chainName: 'neutron',
-      rest: 'https://api.beta.resolute.vitwit.com',
-      rpc: 'https://api.beta.resolute.vitwit.com',
-      restURIs: ['https://api.beta.resolute.vitwit.com'],
+      rest: 'https://api.resolute.vitwit.com',
+      rpc: 'https://api.resolute.vitwit.com',
+      restURIs: ['https://api.resolute.vitwit.com'],
       rpcURIs: [
         'https://rpc.mainnet.archway.io',
         'https://archway-rpc.lavenderfive.com:443',
@@ -1891,9 +1891,9 @@ export const networks: Network[] = [
     config: {
       chainId: 'sentinelhub-2',
       chainName: 'sentinel',
-      rest: 'https://api.beta.resolute.vitwit.com',
-      rpc: 'https://api.beta.resolute.vitwit.com',
-      restURIs: ['https://api.beta.resolute.vitwit.com'],
+      rest: 'https://api.resolute.vitwit.com',
+      rpc: 'https://api.resolute.vitwit.com',
+      restURIs: ['https://api.resolute.vitwit.com'],
       rpcURIs: [
         'https://rpc.mainnet.archway.io',
         'https://archway-rpc.lavenderfive.com:443',
@@ -1969,9 +1969,9 @@ export const networks: Network[] = [
     config: {
       chainId: 'ssc-1',
       chainName: 'saga',
-      rest: 'https://api.beta.resolute.vitwit.com',
-      rpc: 'https://api.beta.resolute.vitwit.com',
-      restURIs: ['https://api.beta.resolute.vitwit.com'],
+      rest: 'https://api.resolute.vitwit.com',
+      rpc: 'https://api.resolute.vitwit.com',
+      restURIs: ['https://api.resolute.vitwit.com'],
       rpcURIs: [
         'https://rpc.mainnet.archway.io',
         'https://archway-rpc.lavenderfive.com:443',
