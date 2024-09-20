@@ -78,25 +78,27 @@ export const sendTxnTextFieldStyles = {
 };
 
 export const createMultisigTextFieldStyles = {
-  mt: 3,
-  '& .MuiTypography-body1': {
+  '& .MuiInputBase-input': {
     color: 'white',
-    fontSize: '12px',
+    fontSize: '14px',
     fontWeight: 200,
+    fontFamily: 'Libre Franklin',
+    lineHeight: '19px',
   },
   '& .MuiOutlinedInput-notchedOutline': {
     border: 'none',
   },
-  '& .Mui-disabled': {
-    WebkitTextFillColor: '#ffffff6b !important',
-  },
   '& .MuiOutlinedInput-root': {
-    border: '1px solid transparent',
-    borderRadius: '16px',
+    border: '0.25px solid #ffffff10',
+    borderRadius: '100px',
+    height: '40px',
   },
   '& .Mui-focused': {
-    border: '1px solid #ffffff4a',
-    borderRadius: '16px',
+    border: '0.25px solid #ffffff4a',
+    borderRadius: '100px',
+  },
+  '& .Mui-disabled': {
+    WebkitTextFillColor: '#ffffff !important',
   },
 };
 

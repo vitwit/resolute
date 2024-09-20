@@ -3,12 +3,19 @@
 package main
 
 import (
+	"bytes"
+	"compress/gzip"
+	"encoding/json"
+	"io"
+	"io/ioutil"
 	"net/http"
 
+	"github.com/andybalholm/brotli"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/labstack/gommon/log"
 
+	"github.com/vitwit/resolute/server/clients"
 	"github.com/vitwit/resolute/server/config"
 	"github.com/vitwit/resolute/server/cron"
 	"github.com/vitwit/resolute/server/handler"
@@ -20,6 +27,15 @@ import (
 
 	_ "github.com/lib/pq"
 )
+
+func init() {
+	config, err := config.ParseConfig()
+	if err != nil {
+		log.Fatal(err)
+	}
+	// Initialize the Redis client
+	clients.InitializeRedis(config.REDIS_URI, "", 0)
+}
 
 func main() {
 	e := echo.New()
@@ -78,6 +94,8 @@ func main() {
 	e.GET("/accounts/:address/all-txns", h.GetAllMultisigTxns)
 	e.POST("/transactions", h.GetRecentTransactions)
 	e.GET("/txns/:chainId/:address", h.GetAllTransactions)
+	e.GET("/txns/:chainId/:address/:txhash", h.GetChainTxHash)
+	e.GET("/search/txns/:txhash", h.GetTxHash)
 
 	// users
 	e.POST("/users/:address/signature", h.CreateUserSignature)
@@ -86,7 +104,12 @@ func main() {
 	e.GET("/tokens-info", h.GetTokensInfo)
 	e.GET("/tokens-info/:denom", h.GetTokenInfo)
 
+	e.POST("/cosmos/tx/v1beta1/txs", proxyHandler1)
+
+	e.Any("/*", proxyHandler)
+
 	e.GET("/", func(c echo.Context) error {
+
 		return c.JSON(http.StatusOK, model.SuccessResponse{
 			Status:  "success",
 			Message: "server up",
@@ -106,4 +129,179 @@ func main() {
 	// Start server
 	// TODO: add ip and port
 	e.Logger.Fatal(e.Start(fmt.Sprintf(":%s", apiCfg.Port)))
+}
+
+func proxyHandler1(c echo.Context) error {
+	config, err := config.ParseConfig()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	type RequestBody struct {
+		Mode    string `json:"mode"`
+		TxBytes string `json:"tx_bytes"`
+	}
+
+	reqBody := new(RequestBody)
+
+	// Bind the request body to the struct
+	if err := c.Bind(reqBody); err != nil {
+		return c.String(http.StatusBadRequest, "Invalid request")
+	}
+
+	// Convert the struct to JSON
+	jsonData, err := json.Marshal(reqBody)
+	if err != nil {
+		return c.String(http.StatusInternalServerError, "Error encoding JSON")
+	}
+
+	chanDetails := clients.GetChain(c.QueryParam("chain"))
+
+	if chanDetails == nil {
+		return c.String(http.StatusInternalServerError, "Failed to get the server")
+	}
+
+	// URL to which the POST request will be sent
+	targetURL := chanDetails.RestURI + "/cosmos/tx/v1beta1/txs"
+
+	// Create a new HTTP request
+	req, err := http.NewRequest("POST", targetURL, bytes.NewBuffer(jsonData))
+	if err != nil {
+		return c.String(http.StatusInternalServerError, "Error creating request")
+	}
+
+	// Set the Content-Type header
+	req.Header.Set("Content-Type", "application/json")
+
+	if chanDetails.SourceEnd == "mintscan" {
+		authorizationToken := fmt.Sprintf("Bearer %s", config.MINTSCAN_TOKEN.Token)
+
+		req.Header.Add("Authorization", authorizationToken)
+	}
+
+	if chanDetails.SourceEnd == "numia" {
+		bearerToken := config.NUMIA_BEARER_TOKEN.Token
+		var authorization = "Bearer " + bearerToken
+
+		req.Header.Add("Authorization", authorization)
+	}
+
+	// Create a new HTTP client and send the request
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return c.String(http.StatusInternalServerError, "Error sending request")
+	}
+	defer resp.Body.Close()
+
+	// Read the response body
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return c.String(http.StatusInternalServerError, "Error reading response")
+	}
+
+	// Respond back to the original request
+	return c.JSON(http.StatusOK, string(body))
+}
+
+func proxyHandler(c echo.Context) error {
+	config, err := config.ParseConfig()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	chanDetails := clients.GetChain(c.QueryParam("chain"))
+
+	if chanDetails == nil {
+		return c.String(http.StatusInternalServerError, "Failed to get the server")
+	}
+	// Construct the target URL based on the incoming request
+	targetBase := chanDetails.RestURI // Change this to your target service base URL
+
+	targetURL := targetBase + c.Request().URL.Path
+	if c.Request().URL.RawQuery != "" {
+		targetURL += "?" + c.Request().URL.RawQuery
+	}
+
+	// Create a new request to the target URL
+	req, err := http.NewRequest(c.Request().Method, targetURL, c.Request().Body)
+	if err != nil {
+		log.Printf("Failed to create request: %v", err)
+		return c.String(http.StatusInternalServerError, "Failed to create request")
+	}
+	// Forward headers from the original request
+	for name, values := range c.Request().Header {
+		for _, value := range values {
+			req.Header.Add(name, value)
+		}
+	}
+	req.Header.Set("Content-Type", "application/json")
+
+	// Add Authorization header
+	if chanDetails.SourceEnd == "mintscan" {
+		authorizationToken := fmt.Sprintf("Bearer %s", config.MINTSCAN_TOKEN.Token)
+		req.Header.Add("Authorization", authorizationToken) // Change this to your actual token
+	}
+
+	if chanDetails.SourceEnd == "numia" {
+		bearerToken := config.NUMIA_BEARER_TOKEN.Token
+		var authorization = "Bearer " + bearerToken
+
+		req.Header.Add("Authorization", authorization)
+	}
+
+	// Make the request
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		log.Printf("Failed to make request: %v", err)
+		return c.String(http.StatusInternalServerError, "Failed to make request")
+	}
+	defer resp.Body.Close()
+
+	// Check the content encoding and decode accordingly
+	var reader io.ReadCloser
+	switch resp.Header.Get("Content-Encoding") {
+	case "gzip":
+		reader, err = gzip.NewReader(resp.Body)
+		if err != nil {
+			log.Printf("Failed to create gzip reader: %v", err)
+			return c.String(http.StatusInternalServerError, "Failed to decompress response")
+		}
+		defer reader.Close()
+	case "br":
+		reader = ioutil.NopCloser(brotli.NewReader(resp.Body))
+		defer reader.Close()
+	default:
+		reader = resp.Body
+	}
+
+	// Read the decompressed or raw body
+	bodyBytes, err := ioutil.ReadAll(reader)
+	if err != nil {
+		log.Printf("Failed to read response body: %v", err)
+		return c.String(http.StatusInternalServerError, "Failed to read response body")
+	}
+
+	// Set content type and response
+	c.Response().Header().Set("Content-Type", resp.Header.Get("Content-Type"))
+	c.Response().WriteHeader(resp.StatusCode)
+	_, err = c.Response().Writer.Write(bodyBytes)
+	if err != nil {
+		log.Printf("Failed to write response body: %v", err)
+		return c.String(http.StatusInternalServerError, "Failed to write response body")
+	}
+
+	return nil
+
+	// c.Response().WriteHeader(resp.StatusCode)
+
+	// // Copy the response body to the original response
+	// _, err = io.Copy(c.Response().Writer, resp.Body)
+	// if err != nil {
+	// 	log.Printf("Failed to read response body: %v", err)
+	// 	return c.String(http.StatusInternalServerError, "Failed to read response body")
+	// }
+
+	// return nil
 }

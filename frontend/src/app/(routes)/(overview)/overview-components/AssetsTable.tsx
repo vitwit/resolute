@@ -2,8 +2,8 @@ import { useAppSelector } from '@/custom-hooks/StateHooks';
 import useSortedAssets from '@/custom-hooks/useSortedAssets';
 import React from 'react';
 import Asset from './Asset';
-import { CircularProgress } from '@mui/material';
 import NoAssets from '@/components/illustrations/NoAssets';
+import DashboardLoading from './DashboardLoading';
 
 const AssetsTable = ({ chainIDs }: { chainIDs: string[] }) => {
   const isAuthzMode = useAppSelector((state) => state.authz.authzModeEnabled);
@@ -33,68 +33,51 @@ const AssetsTable = ({ chainIDs }: { chainIDs: string[] }) => {
     isAuthzMode && (authzBalanceLoading || authzDelegationsLoading);
 
   return (
-    <div className="flex flex-col flex-1 overflow-y-scroll">
-      <div className="assets-table bg-[#1a1a1b] px-8 py-8">
-        <div className="flex flex-col flex-1">
-          {assets.length ? (
-            <div className="flex-1">
-              <table className="w-full text-sm leading-normal">
-                <thead className="border-b-[0.5px] border-[#B0B0B033] relative">
-                  <tr className="text-left">
-                    <th className="w-1/5">
-                      <div className="min-h-[17px] flex items-center text-sm not-italic font-normal leading-[normal]">
-                        Available
-                      </div>
-                    </th>
-                    <th className="w-1/5">
-                      <div className="min-h-[17px] flex items-center text-sm not-italic font-normal leading-[normal]">
-                        Staked
-                      </div>
-                    </th>
-                    <th className="w-1/5">
-                      <div className="min-h-[17px] flex items-center text-sm not-italic font-normal leading-[normal]">
-                        Rewards
-                      </div>
-                    </th>
-                    <th className="w-1/5">
-                      <div className="min-h-[17px] flex items-center text-sm not-italic font-normal leading-[normal]">
-                        Price
-                      </div>
-                    </th>
-                    <th className="w-1/5">
-                      <div className="min-h-[17px] flex items-center text-sm not-italic font-normal leading-[normal]">
-                        Value
-                      </div>
-                    </th>
-                    <th className="max-h-[104px]">
-                      <div className="min-h-[17px] flex items-center text-sm not-italic font-normal leading-[normal]">
-                        Actions
-                      </div>
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="flex-1">
-                  {assets.map((asset) => (
-                    <Asset
-                      asset={asset}
-                      key={asset.chainID + asset.denom}
-                      showChainName={chainIDs.length > 1}
-                    />
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          ) : (
-            <div className="w-full flex flex-col flex-1 items-center justify-center text-white">
-              {loading || authzLoading ? (
-                <CircularProgress size={32} />
-              ) : (
-                <NoAssets />
-              )}
-            </div>
-          )}
+    <div className="flex flex-col gap-6 w-full bg-[#ffffff05] rounded-2xl p-6">
+      <div className=" flex flex-col gap-1">
+        <div className="text-h2 !font-bold">Asset Information</div>
+        <div className="flex flex-col gap-2">
+          <div className="secondary-text">
+            Information of your asset holdings
+          </div>
+          <div className="divider-line"></div>
         </div>
       </div>
+
+      {/* table */}
+
+      {assets.length ? (
+        <div className="flex flex-col items-start gap-2 w-full flex-1">
+          <table className="relative w-full">
+            <thead className="w-full">
+              <tr>
+                {['Available', 'Staked', 'Rewards', 'Value', ''].map(
+                  (header, hIndex) => (
+                    <th key={hIndex} className="">
+                      <div className="secondary-text items-start flex px-4">
+                        {header}
+                      </div>
+                    </th>
+                  )
+                )}
+              </tr>
+            </thead>
+            <tbody>
+              {assets.map((asset) => (
+                <Asset
+                  asset={asset}
+                  key={asset.chainID + asset.denom}
+                  // showChainName={chainIDs.length > 1}
+                />
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        <div className="w-full flex flex-col flex-1 items-center justify-start text-[#fffffff0]">
+          {loading || authzLoading ? <DashboardLoading /> : <NoAssets />}
+        </div>
+      )}
     </div>
   );
 };

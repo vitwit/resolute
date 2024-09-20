@@ -1,8 +1,8 @@
 import React from 'react';
-import ValidatorProfile from './ValidatorProfile';
 import '../validator-profile.css';
 import '../../staking/staking.css';
 import { VITWIT_NEW_MONIKER, VITWIT_VALIDATOR_NAMES } from '@/utils/constants';
+import ValidatorProfile from './ValidatorProfile';
 
 const page = ({ params }: { params: { validator: string } }) => {
   const decodedMonikerName = decodeURIComponent(params.validator);

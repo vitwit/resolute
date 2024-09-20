@@ -1,11 +1,5 @@
-.stats-sub-card {
-  @apply bg-[#FFFFFF0D] rounded-2xl p-2;
-  backdrop-filter: blur(2px);
-}
-
 .validators-table {
-  @apply rounded-3xl text-white bg-[#0e0b26] flex flex-col flex-1;
-  backdrop-filter: blur(2px);
+  @apply text-[#fffffff0] flex flex-col flex-1;
 }
 
 .validators-table th {
@@ -13,22 +7,17 @@
 }
 
 .validators-table td {
-  @apply font-light leading-normal pt-4 pb-4 px-2;
+  @apply text-[14px] text-[#fffffff0] py-4 px-6;
 }
 
-.validators-table tbody tr {
-  @apply hover:bg-[#1a1731];
+.validators-table tr {
+  @apply mb-2;
 }
 
-.validator-profile-menu-item {
-  @apply cursor-pointer px-2 text-[18px] h-9 flex items-center pb-[14px] leading-[21.7px];
+.validator-stats-card {
+  @apply bg-[#FFFFFF05] p-4 flex flex-col gap-2 items-center justify-center flex-1 rounded-2xl;
 }
 
-.button-disabled {
-  @apply bg-[#FFFFFF1A] text-[#FFFFFF1A] cursor-not-allowed;
-  background: #ffffff1a;
-}
-
-.stake-btn {
-  @apply px-3 py-[6px] w-full rounded-lg;
+.validator-description {
+  @apply text-[#FFFFFF80] font-extralight text-[14px] leading-8;
 }

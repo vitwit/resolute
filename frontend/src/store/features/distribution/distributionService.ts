@@ -1,8 +1,10 @@
 'use client';
 import { AxiosResponse } from 'axios';
-import { convertPaginationToParams } from '../../../utils/util';
+import {
+  addChainIDParam,
+  convertPaginationToParams,
+} from '../../../utils/util';
 import { axiosGetRequestWrapper } from '@/utils/RequestWrapper';
-import { MAX_TRY_END_POINTS } from '../../../utils/constants';
 
 const delegatorTotalRewardsURL = (address: string) =>
   `/cosmos/distribution/v1beta1/delegators/${address}/rewards`;
@@ -12,7 +14,8 @@ const withdrawAddressURL = (delegator: string) =>
 export const fetchDelegatorTotalRewards = (
   baseURLs: string[],
   address: string,
-  pagination: KeyLimitPagination
+  pagination: KeyLimitPagination,
+  chainID: string
 ): Promise<AxiosResponse> => {
   let endPoint = `${delegatorTotalRewardsURL(address)}`;
 
@@ -20,17 +23,20 @@ export const fetchDelegatorTotalRewards = (
   if (parsed !== '') {
     endPoint += `?${parsed}`;
   }
+  endPoint = addChainIDParam(endPoint, chainID);
 
-  return axiosGetRequestWrapper(baseURLs, endPoint, MAX_TRY_END_POINTS);
+  return axiosGetRequestWrapper(baseURLs, endPoint);
 };
 
 export const fetchWithdrawAddress = (
   baseURLs: string[],
-  delegator: string
+  delegator: string,
+  chainID: string
 ): Promise<AxiosResponse> => {
-  const endPoint = `${withdrawAddressURL(delegator)}`;
+  let endPoint = `${withdrawAddressURL(delegator)}`;
+  endPoint = addChainIDParam(endPoint, chainID);
 
-  return axiosGetRequestWrapper(baseURLs, endPoint, MAX_TRY_END_POINTS);
+  return axiosGetRequestWrapper(baseURLs, endPoint);
 };
 const result = {
   delegatorRewards: fetchDelegatorTotalRewards,

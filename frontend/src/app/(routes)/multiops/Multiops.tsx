@@ -1,5 +1,4 @@
 'use client';
-import TopNav from '@/components/TopNav';
 import Image from 'next/image';
 import React from 'react';
 
@@ -10,7 +9,6 @@ const Multiops = () => {
     <div className="h-screen flex flex-col p-6 pl-10">
       <div className="w-full flex justify-between items-center">
         <h2 className="text-[20px] leading-normal font-normal">Multiops</h2>
-        <TopNav message={message} />
       </div>
       <div className="flex-1 flex flex-col justify-center items-center gap-4">
         <Image

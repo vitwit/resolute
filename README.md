@@ -25,6 +25,8 @@ To add a new network to Resolute, please follow these steps:
 
 1. Open the `frontend/src/utils/chainInfo.ts` file. 
 2. Add the new network configuration to the networks list. You can refer to the existing network configurations.
+3. Open the `server/networks.json` file and add the new network configuration.
+4. Add the token denom and coingecko-id in backend for token price. (Refer: [Set up backend server](./BACKEND_SERVER_README.md))
 
 ## Prerequisites
 
@@ -45,8 +47,13 @@ $ yarn
 
 ## Environment variables
 
-Rename `.env.example` to `.env` and set multisig backend URI `NEXT_PUBLIC_APP_API_URI`, 
-You can setup your own multisig server in [Set up multisig server](./MULTISIG_SERVER_README.md).
+Rename `.env.example` to `.env` and set backend sever URI `NEXT_PUBLIC_APP_API_URI`.
+
+Backend server setup: [Set up backend server](./BACKEND_SERVER_README.md).
+
+Set Squid ID `NEXT_PUBLIC_SQUID_ID`, You can get Squid ID from here [Squid ID](https://squidrouter.typeform.com/integrator-id?typeform-source=docs.squidrouter.com)
+
+To use Cosmwasm contracts set `NEXT_PUBLIC_DUMMY_WALLET_MNEMONIC`.
 
 Set Squid ID `NEXT_PUBLIC_SQUID_ID`, You can get Squid ID from here [Squid ID](https://squidrouter.typeform.com/integrator-id?typeform-source=docs.squidrouter.com)
 

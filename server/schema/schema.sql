@@ -132,6 +132,16 @@ uosmo	osmosis	t	2022-10-04 09:10:29.043476+00	{}
 ujuno	juno-network	t	2022-10-04 09:10:29.043476+00	{}
 ustars	stargaze	t	2022-10-04 09:10:29.043476+00	{}
 uakt	akash-network	t	2022-10-04 09:10:29.043476+00	{}
+utia	celestia	t	2022-10-04 09:10:29.043476+00	{}
+ubld	agoric	t	2022-10-04 09:10:29.043476+00	{}
+attoaioz	aioz-network	t	2022-10-04 09:10:29.043476+00	{}
+uandr	andromeda-2	t	2022-10-04 09:10:29.043476+00	{}
+aarch	archway	t	2022-10-04 09:10:29.043476+00	{}
+arkh	arkham	t	2022-10-04 09:10:29.043476+00	{}
+umntl	assetmantle	t	2022-10-04 09:10:29.043476+00	{}
+uaura	aura-network	t	2022-10-04 09:10:29.043476+00	{}
+uaxl	axelar	t	2022-10-04 09:10:29.043476+00	{}
+ubze	bzedge	t	2022-10-04 09:10:29.043476+00	{}
 \.
 
 

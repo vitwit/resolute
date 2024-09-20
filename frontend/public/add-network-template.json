@@ -14,10 +14,11 @@
     "menu": "https://raw.githubusercontent.com/vitwit/aneka-resources/d234799b2da3dc0b148829259866d07618b9773b/assets/cosmoshub/atom.png",
     "toolbar": "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/cosmoshub/images/cosmoshub-logo.png"
   },
+  "supported_wallets": ["keplr", "leap", "cosmostation"],
   "keplr_experimental": false,
   "leap_experimental": false,
   "is_testnet": false,
-  "govV1": false,
+  "gov_v1": false,
   "explorer_tx_hash_endpoint": "https://www.mintscan.io/cosmos/txs/",
   "config": {
     "chain_id": "cosmoshub-4",

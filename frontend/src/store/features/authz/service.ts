@@ -1,7 +1,6 @@
 import { AxiosResponse } from 'axios';
-import { convertPaginationToParams } from '@/utils/util';
+import { addChainIDParam, convertPaginationToParams } from '@/utils/util';
 import { axiosGetRequestWrapper } from '@/utils/RequestWrapper';
-import { MAX_TRY_END_POINTS } from '../../../utils/constants';
 
 const grantToMeURL = '/cosmos/authz/v1beta1/grants/grantee/';
 const grantByMeURL = '/cosmos/authz/v1beta1/grants/granter/';
@@ -9,7 +8,8 @@ const grantByMeURL = '/cosmos/authz/v1beta1/grants/granter/';
 const fetchGrantsToMe = (
   baseURLs: string[],
   grantee: string,
-  pagination?: KeyLimitPagination
+  chainID:string,
+  pagination?: KeyLimitPagination,
 ): Promise<AxiosResponse<GetGrantsResponse>> => {
   let endPoint = `${grantToMeURL}${grantee}`;
 
@@ -18,13 +18,16 @@ const fetchGrantsToMe = (
     endPoint += `?${parsed}`;
   }
 
-  return axiosGetRequestWrapper(baseURLs, endPoint, MAX_TRY_END_POINTS);
+  endPoint = addChainIDParam(endPoint, chainID);
+
+  return axiosGetRequestWrapper(baseURLs, endPoint);
 };
 
 const fetchGrantsByMe = (
   baseURLs: string[],
   grantee: string,
-  pagination?: KeyLimitPagination
+  chainID: string,
+  pagination?: KeyLimitPagination,
 ): Promise<AxiosResponse<GetGrantsResponse>> => {
   let endPoint = `${grantByMeURL}${grantee}`;
 
@@ -33,7 +36,9 @@ const fetchGrantsByMe = (
     endPoint += `?${parsed}`;
   }
 
-  return axiosGetRequestWrapper(baseURLs, endPoint, MAX_TRY_END_POINTS);
+  endPoint = addChainIDParam(endPoint, chainID);
+
+  return axiosGetRequestWrapper(baseURLs, endPoint);
 };
 
 const result = {

@@ -53,7 +53,7 @@ const useSortedAssets = (
       const network = networks?.[chainID]?.network;
       const currency = config?.currencies?.[0];
       const chainName = config?.chainName.toLowerCase();
-      const nativeMinimalDenom = currency.coinMinimalDenom;
+      const nativeMinimalDenom = currency?.coinMinimalDenom;
       const chainBalances = balanceChains?.[chainID]?.list || [];
       const chainLogoURL = network?.logos?.menu;
 
@@ -166,7 +166,7 @@ const useSortedAssets = (
       const network = networks?.[chainID]?.network;
       const currency = config?.currencies?.[0];
       const chainName = config?.chainName.toLowerCase();
-      const nativeMinimalDenom = currency.coinMinimalDenom;
+      const nativeMinimalDenom = currency?.coinMinimalDenom;
       const chainBalances = authzBalanceChains?.[chainID]?.list || [];
       const chainLogoURL = network?.logos?.menu;
 

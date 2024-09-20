@@ -1,19 +1,19 @@
 export const paginationComponentStyles = {
   '& .MuiPaginationItem-page': {
-    color: '#fff',
     '&:hover': {
-      backgroundColor: '#ffffff1a',
+      backgroundColor: '#FFFFFF05',
     },
     fontSize: '12px',
     minWidth: '24px',
     height: '24px',
     borderRadius: '4px',
+    color: '#ffffff80',
+    fontWeight: '200',
   },
   '& .Mui-selected': {
-    background: 'linear-gradient(180deg, #4AA29C 0%, #8B3DA7 100%)',
-    '&:hover': {
-      opacity: '0.95',
-    },
+    backgroundColor: '#FFFFFF05',
+    fontWeight: '600',
+    color: '#ffffff',
   },
   '& .MuiPaginationItem-icon': {
     color: '#fff',

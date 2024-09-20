@@ -1,28 +1,18 @@
-import React from 'react'
-import TableHeader from './TableHeader';
+import React from 'react';
 import CodeItem from './CodeItem';
+import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 
-const CodesList = (props: { codes: CodeInfo[] }) => {
-    const { codes } = props;
-    const tableColumnTitle = ['Code Id', 'Code Hash', 'Creator', 'Permissions'];
-    return (
-      <div className="codes-table">
-        <table className="w-full text-sm leading-normal">
-          <thead className="border-b-[0.5px] border-[#B0B0B033] relative">
-            <tr className="text-left">
-              {tableColumnTitle.map((title) => (
-                <TableHeader key={title} title={title} />
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {codes.map((code) => (
-              <CodeItem key={code.code_id} code={code} />
-            ))}
-          </tbody>
-        </table>
-      </div>
-    );
-  };
+const CodesList = (props: { codes: CodeInfo[]; chainID: string }) => {
+  const { codes, chainID } = props;
+  const { getChainInfo } = useGetChainInfo();
+  const { chainLogo } = getChainInfo(chainID);
+  return (
+    <div className="space-y-6">
+      {codes.map((code) => (
+        <CodeItem key={code.code_id} code={code} chainLogo={chainLogo} />
+      ))}
+    </div>
+  );
+};
 
-export default CodesList
+export default CodesList;

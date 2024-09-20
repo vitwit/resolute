@@ -1,6 +1,6 @@
 'use client';
 
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { SendMsg } from '../../../txns/bank';
 import bankService from './bankService';
 import { signAndBroadcast } from '../../../utils/signing';
@@ -9,8 +9,9 @@ import { GAS_FEE } from '../../../utils/constants';
 import { TxStatus } from '../../../types/enums';
 import { ERR_UNKNOWN } from '@/utils/errors';
 import { NewTransaction } from '@/utils/transaction';
-import { setTxAndHash } from '../common/commonSlice';
+import { setError, setTxAndHash } from '../common/commonSlice';
 import cloneDeep from 'lodash/cloneDeep';
+import { trackEvent } from '@/utils/util';
 
 interface Balance {
   list: Coin[];
@@ -36,6 +37,7 @@ interface BankState {
       status: TxStatus;
     };
   };
+  showIBCSendAlert: boolean;
 }
 
 const initialState: BankState = {
@@ -53,6 +55,7 @@ const initialState: BankState = {
     },
     multiSendTx: { status: TxStatus.INIT },
   },
+  showIBCSendAlert: false,
 };
 
 export const getBalances = createAsyncThunk(
@@ -67,6 +70,7 @@ export const getBalances = createAsyncThunk(
     const response = await bankService.balances(
       data.baseURLs,
       data.address,
+      data.chainID,
       data.pagination
     );
     return {
@@ -88,6 +92,7 @@ export const getAuthzBalances = createAsyncThunk(
     const response = await bankService.balances(
       data.baseURLs,
       data.address,
+      data.chainID,
       data.pagination
     );
     return {
@@ -123,15 +128,33 @@ export const multiTxns = createAsyncThunk(
       dispatch(setTxAndHash({ tx, hash: tx.transactionHash }));
       if (result?.code === 0) {
         dispatch(
-          getBalances({ baseURL: rest, chainID, address, baseURLs: restURLs })
+          getBalances({
+            baseURL: rest,
+            chainID,
+            address,
+            baseURLs: restURLs,
+          })
         );
+
+        trackEvent('TRANSFER', 'MULTI_SEND', 'SUCCESS');
+
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
+        trackEvent('TRANSFER', 'MULTI_SEND', 'FAILED');
+
         return rejectWithValue(result?.rawLog);
       }
       /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     } catch (error: any) {
-      return rejectWithValue(error.message);
+      trackEvent('TRANSFER', 'MULTI_SEND', 'FAILED');
+      const errMessage = error?.response?.data?.error || error?.message;
+      dispatch(
+        setError({
+          type: 'error',
+          message: errMessage || ERR_UNKNOWN,
+        })
+      );
+      return rejectWithValue(errMessage || ERR_UNKNOWN);
     }
   }
 );
@@ -167,7 +190,7 @@ export const txBankSend = createAsyncThunk(
             data.denom
           }`,
           data.basicChainInfo.rest,
-          data.feegranter,
+          data?.feegranter?.length ? data.feegranter : undefined,
           data?.basicChainInfo?.rpc,
           data?.basicChainInfo?.restURLs
         );
@@ -204,13 +227,25 @@ export const txBankSend = createAsyncThunk(
           );
         }
 
+        trackEvent('TRANSFER', 'SEND', 'SUCCESS');
+
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
+        trackEvent('TRANSFER', 'SEND', 'FAILED');
+
         return rejectWithValue(result?.rawLog);
       }
       /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     } catch (error: any) {
-      return rejectWithValue(error.message);
+      trackEvent('TRANSFER', 'SEND', 'FAILED');
+      const errMessage = error?.response?.data?.error || error?.message;
+      dispatch(
+        setError({
+          type: 'error',
+          message: errMessage || ERR_UNKNOWN,
+        })
+      );
+      return rejectWithValue(errMessage || ERR_UNKNOWN);
     }
   }
 );
@@ -244,6 +279,9 @@ export const bankSlice = createSlice({
         },
         multiSendTx: { status: TxStatus.INIT },
       };
+    },
+    setIBCSendAlert: (state, action: PayloadAction<boolean>) => {
+      state.showIBCSendAlert = action.payload;
     },
   },
 
@@ -349,5 +387,6 @@ export const {
   resetMultiSendTxRes,
   resetState,
   resetAuthz,
+  setIBCSendAlert,
 } = bankSlice.actions;
 export default bankSlice.reducer;

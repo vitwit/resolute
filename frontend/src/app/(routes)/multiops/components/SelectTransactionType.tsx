@@ -8,7 +8,7 @@ interface SelectTransactionTypeProps {
 const SelectTransactionType: React.FC<SelectTransactionTypeProps> = (props) => {
   const { isFileUpload, onSelect } = props;
   return (
-    <div className="my-6 flex items-center gap-6 text-white">
+    <div className="my-6 flex items-center gap-6">
       <div
         className="custom-radio-button-label"
         onClick={() => onSelect(false)}

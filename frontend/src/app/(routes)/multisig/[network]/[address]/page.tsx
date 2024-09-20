@@ -1,12 +1,12 @@
 import React from 'react';
-import MultisigAccount from './MultisigAccount';
 import '../../multisig.css';
+import PageMultisigInfo from '../../components/multisig-account/PageMultisigInfo';
 
 const page = ({ params }: { params: { network: string; address: string } }) => {
   return (
     <div>
-      <MultisigAccount
-        paramChain={params.network}
+      <PageMultisigInfo
+        paramChain={params.network.toLowerCase()}
         paramAddress={params.address}
       />
     </div>

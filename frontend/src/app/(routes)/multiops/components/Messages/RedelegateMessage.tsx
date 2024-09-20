@@ -1,3 +1,4 @@
+import { REMOVE_ICON } from '@/constants/image-names';
 import { TxnMsgProps } from '@/types/multisig';
 import { parseBalance } from '@/utils/denom';
 import { shortenName } from '@/utils/util';
@@ -9,14 +10,6 @@ const RedelegateMessage: React.FC<TxnMsgProps> = (props) => {
   return (
     <div className="flex justify-between items-center text-[14px]">
       <div className="flex gap-2">
-        <Image
-          className="bg-[#FFFFFF1A] rounded-lg"
-          src="/solid-arrow-icon.svg"
-          height={24}
-          width={24}
-          alt=""
-          draggable={false}
-        />
         <div className="truncate">
           <span>ReDelegate&nbsp;</span>
           <span className="msg-amount">
@@ -30,20 +23,20 @@ const RedelegateMessage: React.FC<TxnMsgProps> = (props) => {
           </span>
           <span>from&nbsp;</span>
           <span className="font-extralight">
-            {shortenName(msg.value.validatorSrcAddress, 21)}&nbsp;
+            {shortenName(msg.value.validatorSrcAddress, 20)}&nbsp;
           </span>
           <span>to&nbsp;</span>
           <span className="font-extralight">
-            {shortenName(msg.value.validatorDstAddress, 21)}
+            {shortenName(msg.value.validatorDstAddress, 20)}
           </span>
         </div>
       </div>
       {onDelete ? (
         <span className="cursor-pointer" onClick={() => onDelete(index)}>
           <Image
-            src="/delete-cross-icon.svg"
-            height={16}
-            width={16}
+            src={REMOVE_ICON}
+            height={24}
+            width={24}
             alt="Remove"
             draggable={false}
           />

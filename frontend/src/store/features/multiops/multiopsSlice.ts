@@ -7,6 +7,8 @@ import { setError, setTxAndHash } from '../common/commonSlice';
 import { NewTransaction } from '@/utils/transaction';
 import { ERR_UNKNOWN } from '@/utils/errors';
 import { getBalances } from '../bank/bankSlice';
+import { trackEvent } from '@/utils/util';
+import { FAILED, SUCCESS } from '@/utils/constants';
 
 interface MultiopsState {
   tx: {
@@ -40,7 +42,7 @@ export const txExecuteMultiMsg = createAsyncThunk(
           data.denom
         }`,
         data.basicChainInfo.rest,
-        data.feegranter,
+        data?.feegranter?.length ? data.feegranter : undefined,
         data.basicChainInfo.rpc,
         data.basicChainInfo.restURLs
       );
@@ -60,6 +62,8 @@ export const txExecuteMultiMsg = createAsyncThunk(
           })
         );
 
+        trackEvent('MULTIOPS', 'TXN_BUILDER', SUCCESS);
+
         dispatch(
           getBalances({
             address: data.address,
@@ -71,6 +75,7 @@ export const txExecuteMultiMsg = createAsyncThunk(
 
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
+        trackEvent('MULTIOPS', 'TXN_BUILDER', FAILED);
         dispatch(
           setError({
             type: 'error',
@@ -81,6 +86,7 @@ export const txExecuteMultiMsg = createAsyncThunk(
       }
       /* eslint-disable @typescript-eslint/no-explicit-any */
     } catch (error: any) {
+      trackEvent('MULTIOPS', 'TXN_BUILDER', FAILED);
       const errMsg = error?.message || ERR_UNKNOWN;
       dispatch(
         setError({

@@ -8,9 +8,10 @@ import { getAddressByPrefix } from '@/utils/address';
 import { signAndBroadcast } from '@/utils/signing';
 import { setError, setTxAndHash } from '../common/commonSlice';
 import { NewTransaction } from '@/utils/transaction';
-import { GAS_FEE } from '@/utils/constants';
+import { FAILED, GAS_FEE, SUCCESS } from '@/utils/constants';
 import { ERR_UNKNOWN } from '@/utils/errors';
 import { AxiosError } from 'axios';
+import { trackEvent } from '@/utils/util';
 
 interface ChainAuthz {
   grantsToMe: Authorization[];
@@ -84,6 +85,9 @@ interface AuthzState {
   multiChainAuthzGrantTx: {
     status: TxStatus;
   };
+  authzAlert: {
+    display: boolean;
+  };
 }
 
 const initialState: AuthzState = {
@@ -96,6 +100,9 @@ const initialState: AuthzState = {
   multiChainAuthzGrantTx: {
     status: TxStatus.INIT,
   },
+  authzAlert: {
+    display: true,
+  },
 };
 
 export const getGrantsToMe = createAsyncThunk(
@@ -104,7 +111,7 @@ export const getGrantsToMe = createAsyncThunk(
     const response = await authzService.grantsToMe(
       data.baseURLs,
       data.address,
-      data.pagination
+      data.chainID
     );
 
     return {
@@ -119,7 +126,7 @@ export const getGrantsByMe = createAsyncThunk(
     const response = await authzService.grantsByMe(
       data.baseURLs,
       data.address,
-      data.pagination
+      data.chainID
     );
     return {
       data: response.data,
@@ -196,12 +203,15 @@ export const txCreateAuthzGrant = createAsyncThunk(
             chainID: data.basicChainInfo.chainID,
           })
         );
+        trackEvent('AUTHZ', 'GRANT_AUTHZ', SUCCESS);
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
+        trackEvent('AUTHZ', 'GRANT_AUTHZ', FAILED);
         return rejectWithValue(result?.rawLog);
       }
       /* eslint-disable @typescript-eslint/no-explicit-any */
     } catch (error: any) {
+      trackEvent('AUTHZ', 'GRANT_AUTHZ', FAILED);
       return rejectWithValue(error?.message || ERR_UNKNOWN);
     }
   }
@@ -225,7 +235,7 @@ export const txAuthzExec = createAsyncThunk(
           data.denom
         }`,
         data.basicChainInfo.rest,
-        data.feegranter,
+        data?.feegranter?.length ? data.feegranter : undefined,
         '',
         data?.basicChainInfo?.restURLs
       );
@@ -236,6 +246,7 @@ export const txAuthzExec = createAsyncThunk(
           data.basicChainInfo.chainID,
           data.basicChainInfo.cosmosAddress
         );
+        trackEvent('AUTHZ', 'EXEC_AUTHZ', SUCCESS);
         dispatch(
           setTxAndHash({
             hash: result?.transactionHash,
@@ -244,6 +255,7 @@ export const txAuthzExec = createAsyncThunk(
         );
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
+        trackEvent('AUTHZ', 'GRANT_AUTHZ', FAILED);
         dispatch(
           setError({
             type: 'error',
@@ -254,6 +266,7 @@ export const txAuthzExec = createAsyncThunk(
       }
       /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     } catch (error: any) {
+      trackEvent('AUTHZ', 'GRANT_AUTHZ', FAILED);
       dispatch(
         setError({
           type: 'error',
@@ -293,6 +306,7 @@ export const txAuthzRevoke = createAsyncThunk(
           data.basicChainInfo.chainID,
           data.basicChainInfo.cosmosAddress
         );
+        trackEvent('AUTHZ', 'GRANT_AUTHZ', SUCCESS);
         dispatch(
           setTxAndHash({
             tx: tx,
@@ -315,9 +329,11 @@ export const txAuthzRevoke = createAsyncThunk(
             message: result?.rawLog || '',
           })
         );
+        trackEvent('AUTHZ', 'REVOKE_AUTHZ', FAILED);
         return rejectWithValue(result?.rawLog);
       }
     } catch (error) {
+      trackEvent('AUTHZ', 'REVOKE_AUTHZ', FAILED);
       dispatch(
         setError({
           type: 'error',
@@ -351,6 +367,11 @@ export const authzSlice = createSlice({
         errMsg: '',
         status: TxStatus.INIT,
       };
+    },
+    setAuthzAlert: (state, action: PayloadAction<boolean>) => {
+      if (state.authzAlert.display) {
+        state.authzAlert.display = action.payload;
+      }
     },
   },
   extraReducers: (builder) => {
@@ -541,7 +562,12 @@ export const authzSlice = createSlice({
   },
 });
 
-export const { enableAuthzMode, exitAuthzMode, resetState, resetTxStatus } =
-  authzSlice.actions;
+export const {
+  enableAuthzMode,
+  exitAuthzMode,
+  resetState,
+  resetTxStatus,
+  setAuthzAlert,
+} = authzSlice.actions;
 
 export default authzSlice.reducer;

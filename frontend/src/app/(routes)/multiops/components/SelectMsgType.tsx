@@ -27,7 +27,7 @@ const SelectMsgType = ({
           },
         }}
       >
-        <InputLabel className="text-white" id="tx-type">
+        <InputLabel className="" id="tx-type">
           Select Transaction
         </InputLabel>
         <Select

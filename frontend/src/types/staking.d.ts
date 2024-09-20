@@ -5,7 +5,7 @@ interface GetValidatorsResponse {
   pagination: Pagination;
 }
 
-interface Validator {
+export interface Validator {
   operator_address: string;
   consensus_pubkey: PubKey;
   jailed: boolean;
@@ -372,4 +372,12 @@ interface ValidatorProfileInfo {
   operatorAddress: string;
   validatorStatus: string;
   validatorInfo: Validator;
+}
+
+interface ValidatorInfo {
+  address: string;
+  label: string; // moniker name
+  identity: string;
+  description: string;
+  commission: number;
 }

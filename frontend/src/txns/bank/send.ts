@@ -1,5 +1,5 @@
 import { parseBalance } from '@/utils/denom';
-import { formatNumber } from '@/utils/util';
+import { formatNumber, shortenAddress } from '@/utils/util';
 import { MsgSend } from 'cosmjs-types/cosmos/bank/v1beta1/tx';
 export const msgSendTypeUrl: string = '/cosmos.bank.v1beta1.MsgSend';
 
@@ -53,5 +53,5 @@ export function formatSendMessage(
   const parsedAmount = parseBalance(amount, decimals, amount[0].denom);
   return `${pastTense ? 'Sent' : 'Send'} ${formatNumber(
     parsedAmount
-  )} ${originalDenom} to ${toAddress}`;
+  )} ${originalDenom} to ${shortenAddress(toAddress, 15)}`;
 }

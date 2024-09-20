@@ -1,3 +1,4 @@
+import { IBC_SEND_TYPE_URL } from './constants';
 import { convertToSpacedName } from './util';
 
 interface AuthzMenuItem {
@@ -67,6 +68,14 @@ export function authzMsgTypes(): AuthzMenuItem[] {
       txn: 'Set Withdraw Address',
       typeURL: '/cosmos.distribution.v1beta1.MsgSetWithdrawAddress',
     },
+    {
+      txn: 'Cancel Unbonding',
+      typeURL: '/cosmos.staking.v1beta1.MsgCancelUnbondingDelegation',
+    },
+    {
+      txn: 'IBC Transfer',
+      typeURL: '/ibc.applications.transfer.v1.MsgTransfer',
+    },
   ];
 }
 
@@ -87,6 +96,8 @@ export const MAP_TXN_MSG_TYPES: Record<string, string> = {
     '/cosmos.distribution.v1beta1.MsgWithdrawValidatorCommission',
   unjail: '/cosmos.slashing.v1beta1.MsgUnjail',
   set_withdraw_address: '/cosmos.distribution.v1beta1.MsgSetWithdrawAddress',
+  cancel_unbonding: '/cosmos.staking.v1beta1.MsgCancelUnbondingDelegation',
+  ibc_transfer: '/ibc.applications.transfer.v1.MsgTransfer',
 };
 
 export const grantAuthzFormDefaultValues = () => {
@@ -108,6 +119,8 @@ export const grantAuthzFormDefaultValues = () => {
     undelegate: { expiration: expiration, max_tokens: '' },
     redelegate: { expiration: expiration, max_tokens: '' },
     set_withdraw_address: { expiration: expiration },
+    cancel_unbonding: { expiration: expiration },
+    ibc_transfer: { expiration: expiration },
   };
 };
 export function getTypeURLName(url: string) {
@@ -140,6 +153,9 @@ export function getMsgNameFromAuthz(authorization: Authorization): string {
     case '/cosmos.bank.v1beta1.SendAuthorization':
       return 'Send';
     case '/cosmos.authz.v1beta1.GenericAuthorization':
+      if (authorization?.authorization?.msg === IBC_SEND_TYPE_URL) {
+        return 'IBC Transfer';
+      }
       return convertToSpacedName(
         getTypeURLName(authorization.authorization.msg)
       );
@@ -193,5 +209,7 @@ export const GENRIC_GRANTS = [
   'withdraw_commission',
   'unjail',
   'set_withdraw_address',
+  'cancel_unbonding',
+  'ibc_transfer',
 ];
 export const STAKE_GRANTS = ['delegate', 'undelegate', 'redelegate'];

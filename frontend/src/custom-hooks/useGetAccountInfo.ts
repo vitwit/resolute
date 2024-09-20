@@ -10,7 +10,7 @@ const useGetAccountInfo = (chainID: string) => {
   const sequence = authInfo?.account.sequence || '-';
   const accountNumber = authInfo?.account.account_number || '-';
   const pubkey = useAppSelector(
-    (state) => state.wallet.networks[chainID].walletInfo.pubKey
+    (state) => state.wallet.networks?.[chainID]?.walletInfo?.pubKey
   );
   const accountInfo: BasicAccountInfo = {
     pubkey,

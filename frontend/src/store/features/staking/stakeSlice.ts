@@ -6,7 +6,7 @@ import stakingService from './stakingService';
 import { ERR_UNKNOWN } from '../../../utils/errors';
 import { signAndBroadcast } from '../../../utils/signing';
 import cloneDeep from 'lodash/cloneDeep';
-import { GAS_FEE } from '../../../utils/constants';
+import { FAILED, GAS_FEE, SUCCESS } from '../../../utils/constants';
 import {
   GetDelegationsResponse,
   GetUnbondingResponse,
@@ -30,6 +30,7 @@ import {
   getDelegatorTotalRewards,
 } from '../distribution/distributionSlice';
 import { getAuthzBalances, getBalances } from '../bank/bankSlice';
+import { trackEvent } from '@/utils/util';
 
 interface Chain {
   validators: Validators;
@@ -51,6 +52,7 @@ interface Chain {
     totalUnbonded: number;
   };
   validator: {
+    [key: string]: Validator | undefined | TxStatus | string;
     validatorInfo: Validator | undefined;
     status: TxStatus;
     errMsg: string;
@@ -72,13 +74,15 @@ interface Chain {
   validatorProfiles: Record<string, { totalDelegators: number }>;
 }
 
-interface Chains {
+export interface Chains {
   [key: string]: Chain;
 }
 
 interface StakingState {
   validatorsLoading: number;
   delegationsLoading: number;
+  undelegationsLoading: number;
+  totalUndelegationsAmount: number;
   chains: Chains;
   hasDelegations: boolean;
   hasUnbonding: boolean;
@@ -88,18 +92,25 @@ interface StakingState {
     chains: Chains;
     hasDelegations: boolean;
     hasUnbonding: boolean;
+    undelegationsLoading: number;
+    totalUndelegationsAmount: number;
   };
   /* eslint-disable @typescript-eslint/no-explicit-any */
   witvalNonCosmosValidators: {
     chains: Record<string, any>;
     delegators: Record<string, any>;
   };
+  allValidators: Record<string, any>;
+  filteredValidators: Record<string, any>;
+  searchQuery: string;
 }
 
 const initialState: StakingState = {
   chains: {},
   validatorsLoading: 0,
   delegationsLoading: 0,
+  undelegationsLoading: 0,
+  totalUndelegationsAmount: 0,
   hasUnbonding: false,
   hasDelegations: false,
   authz: {
@@ -107,6 +118,8 @@ const initialState: StakingState = {
     delegationsLoading: 0,
     hasUnbonding: false,
     hasDelegations: false,
+    undelegationsLoading: 0,
+    totalUndelegationsAmount: 0,
   },
   witvalNonCosmosValidators: {
     chains: {},
@@ -176,6 +189,9 @@ const initialState: StakingState = {
     cancelUnbondingTxStatus: TxStatus.INIT,
     isTxAll: false,
   },
+  allValidators: {},
+  filteredValidators: {},
+  searchQuery: '',
 };
 
 export const txRestake = createAsyncThunk(
@@ -184,8 +200,7 @@ export const txRestake = createAsyncThunk(
     data: TxReStakeInputs | TxAuthzExecInputs,
     { rejectWithValue, fulfillWithValue, dispatch }
   ) => {
-    const { chainID, address, rest, aminoConfig, prefix } =
-      data.basicChainInfo;
+    const { chainID, address, rest, aminoConfig, prefix } = data.basicChainInfo;
     try {
       const result = await signAndBroadcast(
         chainID,
@@ -210,6 +225,7 @@ export const txRestake = createAsyncThunk(
         })
       );
       if (result?.code === 0) {
+        trackEvent('STAKING', 'RESTAKE', SUCCESS);
         if (data.isAuthzMode) {
           dispatch(
             getAuthzDelegatorTotalRewards({
@@ -247,10 +263,20 @@ export const txRestake = createAsyncThunk(
         }
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
+        trackEvent('STAKING', 'RESTAKE', FAILED);
         return rejectWithValue(result?.rawLog);
       }
-    } catch (error) {
-      if (error instanceof AxiosError) return rejectWithValue(error.response);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      trackEvent('STAKING', 'RESTAKE', FAILED);
+      const errMessage = error?.response?.data?.error || error?.message;
+      dispatch(
+        setError({
+          type: 'error',
+          message: errMessage || ERR_UNKNOWN,
+        })
+      );
+      return rejectWithValue(errMessage || ERR_UNKNOWN);
     }
   }
 );
@@ -339,12 +365,24 @@ export const txDelegate = createAsyncThunk(
           );
         }
 
+        trackEvent('STAKING', 'DELEGATE', SUCCESS);
+
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
+        trackEvent('STAKING', 'DELEGATE', FAILED);
         return rejectWithValue(result?.rawLog);
       }
-    } catch (error) {
-      if (error instanceof AxiosError) return rejectWithValue(error.response);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      trackEvent('STAKING', 'DELEGATE', FAILED);
+      const errMessage = error?.response?.data?.error || error?.message;
+      dispatch(
+        setError({
+          type: 'error',
+          message: errMessage || ERR_UNKNOWN,
+        })
+      );
+      return rejectWithValue(errMessage || ERR_UNKNOWN);
     }
   }
 );
@@ -424,12 +462,25 @@ export const txReDelegate = createAsyncThunk(
           );
         }
 
+        trackEvent('STAKING', 'REDELEGATE', SUCCESS);
+
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
+        trackEvent('STAKING', 'REDELEGATE', FAILED);
+
         return rejectWithValue(result?.rawLog);
       }
-    } catch (error) {
-      if (error instanceof AxiosError) return rejectWithValue(error.response);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      trackEvent('STAKING', 'REDELEGATE', FAILED);
+      const errMessage = error?.response?.data?.error || error?.message;
+      dispatch(
+        setError({
+          type: 'error',
+          message: errMessage || ERR_UNKNOWN,
+        })
+      );
+      return rejectWithValue(errMessage || ERR_UNKNOWN);
     }
   }
 );
@@ -512,12 +563,26 @@ export const txUnDelegate = createAsyncThunk(
             })
           );
         }
+
+        trackEvent('STAKING', 'UNDELEGATE', SUCCESS);
+
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
+        trackEvent('STAKING', 'UNDELEGATE', FAILED);
+
         return rejectWithValue(result?.rawLog);
       }
-    } catch (error) {
-      if (error instanceof AxiosError) return rejectWithValue(error.response);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      trackEvent('STAKING', 'UNDELEGATE', FAILED);
+      const errMessage = error?.response?.data?.error || error?.message;
+      dispatch(
+        setError({
+          type: 'error',
+          message: errMessage || ERR_UNKNOWN,
+        })
+      );
+      return rejectWithValue(errMessage || ERR_UNKNOWN);
     }
   }
 );
@@ -596,28 +661,25 @@ export const txCancelUnbonding = createAsyncThunk(
           dispatch(getUnbonding(inputData));
         }
 
+        trackEvent('STAKING', 'CANCEL_UNBONDING', SUCCESS);
+
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
+        trackEvent('STAKING', 'CANCEL_UNBONDING', FAILED);
+
         return rejectWithValue(result?.rawLog);
       }
-    } catch (error) {
-      console.log('Error while cancel unbonding the transaction ', error);
-      if (error instanceof AxiosError) {
-        dispatch(
-          setError({
-            type: 'error',
-            message: error.message,
-          })
-        );
-        return rejectWithValue(error.response);
-      }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      trackEvent('STAKING', 'CANCEL_UNBONDING', FAILED);
+      const errMessage = error?.response?.data?.error || error?.message;
       dispatch(
         setError({
           type: 'error',
-          message: ERR_UNKNOWN,
+          message: errMessage || ERR_UNKNOWN,
         })
       );
-      return rejectWithValue(ERR_UNKNOWN);
+      return rejectWithValue(errMessage || ERR_UNKNOWN);
     }
   }
 );
@@ -636,6 +698,7 @@ export const getValidators = createAsyncThunk(
     try {
       const response = await stakingService.validators(
         data.baseURLs,
+        data.chainID,
         data?.status,
         data?.pagination
       );
@@ -668,6 +731,7 @@ export const getAllValidators = createAsyncThunk(
       while (true) {
         const response = await stakingService.validators(
           data.baseURLs,
+          data.chainID,
           data?.status,
           nextKey
             ? {
@@ -697,7 +761,7 @@ export const getAllValidators = createAsyncThunk(
 export const getPoolInfo = createAsyncThunk(
   'staking/poolInfo',
   async (data: { baseURLs: string[]; chainID: string }) => {
-    const response = await stakingService.poolInfo(data.baseURLs);
+    const response = await stakingService.poolInfo(data.baseURLs, data.chainID);
     return {
       chainID: data.chainID,
       data: response.data,
@@ -708,7 +772,7 @@ export const getPoolInfo = createAsyncThunk(
 export const getParams = createAsyncThunk(
   'staking/params',
   async (data: { baseURLs: string[]; chainID: string }) => {
-    const response = await stakingService.params(data.baseURLs);
+    const response = await stakingService.params(data.baseURLs, data.chainID);
     return {
       data: response.data,
       chainID: data.chainID,
@@ -725,7 +789,8 @@ export const getTotalDelegationsCount = createAsyncThunk(
   }) => {
     const response = await stakingService.validatorDelegations(
       data.baseURLs,
-      data.operatorAddress
+      data.operatorAddress,
+      data.chainID
     );
     return {
       data: response.data,
@@ -752,6 +817,7 @@ export const getDelegations = createAsyncThunk(
         const response = await stakingService.delegations(
           data.baseURLs,
           data.address,
+          data.chainID,
           nextKey
             ? {
                 key: nextKey,
@@ -795,6 +861,7 @@ export const getAuthzDelegations = createAsyncThunk(
         const response = await stakingService.delegations(
           data.baseURLs,
           data.address,
+          data.chainID,
           nextKey
             ? {
                 key: nextKey,
@@ -829,7 +896,8 @@ export const getUnbonding = createAsyncThunk(
     try {
       const response = await stakingService.unbonding(
         data.baseURLs,
-        data.address
+        data.address,
+        data.chainID
       );
       return {
         data: response.data,
@@ -851,7 +919,8 @@ export const getAuthzUnbonding = createAsyncThunk(
     try {
       const response = await stakingService.unbonding(
         data.baseURLs,
-        data.address
+        data.address,
+        data.chainID
       );
       return {
         data: response.data,
@@ -877,7 +946,8 @@ export const getValidator = createAsyncThunk(
     try {
       const response = await stakingService.validatorInfo(
         data.baseURLs,
-        data.valoperAddress
+        data.valoperAddress,
+        data.chainID
       );
       return {
         data: response.data,
@@ -903,7 +973,8 @@ export const getAuthzValidator = createAsyncThunk(
     try {
       const response = await stakingService.validatorInfo(
         data.baseURLs,
-        data.valoperAddress
+        data.valoperAddress,
+        data.chainID
       );
       return {
         data: response.data,
@@ -992,6 +1063,23 @@ export const stakeSlice = createSlice({
   name: 'staking',
   initialState,
   reducers: {
+    setValidators(state, action: PayloadAction<Record<string, Validator>>) {
+      state.allValidators = action.payload;
+      state.filteredValidators = action.payload;
+    },
+    setSearchQuery(state, action: PayloadAction<string>) {
+      state.searchQuery = action.payload;
+    },
+    filterValidators(state) {
+      const query = state.searchQuery.toLowerCase();
+      state.filteredValidators = Object.fromEntries(
+        Object.entries(state.allValidators).filter(
+          ([, validator]) =>
+            validator.operator_address.toLowerCase().includes(query) ||
+            validator.description?.moniker.toLowerCase().includes(query)
+        )
+      );
+    },
     resetRestakeTx: (state, action: PayloadAction<{ chainID: string }>) => {
       const chainID = action.payload.chainID;
       if (chainID?.length && state.chains[chainID]) {
@@ -1016,6 +1104,8 @@ export const stakeSlice = createSlice({
         delegationsLoading: 0,
         hasUnbonding: false,
         hasDelegations: false,
+        undelegationsLoading: 0,
+        totalUndelegationsAmount: 0,
       };
     },
     resetCancelUnbondingTx: (
@@ -1324,11 +1414,13 @@ export const stakeSlice = createSlice({
 
     builder
       .addCase(getUnbonding.pending, (state, action) => {
+        state.undelegationsLoading++;
         const { chainID } = action.meta.arg;
         state.chains[chainID].unbonding.status = TxStatus.PENDING;
         state.chains[chainID].unbonding.errMsg = '';
       })
       .addCase(getUnbonding.fulfilled, (state, action) => {
+        state.undelegationsLoading--;
         const { chainID } = action.meta.arg;
         const unbonding_responses = action.payload.data.unbonding_responses;
         let totalUnbonded = 0.0;
@@ -1339,6 +1431,7 @@ export const stakeSlice = createSlice({
             });
           });
           state.chains[chainID].unbonding.totalUnbonded = totalUnbonded;
+          state.totalUndelegationsAmount += totalUnbonded;
           if (unbonding_responses[0].entries.length) {
             state.chains[chainID].unbonding.hasUnbonding = true;
             state.hasUnbonding = true;
@@ -1352,6 +1445,7 @@ export const stakeSlice = createSlice({
         state.chains[chainID].unbonding.errMsg = '';
       })
       .addCase(getUnbonding.rejected, (state, action) => {
+        state.undelegationsLoading--;
         const { chainID } = action.meta.arg;
         state.chains[chainID].unbonding.status = TxStatus.REJECTED;
         state.chains[chainID].unbonding.errMsg = action.error.message || '';
@@ -1359,6 +1453,7 @@ export const stakeSlice = createSlice({
 
     builder
       .addCase(getAuthzUnbonding.pending, (state, action) => {
+        state.authz.undelegationsLoading++;
         const { chainID } = action.meta.arg;
         if (!state.authz.chains[chainID])
           state.authz.chains[chainID] = cloneDeep(state.defaultState);
@@ -1366,6 +1461,7 @@ export const stakeSlice = createSlice({
         state.authz.chains[chainID].unbonding.errMsg = '';
       })
       .addCase(getAuthzUnbonding.fulfilled, (state, action) => {
+        state.authz.undelegationsLoading--;
         const { chainID } = action.meta.arg;
         const unbonding_responses = action.payload.data.unbonding_responses;
         let totalUnbonded = 0.0;
@@ -1376,6 +1472,7 @@ export const stakeSlice = createSlice({
             });
           });
           state.authz.chains[chainID].unbonding.totalUnbonded = totalUnbonded;
+          state.authz.totalUndelegationsAmount += totalUnbonded;
           if (unbonding_responses[0].entries.length) {
             state.authz.chains[chainID].unbonding.hasUnbonding = true;
             state.authz.hasUnbonding = true;
@@ -1389,6 +1486,7 @@ export const stakeSlice = createSlice({
         state.authz.chains[chainID].unbonding.errMsg = '';
       })
       .addCase(getAuthzUnbonding.rejected, (state, action) => {
+        state.authz.undelegationsLoading--;
         const { chainID } = action.meta.arg;
         state.authz.chains[chainID].unbonding.status = TxStatus.REJECTED;
         state.authz.chains[chainID].unbonding.errMsg =
@@ -1401,6 +1499,8 @@ export const stakeSlice = createSlice({
         if (!state.chains[chainID])
           state.chains[chainID] = cloneDeep(initialState.defaultState);
         state.chains[chainID].validator.status = TxStatus.PENDING;
+        const valoperAddress = action.meta?.arg?.valoperAddress;
+        state.chains[chainID].validator[valoperAddress] = TxStatus.PENDING;
         state.chains[chainID].validator.errMsg = '';
       })
       .addCase(getValidator.fulfilled, (state, action) => {
@@ -1408,11 +1508,17 @@ export const stakeSlice = createSlice({
         state.chains[chainID].validator.status = TxStatus.IDLE;
         state.chains[chainID].validator.validatorInfo =
           action.payload.data.validator;
+
+        const valoperAddress = action.meta?.arg?.valoperAddress;
+        state.chains[chainID].validator[valoperAddress] =
+          action?.payload?.data?.validator;
       })
       .addCase(getValidator.rejected, (state, action) => {
         const chainID = action.meta?.arg?.chainID;
         state.chains[chainID].validator.status = TxStatus.REJECTED;
         state.chains[chainID].validator.errMsg = '';
+        const valoperAddress = action.meta?.arg?.valoperAddress;
+        state.chains[chainID].validator[valoperAddress] = TxStatus.REJECTED;
       });
 
     builder
@@ -1579,6 +1685,9 @@ export const {
   resetCompleteState,
   resetAuthz,
   resetAuthzDelegations,
+  setValidators,
+  setSearchQuery,
+  filterValidators,
 } = stakeSlice.actions;
 
 export default stakeSlice.reducer;

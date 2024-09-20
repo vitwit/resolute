@@ -14,15 +14,20 @@ export const SUPPORTED_WALLETS = [
     logo: '/cosmostation-wallet-logo.png',
   },
   {
-    name: 'MetaMask',
-    logo: '/metamask.png',
-  },
+    name: 'Metamask',
+    logo: '/metamask.svg',
+  }
 ];
 
+export const NotSupportedMetamaskChainIds = [
+  'agoric-3',
+  'evmos_9001-2',
+  'desmos-mainnet',
+];
 export const USD_CURRENCY = 'usd';
 export const GAS_FEE = 860000;
 export const ADD_NETWORK_TEMPLATE_URL =
-  'https://raw.githubusercontent.com/vitwit/resolute/52aa50f4ba52cb65a2a483bedfbbca76fd39a47b/frontend/public/add-network-template.json';
+  'https://raw.githubusercontent.com/vitwit/resolute/7436d1f8b545a67e6137cea75be8380c42264d46/frontend/public/add-network-template.json';
 export const PROPOSAL_STATUS_VOTING_PERIOD = 'PROPOSAL_STATUS_VOTING_PERIOD';
 export const COSMOS_CHAIN_ID = 'cosmoshub-4';
 export const OFFCHAIN_VERIFICATION_MESSAGE =
@@ -55,11 +60,19 @@ export const SEND_TYPE_URL = '/cosmos.bank.v1beta1.MsgSend';
 export const DELEGATE_TYPE_URL = '/cosmos.staking.v1beta1.MsgDelegate';
 export const UNDELEGATE_TYPE_URL = '/cosmos.staking.v1beta1.MsgUndelegate';
 export const REDELEGATE_TYPE_URL = '/cosmos.staking.v1beta1.MsgBeginRedelegate';
+export const WITHDRAW_DELEGATE_REWARD = '/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward'
 export const IBC_SEND_TYPE_URL = '/ibc.applications.transfer.v1.MsgTransfer';
 export const DEPOSIT_TYPE_URL = '/cosmos.gov.v1beta1.MsgDeposit';
 export const SEND_TEMPLATE = 'https://api.resolute.vitwit.com/_static/send.csv';
 export const VOTE_TYPE_URL = '/cosmos.gov.v1beta1.MsgVote';
-export const MULTI_TRANSFER_MSG_COUNT = 13;
+export const MSG_AUTHZ_REVOKE = '/cosmos.authz.v1beta1.MsgRevoke';
+export const MSG_AUTHZ_EXEC = '/cosmos.authz.v1beta1.MsgExec';
+export const MSG_AUTHZ_GRANT = '/cosmos.authz.v1beta1.MsgGrant';
+export const MSG_GRANT_ALLOWANCE = '/cosmos.feegrant.v1beta1.MsgGrantAllowance';
+export const MSG_REVOKE_ALLOWANCE =
+  '/cosmos.feegrant.v1beta1.MsgRevokeAllowance';
+
+export const MULTI_TRANSFER_MSG_COUNT = 3;
 export const DELETE_TXN_DIALOG_IMAGE_PATH = '/delete-txn-popup-image.png';
 export const EMPTY_TXN = {
   id: NaN,
@@ -98,6 +111,7 @@ export const MAP_TXNS = {
   '/cosmos.bank.v1beta1.MsgSend': 'Send',
   '/cosmos.staking.v1beta1.MsgBeginRedelegate': 'ReDelegate',
   '/cosmos.staking.v1beta1.MsgUndelegate': 'UnDelegate',
+  '/cosmos.gov.v1beta1.MsgVote': 'Vote',
   Msg: 'Tx Msg',
 };
 export const MULTISIG_TX_TYPES = {
@@ -205,12 +219,9 @@ export const SIDENAV_MENU_ITEMS = {
     },
   ],
 };
-export const ALL_NETWORKS_ICON = '/all-networks-icon.png';
-export const CHANGE_NETWORK_ICON = '/switch-icon.svg';
+export const ALL_NETWORKS_ICON = '/icons/all-networks-icon.png';
 export const TXN_SUCCESS_ICON = '/transaction-success-icon.svg';
 export const TXN_FAILED_ICON = '/transaction-failed-icon.svg';
-export const HELP_ICON = '/help-icon.svg';
-export const REPORT_ICON = '/report-icon.svg';
 export const GITHUB_ISSUES_PAGE_LINK =
   'https://github.com/vitwit/resolute/issues/new';
 export const TELEGRAM_LINK = 'https://web.telegram.org/k/#-1982236507';
@@ -218,7 +229,8 @@ export const LOGOUT_ICON = '/logout-icon.svg';
 export const TRANSFERS_CARDS_COUNT = 5;
 export const NO_MESSAGES_ILLUSTRATION = '/no-messages-illustration.png';
 export const NO_DELEGATIONS_MSG = `Looks like you haven't staked anything yet, go ahead and explore !`;
-export const OVERVIEW_NO_DELEGATIONS = "Looks like you haven't staked anything yet, Select a network to delegate your tokens!"
+export const OVERVIEW_NO_DELEGATIONS =
+  "Looks like you haven't staked anything yet, Select a network to delegate your tokens!";
 export const VOTE_OPTIONS = ['Yes', 'Abstain', 'No', 'No With Veto'];
 export const MAP_TXN_TYPES: Record<string, string[]> = {
   '/cosmos.staking.v1beta1.MsgDelegate': ['delegated', 'delegating'],
@@ -256,7 +268,7 @@ export const MULTISIG_PUBKEY_OBJECT = {
   error: '',
 };
 export const AXIOS_RETRIES_COUNT = 2;
-export const MAX_TRY_END_POINTS = 20;
+export const MAX_TRY_END_POINTS = 1;
 export const NO_FEEGRANTS_BY_ME_TEXT = "You haven't granted any allowance yet";
 export const NO_FEEGRANTS_TO_ME_TEXT = "You don't have any feegrants";
 export const SQUID_ID = process.env.NEXT_PUBLIC_SQUID_ID || '';
@@ -324,7 +336,7 @@ export const voteOptions: Record<string, string> = {
   VOTE_OPTION_UNSPECIFIED: '',
 };
 
-export const MULTIOPS_MSG_TYPES = {
+export const MULTIOPS_MSG_TYPES: Record<string, string> = {
   send: 'Send',
   delegate: 'Delegate',
   undelegate: 'Undelegate',
@@ -336,7 +348,7 @@ export const MULTIOPS_NOTE = `Note: Please ensure to allocate additional gas if 
 transaction involves multiple messages, and be sure to
 select the appropriate fee option in the signing
 wallet.`;
-export const MULTIOPS_SAMPLE_FILES = {
+export const MULTIOPS_SAMPLE_FILES: Record<string, string> = {
   delegate:
     'https://raw.githubusercontent.com/vitwit/resolute/a6a02cc1b74ee34604e6df35cfce7a46c39980ea/frontend/src/example-files/delegate.csv',
   deposit:
@@ -351,3 +363,48 @@ export const MULTIOPS_SAMPLE_FILES = {
 export const SWAP_ROUTE_ERROR = 'Failed to fetch routes.';
 export const DUMMY_WALLET_MNEMONIC =
   process.env.NEXT_PUBLIC_DUMMY_WALLET_MNEMONIC || '';
+export const INCREASE = 'increase';
+export const DECREASE = 'decrease';
+export const IBC_SWAP_DESCRIPTION =
+  'Swap tokens across various interchain networks';
+export const MULTISIG_DESCRIPTION =
+  'A multisig account is an account that requires multiple signatures to sign transactions';
+export const COSMWASM_DESCRIPTION =
+  'CosmWasm is a smart contracting platform built for the Cosmos ecosystem.';
+export const DEPLOY_CONTRACT_DESCRIPTION = 'Deploy your Cosmwasm Contract';
+export const IBC_SWAP_GRADIENT = `linear-gradient(
+    180deg,
+    rgba(68, 83, 223, 0.1) 12.5%,
+    rgba(127, 92, 237, 0.1) 87.5%
+  )`;
+
+export const IBC_SEND_ALERT = '*Avoid IBC transfer to centralized exchanges';
+export const VITWIT_VALIDATOR_DESCRIPTION =
+  'Vitwit excels in providing top-notch infrastructure services for the Cosmos blockchain ecosystem. We specialize in setting up and managing validators, relayers, and offering expert advisory services.';
+export const TRANSFERS_TYPES: Record<
+  string,
+  { title: string; description: string }
+> = {
+  'multi-send': {
+    title: 'Multi Transfer',
+    description: 'Transfer tokens to multiple addressess within a network',
+  },
+  single: {
+    title: 'Single Transfer',
+    description: 'Transfer tokens within or across different networks',
+  },
+  'ibc-swap': {
+    title: 'IBC Swap',
+    description:
+      'Exchange of assets between different networks using the Inter-Blockchain Communication protocol',
+  },
+};
+export const ALL_NETWORKS_GRADIENT =
+  'linear-gradient(180deg, #6155b275 0.5%, #12131C80 100%)';
+export const AUTHZ = 'authz';
+export const FEEGRANT = 'feegrant';
+export const TXN_BUILDER_DESCRIPTION =
+  'Transaction builder allows to create single transaction with multiple messages of same or different type.';
+export const GENERAL_SETTINGS_DESCRIPTION = 'Settings to enhance your application’s functionality';
+export const SUCCESS = 'SUCCESS';
+export const FAILED = 'FAILED';

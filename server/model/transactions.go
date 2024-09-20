@@ -55,6 +55,7 @@ type Message struct {
 
 type CreateTransactionRequest struct {
 	Fee      Fees      `json:"fee"`
+	Title    string    `json:"title"`
 	Messages []Message `json:"messages"`
 	ChainId  string    `json:"chain_id"`
 	Memo     string    `json:"memo"`

@@ -1,6 +1,6 @@
-import { formatAmount, formatCoin, formatDollarAmount } from '@/utils/util';
+import { formatAmount } from '@/utils/util';
 import Link from 'next/link';
-import React from 'react';
+import React, { RefObject, useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { txWithdrawAllRewards } from '@/store/features/distribution/distributionSlice';
@@ -14,13 +14,14 @@ import { capitalize } from 'lodash';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import { DelegationsPairs } from '@/types/distribution';
 import useAuthzStakingExecHelper from '@/custom-hooks/useAuthzStakingExecHelper';
+import NumberFormat from '@/components/common/NumberFormat';
 
 const Asset = ({
   asset,
-  showChainName,
+  // showChainName,
 }: {
   asset: ParsedAsset;
-  showChainName: boolean;
+  // showChainName: boolean;
 }) => {
   const txClaimStatus = useAppSelector(
     (state: RootState) =>
@@ -123,129 +124,238 @@ const Asset = ({
       );
   };
 
+  // actions for claim and claim and stake
+
+  const [showPopup, setShowPopup] = useState(false);
+  const popupRef = useRef<HTMLDivElement>(null);
+  const buttonRef: RefObject<HTMLImageElement> = useRef<HTMLImageElement>(null);
+
+  const togglePopup = () => {
+    setShowPopup(!showPopup);
+  };
+
+  const handleClickOutside = (event: MouseEvent) => {
+    if (
+      popupRef.current &&
+      !popupRef.current.contains(event.target as Node) &&
+      buttonRef.current &&
+      !buttonRef.current.contains(event.target as Node)
+    ) {
+      setShowPopup(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener('click', handleClickOutside);
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, []);
+
   return (
-    <tr>
-      <td>
-        <div className="h-[36px] flex flex-col justify-center gap-1">
-          <div className="text-sm not-italic font-normal leading-[normal] h-[14px]">
-            {formatCoin(asset.balance, asset.displayDenom)}
+    <tr className="hover:bg-[#FFFFFF14] space-y-2">
+      <th className="px-4 py-4 w-1/4">
+        <div className="flex flex-col items-start gap-1">
+          <div className="text-[14px] font-normal leading-[21px]">
+            <NumberFormat
+              cls=""
+              type="token"
+              token={asset.displayDenom}
+              value={asset?.balance?.toString()}
+            />
           </div>
-          {showChainName ? (
-            <div className="text-[10px] not-italic font-normal leading-[normal] h-[14px]">
+          <div className="flex space-x-1 justify-center items-center">
+            <Image
+              src={asset?.chainLogoURL}
+              width={16}
+              height={16}
+              alt="chain-Logo"
+              loading="lazy"
+              className="w-4 h-4"
+              draggable={false}
+            />
+            <p className="text-b1-light">
               on{' '}
-              <Link href={`/overview/${asset.chainName}`}>
+              <Link
+                className="capitalize"
+                href={`/overview/${asset.chainName}`}
+              >
                 {asset.chainName}
               </Link>
-            </div>
-          ) : null}
-        </div>
-      </td>
-      <td>
-        <div className="text-sm not-italic font-normal leading-[normal]">
-          {asset.type === 'native'
-            ? formatCoin(asset.staked, asset.displayDenom)
-            : '-'}
-        </div>
-      </td>
-      <td>
-        <div className="text-sm not-italic font-normal leading-[normal]">
-          {asset.type === 'native'
-            ? formatCoin(asset.rewards, asset.displayDenom)
-            : '-'}
-        </div>
-      </td>
-      <td>
-        <div className="flex gap-1" style={{ alignItems: 'flex-start' }}>
-          <div className="text-sm not-italic font-normal leading-[normal]">
-            {formatDollarAmount(asset.usdPrice)}
+            </p>
           </div>
-          <div className="flex items-center">
+        </div>
+      </th>
+      <th>
+        <div className="flex flex-col items-start gap-2 px-4">
+          <div className="text-[14px] font-normal leading-[21px] items-start flex">
+            {asset.type === 'native' ? (
+              <span>
+                <NumberFormat
+                  cls=""
+                  token={asset.displayDenom}
+                  type="token"
+                  value={asset?.staked?.toString()}
+                />
+              </span>
+            ) : (
+              '-'
+            )}
+          </div>
+
+          <div className="w-4 h-4" />
+        </div>
+      </th>
+      <th>
+        <div className="flex flex-col items-start gap-2 px-4">
+          <div className="text-[14px] font-normal leading-[21px] items-start flex">
+            {asset.type === 'native' ? (
+              <span>
+                <NumberFormat
+                  cls=""
+                  token={asset.displayDenom}
+                  type="token"
+                  value={asset?.rewards?.toString()}
+                />
+              </span>
+            ) : (
+              '-'
+            )}
+          </div>
+          <div className="w-4 h-4" />
+        </div>
+      </th>
+      <th>
+        <div className="flex flex-col items-start gap-1 px-4">
+          <div className="text-[14px] font-normal leading-[21px] flex items-baseline">
+            <NumberFormat
+              cls=""
+              type="dollar"
+              value={asset?.usdValue?.toString()}
+            />
+          </div>
+          <div className="flex">
+            <div
+              className={
+                'text-sm font-normal leading-[21px] ' +
+                (asset.inflation >= 0 ? 'text-[#238636]' : 'text-[#F1575780]')
+              }
+            >
+              <p className="text-sm font-extralight leading-[21px]">
+                {formatAmount(Math.abs(asset.inflation))}%
+              </p>
+            </div>
             <Image
               src={`/${
                 asset.inflation >= 0 ? 'up' : 'down'
               }-arrow-filled-icon.svg`}
-              height={16}
-              width={16}
-              alt="inflation change"
+              width={18}
+              height={5}
+              alt="down-arrow-filled-icon"
             />
-            <div
-              className={
-                'text-sm not-italic font-normal leading-[normal] ' +
-                (asset.inflation >= 0 ? 'text-[#238636]' : 'text-[#E57575]')
-              }
-            >
-              {formatAmount(Math.abs(asset.inflation))}%
-            </div>
           </div>
         </div>
-      </td>
-      <td>
-        <div className="text-sm not-italic font-normal leading-[normal]">
-          {formatDollarAmount(asset.usdValue)}
+      </th>
+      {/* <th>
+        <div className="flex flex-col items-start gap-2">
+          <div className="text-base font-normal flex">
+            {formatDollarAmount(asset.usdValue).split('.')[0]}.
+            <span >
+              {formatDollarAmount(asset.usdValue).split('.')[1]}
+            </span>
+          </div>
+          <div className="w-4 h-4" />
         </div>
-      </td>
-      <td>
+      </th> */}
+      <th className="">
+        <div className="items-center justify-center relative inline-block">
+          <Image
+            src="/more.svg"
+            width={24}
+            height={24}
+            alt="more-icon"
+            className="cursor-pointer"
+            ref={buttonRef}
+            onClick={togglePopup}
+          />
+
+          {showPopup && (
+            <div
+              ref={popupRef}
+              className="absolute right-0 z-10 more-popup-grid"
+            >
+              <div className="w-full">
+                <a
+                  href="#"
+                  className="flex items-center w-full p-4 text-b1 hover:bg-[#FFFFFF10] rounded-t-2xl"
+                  onClick={() => {
+                    if (asset.type === 'native') claim(asset.chainID);
+                  }}
+                >
+                  <Tooltip
+                    title={
+                      asset.type === 'ibc'
+                        ? 'IBC Deposit feature is coming soon..'
+                        : 'Claim'
+                    }
+                    placement="top-end"
+                  >
+                    <div>
+                      {asset.type !== 'ibc' &&
+                      txClaimStatus === TxStatus.PENDING ? (
+                        <>
+                          {' '}
+                          Claiming.... <CircularProgress size={16} />
+                        </>
+                      ) : (
+                        'Claim'
+                      )}
+                    </div>
+                  </Tooltip>
+                </a>
+                <a
+                  href="#"
+                  className="flex items-center w-full p-4 text-b1 hover:bg-[#FFFFFF10] rounded-b-2xl"
+                  onClick={() => {
+                    if (asset.type === 'native') claimAndStake(asset.chainID);
+                  }}
+                >
+                  <Tooltip
+                    title={
+                      asset.type === 'ibc'
+                        ? 'IBC Withdraw feature is coming soon..'
+                        : 'Claim & Stake'
+                    }
+                    placement="top-start"
+                  >
+                    <div>
+                      {txRestakeStatus === TxStatus.PENDING &&
+                      asset.type !== 'ibc' ? (
+                        <>
+                          Claiming and staking...
+                          <CircularProgress size={16} />
+                        </>
+                      ) : (
+                        'Claim And Stake'
+                      )}
+                    </div>
+                  </Tooltip>
+                </a>
+              </div>
+            </div>
+          )}
+        </div>
+      </th>
+      {/* <td>
         <div className="flex gap-10 justify-center">
           <Tooltip
             title={asset.type === 'ibc' ? 'IBC Deposit feature is coming soon..' : 'Claim'}
-            placement="top-end"
-          >
-            <div
-              className={
-                'asset-action ' + (asset.type === 'ibc' ? 'disabled' : 'active')
-              }
-              onClick={() => {
-                if (asset.type === 'native') claim(asset.chainID);
-              }}
-            >
-              {asset.type !== 'ibc' && txClaimStatus === TxStatus.PENDING ? (
-                <CircularProgress size={16} />
-              ) : (
-                <Image
-                  src={
-                    '/' +
-                    (asset.type === 'ibc' ? 'disabled-deposit.svg' : 'claim-icon.svg')
-                  }
-                  height={asset.type === 'ibc' ? 24 : 16}
-                  width={asset.type === 'ibc' ? 24 : 16}
-                  alt="Claim"
-                />
-              )}
-            </div>
-          </Tooltip>
-          <Tooltip
-            title={asset.type === 'ibc' ? 'IBC Withdraw feature is coming soon..' : 'Claim & Stake'}
-            placement="top-start"
-          >
-            <div
-              className={
-                'asset-action ' + (asset.type === 'ibc' ? 'disabled' : 'active')
-              }
-              onClick={() => {
-                if (asset.type === 'native') claimAndStake(asset.chainID);
-              }}
-            >
-              {txRestakeStatus === TxStatus.PENDING && asset.type !== 'ibc' ? (
-                <CircularProgress size={16} />
-              ) : (
-                <Image
-                  src={
-                    '/' +
-                    (asset.type === 'ibc'
-                      ? 'disabled-withdraw.svg'
-                      : 'claim-stake-icon.svg')
-                  }
-                  height={16}
-                  width={16}
-                  alt="Claim and Stake"
-                />
-              )}
+	@@ -243,7 +370,7 @@ const Asset = ({
             </div>
           </Tooltip>
         </div>
-      </td>
+      </td> */}
     </tr>
   );
 };
-
 export default Asset;

@@ -12,5 +12,7 @@ declare global {
     metamask: any;
      /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
      ethereum: any;
+
+     GA_INITIALIZED?:boolean;
   }
 }

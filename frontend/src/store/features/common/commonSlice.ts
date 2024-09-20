@@ -5,6 +5,7 @@ import commonService from './commonService';
 import { AxiosError } from 'axios';
 import { ERR_UNKNOWN } from '../../../utils/errors';
 import { networks } from '../../../utils/chainsInfo';
+import { getLocalNetworks } from '@/utils/localStorage';
 
 const initialState: CommonState = {
   errState: {
@@ -32,10 +33,16 @@ const initialState: CommonState = {
     info: {},
     status: 'idle',
   },
+  changeNetworkDialog: {
+    open: false,
+    showSearch: false,
+  },
   selectedNetwork: {
     chainName: '',
   },
   allNetworksInfo: {},
+  nameToChainIDs: {},
+  addNetworkOpen: false,
 };
 
 export const getTokenPrice = createAsyncThunk(
@@ -98,13 +105,31 @@ export const commonSlice = createSlice({
         type: '',
       };
     },
+    setChangeNetworkDialogOpen: (
+      state,
+      action: PayloadAction<{ open: boolean; showSearch: boolean }>
+    ) => {
+      state.changeNetworkDialog.open = action.payload.open;
+      state.changeNetworkDialog.showSearch = action.payload.showSearch;
+    },
+    setAddNetworkDialogOpen: (state, action: PayloadAction<boolean>) => {
+      state.addNetworkOpen = action.payload;
+    },
     setSelectedNetwork: (state, action: PayloadAction<SelectedNetwork>) => {
       state.selectedNetwork.chainName = action.payload.chainName;
     },
     setAllNetworksInfo: (state) => {
       state.allNetworksInfo = {};
-      for (let i = 0; i < networks.length; i++) {
-        state.allNetworksInfo[networks[i].config.chainId] = networks[i];
+      const networksList = [...networks, ...getLocalNetworks()];
+      for (let i = 0; i < networksList.length; i++) {
+        state.allNetworksInfo[networksList?.[i]?.config?.chainId] =
+          networksList?.[i];
+        state.nameToChainIDs[
+          networksList?.[i]?.config?.chainName
+            ?.toLowerCase()
+            .split(' ')
+            .join('')
+        ] = networksList?.[i]?.config?.chainId;
       }
     },
   },
@@ -161,6 +186,8 @@ export const {
   resetTxAndHash,
   setSelectedNetwork,
   setAllNetworksInfo,
+  setChangeNetworkDialogOpen,
+  setAddNetworkDialogOpen,
 } = commonSlice.actions;
 
 export default commonSlice.reducer;

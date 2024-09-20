@@ -74,11 +74,11 @@ interface MultisigAddressPubkey {
   pubkey: Pubkey;
 }
 
-interface GetMultisigBalanceInputs {
+interface GetMultisigBalancesInputs {
   baseURL: string;
   baseURLs: string[];
   address: string;
-  denom: string;
+  chainID: string;
 }
 
 interface Account {
@@ -121,12 +121,25 @@ interface MultisigState {
   updateTxnRes: TxRes;
   txns: Txns;
   signTxRes: TxRes;
+  signTransactionRes: TxRes;
   multisigAccountData: {
     account: ImportMultisigAccountRes;
     status: TxStatus;
     error: string;
   };
   verifyDialogOpen: boolean;
+  broadcastTxnRes: {
+    status: TxStatus;
+    error: string;
+    txHash: string;
+    txResponse: {
+      code: number;
+      fee: Coin[];
+      transactionHash: string;
+      rawLog: string;
+      memo: string;
+    };
+  };
 }
 
 interface VerifyAccountRes {
@@ -141,10 +154,7 @@ interface TxRes {
 }
 
 interface Balance {
-  balance: {
-    denom: string;
-    amount: string;
-  };
+  balance: Coin[];
   status: TxStatus;
   error: string;
 }
@@ -188,10 +198,16 @@ interface Txn {
   threshold?: number;
 }
 
+interface TxnCount {
+  computed_status: string;
+  count: number;
+}
+
 interface Txns {
   list: Txn[];
   status: TxStatus;
   error: string;
+  Count: TxnCount[]
 }
 
 interface SignTxInputs {
@@ -232,11 +248,7 @@ interface ImportMultisigAccountRes {
 interface DialogCreateMultisigProps {
   open: boolean;
   onClose: () => void;
-  addressPrefix: string;
   chainID: string;
-  address: string;
-  pubKey: string;
-  baseURLs: string[];
 }
 
 interface PubKeyFields {
@@ -260,4 +272,6 @@ interface InputTextComponentProps {
     index: number,
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => void;
+  togglePubKey: (index: number) => void;
+  isImport: boolean;
 }

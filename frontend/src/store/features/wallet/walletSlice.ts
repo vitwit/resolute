@@ -1,5 +1,5 @@
 'use client';
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { getWalletAmino } from '../../../txns/execute';
 import { isWalletInstalled } from './walletService';
 import {
@@ -14,6 +14,7 @@ import { getAddressByPrefix } from '@/utils/address';
 import { getAuthzMode } from '@/utils/localStorage';
 import { enableAuthzMode } from '../authz/authzSlice';
 import { enableFeegrantMode } from '../feegrant/feegrantSlice';
+import { NotSupportedMetamaskChainIds } from '@/utils/constants';
 
 declare let window: WalletWindow;
 
@@ -31,6 +32,7 @@ interface ChainInfo {
 
 interface WalletState {
   name: string;
+  connectWalletOpen: boolean;
   connected: boolean;
   isLoading: boolean;
   isNanoLedger: boolean;
@@ -42,6 +44,7 @@ interface WalletState {
 
 const initialState: WalletState = {
   name: '',
+  connectWalletOpen: false,
   connected: false,
   isLoading: true,
   isNanoLedger: false,
@@ -85,80 +88,47 @@ export const establishWalletConnection = createAsyncThunk(
       const chainInfos: Record<string, ChainInfo> = {};
       const nameToChainIDs: Record<string, string> = {};
       let anyNetworkAddress = '';
+
       for (let i = 0; i < networks.length; i++) {
-        if (data.walletName === 'metamask') {
-          try {
-            const chainId: string = networks[i].config.chainId;
-            const chainName: string = networks[i].config.chainName;
-            const walletInfo = await getKey(chainId);
-            if (walletInfo?.address.includes('cosmos')) {
-              walletName = walletInfo?.address;
-            }
-            isNanoLedger = false;
-
-            chainInfos[chainId] = {
-              walletInfo: {
-                algo: walletInfo?.algo,
-                bech32Address: walletInfo?.address,
-                pubKey: Buffer.from(walletInfo?.pubkey).toString('base64'),
-                isKeystone: '',
-                isNanoLedger: isNanoLedger,
-                name: walletName,
-              },
-              network: networks[i],
-            };
-
-            nameToChainIDs[chainName?.toLowerCase().split(' ').join('')] =
-              chainId;
-          } catch (error) {
-            console.log(
-              `unable to connect to network ${networks[i].config.chainName}: `,
-              error
-            );
+        const chainId = networks[i].config.chainId;
+        try {
+          if (
+            (data.walletName === 'keplr' ||
+              data.walletName === 'cosmostation') &&
+            networks[i].keplrExperimental
+          ) {
+            await window.wallet.experimentalSuggestChain(networks[i].config);
           }
-        } else {
-          try {
-            if (
-              (data.walletName === 'keplr' ||
-                data.walletName === 'cosmostation') &&
-              networks[i].keplrExperimental
-            ) {
-              await window.wallet.experimentalSuggestChain(networks[i].config);
-            }
-            if (data.walletName === 'leap' && networks[i].leapExperimental) {
-              await window.wallet.experimentalSuggestChain(networks[i].config);
-            }
-            const chainId: string = networks[i].config.chainId;
-            const chainName: string = networks[i].config.chainName;
-            await getWalletAmino(chainId);
-            const walletInfo = await window.wallet.getKey(chainId);
-            walletInfo.pubKey = Buffer.from(walletInfo?.pubKey).toString(
-              'base64'
-            );
-            delete walletInfo?.address;
-            walletName = walletInfo?.name;
-            isNanoLedger = walletInfo?.isNanoLedger || false;
-            chainInfos[chainId] = {
-              walletInfo: walletInfo,
-              network: networks[i],
-            };
-            if (anyNetworkAddress === '')
-              anyNetworkAddress = walletInfo?.bech32Address || '';
-            nameToChainIDs[chainName?.toLowerCase().split(' ').join('')] =
-              chainId;
-          } catch (error) {
-            console.log(
-              `unable to connect to network ${networks[i].config.chainName}: `,
-              error
-            );
-
-            dispatch(
-              setError({
-                type: 'error',
-                message: `Unable to connect to network ${networks[i].config.chainName}`,
-              })
-            );
+          if (data.walletName === 'leap' && networks[i].leapExperimental) {
+            await window.wallet.experimentalSuggestChain(networks[i].config);
           }
+          await getWalletAmino(chainId);
+          const walletInfo = await window.wallet.getKey(chainId);
+          walletInfo.pubKey = Buffer.from(walletInfo?.pubKey).toString(
+            'base64'
+          );
+          walletName = walletInfo?.name;
+          isNanoLedger = walletInfo?.isNanoLedger || false;
+          chainInfos[chainId] = {
+            walletInfo: walletInfo,
+            network: networks[i],
+          };
+          if (anyNetworkAddress === '')
+            anyNetworkAddress = walletInfo?.bech32Address || '';
+          nameToChainIDs[
+            networks[i].config.chainName.toLowerCase().split(' ').join('')
+          ] = chainId;
+        } catch (error) {
+          console.log(
+            `unable to connect to network ${networks[i].config.chainName}: `,
+            error
+          );
+          dispatch(
+            setError({
+              type: 'error',
+              message: `Unable to connect to network ${networks[i].config.chainName}`,
+            })
+          );
         }
       }
 
@@ -169,7 +139,6 @@ export const establishWalletConnection = createAsyncThunk(
             message: 'Permission denied for all the networks',
           })
         );
-
         return rejectWithValue('Permission denied for all the networks');
       } else {
         setConnected();
@@ -196,6 +165,70 @@ export const establishWalletConnection = createAsyncThunk(
   }
 );
 
+export const establishMetamaskConnection = createAsyncThunk(
+  'wallet/metamask-connection',
+  async (
+    data: {
+      network: Network;
+      walletName: string;
+    },
+    { rejectWithValue, dispatch }
+  ) => {
+    if (!isWalletInstalled(data.walletName)) {
+      dispatch(setError({ type: 'error', message: 'Wallet is not installed' }));
+      return rejectWithValue('wallet is not installed');
+    } else {
+      window.wallet.defaultOptions = {
+        sign: {
+          preferNoSetMemo: true,
+          disableBalanceCheck: true,
+        },
+      };
+      const chainId = data.network.config.chainId;
+      try {
+        await window.wallet.enable(chainId);
+      } catch (error) {
+        console.log('caught', error);
+      }
+
+      try {
+        if (NotSupportedMetamaskChainIds.indexOf(chainId) === -1) {
+          const walletInfo = await getKey(chainId);
+          const chainInfo: ChainInfo = {
+            walletInfo: {
+              algo: walletInfo?.algo,
+              bech32Address: walletInfo?.address,
+              pubKey: Buffer.from(walletInfo?.pubkey).toString('base64'),
+              isKeystone: '',
+              isNanoLedger: false,
+              name: walletInfo?.address || '',
+            },
+            network: data.network,
+          };
+
+          setConnected();
+          setWalletName(data.walletName);
+          dispatch(addChainInfo({ chainId, chainInfo }));
+          dispatch(
+            addNameToChainIDs({
+              chainName: data.network.config.chainName
+                .toLowerCase()
+                .split(' ')
+                .join(''),
+              chainId,
+            })
+          );
+        }
+      } catch (error) {
+        console.log(
+          `unable to connect to network ${data.network.config.chainName}: `,
+          error
+        );
+      }
+    }
+  }
+);
+
 const walletSlice = createSlice({
   name: 'wallet',
   initialState,
@@ -217,17 +250,53 @@ const walletSlice = createSlice({
     resetConnectWalletStatus: (state) => {
       state.status = TxStatus.INIT;
     },
+    setIsLoading: (state) => {
+      state.isLoading = true;
+    },
     unsetIsLoading: (state) => {
       state.isLoading = false;
+    },
+    setConnectWalletOpen: (state, action: PayloadAction<boolean>) => {
+      state.connectWalletOpen = action.payload;
+    },
+    addChainInfo: (
+      state,
+      action: PayloadAction<{ chainId: string; chainInfo: ChainInfo }>
+    ) => {
+      const { chainId, chainInfo } = action.payload;
+      state.networks = { ...state.networks, [chainId]: chainInfo };
+      state.connected = true;
+      state.isLoading = false;
+      state.status = TxStatus.IDLE;
+      if (!state.name?.length) {
+        const cosmosAddress = getAddressByPrefix(
+          chainInfo.walletInfo.name || '',
+          'cosmos'
+        );
+        state.name = cosmosAddress;
+      }
+    },
+    addNameToChainIDs: (
+      state,
+      action: PayloadAction<{ chainName: string; chainId: string }>
+    ) => {
+      const { chainName, chainId } = action.payload;
+      state.nameToChainIDs = { ...state.nameToChainIDs, [chainName]: chainId };
     },
   },
   extraReducers: (builder) => {
     builder
       .addCase(establishWalletConnection.pending, (state) => {
         state.status = TxStatus.PENDING;
-        state.isLoading = true
+        state.isLoading = true;
       })
       .addCase(establishWalletConnection.fulfilled, (state, action) => {
+        if (!action.payload) {
+          state.connected = true;
+          state.status = TxStatus.IDLE;
+          state.isLoading = false;
+          return;
+        }
         const networks = action.payload.chainInfos;
         const nameToChainIDs = action.payload.nameToChainIDs;
         state.networks = networks;
@@ -250,6 +319,10 @@ export const {
   resetWallet,
   resetConnectWalletStatus,
   unsetIsLoading,
+  setConnectWalletOpen,
+  setIsLoading,
+  addChainInfo,
+  addNameToChainIDs,
 } = walletSlice.actions;
 
 export default walletSlice.reducer;

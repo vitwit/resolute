@@ -383,6 +383,7 @@ const TxnBuilder = ({ chainID }: { chainID: string }) => {
                       messages={messages}
                       currency={currency}
                       onDeleteMsg={onDeleteMsg}
+                      chainID={chainID}
                     />
                     <div>
                       <form

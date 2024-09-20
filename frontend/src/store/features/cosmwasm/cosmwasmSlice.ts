@@ -6,9 +6,10 @@ import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { cloneDeep } from 'lodash';
 import { setError } from '../common/commonSlice';
 import axios from 'axios';
-import { cleanURL } from '@/utils/util';
+import { cleanURL, trackEvent } from '@/utils/util';
 import { parseTxResult } from '@/utils/signing';
 import { getCodes, getContractsByCode } from './cosmwasmService';
+import { FAILED, SUCCESS } from '@/utils/constants';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export const contractInfoEmptyState = {
@@ -170,7 +171,7 @@ export const getAllCodes = createAsyncThunk(
     { rejectWithValue, dispatch }
   ) => {
     try {
-      const response = await getCodes(data.baseURLs);
+      const response = await getCodes(data.baseURLs, data.chainID);
       return {
         data: response.data,
         chainID: data.chainID,
@@ -195,7 +196,11 @@ export const getAllContractsByCode = createAsyncThunk(
     { rejectWithValue, dispatch }
   ) => {
     try {
-      const response = await getContractsByCode(data.baseURLs, data.codeId);
+      const response = await getContractsByCode(
+        data.baseURLs,
+        data.codeId,
+        data.chainID
+      );
       return {
         data: {
           contracts: response.data,
@@ -231,11 +236,17 @@ export const executeContract = createAsyncThunk(
         memo = '',
         rawLog = '',
       } = parseTxResult(txn?.data?.tx_response);
+      if(code === 0) {
+        trackEvent('COSMWASM', 'EXECUTE_CONTRACT', SUCCESS);
+      } else {
+        trackEvent('COSMWASM', 'EXECUTE_CONTRACT', FAILED);
+      }
       return {
         data: { code, transactionHash, fee, memo, rawLog },
         chainID: data.chainID,
       };
     } catch (error: any) {
+      trackEvent('COSMWASM', 'EXECUTE_CONTRACT', FAILED);
       const errMsg = error?.message || 'Failed to execute contract';
       dispatch(
         setError({
@@ -263,6 +274,11 @@ export const uploadCode = createAsyncThunk(
         memo = '',
         rawLog = '',
       } = parseTxResult(txn?.data?.tx_response);
+      if(code === 0) {
+        trackEvent('COSMWASM', 'UPLOAD_CODE', SUCCESS);
+      } else {
+        trackEvent('COSMWASM', 'UPLOAD_CODE', FAILED);
+      }
       return {
         data: {
           code,
@@ -275,6 +291,7 @@ export const uploadCode = createAsyncThunk(
         chainID: data.chainID,
       };
     } catch (error: any) {
+      trackEvent('COSMWASM', 'UPLOAD_CODE', FAILED);
       const errMsg = error?.message || 'Failed to execute contract';
       dispatch(
         setError({
@@ -302,6 +319,11 @@ export const txInstantiateContract = createAsyncThunk(
         memo = '',
         rawLog = '',
       } = parseTxResult(txn?.data?.tx_response);
+      if(code === 0) {
+        trackEvent('COSMWASM', 'INSTANTIATE_CONTRACT', SUCCESS);
+      } else {
+        trackEvent('COSMWASM', 'INSTANTIATE_CONTRACT', FAILED);
+      }
       return {
         data: {
           code,
@@ -315,6 +337,7 @@ export const txInstantiateContract = createAsyncThunk(
         chainID: data.chainID,
       };
     } catch (error: any) {
+      trackEvent('COSMWASM', 'INSTANTIATE_CONTRACT', FAILED);
       const errMsg = error?.message || 'Failed to execute contract';
       dispatch(
         setError({

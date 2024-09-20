@@ -6,7 +6,7 @@ import './transfers.css';
 
 const Page = () => {
   const nameToChainsIDs = useAppSelector(
-    (state) => state.wallet.nameToChainIDs
+    (state) => state.common.nameToChainIDs
   );
   const chainNames = Object.keys(nameToChainsIDs);
   return <Transfers chainNames={chainNames} />;

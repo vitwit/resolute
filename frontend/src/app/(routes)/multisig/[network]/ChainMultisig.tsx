@@ -6,7 +6,7 @@ import PageMultisig from '../components/PageMultisig';
 
 const ChainMultisig = ({ network }: { network: string }) => {
   const nameToChainIDs = useAppSelector(
-    (state: RootState) => state.wallet.nameToChainIDs
+    (state: RootState) => state.common.nameToChainIDs
   );
   const chainName = network.toLowerCase();
   const validChain = chainName in nameToChainIDs;
@@ -16,7 +16,7 @@ const ChainMultisig = ({ network }: { network: string }) => {
         <PageMultisig chainName={chainName} />
       ) : (
         <>
-          <div className="flex justify-center items-center h-screen w-full text-white txt-lg">
+          <div className="flex justify-center items-center h-screen w-full txt-lg">
             - The {chainName} is not supported -
           </div>
         </>

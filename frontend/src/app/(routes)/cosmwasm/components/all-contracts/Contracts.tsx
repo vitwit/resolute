@@ -1,11 +1,11 @@
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { getAllContractsByCode } from '@/store/features/cosmwasm/cosmwasmSlice';
 import { TxStatus } from '@/types/enums';
-import { CircularProgress, Tooltip } from '@mui/material';
-import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import React, { useEffect } from 'react';
 import ContractsList from './ContractsList';
+import PageHeader from '@/components/common/PageHeader';
+import ContractsLoading from '../loaders/ContractsLoading';
 
 const Contracts = ({
   codeId,
@@ -40,40 +40,26 @@ const Contracts = ({
   );
 
   return (
-    <div className="space-y-6">
-      <div className="flex gap-4 items-center">
-        <Tooltip title="Go back to codes" placement="bottom">
-          <Image
-            onClick={() => {
-              router.push(`/cosmwasm/${chainName.toLowerCase()}`);
-            }}
-            className="cursor-pointer"
-            src="/go-back-icon.svg"
-            width={32}
-            height={32}
-            alt="Go Back"
-            draggable={false}
-          />
-        </Tooltip>
-        <div className="font-semibold text-[18px]">
-          Contracts List of Code: {codeId}
-        </div>
+    <div className="space-y-10">
+      <div className="space-y-6">
+        <button
+          onClick={() => {
+            router.push(`/cosmwasm/${chainName.toLowerCase()}?tab=codes`);
+          }}
+          className="text-btn flex items-center w-fit"
+        >
+          <span>Back to codes</span>
+        </button>
+        <PageHeader
+          title={`Code ${codeId}`}
+          description={`Contracts list of code ${codeId}`}
+        />
       </div>
       <div>
         {contractsLoading === TxStatus.PENDING ? (
-          <div className="flex justify-center items-center h-1/2">
-            <div className="flex gap-4 items-center">
-              <CircularProgress size={24} sx={{ color: 'white' }} />
-              <div>
-                <span className="italic font-extralight">
-                  Fetching Contracts
-                </span>
-                <span className="dots-flashing"></span>
-              </div>
-            </div>
-          </div>
+          <ContractsLoading />
         ) : contracts?.length ? (
-          <ContractsList contracts={contracts} />
+          <ContractsList contracts={contracts} chainID={chainID} />
         ) : (
           <div className="flex justify-center items-center h-1/2">
             <div className="text-[16px]">

@@ -11,6 +11,8 @@ import { setError, setTxAndHash } from '../common/commonSlice';
 import { capitalize } from 'lodash';
 import { getBalances } from '../bank/bankSlice';
 import { addIBCTransaction, updateIBCTransactionStatus } from '../recent-transactions/recentTransactionsSlice';
+import { FAILED, SUCCESS } from '@/utils/constants';
+import { trackEvent } from '@/utils/util';
 
 export interface IBCState {
   txStatus: TxStatus;
@@ -54,7 +56,7 @@ export const txTransfer = createAsyncThunk(
     const onSourceChainTxSuccess = async (chainID: string, txHash: string) => {
       dispatch(resetTxStatus());
       const response = await axios.get(
-        data.rest + '/cosmos/tx/v1beta1/txs/' + txHash
+        data.rest + '/cosmos/tx/v1beta1/txs/' + txHash+ `?chain=${data.sourceChainID}`
       );
       const msgs = response?.data?.tx?.body?.messages || [];
       /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
@@ -81,6 +83,11 @@ export const txTransfer = createAsyncThunk(
         true,
         result.code === 0
       );
+      if(result.code === 0) {
+        trackEvent('TRANSFER', 'IBC_TRANSFER', SUCCESS);
+      } else {
+        trackEvent('TRANSFER', 'IBC_TRANSFER', FAILED);
+      }
       dispatch(
         setTxAndHash({
           hash: txHash,
@@ -148,6 +155,7 @@ export const txTransfer = createAsyncThunk(
       return response;
       /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     } catch (err: any) {
+      trackEvent('TRANSFER', 'IBC_TRANSFER', FAILED);
       dispatch(
         setError({
           type: 'error',

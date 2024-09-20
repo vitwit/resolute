@@ -8,7 +8,7 @@ import ChainNotFound from '@/components/ChainNotFound';
 
 const Transfers = ({ chainNames }: { chainNames: string[] }) => {
   const nameToChainIDs = useAppSelector(
-    (state: RootState) => state.wallet.nameToChainIDs
+    (state: RootState) => state.common.nameToChainIDs
   );
 
   const chainIDs: string[] = [];

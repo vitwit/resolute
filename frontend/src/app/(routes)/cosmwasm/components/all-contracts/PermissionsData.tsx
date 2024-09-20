@@ -1,6 +1,5 @@
-import Image from 'next/image';
 import React, { useState } from 'react';
-import DialogAddressesList from '../DialogAddressesList';
+import DialogAddressesList from './DialogAddressesList';
 
 const PermissionsData = ({
   permission,
@@ -10,7 +9,7 @@ const PermissionsData = ({
   const permissionType = permission.permission;
   const [showAddresses, setShowAddresses] = useState(false);
   const handleDialogOpen = (
-    e: React.MouseEvent<HTMLImageElement, MouseEvent>,
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
     value: boolean
   ) => {
     setShowAddresses(value);
@@ -18,26 +17,22 @@ const PermissionsData = ({
   };
   return (
     <div>
-      {permission.addresses?.length ? (
-        <div className="flex gap-1 items-center">
-          <div>{permissionType}</div>
-          <Image
-            onClick={(e) => handleDialogOpen(e, true)}
-            className="cursor-pointer"
-            src="/view-more-icon.svg"
-            height={20}
-            width={20}
-            alt="View Addresses"
-          />
-          <DialogAddressesList
-            addresses={permission.addresses}
-            onClose={() => setShowAddresses(false)}
-            open={showAddresses}
-          />
-        </div>
-      ) : (
-        <div>{permissionType}</div>
-      )}
+      <div className="flex flex-col gap-2 w-[20%]">
+        <p className="secondary-text">Permission</p>
+        <button
+          onClick={(e) => {
+            if (permission.addresses?.length) handleDialogOpen(e, true);
+          }}
+          className={`text-b1 ${permissionType === 'AnyOfAddresses' ? 'underline' : ''}`}
+        >
+          {permissionType}
+        </button>
+      </div>
+      <DialogAddressesList
+        addresses={permission.addresses}
+        onClose={() => setShowAddresses(false)}
+        open={showAddresses}
+      />
     </div>
   );
 };
