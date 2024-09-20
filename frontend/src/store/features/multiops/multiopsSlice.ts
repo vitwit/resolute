@@ -42,7 +42,7 @@ export const txExecuteMultiMsg = createAsyncThunk(
           data.denom
         }`,
         data.basicChainInfo.rest,
-        data.feegranter,
+        data?.feegranter?.length ? data.feegranter : undefined,
         data.basicChainInfo.rpc,
         data.basicChainInfo.restURLs
       );
