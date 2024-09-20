@@ -31,7 +31,7 @@ const useInitAuthz = ({
             baseURL,
             chainID,
           };
-          if (enableModules.authz) {
+          if (enableModules?.authz) {
             dispatch(getGrantsByMe(authzInputs));
             dispatch(getGrantsToMe(authzInputs));
           }
