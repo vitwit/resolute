@@ -9,7 +9,7 @@ import { GAS_FEE } from '../../../utils/constants';
 import { TxStatus } from '../../../types/enums';
 import { ERR_UNKNOWN } from '@/utils/errors';
 import { NewTransaction } from '@/utils/transaction';
-import { setTxAndHash } from '../common/commonSlice';
+import { setError, setTxAndHash } from '../common/commonSlice';
 import cloneDeep from 'lodash/cloneDeep';
 import { trackEvent } from '@/utils/util';
 
@@ -136,18 +136,25 @@ export const multiTxns = createAsyncThunk(
           })
         );
 
-        trackEvent('TRANSFER', 'MULTI_SEND', 'SUCCESS')
+        trackEvent('TRANSFER', 'MULTI_SEND', 'SUCCESS');
 
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
-
-        trackEvent('TRANSFER', 'MULTI_SEND', 'FAILED')
+        trackEvent('TRANSFER', 'MULTI_SEND', 'FAILED');
 
         return rejectWithValue(result?.rawLog);
       }
       /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     } catch (error: any) {
-      return rejectWithValue(error.message);
+      trackEvent('TRANSFER', 'MULTI_SEND', 'FAILED');
+      const errMessage = error?.response?.data?.error || error?.message;
+      dispatch(
+        setError({
+          type: 'error',
+          message: errMessage || ERR_UNKNOWN,
+        })
+      );
+      return rejectWithValue(errMessage || ERR_UNKNOWN);
     }
   }
 );
@@ -183,7 +190,7 @@ export const txBankSend = createAsyncThunk(
             data.denom
           }`,
           data.basicChainInfo.rest,
-          data.feegranter,
+          data?.feegranter?.length ? data.feegranter : undefined,
           data?.basicChainInfo?.rpc,
           data?.basicChainInfo?.restURLs
         );
@@ -220,18 +227,25 @@ export const txBankSend = createAsyncThunk(
           );
         }
 
-        trackEvent('TRANSFER', 'SEND', 'SUCCESS')
+        trackEvent('TRANSFER', 'SEND', 'SUCCESS');
 
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
-
-        trackEvent('TRANSFER', 'SEND', 'FAILED')
+        trackEvent('TRANSFER', 'SEND', 'FAILED');
 
         return rejectWithValue(result?.rawLog);
       }
       /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     } catch (error: any) {
-      return rejectWithValue(error.message);
+      trackEvent('TRANSFER', 'SEND', 'FAILED');
+      const errMessage = error?.response?.data?.error || error?.message;
+      dispatch(
+        setError({
+          type: 'error',
+          message: errMessage || ERR_UNKNOWN,
+        })
+      );
+      return rejectWithValue(errMessage || ERR_UNKNOWN);
     }
   }
 );
