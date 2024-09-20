@@ -433,13 +433,14 @@ export const txVote = createAsyncThunk(
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       trackEvent('GOV', 'VOTE', FAILED);
+      const errMessage = error?.response?.data?.error || error?.message;
       dispatch(
         setError({
           type: 'error',
-          message: error?.message || ERR_UNKNOWN,
+          message: errMessage || ERR_UNKNOWN,
         })
       );
-      return rejectWithValue(error?.message || ERR_UNKNOWN);
+      return rejectWithValue(errMessage || ERR_UNKNOWN);
     }
   }
 );
@@ -501,13 +502,14 @@ export const txDeposit = createAsyncThunk(
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       trackEvent('GOV', 'DEPOSIT', FAILED);
+      const errMessage = error?.response?.data?.error || error?.message;
       dispatch(
         setError({
           type: 'error',
-          message: error?.message || ERR_UNKNOWN,
+          message: errMessage || ERR_UNKNOWN,
         })
       );
-      return rejectWithValue(error?.message || ERR_UNKNOWN);
+      return rejectWithValue(errMessage || ERR_UNKNOWN);
     }
   }
 );

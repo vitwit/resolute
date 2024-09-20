@@ -225,6 +225,7 @@ export const txRestake = createAsyncThunk(
         })
       );
       if (result?.code === 0) {
+        trackEvent('STAKING', 'RESTAKE', SUCCESS);
         if (data.isAuthzMode) {
           dispatch(
             getAuthzDelegatorTotalRewards({
@@ -262,10 +263,20 @@ export const txRestake = createAsyncThunk(
         }
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
+        trackEvent('STAKING', 'RESTAKE', FAILED);
         return rejectWithValue(result?.rawLog);
       }
-    } catch (error) {
-      if (error instanceof AxiosError) return rejectWithValue(error.response);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      trackEvent('STAKING', 'RESTAKE', FAILED);
+      const errMessage = error?.response?.data?.error || error?.message;
+      dispatch(
+        setError({
+          type: 'error',
+          message: errMessage || ERR_UNKNOWN,
+        })
+      );
+      return rejectWithValue(errMessage || ERR_UNKNOWN);
     }
   }
 );
@@ -361,9 +372,17 @@ export const txDelegate = createAsyncThunk(
         trackEvent('STAKING', 'DELEGATE', FAILED);
         return rejectWithValue(result?.rawLog);
       }
-    } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
       trackEvent('STAKING', 'DELEGATE', FAILED);
-      if (error instanceof AxiosError) return rejectWithValue(error.response);
+      const errMessage = error?.response?.data?.error || error?.message;
+      dispatch(
+        setError({
+          type: 'error',
+          message: errMessage || ERR_UNKNOWN,
+        })
+      );
+      return rejectWithValue(errMessage || ERR_UNKNOWN);
     }
   }
 );
@@ -451,9 +470,17 @@ export const txReDelegate = createAsyncThunk(
 
         return rejectWithValue(result?.rawLog);
       }
-    } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
       trackEvent('STAKING', 'REDELEGATE', FAILED);
-      if (error instanceof AxiosError) return rejectWithValue(error.response);
+      const errMessage = error?.response?.data?.error || error?.message;
+      dispatch(
+        setError({
+          type: 'error',
+          message: errMessage || ERR_UNKNOWN,
+        })
+      );
+      return rejectWithValue(errMessage || ERR_UNKNOWN);
     }
   }
 );
@@ -545,9 +572,17 @@ export const txUnDelegate = createAsyncThunk(
 
         return rejectWithValue(result?.rawLog);
       }
-    } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
       trackEvent('STAKING', 'UNDELEGATE', FAILED);
-      if (error instanceof AxiosError) return rejectWithValue(error.response);
+      const errMessage = error?.response?.data?.error || error?.message;
+      dispatch(
+        setError({
+          type: 'error',
+          message: errMessage || ERR_UNKNOWN,
+        })
+      );
+      return rejectWithValue(errMessage || ERR_UNKNOWN);
     }
   }
 );
@@ -634,24 +669,17 @@ export const txCancelUnbonding = createAsyncThunk(
 
         return rejectWithValue(result?.rawLog);
       }
-    } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
       trackEvent('STAKING', 'CANCEL_UNBONDING', FAILED);
-      if (error instanceof AxiosError) {
-        dispatch(
-          setError({
-            type: 'error',
-            message: error.message,
-          })
-        );
-        return rejectWithValue(error.response);
-      }
+      const errMessage = error?.response?.data?.error || error?.message;
       dispatch(
         setError({
           type: 'error',
-          message: ERR_UNKNOWN,
+          message: errMessage || ERR_UNKNOWN,
         })
       );
-      return rejectWithValue(ERR_UNKNOWN);
+      return rejectWithValue(errMessage || ERR_UNKNOWN);
     }
   }
 );

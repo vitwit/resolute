@@ -77,7 +77,7 @@ const useInitApp = () => {
               isAuthzMode
                 ? getAuthzDelegations(chainRequestData)
                 : getDelegations(chainRequestData)
-            ).then();
+            );
 
             // Fetch available balances
             dispatch(
@@ -108,9 +108,6 @@ const useInitApp = () => {
                 : getUnbonding(chainRequestData)
             );
 
-            // Fetch validators
-            dispatch(getAllValidators({ baseURLs: restURLs, chainID }));
-
             // Mark chain as fetched
             fetchedChains.current[chainID] = true;
           }
@@ -132,8 +129,8 @@ const useInitApp = () => {
   useEffect(() => {
     if (chainIDs.length > 0) {
       chainIDs.forEach((chainID) => {
-        if (!validatorsFetchedChains.current[chainID]) {
-          const { restURLs } = getChainInfo(chainID);
+        const { restURLs } = getChainInfo(chainID);
+        if (restURLs?.length && !validatorsFetchedChains.current[chainID]) {
           // Fetch validators
           dispatch(getAllValidators({ baseURLs: restURLs, chainID }));
 
