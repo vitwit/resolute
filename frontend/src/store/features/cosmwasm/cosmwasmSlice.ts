@@ -6,7 +6,7 @@ import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { cloneDeep } from 'lodash';
 import { setError } from '../common/commonSlice';
 import axios from 'axios';
-import { cleanURL, trackEvent } from '@/utils/util';
+import { addChainIDParam, cleanURL, trackEvent } from '@/utils/util';
 import { parseTxResult } from '@/utils/signing';
 import { getCodes, getContractsByCode } from './cosmwasmService';
 import { FAILED, SUCCESS } from '@/utils/constants';
@@ -226,9 +226,12 @@ export const executeContract = createAsyncThunk(
   async (data: ExecuteContractInputs, { rejectWithValue, dispatch }) => {
     try {
       const response = await data.getExecutionOutput(data);
-      const txn = await axios.get(
-        cleanURL(data.baseURLs[0]) + '/cosmos/tx/v1beta1/txs/' + response.txHash
-      );
+      let txnUrl =
+        cleanURL(data.baseURLs[0]) +
+        '/cosmos/tx/v1beta1/txs/' +
+        response.txHash;
+      txnUrl = addChainIDParam(txnUrl, data.chainID);
+      const txn = await axios.get(txnUrl);
       const {
         code,
         transactionHash,
@@ -236,7 +239,7 @@ export const executeContract = createAsyncThunk(
         memo = '',
         rawLog = '',
       } = parseTxResult(txn?.data?.tx_response);
-      if(code === 0) {
+      if (code === 0) {
         trackEvent('COSMWASM', 'EXECUTE_CONTRACT', SUCCESS);
       } else {
         trackEvent('COSMWASM', 'EXECUTE_CONTRACT', FAILED);
@@ -264,9 +267,12 @@ export const uploadCode = createAsyncThunk(
   async (data: UploadCodeInputs, { rejectWithValue, dispatch }) => {
     try {
       const response = await data.uploadContract(data);
-      const txn = await axios.get(
-        cleanURL(data.baseURLs[0]) + '/cosmos/tx/v1beta1/txs/' + response.txHash
-      );
+      let txnUrl =
+        cleanURL(data.baseURLs[0]) +
+        '/cosmos/tx/v1beta1/txs/' +
+        response.txHash;
+      txnUrl = addChainIDParam(txnUrl, data.chainID);
+      const txn = await axios.get(txnUrl);
       const {
         code,
         transactionHash,
@@ -274,7 +280,7 @@ export const uploadCode = createAsyncThunk(
         memo = '',
         rawLog = '',
       } = parseTxResult(txn?.data?.tx_response);
-      if(code === 0) {
+      if (code === 0) {
         trackEvent('COSMWASM', 'UPLOAD_CODE', SUCCESS);
       } else {
         trackEvent('COSMWASM', 'UPLOAD_CODE', FAILED);
@@ -309,9 +315,12 @@ export const txInstantiateContract = createAsyncThunk(
   async (data: InstantiateContractInputs, { rejectWithValue, dispatch }) => {
     try {
       const response = await data.instantiateContract(data);
-      const txn = await axios.get(
-        cleanURL(data.baseURLs[0]) + '/cosmos/tx/v1beta1/txs/' + response.txHash
-      );
+      let txnUrl =
+        cleanURL(data.baseURLs[0]) +
+        '/cosmos/tx/v1beta1/txs/' +
+        response.txHash;
+      txnUrl = addChainIDParam(txnUrl, data.chainID);
+      const txn = await axios.get(txnUrl);
       const {
         code,
         transactionHash,
@@ -319,7 +328,7 @@ export const txInstantiateContract = createAsyncThunk(
         memo = '',
         rawLog = '',
       } = parseTxResult(txn?.data?.tx_response);
-      if(code === 0) {
+      if (code === 0) {
         trackEvent('COSMWASM', 'INSTANTIATE_CONTRACT', SUCCESS);
       } else {
         trackEvent('COSMWASM', 'INSTANTIATE_CONTRACT', FAILED);
