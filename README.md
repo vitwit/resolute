@@ -1,5 +1,6 @@
 # Resolute
-Resolute is an advanced spacecraft designed to travel through the multiverse, connecting all Cosmos sovereign chains.
+Resolute is your gateway to the Cosmos ecosystem. It enables users to seamlessly interact with any blockchain built using the Cosmos SDK stack, all while using the wallet of their choice. Whether you're a developer, validator, or an everyday user, Resolute offers a streamlined experience to connect and engage with the diverse Cosmos universe.
+
 Supported features:
 
 - [x] Overview
@@ -15,32 +16,19 @@ Supported features:
 - [x] Multi-Message Transaction Builder
 - [ ] Airdrops
 - [ ] Groups
-- [ ] Cross chain swaps
+- [x] Cross chain swaps
 - [ ] Interchain Accounts
-
-
-## Adding new network
-
-To add a new network to Resolute, please follow these steps:
-
-1. Open the `frontend/src/utils/chainInfo.ts` file. 
-2. Add the new network configuration to the networks list. You can refer to the existing network configurations.
-3. Open the `server/networks.json` file and add the new network configuration.
-4. Add the token denom and coingecko-id in backend for token price. (Refer: [Set up backend server](./BACKEND_SERVER_README.md))
 
 ## Prerequisites
 
 1. Install node 18.0.0 or above
 
-## For older version
-Use release/v1.x branch
-
 ## Install deps 
 ```bash
-# clone the repo with git and checkout to master
+# clone the repo with git and checkout to v2.0.0
 $ git clone https://github.com/vitwit/resolute.git
 $ cd resolute
-$ git checkout master
+$ git checkout v2.0.0
 $ cd frontend
 $ yarn
 ```
@@ -82,5 +70,15 @@ Your app is ready to be deployed!
 
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
+
+## How to add a new network to available networks
+
+To add a new network to Resolute, please follow these steps:
+
+1. Open the `frontend/src/utils/chainInfo.ts` file. 
+2. Add the new network configuration to the networks list. You can refer to the existing network configurations.
+3. Open the `server/networks.json` file and add the new network configuration.
+4. Add the token denom and coingecko-id in backend for token price. (Refer: [Set up backend server](./BACKEND_SERVER_README.md))
+
 ## License
-Released under the [Apache 2.0 License](https://github.com/vitwit/resolute/blob/master/LICENSE).
+Released under the [License](https://github.com/vitwit/resolute/blob/master/LICENSE).
