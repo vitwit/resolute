@@ -73,6 +73,9 @@ const DialogTxInstantiateStatus = ({ chainID }: { chainID: string }) => {
           <div className="grid grid-cols-2 gap-6">
             <TxnInfoCard name="Code ID">
               <div className="text-b1">{txResponse?.codeId || '-'}</div>
+              {txResponse?.codeId ? (
+                <Copy content={txResponse?.codeId} />
+              ) : null}
             </TxnInfoCard>
             <TxnInfoCard name="Contract Address">
               <div className="text-b1">
