@@ -9,6 +9,7 @@ import Link from 'next/link';
 import { Tooltip } from '@mui/material';
 import { isMetaMaskWallet } from '@/utils/localStorage';
 import { MenuItemI, SIDEBAR_MENU_OPTIONS } from '@/constants/sidebar-options';
+import AgentButton from './AgentButton';
 
 const DISABLED_FOR_METAMASK = [
   'ibc-swap',
@@ -41,18 +42,25 @@ const SideMenu = () => {
 
   return (
     <div className="scrollable-content w-full">
-      <div className="flex flex-col gap-2">
-        {SIDEBAR_MENU_OPTIONS.map((item) =>
-          item.multipleOptions ? (
-            <MoreOptions
-              key={item.name}
-              item={item}
-              selectedPart={selectedPart}
-            />
-          ) : (
-            <MenuItem key={item.name} itemData={item} pathName={selectedPart} />
-          )
-        )}
+      <div className='flex flex-col gap-2'>
+        <div className="flex flex-col gap-2 px-6">
+          {SIDEBAR_MENU_OPTIONS.map((item) =>
+            item.multipleOptions ? (
+              <MoreOptions
+                key={item.name}
+                item={item}
+                selectedPart={selectedPart}
+              />
+            ) : (
+              <MenuItem
+                key={item.name}
+                itemData={item}
+                pathName={selectedPart}
+              />
+            )
+          )}
+        </div>
+        <AgentButton />
       </div>
     </div>
   );

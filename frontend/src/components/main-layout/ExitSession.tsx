@@ -48,7 +48,7 @@ const ExitSession = () => {
   };
 
   return (
-    <>
+    <div className='px-6'>
       {isWalletConnected ? (
         <div className="fixed-bottom w-full">
           <button
@@ -71,7 +71,7 @@ const ExitSession = () => {
         onClose={() => setConfirmExitOpen(false)}
         onConfirm={onConfirmExitSession}
       />
-    </>
+    </div>
   );
 };
 

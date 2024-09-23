@@ -1,0 +1,22 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
+.interchain-agent-body {
+  font-family: 'Inter', sans-serif !important;
+}
+
+.btn-bg {
+  background: linear-gradient(180deg, #4453df 0%, #7f5ced 100%);
+}
+
+.input-box {
+  @apply w-full border-none cursor-text focus:outline-none bg-transparent  placeholder:text-[#FFFFFF30] placeholder:font-normal text-[#ffffff];
+}
+
+.divider-line {
+  @apply bg-[#FFFFFF80] w-full h-[1px];
+}
+
+.solid-btn {
+  @apply rounded-full;
+  background: linear-gradient(180deg, #4453df 0%, #7f5ced 100%);
+}

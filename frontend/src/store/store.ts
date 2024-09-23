@@ -16,6 +16,7 @@ import recentTransactionsSlice from './features/recent-transactions/recentTransa
 import multiopsSlice from './features/multiops/multiopsSlice';
 import swapsSlice from './features/swaps/swapsSlice';
 import cosmwasmSlice from './features/cosmwasm/cosmwasmSlice';
+import agentSlice from './features/interchain-agent/agentSlice';
 
 export const store = configureStore({
   reducer: {
@@ -34,6 +35,7 @@ export const store = configureStore({
     multiops: multiopsSlice,
     swaps: swapsSlice,
     cosmwasm: cosmwasmSlice,
+    agent: agentSlice, 
   },
 });
 

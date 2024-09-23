@@ -21,7 +21,7 @@
 }
 
 .sidebar {
-  @apply overflow-hidden fixed px-6 w-[240px]  border-r-[1px] border-[#1c1c20] py-10 flex flex-col justify-between;
+  @apply overflow-hidden fixed w-[240px]  border-r-[1px] border-[#1c1c20] py-10 flex flex-col justify-between;
 }
 
 .fixed-top {

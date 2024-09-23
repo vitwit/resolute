@@ -35,6 +35,7 @@ import { TxStatus } from '@/types/enums';
 import useGetShowAuthzAlert from '@/custom-hooks/useGetShowAuthzAlert';
 import { initializeGA } from '@/utils/util';
 import { NotSupportedMetamaskChainIds } from '@/utils/constants';
+import InterchainAgent from '../interchain-agent/InterchainAgent';
 
 declare let window: WalletWindow;
 
@@ -123,7 +124,7 @@ const FixedLayout = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   // Initialize the application state
-  useInitApp();
+  // useInitApp();
 
   return (
     <div className="fixed-layout">
@@ -156,6 +157,7 @@ const FixedLayout = ({ children }: { children: React.ReactNode }) => {
       </main>
       <TransactionStatusPopup />
       <IBCSwapTxStatus />
+      <InterchainAgent />
     </div>
   );
 };
