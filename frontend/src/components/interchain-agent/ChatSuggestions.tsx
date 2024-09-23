@@ -15,7 +15,7 @@ export default ChatSuggestions;
 
 const Suggestion = () => {
   return (
-    <div className="w-[25%] border-[#FFFFFF29] border-[1px] rounded-2xl p-4 space-y-4 cursor-pointer hover:bg-[#ffffff0d] transition-all delay-100">
+    <div className="w-[25%] border-[#FFFFFF29] border-[1px] rounded-2xl p-4 space-y-4 cursor-pointer hover:bg-[#ffffff0d]">
       <Image
         className="bg-[#ffffff14] rounded p-2"
         src="/interchain-agent/hub-icon.svg"

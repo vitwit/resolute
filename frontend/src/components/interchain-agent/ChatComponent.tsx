@@ -9,6 +9,27 @@ interface ChatComponentProps {
   toggleAgent: () => void;
 }
 
+const sampleChat = [
+  { from: 'user', content: 'What is Cosmos SDK' },
+  {
+    from: 'bot',
+    content:
+      'Lorem ipsum dolor sit amet consectetur, adipisicing elit. Similique animi deserunt enim ipsa. Autem qui blanditiis maiores itaque. Voluptas, porro.',
+  },
+  { from: 'user', content: 'What is Cosmos SDK' },
+  {
+    from: 'bot',
+    content:
+      'Lorem ipsum dolor sit amet consectetur, adipisicing elit. Similique animi deserunt enim ipsa. Autem qui blanditiis maiores itaque. Voluptas, porro.',
+  },
+  { from: 'user', content: 'What is Cosmos SDK' },
+  {
+    from: 'bot',
+    content:
+      'Lorem ipsum dolor sit amet consectetur, adipisicing elit. Similique animi deserunt enim ipsa. Autem qui blanditiis maiores itaque. Voluptas, porro.',
+  },
+];
+
 const ChatComponent = ({
   toggleSidebar,
   sidebarOpen,
@@ -41,9 +62,50 @@ const ChatComponent = ({
           />
         </div>
       </div>
-      <div className="flex-1">
-        <ChatSuggestions />
+      <div className="flex-1 overflow-y-scroll flex flex-col gap-6 items-center justify-center">
+        <div
+          className={`flex-1 overflow-y-scroll space-y-6 ${sidebarOpen ? 'w-full' : 'w-[70%]'}`}
+        >
+          {/* <ChatSuggestions /> */}
+          {sampleChat.map((chat) => (
+            <>
+              {chat.from === 'user' ? (
+                <UserChat content={chat.content} />
+              ) : (
+                <BotChat content={chat.content} />
+              )}
+            </>
+          ))}
+          {sampleChat.map((chat) => (
+            <>
+              {chat.from === 'user' ? (
+                <UserChat content={chat.content} />
+              ) : (
+                <BotChat content={chat.content} />
+              )}
+            </>
+          ))}
+          {sampleChat.map((chat) => (
+            <>
+              {chat.from === 'user' ? (
+                <UserChat content={chat.content} />
+              ) : (
+                <BotChat content={chat.content} />
+              )}
+            </>
+          ))}
+          {sampleChat.map((chat) => (
+            <>
+              {chat.from === 'user' ? (
+                <UserChat content={chat.content} />
+              ) : (
+                <BotChat content={chat.content} />
+              )}
+            </>
+          ))}
+        </div>
       </div>
+
       <div>
         <ChatInput />
       </div>
@@ -52,3 +114,37 @@ const ChatComponent = ({
 };
 
 export default ChatComponent;
+
+const UserChat = ({ content }: { content: string }) => {
+  return (
+    <div className="flex justify-end">
+      <div className="bg-[#09090A] rounded-2xl w-fit max-w-[60%] p-4">
+        {content}
+      </div>
+    </div>
+  );
+};
+
+const BotChat = ({ content }: { content: string }) => {
+  return (
+    <div className="flex gap-[10px] items-start">
+      <Image
+        src="/interchain-agent-logo-vitwit.svg"
+        height={24}
+        width={24}
+        alt=""
+      />
+      <div className="space-y-2">
+        <div className="text-[16px] font-light">{content}</div>
+        <button>
+          <Image
+            src="/interchain-agent/copy-icon.svg"
+            height={20}
+            width={20}
+            alt=""
+          />
+        </button>
+      </div>
+    </div>
+  );
+};
