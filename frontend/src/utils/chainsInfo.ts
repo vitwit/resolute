@@ -1721,9 +1721,9 @@ export const networks: Network[] = [
     },
     showAirdrop: false,
     logos: {
-      menu: 'https://raw.githubusercontent.com/cosmos/chain-registry/master/noble/images/frnz.png',
+      menu: 'https://raw.githubusercontent.com/cosmos/chain-registry/master/noble/images/stake.png',
       toolbar:
-        'https://raw.githubusercontent.com/cosmos/chain-registry/master/noble/images/frnz.png',
+        'https://raw.githubusercontent.com/cosmos/chain-registry/master/noble/images/stake.png',
     },
     supportedWallets: ['KEPLR'],
     keplrExperimental: true,
