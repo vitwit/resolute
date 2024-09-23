@@ -72,6 +72,9 @@ const DialogTxUploadCodeStatus = ({ chainID }: { chainID: string }) => {
         <div className="space-y-6">
           <TxnInfoCard name="Code ID">
             <div className="text-b1">{txResponse?.codeId || '-'}</div>
+            {txResponse?.codeId ? (
+              <Copy content={txResponse?.codeId} />
+            ) : null}
           </TxnInfoCard>
           <TxnInfoCard name="Txn Hash">
             <div className="text-b1">
