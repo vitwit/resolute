@@ -17,12 +17,13 @@ const ChatInput = ({
   const currentSessionID = useAppSelector(
     (state) => state.agent.currentSessionID
   );
+  const currentSession = useAppSelector((state) => state.agent.currentSession);
 
   useEffect(() => {
     if (inputRef.current) {
       inputRef.current.focus();
     }
-  }, [currentSessionID]);
+  }, [currentSessionID, currentSession]);
 
   return (
     <form

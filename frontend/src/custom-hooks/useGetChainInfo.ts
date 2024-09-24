@@ -256,6 +256,22 @@ const useGetChainInfo = () => {
     return customNetworks;
   };
 
+  const getChainIDByCoinDenom = (displayDenom: string) => {
+    const chainIDs = Object.keys(networks);
+
+    for (const chainID of chainIDs) {
+      const config = networks[chainID].network.config;
+      const currency = config.stakeCurrency;
+      const { coinDenom } = currency;
+
+      if (coinDenom.toLowerCase() === displayDenom.toLowerCase()) {
+        return chainID;
+      }
+    }
+
+    return '';
+  };
+
   return {
     getDenomInfo,
     getChainInfo,
@@ -271,6 +287,7 @@ const useGetChainInfo = () => {
     getNetworkTheme,
     convertToCosmosAddress,
     getCustomNetworks,
+    getChainIDByCoinDenom,
   };
 };
 

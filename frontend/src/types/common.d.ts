@@ -1,3 +1,5 @@
+import { TxStatus } from "./enums";
+
 interface ErrorState {
   message: string;
   type: string;
@@ -55,6 +57,18 @@ interface CommonState {
   };
   nameToChainIDs: Record<string, string>;
   addNetworkOpen: boolean;
+  genericTransaction: {
+    status: TxStatus;
+    errMsg: string;
+  }
 }
 
 type HandleChangeEvent = (e: React.ChangeEvent<HTMLInputElement>) => void;
+
+interface GenericTxnInputs {
+  basicChainInfo: BasicChainInfo;
+  msgs: Msg[];
+  memo: string;
+  denom: string;
+  feegranter: string;
+}

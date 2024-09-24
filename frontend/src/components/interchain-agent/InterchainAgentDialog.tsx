@@ -10,6 +10,10 @@ import React, { useEffect, useState } from 'react';
 import AgentSidebar from './AgentSidebar';
 import ChatComponent from './ChatComponent';
 import { v4 as uuidv4 } from 'uuid';
+import useTransactions from '@/custom-hooks/interchain-agent/useTransactions';
+import { TxStatus } from '@/types/enums';
+import { getTxnURLOnResolute } from '@/utils/util';
+import { resetGenericTxStatus } from '@/store/features/common/commonSlice';
 
 interface InterchainAgentDialogProps {
   apiUrl: string;
@@ -19,6 +23,25 @@ interface InterchainAgentDialogProps {
   planID: number;
   planOwner: string;
   subscriber: string;
+}
+
+function parseTransaction(input: string): { type: string; data: any } | null {
+  const regex = /^(\w+)\s+(\d+(?:\.\d+)?)\s+(\w+)\s+to\s+([a-zA-Z0-9]+)$/i;
+  const match = input.match(regex);
+
+  if (match) {
+    const [, type, amount, denom, address] = match;
+    return {
+      type: type,
+      data: {
+        amount: amount,
+        denom: denom.toUpperCase(),
+        address,
+      },
+    };
+  }
+
+  return null;
 }
 
 const InterchainAgentDialog = ({
@@ -31,6 +54,7 @@ const InterchainAgentDialog = ({
   subscriber,
 }: InterchainAgentDialogProps) => {
   const dispatch = useAppDispatch();
+
   const agentDialogOpen = useAppSelector((state) => state.agent.agentOpen);
   const currentSessionID = useAppSelector(
     (state) => state.agent.currentSessionID
@@ -38,89 +62,22 @@ const InterchainAgentDialog = ({
 
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [userInput, setUserInput] = useState('');
+
+  const { validateParsedTxnData, initiateTransaction } = useTransactions({
+    userInput,
+  });
+
   const [inputDisabled, setInputDisabled] = useState<boolean>(false);
   const [currentAccessToken, setCurrentAccessToken] =
     useState<string>(accessToken);
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
+  const txStatus = useAppSelector((state) => state.common.genericTransaction);
+  const tx = useAppSelector((state) => state.common.txSuccess.tx);
 
-  useEffect(() => {
-    if (agentDialogOpen) {
-      document.body.classList.add('overflow-hidden');
-    } else {
-      document.body.classList.remove('overflow-hidden');
-    }
-
-    return () => {
-      document.body.classList.remove('overflow-hidden');
-    };
-  }, [agentDialogOpen]);
-
-  const toggleSidebar = () => {
-    setSidebarOpen((prev) => !prev);
+  const resetInputState = () => {
+    setUserInput('');
+    setInputDisabled(false);
   };
-
-  const toggleAgent = () => {
-    dispatch(toggleAgentDialog());
-  };
-
-  useEffect(() => {
-    if (agentDialogOpen) {
-      const newSessionID = uuidv4();
-      dispatch(setCurrentSessionID(newSessionID));
-      setUserInput('');
-      setInputDisabled(false);
-    }
-  }, [agentDialogOpen]);
-
-  useEffect(() => {
-    if (currentSessionID) {
-      setUserInput('');
-      setInputDisabled(false);
-      const storedState = localStorage.getItem('queries');
-      if (storedState) {
-        const parsed = JSON.parse(storedState);
-        if (parsed[currentSessionID]) {
-          dispatch(setCurrentSession({ data: parsed }));
-          dispatch(
-            setCurrentSession({
-              data: parsed[currentSessionID],
-            })
-          );
-        } else {
-          dispatch(
-            setCurrentSession({
-              data: {
-                date: new Date().toISOString(),
-                requests: {},
-              },
-            })
-          );
-        }
-      } else {
-        dispatch(
-          setCurrentSession({
-            data: {
-              date: new Date().toISOString(),
-              requests: {},
-            },
-          })
-        );
-      }
-    } else {
-      dispatch(
-        setCurrentSession({
-          data: {
-            date: new Date().toISOString(),
-            requests: {},
-          },
-        })
-      );
-    }
-  }, [currentSessionID]);
-
-  useEffect(() => {
-    dispatch(loadSessionStateFromLocalStorage());
-  }, []);
 
   const refreshTokenRequest = async () => {
     try {
@@ -150,9 +107,31 @@ const InterchainAgentDialog = ({
     }
   };
 
+  const dispatchSessionItem = (
+    userInput: string,
+    status: string,
+    result: string,
+    errMessage: string
+  ) => {
+    dispatch(
+      addSessionItem({
+        request: {
+          [userInput]: {
+            errMessage,
+            result,
+            status,
+            date: new Date().toISOString(),
+          },
+        },
+        sessionID: currentSessionID,
+      })
+    );
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setInputDisabled(true);
+    dispatch(resetGenericTxStatus());
     if (userInput.trim() !== '') {
       setInputDisabled(true);
 
@@ -169,6 +148,18 @@ const InterchainAgentDialog = ({
           },
         })
       );
+
+      const parsedTransaction = parseTransaction(userInput.trim());
+      if (parsedTransaction) {
+        const error = validateParsedTxnData({ parsedData: parsedTransaction });
+        if (error.length) {
+          dispatchSessionItem(userInput, 'error', error, error);
+          resetInputState();
+          return;
+        }
+        initiateTransaction({ parsedData: parsedTransaction });
+        return;
+      }
 
       try {
         setUserInput('');
@@ -310,6 +301,95 @@ const InterchainAgentDialog = ({
   const handleInputChange = (value: string) => {
     setUserInput(value);
   };
+
+  useEffect(() => {
+    if (agentDialogOpen) {
+      document.body.classList.add('overflow-hidden');
+    } else {
+      document.body.classList.remove('overflow-hidden');
+    }
+
+    return () => {
+      document.body.classList.remove('overflow-hidden');
+    };
+  }, [agentDialogOpen]);
+
+  const toggleSidebar = () => {
+    setSidebarOpen((prev) => !prev);
+  };
+
+  const toggleAgent = () => {
+    dispatch(toggleAgentDialog());
+  };
+
+  useEffect(() => {
+    if (agentDialogOpen) {
+      const newSessionID = uuidv4();
+      dispatch(setCurrentSessionID(newSessionID));
+      setUserInput('');
+      setInputDisabled(false);
+    }
+  }, [agentDialogOpen]);
+
+  useEffect(() => {
+    if (currentSessionID) {
+      setUserInput('');
+      setInputDisabled(false);
+      const storedState = localStorage.getItem('queries');
+      if (storedState) {
+        const parsed = JSON.parse(storedState);
+        if (parsed[currentSessionID]) {
+          dispatch(setCurrentSession({ data: parsed }));
+          dispatch(
+            setCurrentSession({
+              data: parsed[currentSessionID],
+            })
+          );
+        } else {
+          dispatch(
+            setCurrentSession({
+              data: {
+                date: new Date().toISOString(),
+                requests: {},
+              },
+            })
+          );
+        }
+      } else {
+        dispatch(
+          setCurrentSession({
+            data: {
+              date: new Date().toISOString(),
+              requests: {},
+            },
+          })
+        );
+      }
+    } else {
+      dispatch(
+        setCurrentSession({
+          data: {
+            date: new Date().toISOString(),
+            requests: {},
+          },
+        })
+      );
+    }
+  }, [currentSessionID]);
+
+  useEffect(() => {
+    dispatch(loadSessionStateFromLocalStorage());
+  }, []);
+
+  useEffect(() => {
+    if (
+      txStatus.status === TxStatus.IDLE ||
+      txStatus.status === TxStatus.REJECTED
+    ) {
+      resetInputState();
+      dispatch(resetGenericTxStatus());
+    }
+  }, [txStatus]);
 
   if (!agentDialogOpen) {
     return null;

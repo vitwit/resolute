@@ -46,6 +46,7 @@ const FixedLayout = ({ children }: { children: React.ReactNode }) => {
   const isLoading = useAppSelector((state) => state.wallet.isLoading);
 
   const walletState = useAppSelector((state) => state.wallet.status);
+  const interchainAgentOpen = useAppSelector((state) => state.agent.agentOpen);
 
   const tryConnectWallet = async (walletName: string) => {
     if (walletName === 'metamask') {
@@ -155,7 +156,7 @@ const FixedLayout = ({ children }: { children: React.ReactNode }) => {
           </section>
         </div>
       </main>
-      <TransactionStatusPopup />
+      {interchainAgentOpen ? null : <TransactionStatusPopup />}
       <IBCSwapTxStatus />
       <InterchainAgent />
     </div>
