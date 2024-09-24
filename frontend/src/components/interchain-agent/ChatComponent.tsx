@@ -1,40 +1,41 @@
 import Image from 'next/image';
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import ChatInput from './ChatInput';
 import ChatSuggestions from './ChatSuggestions';
+import { useAppSelector } from '@/custom-hooks/StateHooks';
+import ReactMarkdown from 'react-markdown';
+import rehypeHighlight from 'rehype-highlight';
+import 'highlight.js/styles/github-dark.css';
 
 interface ChatComponentProps {
   toggleSidebar: () => void;
   sidebarOpen: boolean;
   toggleAgent: () => void;
+  handleSubmit: (e: React.FormEvent) => void;
+  handleInputChange: (value: string) => void;
+  userInput: string;
+  disabled: boolean;
 }
-
-const sampleChat = [
-  { from: 'user', content: 'What is Cosmos SDK' },
-  {
-    from: 'bot',
-    content:
-      'Lorem ipsum dolor sit amet consectetur, adipisicing elit. Similique animi deserunt enim ipsa. Autem qui blanditiis maiores itaque. Voluptas, porro.',
-  },
-  { from: 'user', content: 'What is Cosmos SDK' },
-  {
-    from: 'bot',
-    content:
-      'Lorem ipsum dolor sit amet consectetur, adipisicing elit. Similique animi deserunt enim ipsa. Autem qui blanditiis maiores itaque. Voluptas, porro.',
-  },
-  { from: 'user', content: 'What is Cosmos SDK' },
-  {
-    from: 'bot',
-    content:
-      'Lorem ipsum dolor sit amet consectetur, adipisicing elit. Similique animi deserunt enim ipsa. Autem qui blanditiis maiores itaque. Voluptas, porro.',
-  },
-];
 
 const ChatComponent = ({
   toggleSidebar,
   sidebarOpen,
   toggleAgent,
+  handleInputChange,
+  handleSubmit,
+  userInput,
+  disabled,
 }: ChatComponentProps) => {
+  const currentSession = useAppSelector((state) => state.agent.currentSession);
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
+
+  // Scroll to bottom whenever currentSession.requests updates
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [currentSession?.requests]);
+
   return (
     <div className="flex-1 w-full h-full p-10 flex flex-col gap-10">
       <div className="flex items-center w-full justify-between h-8">
@@ -64,50 +65,34 @@ const ChatComponent = ({
       </div>
       <div className="flex-1 overflow-y-scroll flex flex-col gap-6 items-center justify-center">
         <div
-          className={`flex-1 overflow-y-scroll space-y-6 ${sidebarOpen ? 'w-full' : 'w-[70%]'}`}
+          className={`flex-1 overflow-y-scroll space-y-6 max-w-[750px] ${sidebarOpen ? 'w-full' : 'w-[70%]'}`}
         >
-          {/* <ChatSuggestions /> */}
-          {sampleChat.map((chat) => (
+          {currentSession &&
+          Object.keys(currentSession?.requests).length > 0 ? (
             <>
-              {chat.from === 'user' ? (
-                <UserChat content={chat.content} />
-              ) : (
-                <BotChat content={chat.content} />
-              )}
+              {Object.entries(currentSession.requests).map(([key, value]) => {
+                return (
+                  <>
+                    <UserChat content={key} />
+                    <BotChat content={value.result} />
+                  </>
+                );
+              })}
+              <div ref={messagesEndRef}></div>
             </>
-          ))}
-          {sampleChat.map((chat) => (
-            <>
-              {chat.from === 'user' ? (
-                <UserChat content={chat.content} />
-              ) : (
-                <BotChat content={chat.content} />
-              )}
-            </>
-          ))}
-          {sampleChat.map((chat) => (
-            <>
-              {chat.from === 'user' ? (
-                <UserChat content={chat.content} />
-              ) : (
-                <BotChat content={chat.content} />
-              )}
-            </>
-          ))}
-          {sampleChat.map((chat) => (
-            <>
-              {chat.from === 'user' ? (
-                <UserChat content={chat.content} />
-              ) : (
-                <BotChat content={chat.content} />
-              )}
-            </>
-          ))}
+          ) : (
+            <ChatSuggestions />
+          )}
         </div>
       </div>
 
       <div>
-        <ChatInput />
+        <ChatInput
+          handleInputChange={handleInputChange}
+          disabled={disabled}
+          userInput={userInput}
+          handleSubmit={handleSubmit}
+        />
       </div>
     </div>
   );
@@ -119,7 +104,7 @@ const UserChat = ({ content }: { content: string }) => {
   return (
     <div className="flex justify-end">
       <div className="bg-[#09090A] rounded-2xl w-fit max-w-[60%] p-4">
-        {content}
+        <DisplayMarkdown content={content} />
       </div>
     </div>
   );
@@ -134,8 +119,10 @@ const BotChat = ({ content }: { content: string }) => {
         width={24}
         alt=""
       />
-      <div className="space-y-2">
-        <div className="text-[16px] font-light">{content}</div>
+      <div className="space-y-2 max-w-full overflow-x-scroll">
+        <div className="text-[16px] font-light">
+          <DisplayMarkdown content={content} />
+        </div>
         <button>
           <Image
             src="/interchain-agent/copy-icon.svg"
@@ -145,6 +132,17 @@ const BotChat = ({ content }: { content: string }) => {
           />
         </button>
       </div>
+    </div>
+  );
+};
+
+const DisplayMarkdown = ({ content }: { content: string }) => {
+  return (
+    <div
+      className="chat-markdown"
+      style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}
+    >
+      <ReactMarkdown rehypePlugins={[rehypeHighlight]}>{content}</ReactMarkdown>
     </div>
   );
 };

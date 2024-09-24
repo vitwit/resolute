@@ -1,9 +1,34 @@
+import { useAppSelector } from '@/custom-hooks/StateHooks';
 import Image from 'next/image';
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 
-const ChatInput = () => {
+const ChatInput = ({
+  handleInputChange,
+  userInput,
+  disabled,
+  handleSubmit,
+}: {
+  userInput: string;
+  handleInputChange: (value: string) => void;
+  disabled: boolean;
+  handleSubmit: (e: React.FormEvent) => void;
+}) => {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const currentSessionID = useAppSelector(
+    (state) => state.agent.currentSessionID
+  );
+
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [currentSessionID]);
+
   return (
-    <div className="p-5 w-full bg-[#09090A66] rounded-full flex items-center gap-3">
+    <form
+      onSubmit={handleSubmit}
+      className={`p-5 w-full bg-[#09090A66] rounded-full flex items-center gap-3 ${disabled ? 'opacity-45' : ''}`}
+    >
       <div className="bg-[#FFFFFF1A] rounded-full w-6 h-6 flex items-center justify-center">
         <Image
           src="/interchain-agent/pen-icon.svg"
@@ -13,9 +38,18 @@ const ChatInput = () => {
         />
       </div>
       <div className="flex-1">
-        <input className="input-box" />
+        <input
+          ref={inputRef}
+          name="user-input"
+          value={userInput}
+          onChange={(e) => handleInputChange(e.target.value)}
+          className="input-box"
+          disabled={disabled}
+          autoComplete="off"
+          autoFocus={true}
+        />
       </div>
-      <button className="btn-bg w-6 rounded-full">
+      <button type="submit" className="btn-bg w-6 rounded-full">
         <Image
           src="/interchain-agent/arrow-outlined-icon.svg"
           width={24}
@@ -23,7 +57,7 @@ const ChatInput = () => {
           alt=""
         />
       </button>
-    </div>
+    </form>
   );
 };
 
