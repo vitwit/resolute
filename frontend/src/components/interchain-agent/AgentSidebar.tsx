@@ -73,21 +73,28 @@ const AgentSidebar = ({ sidebarOpen }: AgentSidebarProps) => {
                               firstRequest: { key: string; value: any };
                             },
                             index: number
-                          ) => (
-                            <div className="w-full">
-                              <button
-                                key={index}
-                                onClick={() =>
-                                  onSelectSession(chatData.sessionID)
-                                }
-                                className={`block w-full text-white hover:font-medium rounded hover:cursor-pointer ${currentSessionID === chatData.sessionID ? 'font-semibold' : ''}`}
-                              >
-                                <div className="text-[14px] leading-[18px] text-left truncate">
-                                  {capitalizeFirstLetter(chatData.firstRequest.key)}
-                                </div>
-                              </button>
-                            </div>
-                          )
+                          ) => {
+                            const requestKey = chatData.firstRequest.key;
+                            const parsedRequestKey = requestKey.substring(
+                              0,
+                              requestKey.lastIndexOf('_')
+                            );
+                            return (
+                              <div className="w-full">
+                                <button
+                                  key={index}
+                                  onClick={() =>
+                                    onSelectSession(chatData.sessionID)
+                                  }
+                                  className={`block w-full text-white hover:font-medium rounded hover:cursor-pointer ${currentSessionID === chatData.sessionID ? 'font-semibold' : ''}`}
+                                >
+                                  <div className="text-[14px] leading-[18px] text-left truncate">
+                                    {capitalizeFirstLetter(parsedRequestKey)}
+                                  </div>
+                                </button>
+                              </div>
+                            );
+                          }
                         )}
                     </div>
                   </div>

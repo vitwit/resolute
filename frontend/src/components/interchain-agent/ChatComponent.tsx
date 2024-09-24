@@ -71,11 +71,12 @@ const ChatComponent = ({
           Object.keys(currentSession?.requests).length > 0 ? (
             <>
               {Object.entries(currentSession.requests).map(([key, value]) => {
+                const parsedKey = key.substring(0, key.lastIndexOf('_'));
                 return (
-                  <>
-                    <UserChat content={key} />
+                  <React.Fragment key={key}>
+                    <UserChat content={parsedKey} />
                     <BotChat content={value.result} />
-                  </>
+                  </React.Fragment>
                 );
               })}
               <div ref={messagesEndRef}></div>

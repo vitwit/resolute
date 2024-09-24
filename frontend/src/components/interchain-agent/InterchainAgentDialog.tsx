@@ -62,9 +62,11 @@ const InterchainAgentDialog = ({
 
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [userInput, setUserInput] = useState('');
+  const [chatInputTime, setChatInputTime] = useState<string>('');
 
   const { validateParsedTxnData, initiateTransaction } = useTransactions({
     userInput,
+    chatInputTime,
   });
 
   const [inputDisabled, setInputDisabled] = useState<boolean>(false);
@@ -72,7 +74,6 @@ const InterchainAgentDialog = ({
     useState<string>(accessToken);
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
   const txStatus = useAppSelector((state) => state.common.genericTransaction);
-  const tx = useAppSelector((state) => state.common.txSuccess.tx);
 
   const resetInputState = () => {
     setUserInput('');
@@ -120,7 +121,7 @@ const InterchainAgentDialog = ({
             errMessage,
             result,
             status,
-            date: new Date().toISOString(),
+            date: chatInputTime,
           },
         },
         sessionID: currentSessionID,
@@ -132,6 +133,8 @@ const InterchainAgentDialog = ({
     e.preventDefault();
     setInputDisabled(true);
     dispatch(resetGenericTxStatus());
+    const currentDate = new Date().toISOString();
+    setChatInputTime(currentDate);
     if (userInput.trim() !== '') {
       setInputDisabled(true);
 
@@ -143,7 +146,7 @@ const InterchainAgentDialog = ({
               errMessage: '',
               result: '',
               status: 'pending',
-              date: new Date().toISOString(),
+              date: currentDate,
             },
           },
         })
@@ -247,7 +250,7 @@ const InterchainAgentDialog = ({
                   errMessage: '',
                   result: data.result,
                   status: 'success',
-                  date: new Date().toISOString(),
+                  date: currentDate,
                 },
               },
               sessionID: currentSessionID,
@@ -261,7 +264,7 @@ const InterchainAgentDialog = ({
                   errMessage: 'Error processing request.',
                   result: 'Error processing request.',
                   status: 'failed',
-                  date: new Date().toISOString(),
+                  date: currentDate,
                 },
               },
               sessionID: currentSessionID,
@@ -284,7 +287,7 @@ const InterchainAgentDialog = ({
                 errMessage: 'Failed to send message',
                 result: 'Failed to send message',
                 status: 'failed',
-                date: new Date().toISOString(),
+                date: currentDate,
               },
             },
             sessionID: currentSessionID,

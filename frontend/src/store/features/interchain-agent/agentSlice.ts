@@ -85,10 +85,14 @@ export const addSessionItem = createAsyncThunk<
   { sessionID: string; request: Queries }
 >('agent/addSessionItem', async ({ sessionID, request }, { dispatch }) => {
   const updatedRequest: Queries = {};
+  const timestamp = new Date().toISOString(); // Generate a unique timestamp
+
   Object.keys(request).forEach((key) => {
-    updatedRequest[key] = {
+    // Create a new key using the user input combined with the timestamp
+    const uniqueKey = `${key}_${request[key].date}`;
+    updatedRequest[uniqueKey] = {
       ...request[key],
-      date: new Date().toISOString(),
+      date: request[key].date,
     };
   });
 
@@ -98,11 +102,11 @@ export const addSessionItem = createAsyncThunk<
   if (storedSessionState[sessionID]) {
     storedSessionState[sessionID].requests = {
       ...storedSessionState[sessionID].requests,
-      ...updatedRequest,
+      ...updatedRequest, // Add the updated request with unique keys
     };
   } else {
     storedSessionState[sessionID] = {
-      date: new Date().toISOString(),
+      date: timestamp,
       requests: updatedRequest,
     };
   }
@@ -117,6 +121,7 @@ export const addSessionItem = createAsyncThunk<
   // Dispatch loadSessionStateFromLocalStorage to update grouped sessions
   dispatch(loadSessionStateFromLocalStorage());
 });
+
 
 export const agentSlice = createSlice({
   name: 'interchain-agent',

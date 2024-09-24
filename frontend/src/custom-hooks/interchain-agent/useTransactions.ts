@@ -10,7 +10,13 @@ import { Delegate } from '@/txns/staking';
 
 const SUPPORTED_TXNS = ['send', 'delegate'];
 
-const useTransactions = ({ userInput }: { userInput: string }) => {
+const useTransactions = ({
+  userInput,
+  chatInputTime,
+}: {
+  userInput: string;
+  chatInputTime: string;
+}) => {
   const dispatch = useAppDispatch();
   const { getChainIDByCoinDenom, getDenomInfo, getChainInfo } =
     useGetChainInfo();
@@ -29,7 +35,6 @@ const useTransactions = ({ userInput }: { userInput: string }) => {
   }: {
     parsedData: { type: string; data: any };
   }) => {
-    console.log(parsedData);
     setCurrenChainID('');
     if (!isWalletConnected) {
       return 'Please connect your wallet';
@@ -109,21 +114,22 @@ const useTransactions = ({ userInput }: { userInput: string }) => {
               errMessage: '',
               result: `Transaction successful: [View here](${getTxnURLOnResolute(chainName, tx?.transactionHash || '')})`,
               status: 'success',
-              date: new Date().toISOString(),
+              date: chatInputTime,
             },
           },
           sessionID: currentSessionID,
         })
       );
     } else if (txStatus.status === TxStatus.REJECTED) {
+      console.log("chat", chatInputTime)
       dispatch(
         addSessionItem({
           request: {
             [userInput]: {
               errMessage: '',
-              result: `Transaction failed: ${txStatus.errMsg}`,
+              result: `Transaction failed: ${txStatus.errMsg} ${chatInputTime}`,
               status: 'failed',
-              date: new Date().toISOString(),
+              date: chatInputTime,
             },
           },
           sessionID: currentSessionID,
