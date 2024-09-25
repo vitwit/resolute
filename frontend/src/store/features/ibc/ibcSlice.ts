@@ -10,16 +10,24 @@ import { NewIBCTransaction, NewTransaction } from '@/utils/transaction';
 import { setError, setTxAndHash } from '../common/commonSlice';
 import { capitalize } from 'lodash';
 import { getBalances } from '../bank/bankSlice';
-import { addIBCTransaction, updateIBCTransactionStatus } from '../recent-transactions/recentTransactionsSlice';
+import {
+  addIBCTransaction,
+  updateIBCTransactionStatus,
+} from '../recent-transactions/recentTransactionsSlice';
 import { FAILED, SUCCESS } from '@/utils/constants';
 import { trackEvent } from '@/utils/util';
 
 export interface IBCState {
   txStatus: TxStatus;
+  txError: string;
   chains: Record<string, string[]>;
 }
 
-const initialState: IBCState = { txStatus: TxStatus.INIT, chains: {} };
+const initialState: IBCState = {
+  txStatus: TxStatus.INIT,
+  txError: '',
+  chains: {},
+};
 
 export const trackTx = createAsyncThunk(
   'ibc/trackTx',
@@ -29,9 +37,7 @@ export const trackTx = createAsyncThunk(
   ) => {
     const onDestChainTxSuccess = (chainID: string, txHash: string) => {
       dispatch(removeFromPending({ chainID, txHash }));
-      dispatch(
-      updateIBCTransactionStatus({ txHash })
-      );
+      dispatch(updateIBCTransactionStatus({ txHash }));
     };
     try {
       await trackIBCTx(data.txHash, data.chainID, onDestChainTxSuccess);
@@ -56,7 +62,10 @@ export const txTransfer = createAsyncThunk(
     const onSourceChainTxSuccess = async (chainID: string, txHash: string) => {
       dispatch(resetTxStatus());
       const response = await axios.get(
-        data.rest + '/cosmos/tx/v1beta1/txs/' + txHash+ `?chain=${data.sourceChainID}`
+        data.rest +
+          '/cosmos/tx/v1beta1/txs/' +
+          txHash +
+          `?chain=${data.sourceChainID}`
       );
       const msgs = response?.data?.tx?.body?.messages || [];
       /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
@@ -83,7 +92,7 @@ export const txTransfer = createAsyncThunk(
         true,
         result.code === 0
       );
-      if(result.code === 0) {
+      if (result.code === 0) {
         trackEvent('TRANSFER', 'IBC_TRANSFER', SUCCESS);
       } else {
         trackEvent('TRANSFER', 'IBC_TRANSFER', FAILED);
@@ -114,9 +123,7 @@ export const txTransfer = createAsyncThunk(
       destChain: string
     ) => {
       dispatch(removeFromPending({ chainID, txHash }));
-      dispatch(
-        updateIBCTransactionStatus({ txHash })
-        );
+      dispatch(updateIBCTransactionStatus({ txHash }));
       dispatch(
         setError({
           type: 'success',
@@ -159,10 +166,10 @@ export const txTransfer = createAsyncThunk(
       dispatch(
         setError({
           type: 'error',
-          message: (err?.message || 'Request rejected').toString(),
+          message: (err?.log || err?.message || 'Request rejected').toString(),
         })
       );
-      return rejectWithValue(err);
+      return rejectWithValue(err?.log || err?.message || 'Failed to execute');
     }
   }
 );
@@ -216,12 +223,15 @@ export const ibcSlice = createSlice({
         const { sourceChainID } = action.meta.arg;
         if (!state.chains[sourceChainID]) state.chains[sourceChainID] = [];
         state.txStatus = TxStatus.PENDING;
+        state.txError = '';
       })
       .addCase(txTransfer.fulfilled, (state) => {
         state.txStatus = TxStatus.IDLE;
+        state.txError = '';
       })
-      .addCase(txTransfer.rejected, (state) => {
+      .addCase(txTransfer.rejected, (state, action) => {
         state.txStatus = TxStatus.REJECTED;
+        state.txError = action.payload as string || '';
       });
 
     builder

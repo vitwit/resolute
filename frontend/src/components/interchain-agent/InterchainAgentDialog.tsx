@@ -26,22 +26,45 @@ interface InterchainAgentDialogProps {
 
  /* eslint-disable @typescript-eslint/no-explicit-any */
 
-function parseTransaction(input: string): { type: string; data: any } | null {
-  const regex = /^(\w+)\s+(\d+(?:\.\d+)?)\s+(\w+)\s+to\s+([a-zA-Z0-9]+)$/i;
-  const match = input.match(regex);
+ function parseTransaction(input: string): { type: string; data: any } | null {
+  // Regex for "send <amount> <denom> to <address> from <chainID>"
+  const regexWithChainID = /^(\w+)\s+(\d+(?:\.\d+)?)\s+(\w+)\s+to\s+([a-zA-Z0-9]+)\s+from\s+([\w-]+)$/i;
 
+  // Regex for "send <amount> <denom> to <address>"
+  const regexWithoutChainID = /^(\w+)\s+(\d+(?:\.\d+)?)\s+(\w+)\s+to\s+([a-zA-Z0-9]+)$/i;
+
+  let match;
+
+  // First, check for the regex with chainID
+  match = input.match(regexWithChainID);
   if (match) {
-    const [, type, amount, denom, address] = match;
+    const [, typeWithChainID, amountWithChainID, denomWithChainID, addressWithChainID, chainID] = match;
     return {
-      type: type,
+      type: typeWithChainID,
       data: {
-        amount: amount,
-        denom: denom.toUpperCase(),
-        address,
+        amount: amountWithChainID,
+        denom: denomWithChainID.toUpperCase(),
+        address: addressWithChainID,
+        chainID: chainID,
       },
     };
   }
 
+  // Then, check for the regex without chainID
+  match = input.match(regexWithoutChainID);
+  if (match) {
+    const [, typeWithoutChainID, amountWithoutChainID, denomWithoutChainID, addressWithoutChainID] = match;
+    return {
+      type: typeWithoutChainID,
+      data: {
+        amount: amountWithoutChainID,
+        denom: denomWithoutChainID.toUpperCase(),
+        address: addressWithoutChainID,
+      },
+    };
+  }
+
+  // If no pattern is matched, return null
   return null;
 }
 

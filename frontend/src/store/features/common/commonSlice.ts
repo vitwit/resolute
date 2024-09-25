@@ -118,7 +118,7 @@ export const txGeneric = createAsyncThunk(
       }
       /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     } catch (error: any) {
-      console.log("error: ", error);
+      console.log('error: ', error);
       const errMessage = error?.response?.data?.error || error?.message;
       dispatch(
         setError({
@@ -126,7 +126,7 @@ export const txGeneric = createAsyncThunk(
           message: errMessage || ERR_UNKNOWN,
         })
       );
-      console.log("erro22", errMessage)
+      console.log('erro22', errMessage);
       return rejectWithValue(errMessage || ERR_UNKNOWN);
     }
   }
@@ -195,6 +195,13 @@ export const commonSlice = createSlice({
     },
     resetGenericTxStatus: (state) => {
       state.genericTransaction = initialState.genericTransaction;
+    },
+    setGenericTxStatus: (
+      state,
+      action: PayloadAction<{ status: TxStatus; errMsg: string }>
+    ) => {
+      state.genericTransaction.status = action.payload.status;
+      state.genericTransaction.errMsg = action.payload.errMsg;
     },
   },
   extraReducers: (builder) => {
@@ -265,6 +272,7 @@ export const {
   setChangeNetworkDialogOpen,
   setAddNetworkDialogOpen,
   resetGenericTxStatus,
+  setGenericTxStatus,
 } = commonSlice.actions;
 
 export default commonSlice.reducer;
