@@ -59,6 +59,8 @@ const InterchainAgentDialog = ({
   const currentSessionID = useAppSelector(
     (state) => state.agent.currentSessionID
   );
+  const groupedChat = useAppSelector((state) => state.agent.groupedSessions);
+  const isNew = Object.keys(groupedChat).length === 0;
 
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [userInput, setUserInput] = useState('');
@@ -408,7 +410,7 @@ const InterchainAgentDialog = ({
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex w-full h-full">
-          <AgentSidebar sidebarOpen={sidebarOpen} />
+          {isNew ? null : <AgentSidebar sidebarOpen={sidebarOpen} />}
           <ChatComponent
             toggleSidebar={toggleSidebar}
             sidebarOpen={sidebarOpen}
@@ -417,6 +419,7 @@ const InterchainAgentDialog = ({
             handleInputChange={handleInputChange}
             userInput={userInput}
             disabled={inputDisabled}
+            isNew={isNew}
           />
         </div>
       </div>

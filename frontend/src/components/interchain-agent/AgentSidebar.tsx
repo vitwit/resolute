@@ -37,7 +37,7 @@ const AgentSidebar = ({ sidebarOpen }: AgentSidebarProps) => {
 
   return (
     <div
-      className={`h-full bg-[#09090A66] transition-all duration-100 ease-in-out ${
+      className={`h-full bg-[#09090A66] transition-all duration-300 ease-in-out ${
         sidebarOpen ? 'w-[300px] p-10 pb-6' : 'w-0 p-0'
       }`}
     >

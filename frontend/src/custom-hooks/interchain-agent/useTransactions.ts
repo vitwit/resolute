@@ -121,13 +121,12 @@ const useTransactions = ({
         })
       );
     } else if (txStatus.status === TxStatus.REJECTED) {
-      console.log("chat", chatInputTime)
       dispatch(
         addSessionItem({
           request: {
             [userInput]: {
               errMessage: '',
-              result: `Transaction failed: ${txStatus.errMsg} ${chatInputTime}`,
+              result: `Transaction failed: ${txStatus.errMsg}`,
               status: 'failed',
               date: chatInputTime,
             },

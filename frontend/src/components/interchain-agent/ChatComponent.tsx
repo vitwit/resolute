@@ -6,6 +6,8 @@ import { useAppSelector } from '@/custom-hooks/StateHooks';
 import ReactMarkdown from 'react-markdown';
 import rehypeHighlight from 'rehype-highlight';
 import 'highlight.js/styles/github-dark.css';
+import Header from './Header';
+import CopyWithFeedback from './CopyWithFeedback';
 
 interface ChatComponentProps {
   toggleSidebar: () => void;
@@ -15,6 +17,7 @@ interface ChatComponentProps {
   handleInputChange: (value: string) => void;
   userInput: string;
   disabled: boolean;
+  isNew: boolean;
 }
 
 const ChatComponent = ({
@@ -25,6 +28,7 @@ const ChatComponent = ({
   handleSubmit,
   userInput,
   disabled,
+  isNew,
 }: ChatComponentProps) => {
   const currentSession = useAppSelector((state) => state.agent.currentSession);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
@@ -40,14 +44,16 @@ const ChatComponent = ({
     <div className="flex-1 w-full h-full p-10 flex flex-col gap-10">
       <div className="flex items-center w-full justify-between h-8">
         <div className="flex items-center gap-4">
-          <Image
-            onClick={toggleSidebar}
-            className={`cursor-pointer ${sidebarOpen ? '' : 'rotate-180'}`}
-            src={'/interchain-agent/solid-arrow-icon.svg'}
-            width={24}
-            height={24}
-            alt=""
-          />
+          {isNew ? null : (
+            <Image
+              onClick={toggleSidebar}
+              className={`cursor-pointer ${sidebarOpen ? '' : 'rotate-180'}`}
+              src={'/interchain-agent/solid-arrow-icon.svg'}
+              width={24}
+              height={24}
+              alt=""
+            />
+          )}
           <div className="text-[26px] font-bold text-white leading-8">
             Interchain Agent
           </div>
@@ -82,7 +88,10 @@ const ChatComponent = ({
               <div ref={messagesEndRef}></div>
             </>
           ) : (
-            <ChatSuggestions />
+            <div className="flex h-full flex-col justify-between items-center">
+              <Header />
+              <ChatSuggestions />
+            </div>
           )}
         </div>
       </div>
@@ -119,19 +128,13 @@ const BotChat = ({ content }: { content: string }) => {
         height={24}
         width={24}
         alt=""
+        draggable={false}
       />
       <div className="space-y-2 max-w-full overflow-x-scroll">
         <div className="text-[16px] font-light">
           <DisplayMarkdown content={content} />
         </div>
-        <button>
-          <Image
-            src="/interchain-agent/copy-icon.svg"
-            height={20}
-            width={20}
-            alt=""
-          />
-        </button>
+        <CopyWithFeedback value={content} />
       </div>
     </div>
   );

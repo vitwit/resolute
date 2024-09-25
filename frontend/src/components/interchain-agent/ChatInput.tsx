@@ -28,7 +28,7 @@ const ChatInput = ({
   return (
     <form
       onSubmit={handleSubmit}
-      className={`p-5 w-full bg-[#09090A66] rounded-full flex items-center gap-3 ${disabled ? 'opacity-45' : ''}`}
+      className={`p-5 w-full bg-[#09090A66] rounded-full flex items-center gap-3 ${disabled ? 'opacity-55' : ''}`}
     >
       <div className="bg-[#FFFFFF1A] rounded-full w-6 h-6 flex items-center justify-center">
         <Image
