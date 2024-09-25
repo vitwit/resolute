@@ -306,12 +306,14 @@ const InterchainAgentDialog = ({
         }
         console.error('Failed to send message:', error, message);
 
+        let eMsg = 'Agent is offline. This could be due to a lost connection or the agent being down';
+
         dispatch(
           addSessionItem({
             request: {
               [userInput]: {
-                errMessage: 'Failed to send message',
-                result: 'Failed to send message',
+                errMessage: eMsg,
+                result: eMsg,
                 status: 'failed',
                 date: currentDate,
               },
