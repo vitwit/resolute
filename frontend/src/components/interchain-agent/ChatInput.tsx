@@ -23,22 +23,21 @@ const ChatInput = ({
   disabled: boolean;
   handleSubmit: (e: React.FormEvent) => void;
 }) => {
-  const inputRef = useRef<HTMLInputElement>(null);
-  const currentSessionID = useAppSelector(
-    (state) => state.agent.currentSessionID
-  );
+  const inputRef = useRef<HTMLTextAreaElement>(null);
+  const currentSessionID = useAppSelector((state) => state.agent.currentSessionID);
   const currentSession = useAppSelector((state) => state.agent.currentSession);
-
+  
   useEffect(() => {
     if (inputRef.current) {
       inputRef.current.focus();
     }
   }, [currentSessionID, currentSession]);
+  
   const [placeholder, setPlaceholder] = useState<string>();
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     const value = e.target.value;
-    handleInputChange(value)
+    handleInputChange(value);
 
     // Find the first action that matches the input value
     const action = actions.find((a) => value.startsWith(a.trigger));
@@ -46,6 +45,24 @@ const ChatInput = ({
       setPlaceholder(action.placeholder);
     } else {
       setPlaceholder('');
+    }
+
+    // Auto-resize the textarea
+    if (inputRef.current) {
+      inputRef.current.style.height = 'auto'; // Reset height
+      inputRef.current.style.height = `${inputRef.current.scrollHeight}px`; // Set to scroll height
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault(); // Prevent default behavior of Enter key
+      /* eslint-disable @typescript-eslint/no-explicit-any */
+      handleSubmit(e as any); // Submit the form
+
+      if (inputRef.current) {
+        inputRef.current.style.height = 'auto'; // Reset the height to default
+      }
     }
   };
 
@@ -64,16 +81,18 @@ const ChatInput = ({
           />
         </div>
         <div className="flex-1">
-          <input
+          <textarea
             ref={inputRef}
             name="user-input"
             value={userInput}
             onChange={handleChange}
-            className="input-box w-full bg-transparent border-none text-white outline-none placeholder-white"
+            onKeyDown={handleKeyDown}
+            className="input-box w-full bg-transparent border-none text-white outline-none placeholder-white resize-none"
             disabled={disabled}
             autoComplete="off"
             autoFocus={true}
-            placeholder={'Message Interchain Agent'}
+            placeholder="Message Interchain Agent"
+            rows={1} // Start with a single row
           />
         </div>
         <button type="submit" className="btn-bg w-6 rounded-full">
