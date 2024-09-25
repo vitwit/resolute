@@ -8,7 +8,7 @@ interface Action {
 }
 
 const actions: Action[] = [
-  { trigger: 'send', placeholder: 'send 1 ATOM to cosmos.....' },
+  { trigger: 'send', placeholder: 'send 1 ATOM to cosmos..... (from chainID [if it is IBC Transaction])' },
   { trigger: 'delegate', placeholder: 'delegate 1 ATOM to cosmosvaloper.....' },
 ];
 
