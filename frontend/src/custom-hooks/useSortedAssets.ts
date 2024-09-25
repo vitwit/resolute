@@ -5,6 +5,7 @@ import { RootState } from '@/store/store';
 import chainDenoms from '@/utils/chainDenoms.json';
 import { filterAsset } from '@/utils/util';
 import useGetChainInfo from './useGetChainInfo';
+import { TokenInfo } from '@/types/common';
 const chainDenomsData = chainDenoms as AssetData;
 
 export interface Options {

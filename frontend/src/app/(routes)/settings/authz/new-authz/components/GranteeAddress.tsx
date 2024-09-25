@@ -1,3 +1,4 @@
+import { HandleChangeEvent } from '@/types/common';
 import { customTextFieldStyles } from '@/utils/commonStyles';
 import { TextField } from '@mui/material';
 import React from 'react';

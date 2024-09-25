@@ -4,6 +4,7 @@ import { useAppSelector } from './StateHooks';
 import { parseBalance } from '@/utils/denom';
 import { getIBCBalances } from '@/utils/ibc';
 import useGetChainInfo from './useGetChainInfo';
+import { TokenInfo } from '@/types/common';
 
 const useGetAuthzAssetsAmount = (chainIDs: string[]) => {
   const stakingChains = useAppSelector(

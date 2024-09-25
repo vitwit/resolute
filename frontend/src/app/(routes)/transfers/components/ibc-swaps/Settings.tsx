@@ -4,6 +4,7 @@ import { TextField } from '@mui/material';
 import React, { useState } from 'react';
 import { customTextFieldStyles } from '../../styles';
 import CustomButton from '@/components/common/CustomButton';
+import { HandleChangeEvent } from '@/types/common';
 
 const Settings = ({
   onClose,

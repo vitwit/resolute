@@ -1,3 +1,4 @@
+import { HandleChangeEvent } from '@/types/common';
 import React from 'react';
 
 type QuickSelectAmountFunc = (value: string) => void;

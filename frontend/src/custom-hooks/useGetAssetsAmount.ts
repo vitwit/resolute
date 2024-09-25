@@ -4,6 +4,7 @@ import { useAppSelector } from './StateHooks';
 import { parseBalance } from '@/utils/denom';
 import { getIBCBalances } from '@/utils/ibc';
 import useGetChainInfo from './useGetChainInfo';
+import { TokenInfo } from '@/types/common';
 
 /* eslint-disable react-hooks/rules-of-hooks */
 const useGetAssetsAmount = (chainIDs: string[]) => {

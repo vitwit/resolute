@@ -11,6 +11,7 @@ import {
   VITWIT_VALIDATOR_NAMES,
   WITVAL,
 } from '@/utils/constants';
+import { TokenInfo } from '@/types/common';
 
 const removedChains = ['crescent-1', 'archway-1', 'celestia'];
 
