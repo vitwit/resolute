@@ -125,7 +125,7 @@ const FixedLayout = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   // Initialize the application state
-  // useInitApp();
+  useInitApp();
 
   return (
     <div className="fixed-layout">

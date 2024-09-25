@@ -24,6 +24,8 @@ interface InterchainAgentDialogProps {
   subscriber: string;
 }
 
+ /* eslint-disable @typescript-eslint/no-explicit-any */
+
 function parseTransaction(input: string): { type: string; data: any } | null {
   const regex = /^(\w+)\s+(\d+(?:\.\d+)?)\s+(\w+)\s+to\s+([a-zA-Z0-9]+)$/i;
   const match = input.match(regex);
@@ -279,7 +281,7 @@ const InterchainAgentDialog = ({
         } else {
           message = `unknown error ${error}`;
         }
-        console.error('Failed to send message:', error);
+        console.error('Failed to send message:', error, message);
 
         dispatch(
           addSessionItem({

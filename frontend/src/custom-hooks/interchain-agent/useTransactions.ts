@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import  { useEffect, useState } from 'react';
 import useGetChainInfo from '../useGetChainInfo';
 import { SendMsg } from '@/txns/bank';
 import { useAppDispatch, useAppSelector } from '../StateHooks';
@@ -33,6 +33,7 @@ const useTransactions = ({
   const validateParsedTxnData = ({
     parsedData,
   }: {
+     /* eslint-disable @typescript-eslint/no-explicit-any */
     parsedData: { type: string; data: any };
   }) => {
     setCurrenChainID('');
@@ -59,6 +60,7 @@ const useTransactions = ({
   const initiateTransaction = ({
     parsedData,
   }: {
+     /* eslint-disable @typescript-eslint/no-explicit-any */
     parsedData: { type: string; data: any };
   }) => {
     const chainID = getChainIDByCoinDenom(parsedData.data.denom);

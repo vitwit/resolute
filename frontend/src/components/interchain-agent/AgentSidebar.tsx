@@ -70,7 +70,8 @@ const AgentSidebar = ({ sidebarOpen }: AgentSidebarProps) => {
                           (
                             chatData: {
                               sessionID: string;
-                              firstRequest: { key: string; value: any };
+                             /* eslint-disable @typescript-eslint/no-explicit-any */
+                              firstRequest: { key: string; value: any }; 
                             },
                             index: number
                           ) => {
@@ -80,7 +81,7 @@ const AgentSidebar = ({ sidebarOpen }: AgentSidebarProps) => {
                               requestKey.lastIndexOf('_')
                             );
                             return (
-                              <div className="w-full">
+                              <div key={index} className="w-full">
                                 <button
                                   key={index}
                                   onClick={() =>

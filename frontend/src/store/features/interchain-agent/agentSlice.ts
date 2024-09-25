@@ -6,6 +6,8 @@ import {
 } from '@/components/interchain-agent/storage';
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 
+ /* eslint-disable @typescript-eslint/no-explicit-any */
+
 export interface SessionState {
   [key: string]: SessionItem;
 }
