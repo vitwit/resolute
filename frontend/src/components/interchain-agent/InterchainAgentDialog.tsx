@@ -12,7 +12,6 @@ import ChatComponent from './ChatComponent';
 import { v4 as uuidv4 } from 'uuid';
 import useTransactions from '@/custom-hooks/interchain-agent/useTransactions';
 import { TxStatus } from '@/types/enums';
-import { getTxnURLOnResolute } from '@/utils/util';
 import { resetGenericTxStatus } from '@/store/features/common/commonSlice';
 
 interface InterchainAgentDialogProps {
