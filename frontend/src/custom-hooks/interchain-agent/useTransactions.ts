@@ -182,6 +182,7 @@ const useTransactions = ({
   useEffect(() => {
     if (txStatus.status === TxStatus.IDLE) {
       const { chainName } = getChainInfo(currentChainID);
+      console.log('here1...', tx?.transactionHash);
       dispatch(
         addSessionItem({
           request: {
@@ -196,6 +197,7 @@ const useTransactions = ({
         })
       );
     } else if (txStatus.status === TxStatus.REJECTED) {
+      console.log('here2..', tx?.transactionHash);
       dispatch(
         addSessionItem({
           request: {
@@ -219,6 +221,7 @@ const useTransactions = ({
       userInput?.length
     ) {
       const { chainName } = getChainInfo(currentChainID);
+      console.log('here3...', tx?.transactionHash);
       dispatch(
         addSessionItem({
           request: {
@@ -234,6 +237,7 @@ const useTransactions = ({
       );
       dispatch(setGenericTxStatus({ status: TxStatus.IDLE, errMsg: '' }));
     } else if (ibcTxStatus === TxStatus.REJECTED && userInput?.length) {
+      console.log('here4...', tx?.transactionHash);
       dispatch(
         addSessionItem({
           request: {

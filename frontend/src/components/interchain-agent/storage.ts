@@ -29,3 +29,17 @@ export const saveToLocalStorage = (
 export const clearChatHistory = () => {
   localStorage.removeItem('queries');
 };
+
+export const deleteSessionFromLocalStorage = (sessionID: string) => {
+  try {
+    const storedData = localStorage.getItem('queries');
+    const queries = storedData ? JSON.parse(storedData) : {};
+
+    if (queries[sessionID]) {
+      delete queries[sessionID]; // Remove the session by sessionID
+      localStorage.setItem('queries', JSON.stringify(queries));
+    }
+  } catch (error) {
+    console.error('Error deleting session from localStorage:', error);
+  }
+};

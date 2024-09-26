@@ -1,24 +1,32 @@
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import {
+  loadSessionStateFromLocalStorage,
   resetChat,
   setCurrentSessionID,
 } from '@/store/features/interchain-agent/agentSlice';
 import Image from 'next/image';
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { clearChatHistory } from './storage';
+import { clearChatHistory, deleteSessionFromLocalStorage } from './storage';
 
 interface AgentSidebarProps {
   sidebarOpen: boolean;
+  isLoading: boolean;
+  handleStopGenerating: () => void;
 }
 
 const capitalizeFirstLetter = (text: string) => {
   return text.charAt(0).toUpperCase() + text.slice(1);
 };
 
-const AgentSidebar = ({ sidebarOpen }: AgentSidebarProps) => {
+const AgentSidebar = ({
+  sidebarOpen,
+  isLoading,
+  handleStopGenerating,
+}: AgentSidebarProps) => {
   const dispatch = useAppDispatch();
   const startNewSession = () => {
+    if (isLoading) return;
     const newSessionID = uuidv4();
     dispatch(setCurrentSessionID(newSessionID));
   };
@@ -27,12 +35,21 @@ const AgentSidebar = ({ sidebarOpen }: AgentSidebarProps) => {
     (state) => state.agent.currentSessionID
   );
   const onSelectSession = (sessionID: string) => {
+    if (isLoading) return;
     dispatch(setCurrentSessionID(sessionID));
   };
 
   const onDeleteChat = () => {
+    if (isLoading) {
+      handleStopGenerating();
+    }
     dispatch(resetChat());
     clearChatHistory();
+  };
+
+  const onDeleteSession = async (sessionID: string) => {
+    await deleteSessionFromLocalStorage(sessionID);
+    dispatch(loadSessionStateFromLocalStorage());
   };
 
   return (
@@ -47,10 +64,10 @@ const AgentSidebar = ({ sidebarOpen }: AgentSidebarProps) => {
             <div className="text-white font-bold text-[18px]">Chats</div>
             <Image
               onClick={startNewSession}
-              className="cursor-pointer"
+              className={`${isLoading ? 'cursor-not-allowed' : 'cursor-pointer'}`}
               src={'/interchain-agent/solid-add-icon.svg'}
-              width={32}
-              height={32}
+              width={24}
+              height={24}
               alt=""
             />
           </div>
@@ -67,33 +84,33 @@ const AgentSidebar = ({ sidebarOpen }: AgentSidebarProps) => {
                         ?.slice()
                         .reverse()
                         .map(
-                          (
-                            chatData: {
-                              sessionID: string;
-                             /* eslint-disable @typescript-eslint/no-explicit-any */
-                              firstRequest: { key: string; value: any }; 
-                            },
-                            index: number
-                          ) => {
+                          (chatData: {
+                            sessionID: string;
+                            /* eslint-disable @typescript-eslint/no-explicit-any */
+                            firstRequest: { key: string; value: any };
+                          }) => {
                             const requestKey = chatData.firstRequest.key;
                             const parsedRequestKey = requestKey.substring(
                               0,
                               requestKey.lastIndexOf('_')
                             );
                             return (
-                              <div key={index} className="w-full">
-                                <button
-                                  key={index}
-                                  onClick={() =>
-                                    onSelectSession(chatData.sessionID)
-                                  }
-                                  className={`block w-full text-white hover:font-medium rounded hover:cursor-pointer ${currentSessionID === chatData.sessionID ? 'font-semibold' : ''}`}
-                                >
-                                  <div className="text-[14px] leading-[18px] text-left truncate">
-                                    {capitalizeFirstLetter(parsedRequestKey)}
-                                  </div>
-                                </button>
-                              </div>
+                              <SessionItem
+                                key={chatData.sessionID}
+                                isLoading={isLoading}
+                                onSelectSession={() => {
+                                  onSelectSession(chatData.sessionID);
+                                }}
+                                requestKey={capitalizeFirstLetter(
+                                  parsedRequestKey
+                                )}
+                                isSelected={
+                                  currentSessionID === chatData.sessionID
+                                }
+                                onDeleteSession={() => {
+                                  onDeleteSession(chatData.sessionID);
+                                }}
+                              />
                             );
                           }
                         )}
@@ -111,7 +128,7 @@ const AgentSidebar = ({ sidebarOpen }: AgentSidebarProps) => {
                 width={20}
                 alt=""
               />
-              <div className="text-[14px] font-thin">Export conversation</div>
+              <div className="text-[14px] font-thin opacity-40 cursor-not-allowed">Export conversation</div>
             </button>
             <button
               onClick={onDeleteChat}
@@ -133,3 +150,75 @@ const AgentSidebar = ({ sidebarOpen }: AgentSidebarProps) => {
 };
 
 export default AgentSidebar;
+
+const SessionItem = ({
+  onSelectSession,
+  onDeleteSession, // New prop for delete action
+  requestKey,
+  isLoading,
+  isSelected,
+}: {
+  onSelectSession: () => void;
+  onDeleteSession: () => void; // New prop type
+  requestKey: string;
+  isLoading: boolean;
+  isSelected: boolean;
+}) => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  // Toggle menu
+  const handleMenuToggle = () => {
+    setIsMenuOpen((prev) => !prev);
+  };
+
+  // Close menu on clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setIsMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  return (
+    <div className="w-full relative flex gap-1 justify-between">
+      <button
+        onClick={onSelectSession}
+        className={`flex-1 w-full truncate text-white hover:font-medium rounded ${isLoading ? 'cursor-not-allowed' : 'cursor-pointer'} ${isSelected ? 'font-semibold' : ''}`}
+      >
+        <div className="text-[14px] leading-[18px] text-left truncate">
+          {requestKey}
+        </div>
+      </button>
+
+      <button onClick={handleMenuToggle}>
+        <Image
+          src="/interchain-agent/menu-icon.svg"
+          height={16}
+          width={16}
+          alt=""
+        />
+      </button>
+
+      {isMenuOpen && (
+        <div
+          ref={menuRef}
+          className="absolute right-0 mt-2 w-40 bg-[#444444] rounded-xl shadow-lg z-[99999]"
+        >
+          <button
+            onClick={onDeleteSession}
+            className="block w-full text-left px-4 py-2 hover:bg-[#ffffff0b] text-[12px]"
+          >
+            Delete Session
+          </button>
+        </div>
+      )}
+    </div>
+  );
+};

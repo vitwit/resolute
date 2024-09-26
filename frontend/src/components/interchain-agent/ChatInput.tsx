@@ -8,7 +8,11 @@ interface Action {
 }
 
 const actions: Action[] = [
-  { trigger: 'send', placeholder: 'send 1 ATOM to cosmos..... (from chainID [if it is IBC Transaction])' },
+  {
+    trigger: 'send',
+    placeholder:
+      'send 1 ATOM to cosmos..... (from chainID [if it is IBC Transaction])',
+  },
   { trigger: 'delegate', placeholder: 'delegate 1 ATOM to cosmosvaloper.....' },
 ];
 
@@ -24,15 +28,17 @@ const ChatInput = ({
   handleSubmit: (e: React.FormEvent) => void;
 }) => {
   const inputRef = useRef<HTMLTextAreaElement>(null);
-  const currentSessionID = useAppSelector((state) => state.agent.currentSessionID);
+  const currentSessionID = useAppSelector(
+    (state) => state.agent.currentSessionID
+  );
   const currentSession = useAppSelector((state) => state.agent.currentSession);
-  
+
   useEffect(() => {
     if (inputRef.current) {
       inputRef.current.focus();
     }
   }, [currentSessionID, currentSession]);
-  
+
   const [placeholder, setPlaceholder] = useState<string>();
 
   const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
@@ -67,7 +73,7 @@ const ChatInput = ({
   };
 
   return (
-    <div className="relative">
+    <div className="relative w-full">
       <form
         onSubmit={handleSubmit}
         className={`p-5 w-full bg-[#09090A66] rounded-full flex items-center gap-3 transition-all duration-300 ${disabled ? 'opacity-55' : ''}`}
@@ -80,14 +86,14 @@ const ChatInput = ({
             alt="Chat"
           />
         </div>
-        <div className="flex-1">
+        <div className="flex-1 flex items-center">
           <textarea
             ref={inputRef}
             name="user-input"
             value={userInput}
             onChange={handleChange}
             onKeyDown={handleKeyDown}
-            className="input-box w-full bg-transparent border-none text-white outline-none placeholder-white resize-none"
+            className="input-box w-full bg-transparent border-none text-white outline-none placeholder-white resize-none max-h-36"
             disabled={disabled}
             autoComplete="off"
             autoFocus={true}
@@ -106,10 +112,9 @@ const ChatInput = ({
       </form>
 
       {placeholder && (
-        <div
-          className="absolute left-0 bottom-[-1.5rem] text-xs text-gray-400 transition-opacity duration-300"
-        >
-          Hint: If you want to do a transaction, please use this format: &quot;{placeholder}&quot;
+        <div className="absolute left-10 bottom-[-1.5rem] text-xs text-[#ffffff80] transition-opacity duration-300">
+          Hint: If you want to do a transaction, please use this format: &quot;
+          {placeholder}&quot;
         </div>
       )}
     </div>

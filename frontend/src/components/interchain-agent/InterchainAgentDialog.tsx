@@ -6,7 +6,7 @@ import {
   setCurrentSessionID,
   toggleAgentDialog,
 } from '@/store/features/interchain-agent/agentSlice';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import AgentSidebar from './AgentSidebar';
 import ChatComponent from './ChatComponent';
 import { v4 as uuidv4 } from 'uuid';
@@ -24,21 +24,30 @@ interface InterchainAgentDialogProps {
   subscriber: string;
 }
 
- /* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
- function parseTransaction(input: string): { type: string; data: any } | null {
+function parseTransaction(input: string): { type: string; data: any } | null {
   // Regex for "send <amount> <denom> to <address> from <chainID>"
-  const regexWithChainID = /^(\w+)\s+(\d+(?:\.\d+)?)\s+(\w+)\s+to\s+([a-zA-Z0-9]+)\s+from\s+([\w-]+)$/i;
+  const regexWithChainID =
+    /^(\w+)\s+(\d+(?:\.\d+)?)\s+(\w+)\s+to\s+([a-zA-Z0-9]+)\s+from\s+([\w-]+)$/i;
 
   // Regex for "send <amount> <denom> to <address>"
-  const regexWithoutChainID = /^(\w+)\s+(\d+(?:\.\d+)?)\s+(\w+)\s+to\s+([a-zA-Z0-9]+)$/i;
+  const regexWithoutChainID =
+    /^(\w+)\s+(\d+(?:\.\d+)?)\s+(\w+)\s+to\s+([a-zA-Z0-9]+)$/i;
 
   let match;
 
   // First, check for the regex with chainID
   match = input.match(regexWithChainID);
   if (match) {
-    const [, typeWithChainID, amountWithChainID, denomWithChainID, addressWithChainID, chainID] = match;
+    const [
+      ,
+      typeWithChainID,
+      amountWithChainID,
+      denomWithChainID,
+      addressWithChainID,
+      chainID,
+    ] = match;
     return {
       type: typeWithChainID,
       data: {
@@ -53,7 +62,13 @@ interface InterchainAgentDialogProps {
   // Then, check for the regex without chainID
   match = input.match(regexWithoutChainID);
   if (match) {
-    const [, typeWithoutChainID, amountWithoutChainID, denomWithoutChainID, addressWithoutChainID] = match;
+    const [
+      ,
+      typeWithoutChainID,
+      amountWithoutChainID,
+      denomWithoutChainID,
+      addressWithoutChainID,
+    ] = match;
     return {
       type: typeWithoutChainID,
       data: {
@@ -89,6 +104,7 @@ const InterchainAgentDialog = ({
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [userInput, setUserInput] = useState('');
   const [chatInputTime, setChatInputTime] = useState<string>('');
+  const [isTxn, setIsTxn] = useState(false);
 
   const { validateParsedTxnData, initiateTransaction } = useTransactions({
     userInput,
@@ -155,13 +171,26 @@ const InterchainAgentDialog = ({
     );
   };
 
+  const abortControllerRef = useRef<AbortController | null>(null);
   const handleSubmit = async (e: React.FormEvent) => {
+    setIsTxn(false);
     e.preventDefault();
     setInputDisabled(true);
     dispatch(resetGenericTxStatus());
     const currentDate = new Date().toISOString();
     setChatInputTime(currentDate);
+
     if (userInput.trim() !== '') {
+      // Reset the abort controller before starting a new request
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+
+      // Create a new AbortController and store it in the ref
+      const abortController = new AbortController();
+      abortControllerRef.current = abortController;
+      const signal = abortController.signal;
+
       setInputDisabled(true);
 
       dispatch(
@@ -180,6 +209,7 @@ const InterchainAgentDialog = ({
 
       const parsedTransaction = parseTransaction(userInput.trim());
       if (parsedTransaction) {
+        setIsTxn(true);
         const error = validateParsedTxnData({ parsedData: parsedTransaction });
         if (error.length) {
           dispatchSessionItem(userInput, 'error', error, error);
@@ -205,37 +235,37 @@ const InterchainAgentDialog = ({
             plan_owner: planOwner,
             request: { request: userInput },
           }),
+          signal,
         });
 
         if (!response.ok) {
-          if (response.status === 401) {
-            if (!isRefreshing) {
-              setIsRefreshing(true);
-              try {
-                const newToken = await refreshTokenRequest();
-                setCurrentAccessToken(newToken);
+          if (response.status === 401 && !isRefreshing) {
+            setIsRefreshing(true);
+            try {
+              const newToken = await refreshTokenRequest();
+              setCurrentAccessToken(newToken);
 
-                response = await fetch(`${apiUrl}`, {
-                  method: 'POST',
-                  headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${newToken}`,
-                  },
-                  body: JSON.stringify({
-                    deployment_id: deploymentID,
-                    plan_id: planID,
-                    subscriber: subscriber,
-                    plan_owner: planOwner,
-                    request: { request: userInput },
-                  }),
-                });
+              response = await fetch(`${apiUrl}`, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  Authorization: `Bearer ${newToken}`,
+                },
+                body: JSON.stringify({
+                  deployment_id: deploymentID,
+                  plan_id: planID,
+                  subscriber: subscriber,
+                  plan_owner: planOwner,
+                  request: { request: userInput },
+                }),
+                signal,
+              });
 
-                if (!response.ok) {
-                  throw new Error('Failed to send message after token refresh');
-                }
-              } finally {
-                setIsRefreshing(false);
+              if (!response.ok) {
+                throw new Error('Failed after token refresh');
               }
+            } finally {
+              setIsRefreshing(false);
             }
           } else {
             throw new Error('Error in API request');
@@ -244,8 +274,10 @@ const InterchainAgentDialog = ({
 
         let data = await response.json();
 
+        // Polling for pending status
         while (data.status === 'pending' || data.result === '') {
           await new Promise((resolve) => setTimeout(resolve, 2000));
+
           response = await fetch(`${apiUrl}`, {
             method: 'POST',
             headers: {
@@ -259,6 +291,7 @@ const InterchainAgentDialog = ({
               plan_owner: planOwner,
               request: { request: userInput },
             }),
+            signal,
           });
 
           if (!response.ok) {
@@ -298,34 +331,50 @@ const InterchainAgentDialog = ({
           );
         }
       } catch (error) {
-        let message: string = '';
-        if (error instanceof Error) {
-          message = error.message;
-        } else {
-          message = `unknown error ${error}`;
-        }
-        console.error('Failed to send message:', error, message);
-
-        const eMsg = 'Agent is offline. This could be due to a lost connection or the agent being down';
-
-        dispatch(
-          addSessionItem({
-            request: {
-              [userInput]: {
-                errMessage: eMsg,
-                result: eMsg,
-                status: 'failed',
-                date: currentDate,
+        if (signal.aborted) {
+          dispatch(
+            addSessionItem({
+              request: {
+                [userInput]: {
+                  errMessage: 'Request cancelled',
+                  result: 'Request cancelled',
+                  status: 'failed',
+                  date: currentDate,
+                },
               },
-            },
-            sessionID: currentSessionID,
-          })
-        );
+              sessionID: currentSessionID,
+            })
+          );
+        } else {
+          const message =
+            error instanceof Error ? error.message : `unknown error ${error}`;
+          console.error('Failed to send message:', message);
+          const eMsg = 'Agent is offline or request failed.';
+
+          dispatch(
+            addSessionItem({
+              request: {
+                [userInput]: {
+                  errMessage: eMsg,
+                  result: eMsg,
+                  status: 'failed',
+                  date: currentDate,
+                },
+              },
+              sessionID: currentSessionID,
+            })
+          );
+        }
       } finally {
+        abortControllerRef.current = null;
         setInputDisabled(false);
       }
+    }
+  };
 
-      setUserInput('');
+  const handleStopGenerating = () => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
     }
   };
 
@@ -408,6 +457,10 @@ const InterchainAgentDialog = ({
     }
   }, [currentSessionID]);
 
+  // useEffect(() => {
+  //   if(inputDisabled) {}
+  // }, [currentSessionID, inputDisabled])
+
   useEffect(() => {
     dispatch(loadSessionStateFromLocalStorage());
   }, []);
@@ -436,7 +489,13 @@ const InterchainAgentDialog = ({
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex w-full h-full">
-          {isNew ? null : <AgentSidebar sidebarOpen={sidebarOpen} />}
+          {isNew ? null : (
+            <AgentSidebar
+              sidebarOpen={sidebarOpen}
+              isLoading={inputDisabled}
+              handleStopGenerating={handleStopGenerating}
+            />
+          )}
           <ChatComponent
             toggleSidebar={toggleSidebar}
             sidebarOpen={sidebarOpen}
@@ -446,7 +505,11 @@ const InterchainAgentDialog = ({
             userInput={userInput}
             disabled={inputDisabled}
             isNew={isNew}
+            showStopOption={!isTxn && inputDisabled}
+            handleStopGenerating={handleStopGenerating}
+            isTxn={isTxn}
           />
+          {/* <button onClick={handleStopGenerating}>stop...</button> */}
         </div>
       </div>
     </div>

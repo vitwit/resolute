@@ -209,7 +209,7 @@ export const ibcSlice = createSlice({
     },
 
     resetTxStatus: (state) => {
-      state.txStatus = TxStatus.IDLE;
+      state.txStatus = TxStatus.INIT;
     },
 
     resetAccountsInfo: (state) => {
@@ -231,7 +231,7 @@ export const ibcSlice = createSlice({
       })
       .addCase(txTransfer.rejected, (state, action) => {
         state.txStatus = TxStatus.REJECTED;
-        state.txError = action.payload as string || '';
+        state.txError = (action.payload as string) || '';
       });
 
     builder

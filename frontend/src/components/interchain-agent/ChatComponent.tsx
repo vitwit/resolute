@@ -18,6 +18,9 @@ interface ChatComponentProps {
   userInput: string;
   disabled: boolean;
   isNew: boolean;
+  showStopOption: boolean;
+  handleStopGenerating: () => void;
+  isTxn: boolean;
 }
 
 const ChatComponent = ({
@@ -29,6 +32,9 @@ const ChatComponent = ({
   userInput,
   disabled,
   isNew,
+  showStopOption,
+  handleStopGenerating,
+  isTxn,
 }: ChatComponentProps) => {
   const currentSession = useAppSelector((state) => state.agent.currentSession);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
@@ -54,7 +60,7 @@ const ChatComponent = ({
               alt=""
             />
           )}
-          <div className="text-[26px] font-bold text-white leading-8">
+          <div className="text-[20px] font-bold text-white leading-8">
             Interchain Agent
           </div>
         </div>
@@ -81,7 +87,11 @@ const ChatComponent = ({
                 return (
                   <React.Fragment key={key}>
                     <UserChat content={parsedKey} />
-                    <BotChat status={value.status} content={value.result} />
+                    <BotChat
+                      status={value.status}
+                      content={value.result}
+                      isTxn={isTxn}
+                    />
                   </React.Fragment>
                 );
               })}
@@ -96,7 +106,18 @@ const ChatComponent = ({
         </div>
       </div>
 
-      <div>
+      <div className="flex flex-col items-center gap-4">
+        {showStopOption && (
+          <button onClick={handleStopGenerating} className="stop-btn">
+            <Image
+              src="/interchain-agent/stop-btn.svg"
+              width={16}
+              height={16}
+              alt=""
+            />
+            <div>Stop Generating</div>
+          </button>
+        )}
         <ChatInput
           handleInputChange={handleInputChange}
           disabled={disabled}
@@ -120,7 +141,15 @@ const UserChat = ({ content }: { content: string }) => {
   );
 };
 
-const BotChat = ({ content, status }: { content: string; status: string }) => {
+const BotChat = ({
+  content,
+  status,
+  isTxn,
+}: {
+  content: string;
+  status: string;
+  isTxn: boolean;
+}) => {
   return (
     <div className="flex gap-[10px] items-start">
       <Image
@@ -132,7 +161,10 @@ const BotChat = ({ content, status }: { content: string; status: string }) => {
       />
       <div className="space-y-2 max-w-full overflow-x-scroll">
         {status === 'pending' ? (
-          'querying....'
+          <span>
+            {isTxn ? 'Transaction pending ' : 'Querying '}{' '}
+            <span className="dots-loader"></span>{' '}
+          </span>
         ) : (
           <>
             <div className="text-[16px] font-light flex">

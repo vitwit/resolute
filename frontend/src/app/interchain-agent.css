@@ -26,14 +26,13 @@
   background: #09090a66 !important;
 }
 
-
 .dots-loader:after {
   content: ' .';
   animation: dots 1s steps(5, end) infinite;
 }
 
 .dots-loader:after {
-  content: ' ...';
+  content: ' ....';
   animation: dots 1s steps(5, end) infinite;
 }
 
@@ -65,4 +64,8 @@
       0.25em 0 0 white,
       0.5em 0 0 white;
   }
+}
+
+.stop-btn {
+  @apply border-[1px] h-8 hover:bg-[#ffffff15] border-[#ffffff29] flex items-center gap-1 rounded-full px-4 py-2;
 }
