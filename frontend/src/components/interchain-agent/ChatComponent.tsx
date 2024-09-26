@@ -74,7 +74,7 @@ const ChatComponent = ({
           className={`flex-1 overflow-y-scroll space-y-6 max-w-[750px] ${sidebarOpen ? 'w-full' : 'w-[70%]'}`}
         >
           {currentSession &&
-            Object.keys(currentSession?.requests).length > 0 ? (
+          Object.keys(currentSession?.requests).length > 0 ? (
             <>
               {Object.entries(currentSession.requests).map(([key, value]) => {
                 const parsedKey = key.substring(0, key.lastIndexOf('_'));
@@ -90,7 +90,7 @@ const ChatComponent = ({
           ) : (
             <div className="flex h-full flex-col justify-between items-center">
               <Header />
-              <ChatSuggestions />
+              <ChatSuggestions handleInputChange={handleInputChange} />
             </div>
           )}
         </div>
@@ -120,7 +120,7 @@ const UserChat = ({ content }: { content: string }) => {
   );
 };
 
-const BotChat = ({ content, status }: { content: string, status: string }) => {
+const BotChat = ({ content, status }: { content: string; status: string }) => {
   return (
     <div className="flex gap-[10px] items-start">
       <Image
@@ -131,14 +131,16 @@ const BotChat = ({ content, status }: { content: string, status: string }) => {
         draggable={false}
       />
       <div className="space-y-2 max-w-full overflow-x-scroll">
-        {
-          status === 'pending' ? 'querying....': <>
+        {status === 'pending' ? (
+          'querying....'
+        ) : (
+          <>
             <div className="text-[16px] font-light flex">
               <DisplayMarkdown content={content} />
               <CopyWithFeedback value={content} />
             </div>
           </>
-        }
+        )}
       </div>
     </div>
   );
