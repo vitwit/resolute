@@ -119,11 +119,11 @@ const NewDelegationDialog: React.FC<PopupProps> = ({
             />
             <p className="text-[#FFC13C] text-b1">Important</p>
             <p className="text-b1-light">
-              Staking will lock your funds for 21 days.
+              Staking will lock your funds for {singleStake.getChainUnbondingPeriod(chainID)} days.
             </p>
           </div>
           <div className="text-b1 pl-6">
-            To make your staked assets liquid, undelegation will take 21 days.
+            To make your staked assets liquid, undelegation will take {singleStake.getChainUnbondingPeriod(chainID)} days.
           </div>
         </div>
 

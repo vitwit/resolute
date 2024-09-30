@@ -1,8 +1,9 @@
 import { useAppDispatch, useAppSelector } from './StateHooks';
 import { RootState } from '@/store/store';
 import useGetChainInfo from './useGetChainInfo';
-import { getValidator } from '@/store/features/staking/stakeSlice';
+import { getParams, getValidator } from '@/store/features/staking/stakeSlice';
 import useGetAssetsAmount from './useGetAssetsAmount';
+import { useEffect } from 'react';
 
 /* eslint-disable react-hooks/rules-of-hooks */
 const useSingleStaking = (chainID: string) => {
@@ -16,9 +17,17 @@ const useSingleStaking = (chainID: string) => {
     //  getValueFromToken, getTokenValueByChainId
   } = useGetChainInfo();
 
+  const { restURLs } = getChainInfo(chainID);
+
+  useEffect(() => {
+    dispatch(getParams({ chainID: chainID, baseURLs: restURLs }))
+  }, [chainID])
+
   const rewardsChains = useAppSelector((state: RootState) =>
     isAuthzMode ? state.distribution.authzChains : state.distribution.chains
   );
+
+
 
   // const totalData = useAppSelector((state: RootState) => state.staking)
 
@@ -39,6 +48,22 @@ const useSingleStaking = (chainID: string) => {
     isAuthzMode ? state.bank.authz.balances : state.bank.balances
   );
   const commonStakingData = useAppSelector((state) => state.staking.chains);
+
+  const getChainUnbondingPeriod = (cID: string) => {
+    const secs = stakeData[cID].params?.unbonding_time || ''
+
+    // Use regex to match all digits in the string
+    const numberInString = secs.match(/\d+/);
+
+    // If a number is found, convert to seconds and then to days
+    if (numberInString) {
+      const seconds = parseInt(numberInString[0], 10);
+      const days = seconds / 86400;
+      return days;
+    }
+
+    return 21
+  }
 
   const getAvaiailableAmount = (chainID: string) => {
     let amount = 0;
@@ -145,6 +170,7 @@ const useSingleStaking = (chainID: string) => {
     getDenomWithChainID,
     getAvaiailableAmount,
     totalValStakedAssets,
+    getChainUnbondingPeriod
   };
 };
 
