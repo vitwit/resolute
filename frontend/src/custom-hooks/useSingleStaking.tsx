@@ -50,7 +50,7 @@ const useSingleStaking = (chainID: string) => {
   const commonStakingData = useAppSelector((state) => state.staking.chains);
 
   const getChainUnbondingPeriod = (cID: string) => {
-    const secs = stakeData[cID].params?.unbonding_time || ''
+    const secs = stakeData[cID]?.params?.unbonding_time || ''
 
     // Use regex to match all digits in the string
     const numberInString = secs.match(/\d+/);
