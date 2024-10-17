@@ -17,8 +17,14 @@ import {
   txTransfer,
   resetTxStatus as resetIBCTxStatus,
 } from '@/store/features/ibc/ibcSlice';
+import { txIBCSwap } from '@/store/features/swaps/swapsSlice';
+import useAccount from '@/custom-hooks/useAccount';
+import useChain from '@/custom-hooks/useChain';
+import useSwaps from '@/custom-hooks/useSwaps';
+import useGetChains from '@/custom-hooks/useGetChains';
+// import useGetAssets from '@/custom-hooks/useGetAssets';
 
-const SUPPORTED_TXNS = ['send', 'delegate'];
+const SUPPORTED_TXNS = ['send', 'delegate', 'swap'];
 
 const useTransactions = ({
   userInput,
@@ -27,6 +33,19 @@ const useTransactions = ({
   userInput: string;
   chatInputTime: string;
 }) => {
+  // Get Signer
+  const { getAccountAddress } = useAccount();
+
+  // To fetch 4 rest endpoints from chain-registry
+  const { getChainEndpoints, getExplorerEndpoints } = useChain();
+
+  const { getSwapRoute, routeError } = useSwaps();
+
+  const { chainsData } = useGetChains();
+
+  // const { getTokensByChainID, srcAssetsLoading, destAssetLoading } =
+  //   useGetAssets();
+
   const dispatch = useAppDispatch();
   const {
     getChainIDByCoinDenom,
@@ -90,7 +109,7 @@ const useTransactions = ({
     return '';
   };
 
-  const initiateTransaction = ({
+  const initiateTransaction = async ({
     parsedData,
   }: {
     /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -176,6 +195,90 @@ const useTransactions = ({
           feegranter: '',
         })
       );
+    }
+    if (parsedData.type === 'swap') {
+      // IBC Swap via Interchain GPT bot
+      const selectedSourceChain: any = {};
+      const selectedDestChain: any = {};
+      const supportedChains = chainsData;
+      const sourceChain: any = supportedChains.find(
+        (chain: any) =>
+          chain.axelarChainName === parsedData.data.sourceChainName
+      );
+
+      // validate if source chain is supported
+      if (sourceChain) {
+        selectedSourceChain.chainID = sourceChain.chainId;
+      }
+
+      const destinationChain: any = supportedChains.find(
+        (chain: any) =>
+          chain.axelarChainName === parsedData.data.destinationChainName
+      );
+
+      // validate if destination chain is supported
+      if (destinationChain) {
+        selectedDestChain.chainID = destinationChain.chainId;
+      }
+
+      const { address: fromAddress } = await getAccountAddress(
+        sourceChain.chainId || ''
+      );
+      const { address: toAddress } = await getAccountAddress(
+        destinationChain.chainId || ''
+      );
+
+      const { rpcs, apis } = getChainEndpoints(
+        selectedSourceChain?.chainID || ''
+      );
+
+      const { explorerEndpoint } = getExplorerEndpoints(
+        selectedSourceChain?.chainID || ''
+      );
+      const { decimals } = getDenomInfo(selectedSourceChain.chainID);
+
+      const { route } = await getSwapRoute({
+        amount: Number(parsedData.data.amount) * 10 ** (decimals || 1),
+        destChainID: selectedDestChain?.chainID || '',
+        destDenom: `u${parsedData.data.destinationDenom}` || '',
+        sourceChainID: selectedSourceChain?.chainID || '',
+        sourceDenom: `u${parsedData.data?.denom}` || '',
+        fromAddress,
+        toAddress,
+        slippage: Number(0.5),
+      });
+      console.log("swap router error ", routeError);
+      
+      if (routeError.length > 0) {
+        dispatch(
+          addSessionItem({
+            request: {
+              [userInput]: {
+                errMessage: '',
+                result: `Transaction failed: ${routeError}`,
+                status: 'failed',
+                date: chatInputTime,
+              },
+            },
+            sessionID: currentSessionID,
+          })
+        );
+        return;
+      }
+
+      if (route?.estimate) {
+        dispatch(
+          txIBCSwap({
+            rpcURLs: rpcs,
+            signerAddress: fromAddress,
+            sourceChainID: selectedSourceChain?.chainID || '',
+            destChainID: selectedDestChain?.chainID || '',
+            swapRoute: route,
+            explorerEndpoint,
+            baseURLs: apis,
+          })
+        );
+      }
     }
   };
 

@@ -14,7 +14,7 @@ import {
   trackTransactionStatus,
   txExecuteSwap,
 } from './swapsService';
-import { setError } from '../common/commonSlice';
+import { setError, setGenericTxStatus } from '../common/commonSlice';
 import { ERR_UNKNOWN } from '@/utils/errors';
 import { OfflineDirectSigner } from '@cosmjs/proto-signing';
 import { TxRaw } from 'cosmjs-types/cosmos/tx/v1beta1/tx';
@@ -103,6 +103,12 @@ export const txIBCSwap = createAsyncThunk(
             status: 'success',
           })
         );
+        dispatch(
+          setGenericTxStatus({
+            status: TxStatus.IDLE,
+            errMsg: '',
+          })
+        );
       } else if (txStatus === 'needs_gas') {
         dispatch(
           setError({
@@ -110,11 +116,23 @@ export const txIBCSwap = createAsyncThunk(
             type: 'error',
           })
         );
+        dispatch(
+          setGenericTxStatus({
+            status: TxStatus.REJECTED,
+            errMsg: 'Transaction could not be completed, needs gas',
+          })
+        );
       } else if (txStatus === 'partial_success') {
         dispatch(
           setTxDestSuccess({
             msg: 'Transaction Partially Successful',
             status: 'partial_success',
+          })
+        );
+        dispatch(
+          setGenericTxStatus({
+            status: TxStatus.REJECTED,
+            errMsg: 'Transaction Partially Successful',
           })
         );
       } else if (txStatus === 'not_found') {

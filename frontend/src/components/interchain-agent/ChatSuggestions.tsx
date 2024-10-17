@@ -17,6 +17,11 @@ const SUGGESTIONS = [
     text: 'send 1 ATOM to cosmos.... from chainID',
     icon: '/sidebar-menu-icons/transfers-icon.svg',
   },
+  {
+    title: 'IBC Swap',
+    text: 'swap 0.1 OSMO of osmosis to ATOM of cosmoshub',
+    icon: '/sidebar-menu-icons/transfers-icon.svg',
+  },
 ];
 
 const ChatSuggestions = ({

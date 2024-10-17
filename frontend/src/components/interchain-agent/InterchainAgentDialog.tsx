@@ -35,6 +35,10 @@ function parseTransaction(input: string): { type: string; data: any } | null {
   const regexWithoutChainID =
     /^(\w+)\s+(\d+(?:\.\d+)?)\s+(\w+)\s+to\s+([a-zA-Z0-9]+)$/i;
 
+  // Regex for "swap <amount> <denom> of <chainID> to <denom> of <chainID>"
+  const regexForIBCSwap =
+    /^(\w+)\s+(\d+(?:\.\d+)?)\s+(\w+)\s+of\s+([\w-]+)\s+to\s+(\w+)\s+of\s+([\w-]+)$/i;
+
   let match;
 
   // First, check for the regex with chainID
@@ -75,6 +79,30 @@ function parseTransaction(input: string): { type: string; data: any } | null {
         amount: amountWithoutChainID,
         denom: denomWithoutChainID.toUpperCase(),
         address: addressWithoutChainID,
+      },
+    };
+  }
+
+  match = input.match(regexForIBCSwap);
+  if(match){
+    const [
+      ,
+      typeWithoutChainID,
+      amount,
+      sourceDenom,
+      sourceChainName,
+      destinationDenom,
+      destinationChainName
+    ] = match;
+
+    return {
+      type: typeWithoutChainID,
+      data: {
+        amount: amount,
+        denom: sourceDenom.toLowerCase(),
+        sourceChainName: sourceChainName.toLowerCase(),
+        destinationDenom: destinationDenom.toLowerCase(),
+        destinationChainName: destinationChainName.toLowerCase(),        
       },
     };
   }

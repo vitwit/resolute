@@ -57,6 +57,7 @@ const useGetChains = () => {
     chainsInfo,
     getChainConfig,
     getChainLogoURI,
+    chainsData
   };
 };
 
