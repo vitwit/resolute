@@ -35,6 +35,8 @@ import { TxStatus } from '@/types/enums';
 import useGetShowAuthzAlert from '@/custom-hooks/useGetShowAuthzAlert';
 import { initializeGA } from '@/utils/util';
 import { NotSupportedMetamaskChainIds } from '@/utils/constants';
+import ChatWidget from 'chat-agent-widget';
+import { ARKA_BOT_CONFIG } from '@/constants/arka-bot';
 
 declare let window: WalletWindow;
 
@@ -147,6 +149,19 @@ const FixedLayout = ({ children }: { children: React.ReactNode }) => {
               ) : (
                 <DynamicSection>{children}</DynamicSection>
               )}
+              {ARKA_BOT_CONFIG.accessToken.length &&
+              ARKA_BOT_CONFIG.refreshToken.length ? (
+                <ChatWidget
+                  accessToken={ARKA_BOT_CONFIG.accessToken}
+                  apiUrl={ARKA_BOT_CONFIG.apiUrl}
+                  deploymentID={Number(ARKA_BOT_CONFIG.deploymentID)}
+                  planID={Number(ARKA_BOT_CONFIG.planID)}
+                  planOwner={ARKA_BOT_CONFIG.planOwner}
+                  refreshToken={ARKA_BOT_CONFIG.refreshToken}
+                  subscriber={ARKA_BOT_CONFIG.subscriber}
+                  theme={ARKA_BOT_CONFIG.theme}
+                />
+              ) : null}
             </section>
             <footer>
               <Footer />
