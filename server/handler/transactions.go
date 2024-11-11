@@ -145,11 +145,11 @@ func (h *Handler) GetTransactions(c echo.Context) error {
 	status := utils.GetStatus(c.QueryParam("status"))
 	var rows *sql.Rows
 	if status == model.Pending {
-		rows, err = h.DB.Query(`SELECT t.id,t.multisig_address,t.status,t.created_at,t.last_updated,t.memo,t.signatures,t.messages,t.hash,t.err_msg,t.fee, m.threshold, 
+		rows, err = h.DB.Query(`SELECT t.id,t.signed_at,t.multisig_address,t.status,t.created_at,t.last_updated,t.memo,t.signatures,t.messages,t.hash,t.err_msg,t.fee, m.threshold, 
 		json_agg(jsonb_build_object('pubkey', p.pubkey, 'address', p.address, 'multisig_address',p.multisig_address)) AS pubkeys FROM transactions t JOIN multisig_accounts m ON t.multisig_address = m.address JOIN pubkeys p ON t.multisig_address = p.multisig_address WHERE t.multisig_address=$1 and t.status='PENDING' GROUP BY t.id, t.multisig_address, m.threshold, t.messages LIMIT $2 OFFSET $3`,
 			address, limit, (page-1)*limit)
 	} else {
-		rows, err = h.DB.Query(`SELECT t.id,t.multisig_address,t.status,t.created_at,t.last_updated,t.memo,t.signatures,t.messages,t.hash,t.err_msg,t.fee, m.threshold, 
+		rows, err = h.DB.Query(`SELECT t.id,t.signed_at,t.multisig_address,t.status,t.created_at,t.last_updated,t.memo,t.signatures,t.messages,t.hash,t.err_msg,t.fee, m.threshold, 
 		json_agg(jsonb_build_object('pubkey', p.pubkey, 'address', p.address, 'multisig_address',p.multisig_address)) AS pubkeys FROM transactions t JOIN multisig_accounts m ON t.multisig_address = m.address JOIN pubkeys p ON t.multisig_address = p.multisig_address WHERE t.multisig_address=$1 and t.status <> 'PENDING' GROUP BY t.id, t.multisig_address, m.threshold, t.messages LIMIT $2 OFFSET $3`,
 			address, limit, (page-1)*limit)
 	}
@@ -187,6 +187,7 @@ func (h *Handler) GetTransactions(c echo.Context) error {
 			&transaction.Fee,
 			&transaction.Threshold,
 			&transaction.Pubkeys,
+			&transaction.SignedAt,
 		); err != nil {
 			return c.JSON(http.StatusInternalServerError, model.ErrorResponse{
 				Status:  "error",

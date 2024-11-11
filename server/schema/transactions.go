@@ -40,5 +40,5 @@ type AllTransactionResult struct {
 	CreatedAt       time.Time        `pg:"created_at" sql:"-" json:"created_at,omitempty"`
 	Threshold       int              `pg:"threshold" json:"threshold"`
 	Pubkeys         json.RawMessage  `pg:"pubkeys" json:"pubkeys"`
-	SignedAt        time.Time        `pg:"signed_at" sql:"-" json:"signed_at,omitempty"`
+	SignedAt        time.Time        `pg:"signed_at,use_zero" sql:"-"  json:"signed_at,omitempty"`
 }
