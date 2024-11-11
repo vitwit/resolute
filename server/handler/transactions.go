@@ -145,11 +145,11 @@ func (h *Handler) GetTransactions(c echo.Context) error {
 	status := utils.GetStatus(c.QueryParam("status"))
 	var rows *sql.Rows
 	if status == model.Pending {
-		rows, err = h.DB.Query(`SELECT t.id,t.signed_at,t.multisig_address,t.status,t.created_at,t.last_updated,t.memo,t.signatures,t.messages,t.hash,t.err_msg,t.fee, m.threshold, 
+		rows, err = h.DB.Query(`SELECT t.id,COALESCE(t.signed_at, '0001-01-01 00:00:00'::timestamp) AS signed_at,t.multisig_address,t.status,t.created_at,t.last_updated,t.memo,t.signatures,t.messages,t.hash,t.err_msg,t.fee, m.threshold, 
 		json_agg(jsonb_build_object('pubkey', p.pubkey, 'address', p.address, 'multisig_address',p.multisig_address)) AS pubkeys FROM transactions t JOIN multisig_accounts m ON t.multisig_address = m.address JOIN pubkeys p ON t.multisig_address = p.multisig_address WHERE t.multisig_address=$1 and t.status='PENDING' GROUP BY t.id, t.multisig_address, m.threshold, t.messages LIMIT $2 OFFSET $3`,
 			address, limit, (page-1)*limit)
 	} else {
-		rows, err = h.DB.Query(`SELECT t.id,t.signed_at,t.multisig_address,t.status,t.created_at,t.last_updated,t.memo,t.signatures,t.messages,t.hash,t.err_msg,t.fee, m.threshold, 
+		rows, err = h.DB.Query(`SELECT t.id,COALESCE(t.signed_at, '0001-01-01 00:00:00'::timestamp) AS signed_at,t.multisig_address,t.status,t.created_at,t.last_updated,t.memo,t.signatures,t.messages,t.hash,t.err_msg,t.fee, m.threshold, 
 		json_agg(jsonb_build_object('pubkey', p.pubkey, 'address', p.address, 'multisig_address',p.multisig_address)) AS pubkeys FROM transactions t JOIN multisig_accounts m ON t.multisig_address = m.address JOIN pubkeys p ON t.multisig_address = p.multisig_address WHERE t.multisig_address=$1 and t.status <> 'PENDING' GROUP BY t.id, t.multisig_address, m.threshold, t.messages LIMIT $2 OFFSET $3`,
 			address, limit, (page-1)*limit)
 	}
@@ -173,10 +173,11 @@ func (h *Handler) GetTransactions(c echo.Context) error {
 	transactions := make([]schema.AllTransactionResult, 0)
 	for rows.Next() {
 		var transaction schema.AllTransactionResult
-		var signedAt sql.NullTime
+		var signedAt time.Time
 
 		if err := rows.Scan(
 			&transaction.ID,
+			&signedAt,
 			&transaction.MultisigAddress,
 			&transaction.Status,
 			&transaction.CreatedAt,
@@ -189,7 +190,6 @@ func (h *Handler) GetTransactions(c echo.Context) error {
 			&transaction.Fee,
 			&transaction.Threshold,
 			&transaction.Pubkeys,
-			&signedAt,
 		); err != nil {
 			return c.JSON(http.StatusInternalServerError, model.ErrorResponse{
 				Status:  "error",
@@ -198,12 +198,10 @@ func (h *Handler) GetTransactions(c echo.Context) error {
 			})
 		}
 
-		// Check if signedAt is valid and set SignedAt accordingly
-		if signedAt.Valid {
-			transaction.SignedAt = signedAt.Time
+		if signedAt.IsZero() {
+			transaction.SignedAt = time.Time{} // Set it to zero time if not set
 		} else {
-			// If signed_at is NULL, set it to a default value (e.g., current time)
-			transaction.SignedAt = time.Now() // You can change this to a default timestamp if needed
+			transaction.SignedAt = signedAt // Otherwise, set the actual signed time
 		}
 
 		transactions = append(transactions, transaction)
