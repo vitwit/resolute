@@ -198,11 +198,12 @@ func (h *Handler) GetTransactions(c echo.Context) error {
 			})
 		}
 
-		// Conditionally set transaction.SignedAt based on whether signedAt is valid
+		// Check if signedAt is valid and set SignedAt accordingly
 		if signedAt.Valid {
-			transaction.SignedAt = signedAt.Time // Assign the time if it's non-NULL
+			transaction.SignedAt = signedAt.Time
 		} else {
-			transaction.SignedAt = time.Time{} // Or set to the zero value of time.Time
+			// If signed_at is NULL, set it to a default value (e.g., current time)
+			transaction.SignedAt = time.Now() // You can change this to a default timestamp if needed
 		}
 
 		transactions = append(transactions, transaction)
