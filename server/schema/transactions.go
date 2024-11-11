@@ -1,7 +1,6 @@
 package schema
 
 import (
-	"database/sql"
 	"encoding/json"
 	"time"
 )
@@ -41,5 +40,5 @@ type AllTransactionResult struct {
 	CreatedAt       time.Time        `pg:"created_at" sql:"-" json:"created_at,omitempty"`
 	Threshold       int              `pg:"threshold" json:"threshold"`
 	Pubkeys         json.RawMessage  `pg:"pubkeys" json:"pubkeys"`
-	SignedAt        sql.NullTime     `pg:"signed_at,use_zero" sql:"-"  json:"signed_at,omitempty"`
+	SignedAt        time.Time        `pg:"signed_at,use_zero" sql:"-"  json:"signed_at,omitempty"`
 }

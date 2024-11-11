@@ -173,6 +173,8 @@ func (h *Handler) GetTransactions(c echo.Context) error {
 	transactions := make([]schema.AllTransactionResult, 0)
 	for rows.Next() {
 		var transaction schema.AllTransactionResult
+		var signedAt sql.NullTime
+
 		if err := rows.Scan(
 			&transaction.ID,
 			&transaction.MultisigAddress,
@@ -187,7 +189,7 @@ func (h *Handler) GetTransactions(c echo.Context) error {
 			&transaction.Fee,
 			&transaction.Threshold,
 			&transaction.Pubkeys,
-			&transaction.SignedAt,
+			&signedAt,
 		); err != nil {
 			return c.JSON(http.StatusInternalServerError, model.ErrorResponse{
 				Status:  "error",
@@ -195,6 +197,14 @@ func (h *Handler) GetTransactions(c echo.Context) error {
 				Log:     err.Error(),
 			})
 		}
+
+		// Conditionally set transaction.SignedAt based on whether signedAt is valid
+		if signedAt.Valid {
+			transaction.SignedAt = signedAt.Time // Assign the time if it's non-NULL
+		} else {
+			transaction.SignedAt = time.Time{} // Or set to the zero value of time.Time
+		}
+
 		transactions = append(transactions, transaction)
 	}
 
