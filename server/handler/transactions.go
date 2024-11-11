@@ -513,7 +513,7 @@ func (h *Handler) DeleteTransaction(c echo.Context) error {
 		})
 	}
 
-	_, err = h.DB.Exec("UPDATE transactions SET signatures='[]'::jsonb WHERE multisig_address=$1", address)
+	_, err = h.DB.Exec("UPDATE transactions SET signatures='[]'::jsonb WHERE multisig_address=$1 and status='PENDING'", address)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, model.ErrorResponse{
 			Status:  "error",
