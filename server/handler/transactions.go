@@ -436,7 +436,7 @@ func (h *Handler) SignTransaction(c echo.Context) error {
 		})
 	}
 
-	_, err = h.DB.Exec("UPDATE transactions SET signatures=$1 WHERE id=$2", bz, id)
+	_, err = h.DB.Exec("UPDATE transactions SET signatures=$1, signed_at=$2 WHERE id=$3", bz, time.Now().UTC(), id)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, model.ErrorResponse{
 			Status:  "error",
@@ -513,7 +513,21 @@ func (h *Handler) DeleteTransaction(c echo.Context) error {
 		})
 	}
 
-	_, err = h.DB.Exec("UPDATE transactions SET signatures='[]'::jsonb WHERE multisig_address=$1 and status='PENDING'", address)
+	row := h.DB.QueryRow(`SELECT signed_at FROM transactions WHERE id=$1 AND multisig_address=$2`, txId, address)
+
+	var transaction schema.Transaction
+	if err := row.Scan(
+		&transaction.Signatures,
+	); err != nil {
+		return c.JSON(http.StatusBadRequest, model.ErrorResponse{
+			Status:  "error",
+			Message: err.Error(),
+		})
+	}
+
+	txSignedAt := transaction.SignedAt
+
+	_, err = h.DB.Exec("UPDATE transactions SET signatures='[]'::jsonb WHERE multisig_address=$1 and signed_at > $2", address, txSignedAt)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, model.ErrorResponse{
 			Status:  "error",
