@@ -516,23 +516,20 @@ func (h *Handler) DeleteTransaction(c echo.Context) error {
 	row := h.DB.QueryRow(`SELECT signed_at FROM transactions WHERE id=$1 AND multisig_address=$2`, txId, address)
 
 	var transaction schema.Transaction
-	if err := row.Scan(
+	row.Scan(
 		&transaction.Signatures,
-	); err != nil {
-		return c.JSON(http.StatusBadRequest, model.ErrorResponse{
-			Status:  "error",
-			Message: err.Error(),
-		})
-	}
+	)
 
-	txSignedAt := transaction.SignedAt
+	if !transaction.SignedAt.IsZero() {
+		txSignedAt := transaction.SignedAt
 
-	_, err = h.DB.Exec("UPDATE transactions SET signatures='[]'::jsonb WHERE multisig_address=$1 and signed_at > $2", address, txSignedAt)
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, model.ErrorResponse{
-			Status:  "error",
-			Message: err.Error(),
-		})
+		_, err = h.DB.Exec("UPDATE transactions SET signatures='[]'::jsonb WHERE multisig_address=$1 AND signed_at > $2", address, txSignedAt)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, model.ErrorResponse{
+				Status:  "error",
+				Message: err.Error(),
+			})
+		}
 	}
 
 	return c.JSON(http.StatusOK, model.SuccessResponse{
