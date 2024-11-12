@@ -523,6 +523,7 @@ export const signTransaction = createAsyncThunk(
       unSignedTxn: Txn;
       walletAddress: string;
       rpcURLs: string[];
+      toBeBroadcastedCount: number;
     },
     { rejectWithValue, dispatch }
   ) => {
@@ -532,7 +533,8 @@ export const signTransaction = createAsyncThunk(
         data.multisigAddress,
         data.unSignedTxn,
         data.walletAddress,
-        data.rpcURLs
+        data.rpcURLs,
+        data.toBeBroadcastedCount
       );
       const authToken = getAuthToken(COSMOS_CHAIN_ID);
 

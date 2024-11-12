@@ -203,6 +203,7 @@ interface Txn {
   signatures: Signature[];
   last_updated: string;
   created_at: string;
+  signed_at: string;
   pubkeys?: MultisigAddressPubkey[];
   threshold?: number;
 }
