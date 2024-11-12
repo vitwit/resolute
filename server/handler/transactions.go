@@ -145,11 +145,11 @@ func (h *Handler) GetTransactions(c echo.Context) error {
 	status := utils.GetStatus(c.QueryParam("status"))
 	var rows *sql.Rows
 	if status == model.Pending {
-		rows, err = h.DB.Query(`SELECT t.id,t.multisig_address,t.status,t.created_at,t.last_updated,t.memo,t.signatures,t.messages,t.hash,t.err_msg,t.fee, m.threshold, 
+		rows, err = h.DB.Query(`SELECT t.id,COALESCE(t.signed_at, '0001-01-01 00:00:00'::timestamp) AS signed_at,t.multisig_address,t.status,t.created_at,t.last_updated,t.memo,t.signatures,t.messages,t.hash,t.err_msg,t.fee, m.threshold, 
 		json_agg(jsonb_build_object('pubkey', p.pubkey, 'address', p.address, 'multisig_address',p.multisig_address)) AS pubkeys FROM transactions t JOIN multisig_accounts m ON t.multisig_address = m.address JOIN pubkeys p ON t.multisig_address = p.multisig_address WHERE t.multisig_address=$1 and t.status='PENDING' GROUP BY t.id, t.multisig_address, m.threshold, t.messages LIMIT $2 OFFSET $3`,
 			address, limit, (page-1)*limit)
 	} else {
-		rows, err = h.DB.Query(`SELECT t.id,t.multisig_address,t.status,t.created_at,t.last_updated,t.memo,t.signatures,t.messages,t.hash,t.err_msg,t.fee, m.threshold, 
+		rows, err = h.DB.Query(`SELECT t.id,COALESCE(t.signed_at, '0001-01-01 00:00:00'::timestamp) AS signed_at,t.multisig_address,t.status,t.created_at,t.last_updated,t.memo,t.signatures,t.messages,t.hash,t.err_msg,t.fee, m.threshold, 
 		json_agg(jsonb_build_object('pubkey', p.pubkey, 'address', p.address, 'multisig_address',p.multisig_address)) AS pubkeys FROM transactions t JOIN multisig_accounts m ON t.multisig_address = m.address JOIN pubkeys p ON t.multisig_address = p.multisig_address WHERE t.multisig_address=$1 and t.status <> 'PENDING' GROUP BY t.id, t.multisig_address, m.threshold, t.messages LIMIT $2 OFFSET $3`,
 			address, limit, (page-1)*limit)
 	}
@@ -173,8 +173,11 @@ func (h *Handler) GetTransactions(c echo.Context) error {
 	transactions := make([]schema.AllTransactionResult, 0)
 	for rows.Next() {
 		var transaction schema.AllTransactionResult
+		var signedAt time.Time
+
 		if err := rows.Scan(
 			&transaction.ID,
+			&signedAt,
 			&transaction.MultisigAddress,
 			&transaction.Status,
 			&transaction.CreatedAt,
@@ -194,6 +197,13 @@ func (h *Handler) GetTransactions(c echo.Context) error {
 				Log:     err.Error(),
 			})
 		}
+
+		if signedAt.IsZero() {
+			transaction.SignedAt = time.Time{} // Set it to zero time if not set
+		} else {
+			transaction.SignedAt = signedAt // Otherwise, set the actual signed time
+		}
+
 		transactions = append(transactions, transaction)
 	}
 
@@ -236,11 +246,11 @@ func (h *Handler) GetAllMultisigTxns(c echo.Context) error {
 
 		var rows *sql.Rows
 		if status == "PENDING" {
-			rows, err = h.DB.Query(`SELECT t.id,t.multisig_address,t.status,t.created_at,t.last_updated,t.memo,t.signatures,t.messages,t.hash,t.err_msg,t.fee, m.threshold, 
+			rows, err = h.DB.Query(`SELECT t.id, COALESCE(t.signed_at, '0001-01-01 00:00:00'::timestamp) AS signed_at, t.multisig_address,t.status,t.created_at,t.last_updated,t.memo,t.signatures,t.messages,t.hash,t.err_msg,t.fee, m.threshold, 
 		json_agg(jsonb_build_object('pubkey', p.pubkey, 'address', p.address, 'multisig_address',p.multisig_address)) AS pubkeys FROM transactions t JOIN multisig_accounts m ON t.multisig_address = m.address JOIN pubkeys p ON t.multisig_address = p.multisig_address WHERE t.multisig_address=$1 and t.status='PENDING' GROUP BY t.id, t.multisig_address, m.threshold, t.messages LIMIT $2 OFFSET $3`,
 				multisigAddress, limit, (page-1)*limit)
 		} else {
-			rows, err = h.DB.Query(`SELECT t.id,t.multisig_address,t.status,t.created_at,t.last_updated,t.memo,t.signatures,t.messages,t.hash,t.err_msg,t.fee, m.threshold, 
+			rows, err = h.DB.Query(`SELECT t.id, COALESCE(t.signed_at, '0001-01-01 00:00:00'::timestamp) AS signed_at, t.multisig_address,t.status,t.created_at,t.last_updated,t.memo,t.signatures,t.messages,t.hash,t.err_msg,t.fee, m.threshold, 
 		json_agg(jsonb_build_object('pubkey', p.pubkey, 'address', p.address, 'multisig_address',p.multisig_address)) AS pubkeys FROM transactions t JOIN multisig_accounts m ON t.multisig_address = m.address JOIN pubkeys p ON t.multisig_address = p.multisig_address WHERE t.multisig_address=$1 and t.status <> 'PENDING' GROUP BY t.id, t.multisig_address, m.threshold, t.messages LIMIT $2 OFFSET $3`,
 				multisigAddress, limit, (page-1)*limit)
 		}
@@ -262,8 +272,11 @@ func (h *Handler) GetAllMultisigTxns(c echo.Context) error {
 
 		for rows.Next() {
 			var transaction schema.AllTransactionResult
+			var signedAt time.Time
+
 			if err := rows.Scan(
 				&transaction.ID,
+				&signedAt,
 				&transaction.MultisigAddress,
 				&transaction.Status,
 				&transaction.CreatedAt,
@@ -282,6 +295,11 @@ func (h *Handler) GetAllMultisigTxns(c echo.Context) error {
 					Message: "failed to decode transaction",
 					Log:     err.Error(),
 				})
+			}
+			if signedAt.IsZero() {
+				transaction.SignedAt = time.Time{}
+			} else {
+				transaction.SignedAt = signedAt
 			}
 			transactions = append(transactions, transaction)
 		}
@@ -436,7 +454,7 @@ func (h *Handler) SignTransaction(c echo.Context) error {
 		})
 	}
 
-	_, err = h.DB.Exec("UPDATE transactions SET signatures=$1 WHERE id=$2", bz, id)
+	_, err = h.DB.Exec("UPDATE transactions SET signatures=$1, signed_at=$2 WHERE id=$3", bz, time.Now().UTC(), id)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, model.ErrorResponse{
 			Status:  "error",
@@ -499,18 +517,48 @@ func (h *Handler) DeleteTransaction(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, model.ErrorResponse{
 			Status:  "error",
-			Message: "invalid transaction id ",
+			Message: "invalid transaction id",
 		})
 	}
 
-	_, err = h.DB.Exec(`DELETE from transactions WHERE id=$1 AND multisig_address=$2`, txId, address)
-
+	// Fetch signed_at before attempting to delete, to avoid issues if the transaction does not exist
+	var signedAt time.Time
+	row := h.DB.QueryRow(`SELECT signed_at FROM transactions WHERE id=$1 AND multisig_address=$2`, txId, address)
+	err = row.Scan(&signedAt)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, model.ErrorResponse{
+		if err == sql.ErrNoRows {
+			return c.JSON(http.StatusNotFound, model.ErrorResponse{
+				Status:  "error",
+				Message: "transaction not found",
+			})
+		}
+		return c.JSON(http.StatusInternalServerError, model.ErrorResponse{
+			Status:  "error",
+			Message: "failed to fetch transaction details",
+			Log:     err.Error(),
+		})
+	}
+
+	// Delete the transaction
+	_, err = h.DB.Exec(`DELETE FROM transactions WHERE id=$1 AND multisig_address=$2`, txId, address)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, model.ErrorResponse{
 			Status:  "error",
 			Message: "failed to delete transaction",
 			Log:     err.Error(),
 		})
+	}
+
+	// Clear signatures for transactions with signed_at > txSignedAt
+	if !signedAt.IsZero() {
+		_, err = h.DB.Exec(`UPDATE transactions SET signatures='[]'::jsonb WHERE multisig_address=$1 AND signed_at > $2`, address, signedAt)
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, model.ErrorResponse{
+				Status:  "error",
+				Message: "failed to update transaction signatures",
+				Log:     err.Error(),
+			})
+		}
 	}
 
 	return c.JSON(http.StatusOK, model.SuccessResponse{
