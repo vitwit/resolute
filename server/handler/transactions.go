@@ -523,8 +523,8 @@ func (h *Handler) DeleteTransaction(c echo.Context) error {
 
 	// Fetch signed_at before attempting to delete, to avoid issues if the transaction does not exist
 	var signedAt time.Time
-	row := h.DB.QueryRow(`SELECT signed_at FROM transactions WHERE id=$1 AND multisig_address=$2`, txId, address)
-	err = row.Scan(&signedAt)
+	var status string
+	err = h.DB.QueryRow(`SELECT signed_at,status FROM transactions WHERE id=$1 AND multisig_address=$2`, txId, address).Scan(&signedAt, &status)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return c.JSON(http.StatusNotFound, model.ErrorResponse{
@@ -545,7 +545,7 @@ func (h *Handler) DeleteTransaction(c echo.Context) error {
 	}
 
 	// Clear signatures for transactions with signed_at > txSignedAt
-	if !signedAt.IsZero() {
+	if !signedAt.IsZero() && status == "PENDING" {
 		_, err = h.DB.Exec(`UPDATE transactions SET signatures='[]'::jsonb WHERE multisig_address=$1 AND signed_at > $2 and status='PENDING'`, address, signedAt)
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, model.ErrorResponse{
