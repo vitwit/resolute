@@ -546,7 +546,7 @@ func (h *Handler) DeleteTransaction(c echo.Context) error {
 
 	// Clear signatures for transactions with signed_at > txSignedAt
 	if !signedAt.IsZero() && status == "PENDING" {
-		_, err = h.DB.Exec(`UPDATE transactions SET signatures='[]'::jsonb WHERE multisig_address=$1 AND signed_at > $2 and status='PENDING'`, address, signedAt)
+		_, err = h.DB.Exec(`UPDATE transactions SET signatures='[]'::jsonb, signed_at = '0001-01-01 00:00:00' WHERE multisig_address=$1 AND signed_at > $2 and status='PENDING'`, address, signedAt)
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, model.ErrorResponse{
 				Status:  "error",
