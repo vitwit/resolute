@@ -30,7 +30,7 @@ const CustomButton = ({
 }: CustomButtonProps) => {
   return (
     <button
-      className={`${btnStyles} ${isDelete ? 'delete-btn' : 'primary-btn'}`}
+      className={`${btnStyles} ${isDelete ? 'delete-btn' : 'primary-btn'} ${btnDisabled ? 'cursor-not-allowed opacity-50' : ''}`}
       disabled={btnDisabled}
       type={btnType || 'button'}
       onClick={btnOnClick}
