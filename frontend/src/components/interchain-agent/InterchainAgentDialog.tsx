@@ -13,6 +13,8 @@ import { v4 as uuidv4 } from 'uuid';
 import useTransactions from '@/custom-hooks/interchain-agent/useTransactions';
 import { TxStatus } from '@/types/enums';
 import { resetGenericTxStatus } from '@/store/features/common/commonSlice';
+import useGetChains from '@/custom-hooks/useGetChains';
+import { SelectChangeEvent } from '@mui/material';
 
 interface InterchainAgentDialogProps {
   apiUrl: string;
@@ -22,6 +24,8 @@ interface InterchainAgentDialogProps {
   planID: number;
   planOwner: string;
   subscriber: string;
+  conversationalModelURL: string;
+  transactionalModelURL: string;
 }
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -38,6 +42,13 @@ function parseTransaction(input: string): { type: string; data: any } | null {
   // Regex for "swap <amount> <denom> of <chainID> to <denom> of <chainID>"
   const regexForIBCSwap =
     /^(\w+)\s+(\d+(?:\.\d+)?)\s+(\w+)\s+of\s+([\w-]+)\s+to\s+(\w+)\s+of\s+([\w-]+)$/i;
+
+  // Regex for "fetch proposals for <chainID>"
+  const regexForFetchProposals = /^(\w+)\s+(\w+)\s+(\w+)\s+(\w+)\s+(\w+)$/i;
+
+  // Regex for "vote "
+  const regexForVoteProposal =
+    /^(\w+)\s+(\w+)\s+(\w+)\s+id\s+(\d+)\s+(\w+)\s+([\w-]+)\s+(\w+)\s+(\d+(?:\.\d+)?\s*\w+)$/i;
 
   let match;
 
@@ -83,8 +94,9 @@ function parseTransaction(input: string): { type: string; data: any } | null {
     };
   }
 
+  // Check for regex with IBC Swap
   match = input.match(regexForIBCSwap);
-  if(match){
+  if (match) {
     const [
       ,
       typeWithoutChainID,
@@ -92,7 +104,7 @@ function parseTransaction(input: string): { type: string; data: any } | null {
       sourceDenom,
       sourceChainName,
       destinationDenom,
-      destinationChainName
+      destinationChainName,
     ] = match;
 
     return {
@@ -102,7 +114,36 @@ function parseTransaction(input: string): { type: string; data: any } | null {
         denom: sourceDenom.toLowerCase(),
         sourceChainName: sourceChainName.toLowerCase(),
         destinationDenom: destinationDenom.toLowerCase(),
-        destinationChainName: destinationChainName.toLowerCase(),        
+        destinationChainName: destinationChainName.toLowerCase(),
+      },
+    };
+  }
+
+  // Check for fetch Proposals regex
+  match = input.match(regexForFetchProposals);
+  if (match) {
+    const [, typeWithoutChainID, , , chainId] = match;
+    return {
+      type: typeWithoutChainID,
+      data: {
+        chainId,
+      },
+    };
+  }
+
+  // Check for voteProposal regex
+  match = input.match(regexForVoteProposal);
+  if (match) {
+    const [, typeWithoutChainID, voteOption, proposalID, chainId, gasPrice] =
+      match;
+
+    return {
+      type: typeWithoutChainID,
+      data: {
+        voteOption,
+        proposalID,
+        chainId,
+        gasPrice,
       },
     };
   }
@@ -119,10 +160,13 @@ const InterchainAgentDialog = ({
   planOwner,
   refreshToken,
   subscriber,
+  conversationalModelURL,
+  transactionalModelURL,
 }: InterchainAgentDialogProps) => {
   const dispatch = useAppDispatch();
-
+  const { chainsData } = useGetChains();
   const agentDialogOpen = useAppSelector((state) => state.agent.agentOpen);
+  const govState = useAppSelector((state) => state.gov.chains);
   const currentSessionID = useAppSelector(
     (state) => state.agent.currentSessionID
   );
@@ -130,6 +174,7 @@ const InterchainAgentDialog = ({
   const isNew = Object.keys(groupedChat).length === 0;
 
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [modelType, setModelType] = useState('conversational');
   const [userInput, setUserInput] = useState('');
   const [chatInputTime, setChatInputTime] = useState<string>('');
   const [isTxn, setIsTxn] = useState(false);
@@ -236,6 +281,36 @@ const InterchainAgentDialog = ({
       );
 
       const parsedTransaction = parseTransaction(userInput.trim());
+      if (parsedTransaction?.type === 'fetch') {
+        setIsTxn(false);
+        const chainDetails: any = chainsData.find(
+          (chain: any) =>
+            chain.axelarChainName === parsedTransaction.data?.chainId
+        );
+
+        const activeProposals =
+          govState?.[chainDetails?.chainId]?.active?.proposals || [];
+        const depositProposals =
+          govState?.[chainDetails?.chainId]?.deposit?.proposals || [];
+        // console.log('activeProposals is ', activeProposals, depositProposals);
+        if (activeProposals.length > 0) {
+          dispatch(
+            addSessionItem({
+              request: {
+                [userInput]: {
+                  errMessage: '',
+                  result: activeProposals[0].content?.title || '',
+                  status: 'fetched',
+                  date: currentDate,
+                },
+              },
+              sessionID: currentSessionID,
+            })
+          );
+        }
+        setInputDisabled(false);
+        return;
+      }
       if (parsedTransaction) {
         setIsTxn(true);
         const error = validateParsedTxnData({ parsedData: parsedTransaction });
@@ -250,18 +325,19 @@ const InterchainAgentDialog = ({
 
       try {
         setUserInput('');
-        let response = await fetch(`${apiUrl}`, {
+        let response = await fetch(conversationalModelURL, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${currentAccessToken}`,
+            // Authorization: `Bearer ${currentAccessToken}`,
           },
           body: JSON.stringify({
-            deployment_id: deploymentID,
-            plan_id: planID,
-            subscriber: subscriber,
-            plan_owner: planOwner,
-            request: { request: userInput },
+            // deployment_id: deploymentID,
+            // plan_id: planID,
+            // subscriber: subscriber,
+            // plan_owner: planOwner,
+            // request: { request: userInput },
+            request: userInput,
           }),
           signal,
         });
@@ -536,6 +612,10 @@ const InterchainAgentDialog = ({
             showStopOption={!isTxn && inputDisabled}
             handleStopGenerating={handleStopGenerating}
             isTxn={isTxn}
+            setModelType={(e: React.ChangeEvent<HTMLSelectElement>) => {
+              setModelType(e.target.value);
+            }}
+            modelType={modelType}
           />
           {/* <button onClick={handleStopGenerating}>stop...</button> */}
         </div>

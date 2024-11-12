@@ -17,6 +17,10 @@ export const ARKA_BOT_CONFIG = {
   planOwner: process.env.NEXT_PUBLIC_BOT_PLAN_OWNER || '',
   subscriber: process.env.NEXT_PUBLIC_BOT_SUBSCRIBER || '',
   theme: ARKA_BOT_THEME || {},
+  conversationalModelURL:
+    process.env.NEXT_BOT_CONFIG_CONVERSATIONAL_MODEL_API || 'https://2bww74rjrq9jpa-7500.proxy.runpod.net/predict',
+  transactionalModelURL:
+    process.env.NEXT_BOT_CONFIG_TRANSACTIONAL_MODEL_API || 'https://2bww74rjrq9jpa-7501.proxy.runpod.net/predict',
 };
 
 const InterchainAgent = () => {
@@ -30,6 +34,8 @@ const InterchainAgent = () => {
         planOwner={ARKA_BOT_CONFIG.planOwner}
         refreshToken={ARKA_BOT_CONFIG.refreshToken}
         subscriber={ARKA_BOT_CONFIG.subscriber}
+        conversationalModelURL={ARKA_BOT_CONFIG.conversationalModelURL}
+        transactionalModelURL={ARKA_BOT_CONFIG.transactionalModelURL}
       />
     </div>
   );

@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import ChatInput from './ChatInput';
 import ChatSuggestions from './ChatSuggestions';
 import { useAppSelector } from '@/custom-hooks/StateHooks';
@@ -8,6 +8,14 @@ import rehypeHighlight from 'rehype-highlight';
 import 'highlight.js/styles/github-dark.css';
 import Header from './Header';
 import CopyWithFeedback from './CopyWithFeedback';
+import {
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+} from '@mui/material';
+import { customSelectStyles } from '@/utils/commonStyles';
 
 interface ChatComponentProps {
   toggleSidebar: () => void;
@@ -20,6 +28,8 @@ interface ChatComponentProps {
   isNew: boolean;
   showStopOption: boolean;
   handleStopGenerating: () => void;
+  modelType: string;
+  setModelType: (event: React.ChangeEvent<HTMLSelectElement>) => void;
   isTxn: boolean;
 }
 
@@ -35,6 +45,8 @@ const ChatComponent = ({
   showStopOption,
   handleStopGenerating,
   isTxn,
+  modelType,
+  setModelType,
 }: ChatComponentProps) => {
   const currentSession = useAppSelector((state) => state.agent.currentSession);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
@@ -49,7 +61,7 @@ const ChatComponent = ({
   return (
     <div className="flex-1 w-full h-full p-10 flex flex-col gap-10">
       <div className="flex items-center w-full justify-between h-8">
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 h-[200px]">
           {isNew ? null : (
             <Image
               onClick={toggleSidebar}
@@ -60,8 +72,25 @@ const ChatComponent = ({
               alt=""
             />
           )}
-          <div className="text-[20px] font-bold text-white leading-8">
+          {/* <div className="text-[20px] font-bold text-white leading-8">
             Interchain Agent
+          </div> */}
+
+          <div className="space-y-2 w-full">
+            <div>
+              <select
+                id="simple-dropdown"
+                value={modelType}
+                onChange={setModelType}
+                className="bg-transparent border-[1px] border-[#ffffff14] rounded-xl p-2 "
+              >
+                <option value="" disabled>
+                  Select Model
+                </option>
+                <option value="conversational">Conversational Model</option>
+                <option value="transactional">Transactional Model</option>
+              </select>
+            </div>
           </div>
         </div>
         <div>

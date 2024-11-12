@@ -24,7 +24,7 @@ import useSwaps from '@/custom-hooks/useSwaps';
 import useGetChains from '@/custom-hooks/useGetChains';
 // import useGetAssets from '@/custom-hooks/useGetAssets';
 
-const SUPPORTED_TXNS = ['send', 'delegate', 'swap'];
+const SUPPORTED_TXNS = ['send', 'delegate', 'swap', 'vote'];
 
 const useTransactions = ({
   userInput,
@@ -42,7 +42,6 @@ const useTransactions = ({
   const { getSwapRoute, routeError } = useSwaps();
 
   const { chainsData } = useGetChains();
-
   // const { getTokensByChainID, srcAssetsLoading, destAssetLoading } =
   //   useGetAssets();
 
@@ -285,7 +284,6 @@ const useTransactions = ({
   useEffect(() => {
     if (txStatus.status === TxStatus.IDLE) {
       const { chainName } = getChainInfo(currentChainID);
-      console.log('here1...', tx?.transactionHash);
       dispatch(
         addSessionItem({
           request: {
@@ -300,7 +298,6 @@ const useTransactions = ({
         })
       );
     } else if (txStatus.status === TxStatus.REJECTED) {
-      console.log('here2..', tx?.transactionHash);
       dispatch(
         addSessionItem({
           request: {
@@ -324,7 +321,6 @@ const useTransactions = ({
       userInput?.length
     ) {
       const { chainName } = getChainInfo(currentChainID);
-      console.log('here3...', tx?.transactionHash);
       dispatch(
         addSessionItem({
           request: {
@@ -340,7 +336,6 @@ const useTransactions = ({
       );
       dispatch(setGenericTxStatus({ status: TxStatus.IDLE, errMsg: '' }));
     } else if (ibcTxStatus === TxStatus.REJECTED && userInput?.length) {
-      console.log('here4...', tx?.transactionHash);
       dispatch(
         addSessionItem({
           request: {
