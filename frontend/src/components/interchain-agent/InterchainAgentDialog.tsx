@@ -14,7 +14,6 @@ import useTransactions from '@/custom-hooks/interchain-agent/useTransactions';
 import { TxStatus } from '@/types/enums';
 import { resetGenericTxStatus } from '@/store/features/common/commonSlice';
 import useGetChains from '@/custom-hooks/useGetChains';
-import { SelectChangeEvent } from '@mui/material';
 
 interface InterchainAgentDialogProps {
   apiUrl: string;
@@ -161,7 +160,6 @@ const InterchainAgentDialog = ({
   refreshToken,
   subscriber,
   conversationalModelURL,
-  transactionalModelURL,
 }: InterchainAgentDialogProps) => {
   const dispatch = useAppDispatch();
   const { chainsData } = useGetChains();
@@ -290,8 +288,8 @@ const InterchainAgentDialog = ({
 
         const activeProposals =
           govState?.[chainDetails?.chainId]?.active?.proposals || [];
-        const depositProposals =
-          govState?.[chainDetails?.chainId]?.deposit?.proposals || [];
+        // const depositProposals =
+        //   govState?.[chainDetails?.chainId]?.deposit?.proposals || [];
         // console.log('activeProposals is ', activeProposals, depositProposals);
         if (activeProposals.length > 0) {
           dispatch(

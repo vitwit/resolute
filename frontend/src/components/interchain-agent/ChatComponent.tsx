@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import ChatInput from './ChatInput';
 import ChatSuggestions from './ChatSuggestions';
 import { useAppSelector } from '@/custom-hooks/StateHooks';
@@ -8,14 +8,6 @@ import rehypeHighlight from 'rehype-highlight';
 import 'highlight.js/styles/github-dark.css';
 import Header from './Header';
 import CopyWithFeedback from './CopyWithFeedback';
-import {
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-  SelectChangeEvent,
-} from '@mui/material';
-import { customSelectStyles } from '@/utils/commonStyles';
 
 interface ChatComponentProps {
   toggleSidebar: () => void;
