@@ -532,11 +532,6 @@ func (h *Handler) DeleteTransaction(c echo.Context) error {
 				Message: "transaction not found",
 			})
 		}
-		return c.JSON(http.StatusInternalServerError, model.ErrorResponse{
-			Status:  "error",
-			Message: "failed to fetch transaction details",
-			Log:     err.Error(),
-		})
 	}
 
 	// Delete the transaction
