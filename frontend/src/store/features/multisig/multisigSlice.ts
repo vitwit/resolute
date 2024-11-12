@@ -48,6 +48,7 @@ import { get } from 'lodash';
 import { getAuthToken } from '@/utils/localStorage';
 import multisigSigning from '@/app/(routes)/multisig/utils/multisigSigning';
 import { setError } from '../common/commonSlice';
+import stakingService from '../staking/stakingService';
 
 const initialState: MultisigState = {
   createMultisigAccountRes: {
@@ -87,6 +88,21 @@ const initialState: MultisigState = {
     balance: [],
     status: TxStatus.INIT,
     error: '',
+  },
+  delegations: {
+    status: TxStatus.INIT,
+    delegations: {
+      delegation_responses: [],
+      pagination: {
+        next_key: '',
+        total: '',
+      },
+    },
+    hasDelegations: false,
+    errMsg: '',
+    pagination: undefined,
+    delegatedTo: {},
+    totalStaked: 0.0,
   },
   createTxnRes: {
     status: TxStatus.INIT,
@@ -283,6 +299,49 @@ export const getMultisigBalances = createAsyncThunk(
       if (error instanceof AxiosError)
         return rejectWithValue({ message: error.message });
       return rejectWithValue({ message: ERR_UNKNOWN });
+    }
+  }
+);
+
+export const getDelegations = createAsyncThunk(
+  'multisig/delegations',
+  async (
+    data: {
+      baseURLs: string[];
+      address: string;
+      chainID: string;
+    },
+    { rejectWithValue }
+  ) => {
+    try {
+      const delegations = [];
+      let nextKey = null;
+      const limit = 100;
+      while (true) {
+        const response = await stakingService.delegations(
+          data.baseURLs,
+          data.address,
+          data.chainID,
+          nextKey
+            ? {
+                key: nextKey,
+                limit: limit,
+              }
+            : {}
+        );
+        delegations.push(...(response.data?.delegation_responses || []));
+        if (!response.data.pagination?.next_key) {
+          break;
+        }
+        nextKey = response.data.pagination.next_key;
+      }
+
+      return {
+        delegations: delegations,
+      };
+    } catch (error) {
+      if (error instanceof AxiosError) return rejectWithValue(error.message);
+      return rejectWithValue(ERR_UNKNOWN);
     }
   }
 );
@@ -730,6 +789,35 @@ export const multisigSlice = createSlice({
         state.balance.status = TxStatus.REJECTED;
         const payload = action.payload as { message: string };
         state.balance.error = payload.message || '';
+      });
+    builder
+      .addCase(getDelegations.pending, (state) => {
+        state.delegations.status = TxStatus.PENDING;
+        state.delegations.errMsg = '';
+      })
+      .addCase(getDelegations.fulfilled, (state, action) => {
+        const delegation_responses = action.payload.delegations;
+        if (delegation_responses?.length) {
+          state.delegations.hasDelegations = true;
+        }
+        state.delegations.status = TxStatus.IDLE;
+        state.delegations.delegations.delegation_responses =
+          delegation_responses;
+        state.delegations.errMsg = '';
+
+        let total = 0.0;
+        for (let i = 0; i < delegation_responses.length; i++) {
+          const delegation = delegation_responses[i];
+          state.delegations.delegatedTo[
+            delegation?.delegation?.validator_address
+          ] = true;
+          total += parseFloat(delegation?.delegation?.shares);
+        }
+        state.delegations.totalStaked = total;
+      })
+      .addCase(getDelegations.rejected, (state, action) => {
+        state.delegations.status = TxStatus.REJECTED;
+        state.delegations.errMsg = action.error.message || '';
       });
     builder
       .addCase(createTxn.pending, (state) => {
