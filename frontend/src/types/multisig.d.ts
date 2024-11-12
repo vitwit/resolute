@@ -117,6 +117,15 @@ interface MultisigState {
   deleteMultisigRes: TxRes;
   multisigAccount: MultisigAccount;
   balance: Balance;
+  delegations: {
+    status: TxStatus;
+    delegations: GetDelegationsResponse;
+    hasDelegations: boolean;
+    errMsg: string;
+    pagination: Pagination | undefined;
+    delegatedTo: Record<string, boolean>;
+    totalStaked: number;
+  };
   createTxnRes: TxRes;
   updateTxnRes: TxRes;
   txns: Txns;

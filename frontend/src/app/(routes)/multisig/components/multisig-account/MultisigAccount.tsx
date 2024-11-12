@@ -1,6 +1,7 @@
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import {
+  getDelegations as getMultisigDelegations,
   getMultisigAccounts,
   getMultisigBalances,
   multisigByAddress,
@@ -10,7 +11,6 @@ import {
   resetUpdateTxnState,
   setVerifyDialogOpen,
 } from '@/store/features/multisig/multisigSlice';
-import { getDelegations } from '@/store/features/staking/stakeSlice';
 import { useEffect, useState } from 'react';
 import MultisigAccountHeader from './MultisigAccountHeader';
 import Copy from '@/components/common/Copy';
@@ -92,7 +92,7 @@ const MultisigAccount = ({
         })
       );
       dispatch(
-        getDelegations({
+        getMultisigDelegations({
           baseURLs: restURLs,
           address: multisigAddress,
           chainID,
@@ -202,7 +202,7 @@ const MultisigAccountInfo = ({
     (state) => state.multisig.multisigAccounts
   );
   const totalStaked = useAppSelector(
-    (state) => state.staking.chains?.[chainID]?.delegations.totalStaked
+    (state) => state.multisig?.delegations.totalStaked
   );
   const balance = useAppSelector((state) => state.multisig.balance.balance);
 
