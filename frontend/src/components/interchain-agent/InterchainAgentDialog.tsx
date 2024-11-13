@@ -13,7 +13,8 @@ import { v4 as uuidv4 } from 'uuid';
 import useTransactions from '@/custom-hooks/interchain-agent/useTransactions';
 import { TxStatus } from '@/types/enums';
 import { resetGenericTxStatus } from '@/store/features/common/commonSlice';
-import useGetChains from '@/custom-hooks/useGetChains';
+// import useGetChains from '@/custom-hooks/useGetChains';
+// import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 
 interface InterchainAgentDialogProps {
   apiUrl: string;
@@ -29,142 +30,143 @@ interface InterchainAgentDialogProps {
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-function parseTransaction(input: string): { type: string; data: any } | null {
-  // Regex for "send <amount> <denom> to <address> from <chainID>"
-  const regexWithChainID =
-    /^(\w+)\s+(\d+(?:\.\d+)?)\s+(\w+)\s+to\s+([a-zA-Z0-9]+)\s+from\s+([\w-]+)$/i;
+// function parseTransaction(input: string): { type: string; data: any } | null {
+//   // Regex for "send <amount> <denom> to <address> from <chainID>"
+//   const regexWithChainID =
+//     /^(\w+)\s+(\d+(?:\.\d+)?)\s+(\w+)\s+to\s+([a-zA-Z0-9]+)\s+from\s+([\w-]+)$/i;
 
-  // Regex for "send <amount> <denom> to <address>"
-  const regexWithoutChainID =
-    /^(\w+)\s+(\d+(?:\.\d+)?)\s+(\w+)\s+to\s+([a-zA-Z0-9]+)$/i;
+//   // Regex for "send <amount> <denom> to <address>"
+//   const regexWithoutChainID =
+//     /^(\w+)\s+(\d+(?:\.\d+)?)\s+(\w+)\s+to\s+([a-zA-Z0-9]+)$/i;
 
-  // Regex for "swap <amount> <denom> of <chainID> to <denom> of <chainID>"
-  const regexForIBCSwap =
-    /^(\w+)\s+(\d+(?:\.\d+)?)\s+(\w+)\s+of\s+([\w-]+)\s+to\s+(\w+)\s+of\s+([\w-]+)$/i;
+//   // Regex for "swap <amount> <denom> of <chainID> to <denom> of <chainID>"
+//   const regexForIBCSwap =
+//     /^(\w+)\s+(\d+(?:\.\d+)?)\s+(\w+)\s+of\s+([\w-]+)\s+to\s+(\w+)\s+of\s+([\w-]+)$/i;
 
-  // Regex for "fetch proposals for <chainID>"
-  const regexForFetchProposals = /^(\w+)\s+(\w+)\s+(\w+)\s+(\w+)\s+(\w+)$/i;
+//   // Regex for "fetch proposals for <chainID>"
+//   const regexForFetchProposals = /^(\w+)\s+(\w+)\s+(\w+)\s+(\w+)\s+(\w+)$/i;
 
-  // Regex for "vote "
-  const regexForVoteProposal =
-    /^(\w+)\s+(\w+)\s+(\w+)\s+id\s+(\d+)\s+(\w+)\s+([\w-]+)\s+(\w+)\s+(\d+(?:\.\d+)?\s*\w+)$/i;
+//   // Regex for "vote "
+//   const regexForVoteProposal =
+//     /^(\w+)\s+(\w+)\s+(\w+)\s+id\s+(\d+)\s+(\w+)\s+([\w-]+)\s+(\w+)\s+(\d+(?:\.\d+)?\s*\w+)$/i;
 
-  let match;
+//   let match;
 
-  // First, check for the regex with chainID
-  match = input.match(regexWithChainID);
-  if (match) {
-    const [
-      ,
-      typeWithChainID,
-      amountWithChainID,
-      denomWithChainID,
-      addressWithChainID,
-      chainID,
-    ] = match;
-    return {
-      type: typeWithChainID,
-      data: {
-        amount: amountWithChainID,
-        denom: denomWithChainID.toUpperCase(),
-        address: addressWithChainID,
-        chainID: chainID,
-      },
-    };
-  }
+//   // First, check for the regex with chainID
+//   match = input.match(regexWithChainID);
+//   if (match) {
+//     const [
+//       ,
+//       typeWithChainID,
+//       amountWithChainID,
+//       denomWithChainID,
+//       addressWithChainID,
+//       chainID,
+//     ] = match;
+//     return {
+//       type: typeWithChainID,
+//       data: {
+//         amount: amountWithChainID,
+//         denom: denomWithChainID.toUpperCase(),
+//         address: addressWithChainID,
+//         chainID: chainID,
+//       },
+//     };
+//   }
 
-  // Then, check for the regex without chainID
-  match = input.match(regexWithoutChainID);
-  if (match) {
-    const [
-      ,
-      typeWithoutChainID,
-      amountWithoutChainID,
-      denomWithoutChainID,
-      addressWithoutChainID,
-    ] = match;
-    return {
-      type: typeWithoutChainID,
-      data: {
-        amount: amountWithoutChainID,
-        denom: denomWithoutChainID.toUpperCase(),
-        address: addressWithoutChainID,
-      },
-    };
-  }
+//   // Then, check for the regex without chainID
+//   match = input.match(regexWithoutChainID);
+//   if (match) {
+//     const [
+//       ,
+//       typeWithoutChainID,
+//       amountWithoutChainID,
+//       denomWithoutChainID,
+//       addressWithoutChainID,
+//     ] = match;
+//     return {
+//       type: typeWithoutChainID,
+//       data: {
+//         amount: amountWithoutChainID,
+//         denom: denomWithoutChainID.toUpperCase(),
+//         address: addressWithoutChainID,
+//       },
+//     };
+//   }
 
-  // Check for regex with IBC Swap
-  match = input.match(regexForIBCSwap);
-  if (match) {
-    const [
-      ,
-      typeWithoutChainID,
-      amount,
-      sourceDenom,
-      sourceChainName,
-      destinationDenom,
-      destinationChainName,
-    ] = match;
+//   // Check for regex with IBC Swap
+//   match = input.match(regexForIBCSwap);
+//   if (match) {
+//     const [
+//       ,
+//       typeWithoutChainID,
+//       amount,
+//       sourceDenom,
+//       sourceChainName,
+//       destinationDenom,
+//       destinationChainName,
+//     ] = match;
 
-    return {
-      type: typeWithoutChainID,
-      data: {
-        amount: amount,
-        denom: sourceDenom.toLowerCase(),
-        sourceChainName: sourceChainName.toLowerCase(),
-        destinationDenom: destinationDenom.toLowerCase(),
-        destinationChainName: destinationChainName.toLowerCase(),
-      },
-    };
-  }
+//     return {
+//       type: typeWithoutChainID,
+//       data: {
+//         amount: amount,
+//         denom: sourceDenom.toLowerCase(),
+//         sourceChainName: sourceChainName.toLowerCase(),
+//         destinationDenom: destinationDenom.toLowerCase(),
+//         destinationChainName: destinationChainName.toLowerCase(),
+//       },
+//     };
+//   }
 
-  // Check for fetch Proposals regex
-  match = input.match(regexForFetchProposals);
-  if (match) {
-    const [, typeWithoutChainID, , , chainId] = match;
-    return {
-      type: typeWithoutChainID,
-      data: {
-        chainId,
-      },
-    };
-  }
+//   // Check for fetch Proposals regex
+//   match = input.match(regexForFetchProposals);
+//   if (match) {
+//     const [, typeWithoutChainID, , , chainId] = match;
+//     return {
+//       type: typeWithoutChainID,
+//       data: {
+//         chainId,
+//       },
+//     };
+//   }
 
-  // Check for voteProposal regex
-  match = input.match(regexForVoteProposal);
-  if (match) {
-    const [, typeWithoutChainID, voteOption, proposalID, chainId, gasPrice] =
-      match;
+//   // Check for voteProposal regex
+//   match = input.match(regexForVoteProposal);
+//   if (match) {
+//     const [, typeWithoutChainID, voteOption, proposalID, chainId, gasPrice] =
+//       match;
 
-    return {
-      type: typeWithoutChainID,
-      data: {
-        voteOption,
-        proposalID,
-        chainId,
-        gasPrice,
-      },
-    };
-  }
+//     return {
+//       type: typeWithoutChainID,
+//       data: {
+//         voteOption,
+//         proposalID,
+//         chainId,
+//         gasPrice,
+//       },
+//     };
+//   }
 
-  // If no pattern is matched, return null
-  return null;
-}
+//   // If no pattern is matched, return null
+//   return null;
+// }
 
 const InterchainAgentDialog = ({
-  accessToken,
-  apiUrl,
-  deploymentID,
-  planID,
-  planOwner,
-  refreshToken,
-  subscriber,
+  // accessToken,
+  // apiUrl,
+  // deploymentID,
+  // planID,
+  // planOwner,
+  // refreshToken,
+  // subscriber,
   conversationalModelURL,
+  transactionalModelURL,
 }: InterchainAgentDialogProps) => {
   const dispatch = useAppDispatch();
-  const { chainsData } = useGetChains();
+  // const { chainsData } = useGetChains();
   const agentDialogOpen = useAppSelector((state) => state.agent.agentOpen);
-  const govState = useAppSelector((state) => state.gov.chains);
+  // const govState = useAppSelector((state) => state.gov.chains);
   const currentSessionID = useAppSelector(
     (state) => state.agent.currentSessionID
   );
@@ -176,6 +178,7 @@ const InterchainAgentDialog = ({
   const [userInput, setUserInput] = useState('');
   const [chatInputTime, setChatInputTime] = useState<string>('');
   const [isTxn, setIsTxn] = useState(false);
+  // const { getChainInfo, getChainIDByCoinDenom } = useGetChainInfo();
 
   const { validateParsedTxnData, initiateTransaction } = useTransactions({
     userInput,
@@ -183,9 +186,9 @@ const InterchainAgentDialog = ({
   });
 
   const [inputDisabled, setInputDisabled] = useState<boolean>(false);
-  const [currentAccessToken, setCurrentAccessToken] =
-    useState<string>(accessToken);
-  const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
+  // const [currentAccessToken, setCurrentAccessToken] =
+  //   useState<string>(accessToken);
+  // const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
   const txStatus = useAppSelector((state) => state.common.genericTransaction);
 
   const resetInputState = () => {
@@ -193,33 +196,33 @@ const InterchainAgentDialog = ({
     setInputDisabled(false);
   };
 
-  const refreshTokenRequest = async () => {
-    try {
-      const response = await fetch(`${apiUrl}/refresh-token`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ refresh_token: refreshToken }),
-      });
+  // const refreshTokenRequest = async () => {
+  //   try {
+  //     const response = await fetch(`${apiUrl}/refresh-token`, {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify({ refresh_token: refreshToken }),
+  //     });
 
-      if (!response.ok) {
-        throw new Error('Failed to refresh token');
-      }
+  //     if (!response.ok) {
+  //       throw new Error('Failed to refresh token');
+  //     }
 
-      const data = await response.json();
-      setCurrentAccessToken(data.accessToken);
-      return data.accessToken;
-    } catch (error) {
-      console.error('Failed to refresh token:', error);
-      if (error instanceof Error) {
-        console.error(`Error: ${error.message}`);
-        throw error;
-      } else {
-        throw new Error(`unknown error ${error}`);
-      }
-    }
-  };
+  //     const data = await response.json();
+  //     // setCurrentAccessToken(data.accessToken);
+  //     return data.accessToken;
+  //   } catch (error) {
+  //     console.error('Failed to refresh token:', error);
+  //     if (error instanceof Error) {
+  //       console.error(`Error: ${error.message}`);
+  //       throw error;
+  //     } else {
+  //       throw new Error(`unknown error ${error}`);
+  //     }
+  //   }
+  // };
 
   const dispatchSessionItem = (
     userInput: string,
@@ -278,100 +281,139 @@ const InterchainAgentDialog = ({
         })
       );
 
-      const parsedTransaction = parseTransaction(userInput.trim());
-      if (parsedTransaction?.type === 'fetch') {
-        setIsTxn(false);
-        const chainDetails: any = chainsData.find(
-          (chain: any) =>
-            chain.axelarChainName === parsedTransaction.data?.chainId
-        );
+      // const parsedTransaction = parseTransaction(userInput.trim());
+      // if (parsedTransaction?.type === 'fetch') {
+      //   setIsTxn(false);
+      //   const chainDetails: any = chainsData.find(
+      //     (chain: any) =>
+      //       chain.axelarChainName === parsedTransaction.data?.chainId
+      //   );
 
-        const activeProposals =
-          govState?.[chainDetails?.chainId]?.active?.proposals || [];
-        // const depositProposals =
-        //   govState?.[chainDetails?.chainId]?.deposit?.proposals || [];
-        // console.log('activeProposals is ', activeProposals, depositProposals);
-        if (activeProposals.length > 0) {
-          dispatch(
-            addSessionItem({
-              request: {
-                [userInput]: {
-                  errMessage: '',
-                  result: activeProposals[0].content?.title || '',
-                  status: 'fetched',
-                  date: currentDate,
-                },
-              },
-              sessionID: currentSessionID,
-            })
-          );
-        }
-        setInputDisabled(false);
-        return;
-      }
-      if (parsedTransaction) {
-        setIsTxn(true);
-        const error = validateParsedTxnData({ parsedData: parsedTransaction });
-        if (error.length) {
-          dispatchSessionItem(userInput, 'error', error, error);
-          resetInputState();
-          return;
-        }
-        initiateTransaction({ parsedData: parsedTransaction });
-        return;
-      }
+      //   const activeProposals =
+      //     govState?.[chainDetails?.chainId]?.active?.proposals || [];
+      //   // const depositProposals =
+      //   //   govState?.[chainDetails?.chainId]?.deposit?.proposals || [];
+      //   // console.log('activeProposals is ', activeProposals, depositProposals);
+      //   if (activeProposals.length > 0) {
+      //     dispatch(
+      //       addSessionItem({
+      //         request: {
+      //           [userInput]: {
+      //             errMessage: '',
+      //             result: activeProposals[0].content?.title || '',
+      //             status: 'fetched',
+      //             date: currentDate,
+      //           },
+      //         },
+      //         sessionID: currentSessionID,
+      //       })
+      //     );
+      //   }
+      //   setInputDisabled(false);
+      //   return;
+      // }
+
+      // if (parsedTransaction?.type === 'send') {
+      //   const error = validateParsedTxnData({ parsedData: parsedTransaction });
+      //   if (error.length) {
+      //     dispatchSessionItem(userInput, 'error', error, error);
+      //     resetInputState();
+      //     return;
+      //   }
+      //   const chainID = getChainIDByCoinDenom(parsedTransaction?.data.denom);
+      //   const basicChainInfo = getChainInfo(chainID);
+      //   const requestObj = {
+      //     request: `transfer ${parsedTransaction?.data.amount} ${parsedTransaction?.data.denom} from atom_address to alice`,
+      //     mappings: {
+      //       atom_address: basicChainInfo.address,
+      //       alice: parsedTransaction.data?.address,
+      //     },
+      //   };
+      //   console.log('req isss ', requestObj, parsedTransaction.data?.chainID);
+
+      //   const response = await fetch(transactionalModelURL, {
+      //     method: 'POST',
+      //     headers: {
+      //       'Content-Type': 'application/json',
+      //     },
+      //     body: JSON.stringify(requestObj),
+      //     signal,
+      //   });
+      //   const data = await response.json();
+      //   console.log('response is ', data);
+
+      //   // initiateTransaction({ parsedData: parsedTransaction });
+      //   return;
+      // }
+
+      // if (parsedTransaction) {
+      //   setIsTxn(true);
+      //   const error = validateParsedTxnData({ parsedData: parsedTransaction });
+      //   if (error.length) {
+      //     dispatchSessionItem(userInput, 'error', error, error);
+      //     resetInputState();
+      //     return;
+      //   }
+      //   initiateTransaction({ parsedData: parsedTransaction });
+      //   return;
+      // }
 
       try {
         setUserInput('');
-        let response = await fetch(conversationalModelURL, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            // Authorization: `Bearer ${currentAccessToken}`,
-          },
-          body: JSON.stringify({
-            // deployment_id: deploymentID,
-            // plan_id: planID,
-            // subscriber: subscriber,
-            // plan_owner: planOwner,
-            // request: { request: userInput },
-            request: userInput,
-          }),
-          signal,
-        });
+        const isConversational = modelType === 'conversational';
+        let response = await fetch(
+          isConversational ? conversationalModelURL : transactionalModelURL,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(
+              isConversational
+                ? {
+                    request: userInput,
+                  }
+                : {
+                    request: userInput,
+                    mappings: {},
+                  }
+            ),
+            signal,
+          }
+        );
 
         if (!response.ok) {
-          if (response.status === 401 && !isRefreshing) {
-            setIsRefreshing(true);
-            try {
-              const newToken = await refreshTokenRequest();
-              setCurrentAccessToken(newToken);
+          // if (response.status === 401 && !isRefreshing) {
+          //   setIsRefreshing(true);
+          //   try {
+          //     const newToken = await refreshTokenRequest();
+          //     setCurrentAccessToken(newToken);
 
-              response = await fetch(`${apiUrl}`, {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                  Authorization: `Bearer ${newToken}`,
-                },
-                body: JSON.stringify({
-                  deployment_id: deploymentID,
-                  plan_id: planID,
-                  subscriber: subscriber,
-                  plan_owner: planOwner,
-                  request: { request: userInput },
-                }),
-                signal,
-              });
+          //     response = await fetch(`${apiUrl}`, {
+          //       method: 'POST',
+          //       headers: {
+          //         'Content-Type': 'application/json',
+          //         // Authorization: `Bearer ${newToken}`,
+          //       },
+          //       body: JSON.stringify({
+          //         deployment_id: deploymentID,
+          //         plan_id: planID,
+          //         subscriber: subscriber,
+          //         plan_owner: planOwner,
+          //         request: { request: userInput },
+          //       }),
+          //       signal,
+          //     });
 
-              if (!response.ok) {
-                throw new Error('Failed after token refresh');
-              }
-            } finally {
-              setIsRefreshing(false);
-            }
-          } else {
-            throw new Error('Error in API request');
-          }
+          //     if (!response.ok) {
+          //       throw new Error('Failed after token refresh');
+          //     }
+          //   } finally {
+          //     setIsRefreshing(false);
+          //   }
+          // } else {
+          // }
+          throw new Error('Error in API request');
         }
 
         let data = await response.json();
@@ -380,21 +422,26 @@ const InterchainAgentDialog = ({
         while (data.status === 'pending' || data.result === '') {
           await new Promise((resolve) => setTimeout(resolve, 2000));
 
-          response = await fetch(`${apiUrl}`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${currentAccessToken}`,
-            },
-            body: JSON.stringify({
-              deployment_id: deploymentID,
-              plan_id: planID,
-              subscriber: subscriber,
-              plan_owner: planOwner,
-              request: { request: userInput },
-            }),
-            signal,
-          });
+          response = await fetch(
+            isConversational ? conversationalModelURL : transactionalModelURL,
+            {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(
+                isConversational
+                  ? {
+                      request: userInput,
+                    }
+                  : {
+                      request: userInput,
+                      mappings: {},
+                    }
+              ),
+              signal,
+            }
+          );
 
           if (!response.ok) {
             throw new Error('Error in API request during polling');
@@ -404,19 +451,46 @@ const InterchainAgentDialog = ({
         }
 
         if (data.status === 'success') {
-          dispatch(
-            addSessionItem({
-              request: {
-                [userInput]: {
-                  errMessage: '',
-                  result: data.result,
-                  status: 'success',
-                  date: currentDate,
+          if (data.result_type === 'action') {
+            const parsedTxnInfo = JSON.parse(data.result);
+            // console.log('parsedTxnInfo is ', parsedTxnInfo);
+            if (parsedTxnInfo) {
+              const { amount, denom, from_address, to_address, action } = parsedTxnInfo;
+              const parsedTransactionPayload = {
+                type: action || "send",
+                data: {
+                  amount,
+                  denom,
+                  address: to_address,
+                  chainID: null,
+                  from_address,
                 },
-              },
-              sessionID: currentSessionID,
-            })
-          );
+              };
+              const error = validateParsedTxnData({
+                parsedData: parsedTransactionPayload,
+              });
+              if (error.length) {
+                dispatchSessionItem(userInput, 'error', error, error);
+                resetInputState();
+                return;
+              }
+              initiateTransaction({ parsedData: parsedTransactionPayload });
+            }
+          } else {
+            dispatch(
+              addSessionItem({
+                request: {
+                  [userInput]: {
+                    errMessage: '',
+                    result: data.result,
+                    status: 'success',
+                    date: currentDate,
+                  },
+                },
+                sessionID: currentSessionID,
+              })
+            );
+          }
         } else if (data.status === 'error') {
           dispatch(
             addSessionItem({

@@ -18,9 +18,9 @@ export const ARKA_BOT_CONFIG = {
   subscriber: process.env.NEXT_PUBLIC_BOT_SUBSCRIBER || '',
   theme: ARKA_BOT_THEME || {},
   conversationalModelURL:
-    process.env.NEXT_BOT_CONFIG_CONVERSATIONAL_MODEL_API || 'https://2bww74rjrq9jpa-7500.proxy.runpod.net/predict',
+    process.env.NEXT_BOT_CONFIG_CONVERSATIONAL_MODEL_API || 'https://b5q1synkj6soe9-7501.proxy.runpod.net/predict',
   transactionalModelURL:
-    process.env.NEXT_BOT_CONFIG_TRANSACTIONAL_MODEL_API || 'https://2bww74rjrq9jpa-7501.proxy.runpod.net/predict',
+    process.env.NEXT_BOT_CONFIG_TRANSACTIONAL_MODEL_API || 'https://b5q1synkj6soe9-7500.proxy.runpod.net/predict',
 };
 
 const InterchainAgent = () => {
