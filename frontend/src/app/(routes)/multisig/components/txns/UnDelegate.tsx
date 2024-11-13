@@ -46,7 +46,7 @@ const UnDelegate: React.FC<UnDelegateProps> = (props) => {
   );
 
   const delegations = useAppSelector(
-    (state: RootState) => state.staking.chains[chainID].delegations
+    (state: RootState) => state.multisig.delegations
   );
 
   useEffect(() => {
