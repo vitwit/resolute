@@ -54,7 +54,7 @@ const DialogConfirmDelete = ({
               />
               <div className="flex items-center flex-col gap-2">
                 <div className="text-h2 !font-bold">{title}</div>
-                <div className="text-b1-light">{description}</div>
+                <div className="text-b1-light text-center">{description}</div>
               </div>
             </div>
             <CustomButton

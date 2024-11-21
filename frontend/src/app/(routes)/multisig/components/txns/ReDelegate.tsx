@@ -48,7 +48,7 @@ const ReDelegate: React.FC<ReDelegateProps> = (props) => {
   );
 
   const delegations = useAppSelector(
-    (state: RootState) => state.staking.chains[chainID].delegations
+    (state: RootState) => state.multisig.delegations
   )
 
   useEffect(() => {
