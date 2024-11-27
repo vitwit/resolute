@@ -42,6 +42,7 @@ export const TxnsCard = ({
   allowRepeat,
   disableBroadcast,
   isOverview,
+  broadcastInfo,
 }: {
   txn: Txn;
   currency: Currency;
@@ -53,6 +54,11 @@ export const TxnsCard = ({
   allowRepeat?: boolean;
   disableBroadcast?: boolean;
   isOverview?: boolean;
+  broadcastInfo?: {
+    disable: boolean;
+    isSequenceLess: boolean;
+    isSequenceGreater: boolean;
+  };
 }) => {
   const dispatch = useAppDispatch();
   const { getChainInfo } = useGetChainInfo();
@@ -274,6 +280,7 @@ export const TxnsCard = ({
                   isMember={isMember}
                   disableBroadcast={disableBroadcast}
                   isOverview={isOverview}
+                  broadcastInfo={broadcastInfo}
                 />
               ) : (
                 <SignTxn

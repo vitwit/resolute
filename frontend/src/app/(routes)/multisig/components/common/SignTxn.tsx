@@ -30,6 +30,17 @@ const SignTxn: React.FC<SignTxnProps> = (props) => {
   const router = useRouter();
 
   const txnsCount = useAppSelector((state) => state.multisig.txns.Count);
+  const allTxns = useAppSelector((state) => state.multisig.txns.list);
+  const multisigAccount = useAppSelector(
+    (state) => state.multisig.multisigAccount
+  );
+
+  const partiallySigned = allTxns.filter(
+    (tx) =>
+      tx.signatures.length > 0 &&
+      tx.signatures.length < multisigAccount.account.threshold
+  );
+
   const getCount = (option: string) => {
     let count = 0;
     /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -56,7 +67,9 @@ const SignTxn: React.FC<SignTxnProps> = (props) => {
         unSignedTxn,
         walletAddress,
         rpcURLs,
+        txnSequence: unSignedTxn.txn_sequence,
         toBeBroadcastedCount,
+        partiallySignedCount: partiallySigned?.length
       })
     );
   };

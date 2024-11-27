@@ -46,7 +46,7 @@ const useInitApp = () => {
   const nameToChainIDs = useAppSelector(
     (state: RootState) => state.wallet.nameToChainIDs
   );
-  const chainIDs = Object.values(nameToChainIDs);
+  const chainIDs = ["mantra-dukong-1"] // Object.values(nameToChainIDs);
 
   const walletState = useAppSelector((state) => state.wallet);
   const isWalletConnected = useAppSelector(
@@ -57,74 +57,74 @@ const useInitApp = () => {
   const fetchedChains = useRef<{ [key: string]: boolean }>({});
   const validatorsFetchedChains = useRef<{ [key: string]: boolean }>({});
 
-  useEffect(() => {
-    if (chainIDs.length > 0 && isWalletConnected) {
-      chainIDs.forEach((chainID) => {
-        if (!fetchedChains.current[chainID]) {
-          const { address, baseURL, restURLs } = getChainInfo(chainID);
+  // useEffect(() => {
+  //   if (chainIDs.length > 0 && isWalletConnected) {
+  //     chainIDs.forEach((chainID) => {
+  //       if (!fetchedChains.current[chainID]) {
+  //         const { address, baseURL, restURLs } = getChainInfo(chainID);
 
-          if (isWalletConnected && address.length) {
-            const authzGranterAddress = convertAddress(chainID, authzAddress);
-            const { minimalDenom } = getDenomInfo(chainID);
-            const chainRequestData = {
-              baseURLs: restURLs,
-              address: isAuthzMode ? authzGranterAddress : address,
-              chainID,
-            };
+  //         if (isWalletConnected && address.length) {
+  //           const authzGranterAddress = convertAddress(chainID, authzAddress);
+  //           const { minimalDenom } = getDenomInfo(chainID);
+  //           const chainRequestData = {
+  //             baseURLs: restURLs,
+  //             address: isAuthzMode ? authzGranterAddress : address,
+  //             chainID,
+  //           };
 
-            // Fetch delegations
-            dispatch(
-              isAuthzMode
-                ? getAuthzDelegations(chainRequestData)
-                : getDelegations(chainRequestData)
-            );
+  //           // Fetch delegations
+  //           dispatch(
+  //             isAuthzMode
+  //               ? getAuthzDelegations(chainRequestData)
+  //               : getDelegations(chainRequestData)
+  //           );
 
-            // Fetch available balances
-            dispatch(
-              isAuthzMode
-                ? getAuthzBalances({ ...chainRequestData, baseURL })
-                : getBalances({ ...chainRequestData, baseURL })
-            );
+  //           // Fetch available balances
+  //           dispatch(
+  //             isAuthzMode
+  //               ? getAuthzBalances({ ...chainRequestData, baseURL })
+  //               : getBalances({ ...chainRequestData, baseURL })
+  //           );
 
-            // Fetch rewards
-            dispatch(
-              isAuthzMode
-                ? getAuthzDelegatorTotalRewards({
-                    ...chainRequestData,
-                    baseURL,
-                    denom: minimalDenom,
-                  })
-                : getDelegatorTotalRewards({
-                    ...chainRequestData,
-                    baseURL,
-                    denom: minimalDenom,
-                  })
-            );
+  //           // Fetch rewards
+  //           dispatch(
+  //             isAuthzMode
+  //               ? getAuthzDelegatorTotalRewards({
+  //                   ...chainRequestData,
+  //                   baseURL,
+  //                   denom: minimalDenom,
+  //                 })
+  //               : getDelegatorTotalRewards({
+  //                   ...chainRequestData,
+  //                   baseURL,
+  //                   denom: minimalDenom,
+  //                 })
+  //           );
 
-            // Fetch unbonding delegations
-            dispatch(
-              isAuthzMode
-                ? getAuthzUnbonding(chainRequestData)
-                : getUnbonding(chainRequestData)
-            );
+  //           // Fetch unbonding delegations
+  //           dispatch(
+  //             isAuthzMode
+  //               ? getAuthzUnbonding(chainRequestData)
+  //               : getUnbonding(chainRequestData)
+  //           );
 
-            // Mark chain as fetched
-            fetchedChains.current[chainID] = true;
-          }
-        }
-      });
-    }
-  }, [
-    isWalletConnected,
-    isAuthzMode,
-    chainIDs,
-    getChainInfo,
-    convertAddress,
-    getDenomInfo,
-    authzAddress,
-    dispatch,
-    walletState,
-  ]);
+  //           // Mark chain as fetched
+  //           fetchedChains.current[chainID] = true;
+  //         }
+  //       }
+  //     });
+  //   }
+  // }, [
+  //   isWalletConnected,
+  //   isAuthzMode,
+  //   chainIDs,
+  //   getChainInfo,
+  //   convertAddress,
+  //   getDenomInfo,
+  //   authzAddress,
+  //   dispatch,
+  //   walletState,
+  // ]);
 
   useEffect(() => {
     if (chainIDs.length > 0) {
@@ -141,9 +141,9 @@ const useInitApp = () => {
     }
   }, [chainIDs, walletState]);
 
-  useFetchPriceInfo();
-  useInitFeegrant({ chainIDs, shouldFetch: isFeegrantModeEnabled });
-  useInitAuthz({ chainIDs, shouldFetch: fetchAuthz(isAuthzMode) });
+  // useFetchPriceInfo();
+  // useInitFeegrant({ chainIDs, shouldFetch: isFeegrantModeEnabled });
+  // useInitAuthz({ chainIDs, shouldFetch: fetchAuthz(isAuthzMode) });
 };
 
 export default useInitApp;

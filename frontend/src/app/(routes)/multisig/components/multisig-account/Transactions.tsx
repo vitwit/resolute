@@ -1,5 +1,8 @@
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
-import { getTxns } from '@/store/features/multisig/multisigSlice';
+import {
+  getSequenceNumber,
+  getTxns,
+} from '@/store/features/multisig/multisigSlice';
 import { Txn } from '@/types/multisig';
 import React, { useEffect, useState } from 'react';
 import { TxStatus } from '@/types/enums';
@@ -8,6 +11,7 @@ import useFetchTxns from '@/custom-hooks/multisig/useFetchTxns';
 import NoData from '@/components/common/NoData';
 import TransactionsLoading from '../loaders/TransactionsLoading';
 import DialogTxnFailed from './DialogTxnFailed';
+import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 
 const TXNS_TYPES = [
   { option: 'to-sign', value: 'To be Signed' },
@@ -28,6 +32,8 @@ const Transactions = ({
   threshold: number;
 }) => {
   const dispatch = useAppDispatch();
+  const { getChainInfo } = useGetChainInfo();
+  const { restURLs } = getChainInfo(chainID);
   const txnsState = useAppSelector((state) => state.multisig.txns.list);
 
   const [txnsList, setTxnsList] = useState<Txn[]>([]);
@@ -244,12 +250,15 @@ const TransactionsList = ({
     setErrMsg(errMsg);
     setViewErrorDialogOpen(true);
   };
+  const currentSequenceNumber = useAppSelector(
+    (state) => state.multisig.multisigAccountSequenceNumber.value
+  );
   const sortedTxns = [...txns].sort((a, b) => {
     const dateA = new Date(
-      txnsType === 'to-broadcast' ? a.signed_at : a.created_at
+      txnsType === 'to-broadcast' ? a.txn_sequence ?? a.signed_at : a.created_at
     ).getTime();
     const dateB = new Date(
-      txnsType === 'to-broadcast' ? b.signed_at : b.created_at
+      txnsType === 'to-broadcast' ? b.txn_sequence ?? b.signed_at : b.created_at
     ).getTime();
     return txnsType === 'to-broadcast' ? dateA - dateB : dateB - dateA;
   });
@@ -267,7 +276,25 @@ const TransactionsList = ({
           isHistory={isHistory}
           onViewError={onViewError}
           allowRepeat={txnsType === 'completed'}
-          disableBroadcast={txnsType === 'to-broadcast' && index > 0}
+          disableBroadcast={
+            txnsType === 'to-broadcast' &&
+            currentSequenceNumber !== txn.txn_sequence
+          }
+          broadcastInfo={{
+            disable:
+              txnsType === 'to-broadcast' &&
+              currentSequenceNumber !== null &&
+              txn.txn_sequence !== null &&
+              currentSequenceNumber !== txn.txn_sequence,
+            isSequenceLess:
+              txn.txn_sequence !== null &&
+              currentSequenceNumber !== null &&
+              txn.txn_sequence < currentSequenceNumber,
+            isSequenceGreater:
+              txn.txn_sequence !== null &&
+              currentSequenceNumber !== null &&
+              txn.txn_sequence > currentSequenceNumber,
+          }}
         />
       ))}
       <DialogTxnFailed

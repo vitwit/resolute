@@ -10,6 +10,8 @@ import {
   resetsignTransactionRes,
   resetUpdateTxnState,
   setVerifyDialogOpen,
+  getSequenceNumber,
+  resetSequenceNumber,
 } from '@/store/features/multisig/multisigSlice';
 import { useEffect, useState } from 'react';
 import MultisigAccountHeader from './MultisigAccountHeader';
@@ -71,6 +73,10 @@ const MultisigAccount = ({
   );
   const members = multisigAccount.pubkeys.map((pubkey) => pubkey.address);
 
+  const broadcastTxnStatus = useAppSelector(
+    (state) => state.multisig.broadcastTxnRes.status
+  );
+
   const { name: multisigName, created_at: createdTime } =
     multisigAccount.account;
 
@@ -108,6 +114,20 @@ const MultisigAccount = ({
     dispatch(resetUpdateTxnState());
     dispatch(resetBroadcastTxnRes());
     dispatch(resetsignTransactionRes());
+  }, []);
+
+  useEffect(() => {
+    if (multisigAddress) {
+      dispatch(
+        getSequenceNumber({ baseURLs: restURLs, chainID, multisigAddress })
+      );
+    }
+  }, [broadcastTxnStatus, multisigAddress]);
+
+  useEffect(() => {
+    return () => {
+      dispatch(resetSequenceNumber());
+    };
   }, []);
 
   const createNewTxn = () => {

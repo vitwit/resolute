@@ -25,7 +25,9 @@ const signTransaction = async (
   unSignedTxn: Txn,
   walletAddress: string,
   rpcURLs: string[],
-  toBeBroadcastedCount: number
+  toBeBroadcastedCount: number,
+  partiallySignedCount: number,
+  txnSequence: number | null
 ) => {
   try {
     window.wallet.defaultOptions = {
@@ -45,10 +47,13 @@ const signTransaction = async (
     if (!multisigAcc) {
       throw new Error('Multisig account does not exist on chain');
     }
+    const updatedTxnSequence =
+      txnSequence ??
+      multisigAcc?.sequence + toBeBroadcastedCount + partiallySignedCount;
 
     const signerData = {
       accountNumber: multisigAcc?.accountNumber,
-      sequence: multisigAcc?.sequence + toBeBroadcastedCount,
+      sequence: updatedTxnSequence,
       chainId: chainID,
     };
 
@@ -67,6 +72,7 @@ const signTransaction = async (
       txId: unSignedTxn.id || NaN,
       address: multisigAddress,
       signature: toBase64(signatures[0]),
+      txnSequence: updatedTxnSequence
     };
 
     return payload;

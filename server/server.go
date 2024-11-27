@@ -96,6 +96,7 @@ func main() {
 	e.GET("/txns/:chainId/:address", h.GetAllTransactions)
 	e.GET("/txns/:chainId/:address/:txhash", h.GetChainTxHash)
 	e.GET("/search/txns/:txhash", h.GetTxHash)
+	e.POST("/multisig/:address/reset-txns", h.ResetPendingTransactions, m.AuthMiddleware)
 
 	// users
 	e.POST("/users/:address/signature", h.CreateUserSignature)
