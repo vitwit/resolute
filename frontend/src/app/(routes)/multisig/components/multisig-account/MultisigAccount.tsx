@@ -2,7 +2,6 @@ import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import {
   getDelegations as getMultisigDelegations,
-  getMultisigAccounts,
   getMultisigBalances,
   multisigByAddress,
   resetBroadcastTxnRes,
@@ -105,7 +104,6 @@ const MultisigAccount = ({
         })
       );
       dispatch(multisigByAddress({ address: multisigAddress }));
-      dispatch(getMultisigAccounts(walletAddress));
     }
   }, [chainID]);
 
@@ -215,12 +213,6 @@ const MultisigAccountInfo = ({
   const [availableBalance, setAvailableBalance] = useState<number>(0);
   const [hasIBCTokens, setHasIBCTokens] = useState(false);
 
-  const multisigAccount = useAppSelector(
-    (state) => state.multisig.multisigAccount
-  );
-  const multisigAccounts = useAppSelector(
-    (state) => state.multisig.multisigAccounts
-  );
   const totalStaked = useAppSelector(
     (state) => state.multisig?.delegations.totalStaked
   );
@@ -237,8 +229,22 @@ const MultisigAccountInfo = ({
     currency.coinDecimals,
     currency.coinMinimalDenom
   );
-  const { txnCounts = {} } = multisigAccounts;
-  const actionsRequired = txnCounts?.[multisigAccount?.account?.address] || 0;
+  const txnsCount = useAppSelector((state) => state.multisig.txns.Count);
+
+  const getCount = (option: string) => {
+    let count = 0;
+    /* eslint-disable @typescript-eslint/no-explicit-any */
+    txnsCount &&
+      txnsCount.forEach((t: any) => {
+        if (t?.computed_status?.toLowerCase() === option.toLowerCase()) {
+          count = t?.count;
+        }
+      });
+
+    return count;
+  };
+
+  const actionsRequired = getCount('to-sign') + getCount('to-broadcast');
 
   useEffect(() => {
     setAvailableBalance(

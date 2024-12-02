@@ -16,11 +16,16 @@ interface SignTxnProps {
   unSignedTxn: Txn;
   isMember: boolean;
   chainID: string;
+  isSigned: boolean;
   isOverview?: boolean;
 }
 
+// TODO: Sequence number is not available is the txn is signed before adding txn_Sequence into db
+// This needs to be handled
+
 const SignTxn: React.FC<SignTxnProps> = (props) => {
-  const { address, isMember, unSignedTxn, chainID, isOverview } = props;
+  const { address, isMember, unSignedTxn, chainID, isOverview, isSigned } =
+    props;
   const dispatch = useAppDispatch();
   const { getChainInfo } = useGetChainInfo();
   const { address: walletAddress, rpcURLs, chainName } = getChainInfo(chainID);
@@ -69,14 +74,14 @@ const SignTxn: React.FC<SignTxnProps> = (props) => {
         rpcURLs,
         txnSequence: unSignedTxn.txn_sequence,
         toBeBroadcastedCount,
-        partiallySignedCount: partiallySigned?.length
+        partiallySignedCount: partiallySigned?.length,
       })
     );
   };
 
   return (
     <CustomButton
-      btnText="Sign"
+      btnText={isSigned ? 'Signed' : 'Sign'}
       btnDisabled={!isMember}
       btnOnClick={() => {
         if (isOverview) {

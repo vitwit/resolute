@@ -33,9 +33,9 @@ import {
   MultisigAddressPubkey,
   MultisigState,
   QueryParams,
-  SignTxInputs,
   Txn,
   UpdateTxnInputs,
+  UpdateTxnSequencesInputs,
 } from '@/types/multisig';
 import {
   getRandomNumber,
@@ -160,6 +160,10 @@ const initialState: MultisigState = {
   verifyDialogOpen: false,
   multisigAccountSequenceNumber: {
     value: null,
+    status: TxStatus.INIT,
+    error: '',
+  },
+  updateTxnSequences: {
     status: TxStatus.INIT,
     error: '',
   },
@@ -313,6 +317,25 @@ export const getSequenceNumber = createAsyncThunk(
         },
       };
     } catch (error) {
+      if (error instanceof AxiosError)
+        return rejectWithValue({ message: error.message });
+      return rejectWithValue({ message: ERR_UNKNOWN });
+    }
+  }
+);
+
+export const updateTxnSequences = createAsyncThunk(
+  'multisig/update-txn-sequences',
+  async (data: UpdateTxnSequencesInputs, { rejectWithValue }) => {
+    try {
+      const response = await multisigService.updateTxnSequences(
+        data.queryParams,
+        data.data.address
+      );
+      trackEvent('MULTISIG', 'UPDATE_TXN_SEQUENCES', SUCCESS);
+      return response.data;
+    } catch (error) {
+      trackEvent('MULTISIG', 'UPDATE_TXN_SEQUENCES', FAILED);
       if (error instanceof AxiosError)
         return rejectWithValue({ message: error.message });
       return rejectWithValue({ message: ERR_UNKNOWN });
@@ -611,28 +634,6 @@ export const signTransaction = createAsyncThunk(
   }
 );
 
-// export const signTx = createAsyncThunk(
-//   'multisig/signTx',
-//   async (data: SignTxInputs, { rejectWithValue }) => {
-//     try {
-//       const response = await multisigService.signTx(
-//         data.queryParams,
-//         data.data.address,
-//         data.data.txId,
-//         {
-//           signer: data.data.signer,
-//           signature: data.data.signature,
-//         }
-//       );
-//       return response.data;
-//     } catch (error) {
-//       if (error instanceof AxiosError)
-//         return rejectWithValue({ message: error.message });
-//       return rejectWithValue({ message: ERR_UNKNOWN });
-//     }
-//   }
-// );
-
 export const importMultisigAccount = createAsyncThunk(
   'multisig/importMultisigAccount',
   async (
@@ -716,6 +717,9 @@ export const multisigSlice = createSlice({
     resetSequenceNumber: (state) => {
       state.multisigAccountSequenceNumber =
         initialState.multisigAccountSequenceNumber;
+    },
+    resetUpdateTxnSequences: (state) => {
+      state.updateTxnSequences = initialState.updateTxnSequences;
     },
     setVerifyDialogOpen: (state, action: PayloadAction<boolean>) => {
       state.verifyDialogOpen = action.payload;
@@ -838,6 +842,26 @@ export const multisigSlice = createSlice({
         state.multisigAccount.error = payload.message || '';
       });
     builder
+      .addCase(updateTxnSequences.pending, (state) => {
+        state.updateTxnSequences = {
+          status: TxStatus.PENDING,
+          error: '',
+        };
+      })
+      .addCase(updateTxnSequences.fulfilled, (state) => {
+        state.updateTxnSequences = {
+          status: TxStatus.IDLE,
+          error: '',
+        };
+      })
+      .addCase(updateTxnSequences.rejected, (state, action) => {
+        const payload = action.payload as { message: string };
+        state.updateTxnSequences = {
+          status: TxStatus.REJECTED,
+          error: payload.message || '',
+        };
+      });
+    builder
       .addCase(getMultisigBalances.pending, (state) => {
         state.balance.status = TxStatus.PENDING;
         state.balance.error = '';
@@ -940,18 +964,6 @@ export const multisigSlice = createSlice({
         const payload = action.payload as { message: string };
         state.txns.error = payload.message || '';
       });
-    // builder
-    //   .addCase(signTx.pending, (state) => {
-    //     state.signTxRes.status = TxStatus.PENDING;
-    //   })
-    //   .addCase(signTx.fulfilled, (state) => {
-    //     state.signTxRes.status = TxStatus.IDLE;
-    //   })
-    //   .addCase(signTx.rejected, (state, action) => {
-    //     state.signTxRes.status = TxStatus.REJECTED;
-    //     const payload = action.payload as { message: string };
-    //     state.signTxRes.error = payload.message || '';
-    //   });
     builder
       .addCase(signTransaction.pending, (state) => {
         state.signTransactionRes.status = TxStatus.PENDING;
@@ -1011,6 +1023,7 @@ export const {
   resetsignTransactionRes,
   setVerifyDialogOpen,
   resetSequenceNumber,
+  resetUpdateTxnSequences,
 } = multisigSlice.actions;
 
 export default multisigSlice.reducer;

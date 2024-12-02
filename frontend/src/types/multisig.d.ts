@@ -69,6 +69,13 @@ interface DeleteTxnInputs {
   };
 }
 
+interface UpdateTxnSequencesInputs {
+  queryParams: QueryParams;
+  data: {
+    address: string;
+  };
+}
+
 interface MultisigAddressPubkey {
   address: string;
   multisig_address: string;
@@ -152,6 +159,10 @@ interface MultisigState {
   };
   multisigAccountSequenceNumber: {
     value: number | null;
+    status: TxStatus;
+    error: string;
+  };
+  updateTxnSequences: {
     status: TxStatus;
     error: string;
   };

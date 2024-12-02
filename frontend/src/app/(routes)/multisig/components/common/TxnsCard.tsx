@@ -30,6 +30,8 @@ import useVerifyAccount from '@/custom-hooks/useVerifyAccount';
 import { fee } from '@/txns/execute';
 import DialogRepeatTxn from '../DialogRepeatTxn';
 import { getTimeDifferenceToFutureDate } from '@/utils/dataTime';
+import { setError } from '@/store/features/common/commonSlice';
+import { ADMIN_ONLY_ALLOWED } from '@/utils/errors';
 
 export const TxnsCard = ({
   txn,
@@ -40,7 +42,6 @@ export const TxnsCard = ({
   isHistory,
   onViewError,
   allowRepeat,
-  disableBroadcast,
   isOverview,
   broadcastInfo,
 }: {
@@ -52,12 +53,12 @@ export const TxnsCard = ({
   isHistory: boolean;
   onViewError?: (errMsg: string) => void;
   allowRepeat?: boolean;
-  disableBroadcast?: boolean;
   isOverview?: boolean;
   broadcastInfo?: {
     disable: boolean;
     isSequenceLess: boolean;
     isSequenceGreater: boolean;
+    isSequenceAvailable: boolean;
   };
 }) => {
   const dispatch = useAppDispatch();
@@ -67,6 +68,11 @@ export const TxnsCard = ({
   const { isAccountVerified } = useVerifyAccount({
     address: walletAddress,
   });
+  const multisigAccount = useAppSelector(
+    (state) => state.multisig.multisigAccount
+  );
+  const isAdmin =
+    multisigAccount?.account?.created_by === (walletAddress || '');
 
   const [showAll, setShowAll] = useState(false);
   const [viewRawOpen, setViewRawOpen] = useState(false);
@@ -87,7 +93,15 @@ export const TxnsCard = ({
 
   const loading = useAppSelector((state) => state.multisig.deleteTxnRes.status);
 
+  const isSigned = txn?.signatures?.some(
+    (sign) => sign.address === walletAddress
+  );
+
   const hanldeDeleteTxn = () => {
+    if (!isAdmin) {
+      dispatch(setError({ type: 'error', message: ADMIN_ONLY_ALLOWED }));
+      return;
+    }
     if (isAccountVerified()) {
       setDeleteDialogOpen(true);
     } else {
@@ -278,7 +292,6 @@ export const TxnsCard = ({
                   threshold={threshold}
                   chainID={chainID}
                   isMember={isMember}
-                  disableBroadcast={disableBroadcast}
                   isOverview={isOverview}
                   broadcastInfo={broadcastInfo}
                 />
@@ -290,6 +303,7 @@ export const TxnsCard = ({
                   txId={txn.id}
                   unSignedTxn={txn}
                   isOverview={isOverview}
+                  isSigned={isSigned}
                 />
               )}
             </>
