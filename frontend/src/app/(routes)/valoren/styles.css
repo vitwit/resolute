@@ -1,0 +1,3 @@
+.error-chip {
+  @apply text-[12px] rounded-lg bg-[#ff00005b] text-center leading-normal max-w-fit py-1 px-2 truncate;
+}

@@ -7,6 +7,7 @@ const FEEGRANT_KEY = 'feegrant_key';
 const FEEGRANT_VALUE = 'feegrant_value';
 const IBC_TXNS_KEY = 'IBC_Txns';
 const AUTHZ_ALERT_KEY = 'authz_alert';
+const VALOREN_AUTH_STORAGE_KEY = 'valoren_auth';
 
 interface LocalNetworks {
   [key: string]: Network;
@@ -279,3 +280,37 @@ export function isAuthzAlertDataSet() {
 export function removeAuthzAlertData() {
   localStorage.removeItem(AUTHZ_ALERT_KEY);
 }
+
+interface ValorenAuth {
+  pubKey: string;
+  signature: string;
+  address: string;
+}
+
+export const getStoredValorenAuth = (): ValorenAuth | null => {
+  const stored = localStorage.getItem(VALOREN_AUTH_STORAGE_KEY);
+  if (!stored) return null;
+
+  try {
+    return JSON.parse(stored) as ValorenAuth;
+  } catch {
+    return null;
+  }
+};
+
+export const storeValorenAuth = (
+  pubKey: string,
+  signature: string,
+  address: string
+) => {
+  const auth: ValorenAuth = {
+    pubKey,
+    signature,
+    address,
+  };
+  localStorage.setItem(VALOREN_AUTH_STORAGE_KEY, JSON.stringify(auth));
+};
+
+export const clearStoredValorenAuth = () => {
+  localStorage.removeItem(VALOREN_AUTH_STORAGE_KEY);
+};

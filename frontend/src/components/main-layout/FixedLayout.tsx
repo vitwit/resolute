@@ -18,6 +18,7 @@ import {
   unsetIsLoading,
 } from '@/store/features/wallet/walletSlice';
 import {
+  clearStoredValorenAuth,
   getLocalNetworks,
   getWalletName,
   isConnected,
@@ -106,6 +107,7 @@ const FixedLayout = ({ children }: { children: React.ReactNode }) => {
     const accountChangeListener = () => {
       setTimeout(() => tryConnectWallet(walletName), 1000);
       removeAllAuthTokens();
+      clearStoredValorenAuth();
       window.location.reload();
     };
 

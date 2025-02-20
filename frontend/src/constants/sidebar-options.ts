@@ -72,4 +72,12 @@ export const SIDEBAR_MENU_OPTIONS: MenuItemI[] = [
     isMetaMaskSupported: false,
     multipleOptions: true,
   },
+  {
+    name: 'Valoren',
+    icon: '/sidebar-menu-icons/valoren-icon.svg',
+    path: '/valoren',
+    authzSupported: false,
+    isMetaMaskSupported: false,
+    multipleOptions: false,
+  },
 ];
