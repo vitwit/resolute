@@ -25,7 +25,6 @@ import { GOV_VOTE_OPTIONS } from '@/constants/gov-constants';
 export function initializeGA () {
   ReactGA.initialize('G-RTXGXXDNNS');
   console.log("GA INITIALIZED");
-  trackEvent('TRANSFER', 'MULTI_SEND', 'SUCCESS')
 };
 
 export const trackEvent = (category: string, action: string, label: string) => {
