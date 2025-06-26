@@ -25,3 +25,16 @@ BEGIN
         ADD COLUMN signed_at TIMESTAMP DEFAULT NULL;
     END IF;
 END $$;
+
+DO $$
+BEGIN
+    -- Check and add the txn_sequence column if it doesn't exist
+    IF NOT EXISTS (
+        SELECT 1
+        FROM information_schema.columns
+        WHERE table_name = 'transactions' AND column_name = 'txn_sequence'
+    ) THEN
+        ALTER TABLE transactions
+        ADD COLUMN txn_sequence INTEGER DEFAULT NULL;
+    END IF;
+END $$;

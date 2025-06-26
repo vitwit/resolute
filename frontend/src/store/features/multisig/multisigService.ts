@@ -28,6 +28,9 @@ const SIGNATURE_PARAMS_STRING = (queryParams: QueryParams): string =>
 const CREATE_ACCOUNT = (queryParams: QueryParams): string =>
   `/multisig` + SIGNATURE_PARAMS_STRING(queryParams);
 
+const UPDATE_TXN_SEQUENCES = (address: string) =>
+  `${BASE_URL}/multisig/${address}/reset-txns`;
+
 const SIGN_URL = (
   queryParams: QueryParams,
   address: string,
@@ -102,6 +105,14 @@ export const getAccountAllMultisigTxns = (
   return Axios.get(uri);
 };
 
+export const updateTxnSequences = (
+  queryParams: QueryParams,
+  address: string
+): Promise<AxiosResponse> =>
+  Axios.delete(
+    UPDATE_TXN_SEQUENCES(address) + SIGNATURE_PARAMS_STRING(queryParams), 
+  );
+
 export const deleteTx = (
   queryParams: QueryParams,
   address: string,
@@ -147,4 +158,5 @@ export default {
   verifyUser,
   getAccountAllMultisigTxns,
   getStargateClient,
+  updateTxnSequences
 };

@@ -27,10 +27,18 @@ export const INSUFFICIENT_BALANCE = 'Insufficient balance';
 export const NOT_MULTISIG_MEMBER_ERROR =
   'Cannot import account: You are not a member of the multisig account';
 export const NOT_MULTISIG_ACCOUNT_ERROR = 'Not a multisig account';
-export const CHAIN_NOT_SELECTED_ERROR = 'Please select at least one network from the left';
-export const MSG_NOT_SELECTED_ERROR = 'Please select at least one transaction message from the left';
+export const CHAIN_NOT_SELECTED_ERROR =
+  'Please select at least one network from the left';
+export const MSG_NOT_SELECTED_ERROR =
+  'Please select at least one transaction message from the left';
 export const PERMISSION_NOT_SELECTED_ERROR =
   'Atleast one permission must be selected';
 export const FAILED_TO_FETCH = 'Failed to fetch';
 export const NETWORK_ERROR = 'Network error';
 export const ERR_TXN_NOT_FOUND = 'TXN not found';
+export const CANNOT_BROADCAST_ERROR =
+  'Cannot broadcast, There is transaction that need to be broadcasted before this.';
+export const FAILED_TO_UPDATE_SEQUENCE = 'Failed to update sequence';
+export const UPDATED_SEQUENCE_SUCCESSFULLY = 'Successfully updated sequence';
+export const ADMIN_ONLY_ALLOWED = 'Delete action is limited to the admin only';
+export const FAILED_TO_BROADCAST_TRY_AGAIN = 'Failed to broadcast. Please try again.';
