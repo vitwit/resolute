@@ -1,0 +1,14 @@
+[Unit]
+Description=Yarn
+After=network.target
+
+[Service]
+ExecStart={{ user_home }}/.nvm/nvm.sh && nvm use 18 && yarn start
+Restart=on-failure
+User={{ ansible_user }}
+Environment=HOME={{ user_home }}
+Environment=NVM_DIR={{ user_home }}/.nvm
+Environment=PATH={{ user_home }}/.nvm/versions/node/v18.20.3/bin:{{ user_home }}/.nvm/versions/node/v18.20.3/lib/node_modules/yarn/bin:$PATH
+
+[Install]
+WantedBy=multi-user.target
