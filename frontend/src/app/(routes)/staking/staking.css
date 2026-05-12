@@ -1,0 +1,228 @@
+.staking-sidebar {
+  @apply p-6 w-[500px] bg-[#0E0B26] h-screen max-h-screen overflow-y-hidden;
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+}
+
+.staking-stats-card {
+  @apply bg-[#FFFFFF0D] rounded-2xl p-2;
+  backdrop-filter: blur(2px);
+}
+
+.staking-actions-menu {
+  @apply rounded-2xl;
+  background: linear-gradient(
+    180deg,
+    rgba(31, 24, 78, 0.9) 31.25%,
+    rgba(139, 61, 167, 0.9) 100%
+  );
+  backdrop-filter: blur(5px);
+}
+
+.staking-actions-menu-item {
+  @apply px-4 py-2 text-[14px] w-[150px] font-medium leading-normal cursor-pointer;
+}
+
+.staking-actions-menu-item:hover {
+  background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
+}
+
+.staking-card,
+.unbonding-card {
+  @apply p-4 rounded-2xl bg-[#0E0B26] overflow-x-hidden;
+  backdrop-filter: blur(2px);
+}
+
+.staking-card-action-button,
+.cancel-unbonding-btn {
+  @apply min-w-[80px] cursor-pointer rounded-lg text-xs font-medium leading-5 tracking-[0.48px] h-8 flex items-center justify-center px-3;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(74, 162, 156, 0.9) 0%,
+      rgba(139, 61, 167, 0.9) 100%
+    ),
+    lightgray 50% / cover no-repeat;
+}
+
+.cancel-unbonding-btn {
+  @apply min-w-fit;
+}
+
+.unbonding-card {
+  @apply flex flex-col gap-4;
+}
+
+.staking-sidebar-actions {
+  @apply flex gap-6 text-[16px] leading-[20px] font-medium;
+}
+
+.staking-sidebar-actions-btn {
+  @apply w-1/2 px-6 py-3 rounded-2xl;
+  background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
+}
+
+.allvalidators {
+  border-radius: 24px;
+  opacity: 0.95;
+}
+
+.custom-radio-button-label {
+  @apply flex items-center cursor-pointer gap-2;
+}
+
+.custom-radio-button {
+  @apply border-2 w-4 h-4 border-[#FFFFFF80] rounded-full flex justify-center items-center;
+}
+
+.custom-radio-button-checked {
+  @apply h-[6px] w-[6px] bg-white rounded-full;
+}
+
+.delegate-button {
+  @apply px-3 py-[6px] text-[12px] leading-[20px] rounded-lg font-medium;
+  background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
+}
+
+.delegate-button-disabled {
+  @apply bg-[#FFFFFF1A] text-[#FFFFFF1A] cursor-not-allowed;
+  background: #ffffff1a;
+}
+
+.overview-grid {
+  @apply grid grid-cols-1 gap-6 md:grid-cols-2;
+}
+
+.unbondings-grid {
+  @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6;
+}
+
+.staking-main {
+  @apply px-10 py-6 flex-1 h-screen max-h-screen overflow-y-scroll;
+}
+
+.search-validator-field {
+  @apply my-6 h-12 flex bg-[#FFFFFF1A] items-center px-6 py-2 rounded-2xl hover:bg-[#ffffff11];
+  border: 1px solid transparent;
+}
+
+.search-validator-field:focus-within {
+  border: 1px solid #ffffff4a;
+}
+
+.search-validator-input {
+  @apply w-full pl-2 border-none cursor-text focus:outline-none bg-transparent placeholder:text-[14px] placeholder:text-[#FFFFFFBF] placeholder:font-extralight text-[#FFFFFFBF];
+}
+
+.dialog-delegate-button {
+  @apply py-[10px] px-10 rounded-2xl min-w-[168px];
+  background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
+}
+
+.cancel-button {
+  @apply text-[16px] leading-[20px] font-medium tracking-[0.64px] underline underline-offset-2 cursor-pointer;
+}
+
+.no-delegations {
+  @apply mt-36 text-[16px] font-medium text-center;
+}
+
+.sidebar-delegate-button {
+  @apply px-3 py-[6px] text-[12px] leading-[20px] rounded-lg font-medium;
+}
+
+.error-box {
+  @apply flex justify-end mt-2 h-[26px];
+}
+
+.error-chip {
+  @apply text-[12px] rounded-lg bg-[#ff00005b] text-center leading-normal max-w-fit py-1 px-2 truncate;
+}
+
+.no-data {
+  @apply my-[5%] flex-1 flex flex-col justify-center items-center;
+}
+
+.amount-options {
+  @apply text-sm not-italic font-normal leading-[normal] rounded-[100px];
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(2px);
+}
+
+.amount-options-default {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.amount-options-fill {
+  background:
+    linear-gradient(
+      180deg,
+      rgba(74, 162, 156, 0.9) 0%,
+      rgba(139, 61, 167, 0.9) 100%
+    ),
+    lightgray 50% / cover no-repeat;
+}
+
+.update-address-btn {
+  @apply rounded-2xl font-medium tracking-[0.64px] px-10 py-[10px] flex justify-center items-center;
+}
+.staking-rewards-background {
+  @apply flex justify-center items-center gap-2.5 px-10 py-10 rounded-3xl;
+  background: rgba(255, 255, 255, 0.1);
+}
+.staking-rewards-actions-btn {
+  @apply px-6 py-3 rounded-2xl;
+  background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
+}
+
+.claim-button {
+  @apply py-[10px] px-10 rounded-2xl flex justify-center items-center;
+  background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
+}
+.amount-input-field {
+  @apply bg-transparent w-full border-none focus:outline-none text-[40px] font-bold placeholder:text-[#FFFFFF33];
+}
+
+.amount-input-field::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.staking-alert {
+  @apply flex flex-col items-start gap-2 px-6 py-4 rounded-2xl;
+  background: rgba(255, 255, 255, 0.08);
+}
+.unBonding-card {
+  @apply flex flex-col items-start gap-10 px-4 py-6 rounded-2xl;
+  /* background: rgba(255, 255, 255, 0.02); */
+  background: linear-gradient(48deg, rgb(255 255 255 / 3%) 0%, rgb(153 153 153 / 25%) 100%);
+}
+.delegations-card {
+  @apply flex flex-col justify-center items-start gap-6 p-4 rounded-2xl;
+  /* background: rgba(255, 255, 255, 0.02); */
+  background: linear-gradient(48deg, rgb(255 255 255 / 3%) 0%, rgb(153 153 153 / 25%) 100%);
+}
+.staked-amount-red-badge {
+  @apply border flex justify-center items-center gap-2 px-3 py-0 rounded-[100px] border-solid border-[#F15757] h-[25px];
+  background: rgba(241, 87, 87, 0.5);
+}
+.status-active {
+  @apply flex h-2 w-2 justify-center items-center gap-2 border rounded-full border-solid border-[#2BA472];
+  background: rgba(43, 164, 114, 0.5);
+}
+.status-jailed {
+  @apply flex h-2 w-2 justify-center items-center gap-2 border rounded-full border-solid border-[#D92101];
+  background: rgba(217, 33, 1, 0.5);
+}
+.status-unbonded {
+  @apply border h-2 w-2 flex justify-center items-center rounded-full border-solid border-[#FFC13C];
+  background: rgba(255, 193, 60, 0.5);
+}
+.reDelegate-dropdown {
+  @apply backdrop-blur-[15px] flex flex-col items-start rounded-2xl;
+  background: rgba(255, 255, 255, 0.08);
+}
+.staking-summary-card {
+  @apply flex-1 rounded-2xl p-6 flex flex-col justify-center items-center gap-4 h-[92px];
+  /* background: rgba(255, 255, 255, 0.02); */
+  background: linear-gradient(48deg, rgb(255 255 255 / 3%) 0%, rgb(153 153 153 / 25%) 100%);
+}
