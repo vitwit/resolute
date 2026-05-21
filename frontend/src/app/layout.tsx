@@ -6,6 +6,7 @@ import Script from 'next/script';
 import { OpenGraph } from 'next/dist/lib/metadata/types/opengraph-types';
 import dynamic from 'next/dynamic';
 import Loading from '@/components/main-layout/Loading';
+import ShutdownBanner from '@/components/ShutdownBanner'
 
 const TRACKING_ID = 'G-RTXGXXDNNS';
 
@@ -41,6 +42,7 @@ export default function RootLayout({
       <body>
         {
           <StoreProvider>
+            <ShutdownBanner />
             <div className="layout">
               <SnackBar />
               <FixedLayout>{children}</FixedLayout>
