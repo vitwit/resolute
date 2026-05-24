@@ -1,0 +1,15 @@
+
+[Unit]
+Description=Go Server
+After=network.target
+
+[Service]
+WorkingDirectory={{ user_home }}/resolute/server
+ExecStart=/usr/local/go/bin/go run server.go
+Environment="HOME={{ user_home }}"
+Environment="PATH=/usr/local/go/bin:/usr/bin:/bin"
+User={{ ansible_user }}
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
