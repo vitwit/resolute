@@ -81,4 +81,4 @@ To add a new network to Resolute, please follow these steps:
 4. Add the token denom and coingecko-id in backend for token price. (Refer: [Set up backend server](./BACKEND_SERVER_README.md))
 
 ## License
-Released under the [License](https://github.com/vitwit/resolute/blob/master/LICENSE).
+Released under the [MIT License](https://github.com/vitwit/resolute/blob/master/LICENSE).
