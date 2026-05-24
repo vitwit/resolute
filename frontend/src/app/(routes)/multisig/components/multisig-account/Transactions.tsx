@@ -44,6 +44,9 @@ const Transactions = ({
     (state) => state.multisig.signTransactionRes
   );
   const updateTxStatus = useAppSelector((state) => state.multisig.updateTxnRes);
+  const updateTxnSequencesStatus = useAppSelector(
+    (state) => state.multisig.updateTxnSequences
+  );
 
   const handleTxnsTypeChange = (type: string) => {
     setTxnsType(type);
@@ -110,7 +113,8 @@ const Transactions = ({
     if (
       signTxStatus.status === TxStatus.IDLE ||
       updateTxStatus.status === TxStatus.IDLE ||
-      updateTxStatus.status === TxStatus.REJECTED
+      updateTxStatus.status === TxStatus.REJECTED ||
+      updateTxnSequencesStatus.status === TxStatus.IDLE
     ) {
       if (['failed', 'history', 'completed'].includes(txnsType)) {
         fetchTxns('history');
@@ -118,7 +122,11 @@ const Transactions = ({
         fetchTxns('current');
       }
     }
-  }, [signTxStatus.status, updateTxStatus.status]);
+  }, [
+    signTxStatus.status,
+    updateTxStatus.status,
+    updateTxnSequencesStatus.status,
+  ]);
 
   // To reset state after singing or broadcasting txn
   useFetchTxns();
@@ -244,13 +252,24 @@ const TransactionsList = ({
     setErrMsg(errMsg);
     setViewErrorDialogOpen(true);
   };
+  const currentSequenceNumber = useAppSelector(
+    (state) => state.multisig.multisigAccountSequenceNumber.value
+  );
   const sortedTxns = [...txns].sort((a, b) => {
-    const dateA = new Date(
-      txnsType === 'to-broadcast' ? a.signed_at : a.created_at
-    ).getTime();
-    const dateB = new Date(
-      txnsType === 'to-broadcast' ? b.signed_at : b.created_at
-    ).getTime();
+    const dateA =
+      txnsType === 'to-broadcast'
+        ? a.txn_sequence !== null
+          ? a.txn_sequence
+          : new Date(a.signed_at).getTime()
+        : new Date(a.created_at).getTime();
+
+    const dateB =
+      txnsType === 'to-broadcast'
+        ? b.txn_sequence !== null
+          ? b.txn_sequence
+          : new Date(b.signed_at).getTime()
+        : new Date(b.created_at).getTime();
+
     return txnsType === 'to-broadcast' ? dateA - dateB : dateB - dateA;
   });
 
@@ -267,7 +286,22 @@ const TransactionsList = ({
           isHistory={isHistory}
           onViewError={onViewError}
           allowRepeat={txnsType === 'completed'}
-          disableBroadcast={txnsType === 'to-broadcast' && index > 0}
+          broadcastInfo={{
+            disable:
+              txnsType === 'to-broadcast' &&
+              currentSequenceNumber !== null &&
+              txn.txn_sequence !== null &&
+              currentSequenceNumber !== txn.txn_sequence,
+            isSequenceLess:
+              txn.txn_sequence !== null &&
+              currentSequenceNumber !== null &&
+              txn.txn_sequence < currentSequenceNumber,
+            isSequenceGreater:
+              txn.txn_sequence !== null &&
+              currentSequenceNumber !== null &&
+              txn.txn_sequence > currentSequenceNumber,
+            isSequenceAvailable: Number(txn?.txn_sequence) ? true : false,
+          }}
         />
       ))}
       <DialogTxnFailed

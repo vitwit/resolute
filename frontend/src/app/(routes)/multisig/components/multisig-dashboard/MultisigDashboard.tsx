@@ -5,8 +5,10 @@ import {
   resetBroadcastTxnRes,
   resetCreateMultisigRes,
   resetCreateTxnState,
+  resetSequenceNumber,
   resetsignTransactionRes,
   resetSignTxnState,
+  resetUpdateTxnSequences,
   resetUpdateTxnState,
 } from '@/store/features/multisig/multisigSlice';
 import React, { useEffect } from 'react';
@@ -129,6 +131,8 @@ const MultisigDashboard: React.FC<MultisigDashboardI> = (props) => {
     dispatch(resetUpdateTxnState());
     dispatch(resetBroadcastTxnRes());
     dispatch(resetsignTransactionRes());
+    dispatch(resetSequenceNumber());
+    dispatch(resetUpdateTxnSequences());
   }, []);
 
   return (

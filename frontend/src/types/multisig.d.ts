@@ -14,6 +14,7 @@ interface UpdateTxPayload {
 interface SignTxPayload {
   signer: string;
   signature: string;
+  txn_sequence: number;
 }
 
 interface Fee {
@@ -65,6 +66,13 @@ interface DeleteTxnInputs {
   data: {
     address: string;
     id: number;
+  };
+}
+
+interface UpdateTxnSequencesInputs {
+  queryParams: QueryParams;
+  data: {
+    address: string;
   };
 }
 
@@ -149,6 +157,15 @@ interface MultisigState {
       memo: string;
     };
   };
+  multisigAccountSequenceNumber: {
+    value: number | null;
+    status: TxStatus;
+    error: string;
+  };
+  updateTxnSequences: {
+    status: TxStatus;
+    error: string;
+  };
 }
 
 interface VerifyAccountRes {
@@ -206,6 +223,7 @@ interface Txn {
   signed_at: string;
   pubkeys?: MultisigAddressPubkey[];
   threshold?: number;
+  txn_sequence: number | null;
 }
 
 interface TxnCount {
@@ -217,7 +235,7 @@ interface Txns {
   list: Txn[];
   status: TxStatus;
   error: string;
-  Count: TxnCount[]
+  Count: TxnCount[];
 }
 
 interface SignTxInputs {

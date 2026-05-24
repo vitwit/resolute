@@ -18,6 +18,7 @@ type Transaction struct {
 	LastUpdated     time.Time        `pg:"last_updated,use_zero" json:"last_updated"`
 	CreatedAt       time.Time        `pg:"created_at,use_zero" json:"created_at"`
 	SignedAt        time.Time        `pg:"signed_at,use_zero" sql:"-"  json:"signed_at,omitempty"`
+	TxnSequence     *int             `pg:"txn_sequence" json:"txn_sequence"`
 }
 
 type TransactionCount struct {
@@ -41,4 +42,5 @@ type AllTransactionResult struct {
 	Threshold       int              `pg:"threshold" json:"threshold"`
 	Pubkeys         json.RawMessage  `pg:"pubkeys" json:"pubkeys"`
 	SignedAt        time.Time        `pg:"signed_at,use_zero" sql:"-"  json:"signed_at,omitempty"`
+	TxnSequence     *int             `pg:"txn_sequence" json:"txn_sequence"`
 }

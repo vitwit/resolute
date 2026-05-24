@@ -33,9 +33,9 @@ import {
   MultisigAddressPubkey,
   MultisigState,
   QueryParams,
-  SignTxInputs,
   Txn,
   UpdateTxnInputs,
+  UpdateTxnSequencesInputs,
 } from '@/types/multisig';
 import {
   getRandomNumber,
@@ -158,6 +158,15 @@ const initialState: MultisigState = {
     error: '',
   },
   verifyDialogOpen: false,
+  multisigAccountSequenceNumber: {
+    value: null,
+    status: TxStatus.INIT,
+    error: '',
+  },
+  updateTxnSequences: {
+    status: TxStatus.INIT,
+    error: '',
+  },
 };
 
 declare let window: WalletWindow;
@@ -278,6 +287,55 @@ export const multisigByAddress = createAsyncThunk(
       const response = await multisigService.getAccount(data.address);
       return response.data;
     } catch (error) {
+      if (error instanceof AxiosError)
+        return rejectWithValue({ message: error.message });
+      return rejectWithValue({ message: ERR_UNKNOWN });
+    }
+  }
+);
+
+export const getSequenceNumber = createAsyncThunk(
+  'multisig/getSequenceNumber',
+  async (
+    data: {
+      baseURLs: string[];
+      multisigAddress: string;
+      chainID: string;
+    },
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await authService.accountInfo(
+        data.baseURLs,
+        data.multisigAddress,
+        data.chainID
+      );
+      const currentSequnce = get(response, 'data.account.sequence', null);
+      return {
+        data: {
+          sequenceNumber: currentSequnce ? Number(currentSequnce) : null,
+        },
+      };
+    } catch (error) {
+      if (error instanceof AxiosError)
+        return rejectWithValue({ message: error.message });
+      return rejectWithValue({ message: ERR_UNKNOWN });
+    }
+  }
+);
+
+export const updateTxnSequences = createAsyncThunk(
+  'multisig/update-txn-sequences',
+  async (data: UpdateTxnSequencesInputs, { rejectWithValue }) => {
+    try {
+      const response = await multisigService.updateTxnSequences(
+        data.queryParams,
+        data.data.address
+      );
+      trackEvent('MULTISIG', 'UPDATE_TXN_SEQUENCES', SUCCESS);
+      return response.data;
+    } catch (error) {
+      trackEvent('MULTISIG', 'UPDATE_TXN_SEQUENCES', FAILED);
       if (error instanceof AxiosError)
         return rejectWithValue({ message: error.message });
       return rejectWithValue({ message: ERR_UNKNOWN });
@@ -524,6 +582,8 @@ export const signTransaction = createAsyncThunk(
       walletAddress: string;
       rpcURLs: string[];
       toBeBroadcastedCount: number;
+      partiallySignedCount: number;
+      txnSequence: number | null;
     },
     { rejectWithValue, dispatch }
   ) => {
@@ -534,7 +594,9 @@ export const signTransaction = createAsyncThunk(
         data.unSignedTxn,
         data.walletAddress,
         data.rpcURLs,
-        data.toBeBroadcastedCount
+        data.toBeBroadcastedCount,
+        data.partiallySignedCount,
+        data.txnSequence
       );
       const authToken = getAuthToken(COSMOS_CHAIN_ID);
 
@@ -548,6 +610,7 @@ export const signTransaction = createAsyncThunk(
         {
           signer: payload.signer,
           signature: payload.signature,
+          txn_sequence: payload.txnSequence,
         }
       );
       trackEvent('MULTISIG', 'SIGN_TXN', SUCCESS);
@@ -567,28 +630,6 @@ export const signTransaction = createAsyncThunk(
         })
       );
       return rejectWithValue(errMsg);
-    }
-  }
-);
-
-export const signTx = createAsyncThunk(
-  'multisig/signTx',
-  async (data: SignTxInputs, { rejectWithValue }) => {
-    try {
-      const response = await multisigService.signTx(
-        data.queryParams,
-        data.data.address,
-        data.data.txId,
-        {
-          signer: data.data.signer,
-          signature: data.data.signature,
-        }
-      );
-      return response.data;
-    } catch (error) {
-      if (error instanceof AxiosError)
-        return rejectWithValue({ message: error.message });
-      return rejectWithValue({ message: ERR_UNKNOWN });
     }
   }
 );
@@ -672,6 +713,13 @@ export const multisigSlice = createSlice({
     },
     resetMultisigAccountData: (state) => {
       state.multisigAccountData = initialState.multisigAccountData;
+    },
+    resetSequenceNumber: (state) => {
+      state.multisigAccountSequenceNumber =
+        initialState.multisigAccountSequenceNumber;
+    },
+    resetUpdateTxnSequences: (state) => {
+      state.updateTxnSequences = initialState.updateTxnSequences;
     },
     setVerifyDialogOpen: (state, action: PayloadAction<boolean>) => {
       state.verifyDialogOpen = action.payload;
@@ -774,6 +822,44 @@ export const multisigSlice = createSlice({
         const payload = action.payload as { message: string };
         state.multisigAccount.status = TxStatus.REJECTED;
         state.multisigAccount.error = payload.message || '';
+      });
+    builder
+      .addCase(getSequenceNumber.pending, (state) => {
+        state.multisigAccountSequenceNumber.status = TxStatus.PENDING;
+        state.multisigAccountSequenceNumber.value = null;
+        state.multisigAccount.error = '';
+      })
+      .addCase(getSequenceNumber.fulfilled, (state, action) => {
+        state.multisigAccountSequenceNumber.status = TxStatus.IDLE;
+        state.multisigAccountSequenceNumber.value =
+          action.payload.data.sequenceNumber;
+        state.multisigAccount.error = '';
+      })
+      .addCase(getSequenceNumber.rejected, (state, action) => {
+        const payload = action.payload as { message: string };
+        state.multisigAccount.status = TxStatus.REJECTED;
+        state.multisigAccountSequenceNumber.value = null;
+        state.multisigAccount.error = payload.message || '';
+      });
+    builder
+      .addCase(updateTxnSequences.pending, (state) => {
+        state.updateTxnSequences = {
+          status: TxStatus.PENDING,
+          error: '',
+        };
+      })
+      .addCase(updateTxnSequences.fulfilled, (state) => {
+        state.updateTxnSequences = {
+          status: TxStatus.IDLE,
+          error: '',
+        };
+      })
+      .addCase(updateTxnSequences.rejected, (state, action) => {
+        const payload = action.payload as { message: string };
+        state.updateTxnSequences = {
+          status: TxStatus.REJECTED,
+          error: payload.message || '',
+        };
       });
     builder
       .addCase(getMultisigBalances.pending, (state) => {
@@ -879,18 +965,6 @@ export const multisigSlice = createSlice({
         state.txns.error = payload.message || '';
       });
     builder
-      .addCase(signTx.pending, (state) => {
-        state.signTxRes.status = TxStatus.PENDING;
-      })
-      .addCase(signTx.fulfilled, (state) => {
-        state.signTxRes.status = TxStatus.IDLE;
-      })
-      .addCase(signTx.rejected, (state, action) => {
-        state.signTxRes.status = TxStatus.REJECTED;
-        const payload = action.payload as { message: string };
-        state.signTxRes.error = payload.message || '';
-      });
-    builder
       .addCase(signTransaction.pending, (state) => {
         state.signTransactionRes.status = TxStatus.PENDING;
       })
@@ -948,6 +1022,8 @@ export const {
   resetBroadcastTxnRes,
   resetsignTransactionRes,
   setVerifyDialogOpen,
+  resetSequenceNumber,
+  resetUpdateTxnSequences,
 } = multisigSlice.actions;
 
 export default multisigSlice.reducer;
