@@ -1,0 +1,105 @@
+.main {
+  --main-bg-color: #09090a;
+  background: radial-gradient(
+      80% 48% at 50% 50%,
+      #4e2d954d 0%,
+      rgba(9, 9, 10, 0.3) 100%
+    )
+    fixed;
+}
+
+.fixed-layout {
+  @apply w-full h-screen flex flex-col;
+}
+
+.main {
+  @apply bg-[var(--main-bg-color)] flex flex-1 w-full justify-center;
+}
+
+.main-container {
+  @apply w-full max-w-[1512px] flex;
+}
+
+.sidebar {
+  @apply overflow-hidden fixed px-6 w-[240px]  border-r-[1px] border-[#1c1c20] py-10 flex flex-col justify-between;
+}
+
+.fixed-top {
+  @apply flex-none;
+}
+
+.scrollable-content {
+  @apply overflow-y-auto flex-1 my-10;
+}
+
+.fixed-bottom {
+  @apply flex-none;
+}
+
+.network-icon-bg {
+  @apply rounded-full flex justify-center items-center;
+}
+
+.menu-item-selected {
+  @apply font-semibold;
+  background: #ffffff14;
+}
+
+.dynamic-section {
+  @apply ml-[240px] w-full;
+  /* background: radial-gradient(
+    50% 50% at 50% 50%,
+    rgba(68, 83, 223, 0.2) 0%,
+    rgba(9, 9, 10, 0.2) 100%
+  ); */
+}
+
+.menu-item {
+  @apply w-full flex gap-2 !h-8 items-center pl-3 pr-1 rounded-full hover:bg-[#FFFFFF0A];
+}
+
+.menu-item-name {
+  @apply text-[14px] leading-[21px];
+}
+
+.top-bar {
+  @apply bg-[#0f0f11] flex justify-center items-center min-h-[60px] fixed top-0 left-0 right-0 z-[999];
+  box-shadow: 0px 4px 4px 0px rgba(17, 0, 0, 0.388);
+}
+
+.top-bar nav {
+  @apply px-6 w-full max-w-[1512px] flex justify-between items-center;
+}
+
+.profile-section {
+  @apply w-[472px] h-full px-6 pt-10 pb-[60px];
+}
+
+.connect-wallet-popup {
+  @apply max-w-[1000px] w-full p-4 space-y-10;
+}
+
+.select-network-popup {
+  @apply w-[1000px] max-w-[1000px] pt-4 pb-6 px-10 space-y-10;
+}
+
+.search-network-field {
+  @apply py-4 px-6 bg-[#FFFFFF05] rounded-full flex flex-1;
+}
+
+.search-network-input {
+  @apply w-full border-none cursor-text focus:outline-none bg-transparent  placeholder:text-[#FFFFFF30] placeholder:font-normal text-[#ffffff];
+}
+
+.network-item {
+  @apply p-2 flex items-center gap-2 border-[0.25px] border-[#ffffff21] rounded-2xl hover:bg-[#ffffff14] hover:border-transparent;
+}
+
+.network-item .network-name {
+  @apply text-[14px] leading-normal opacity-100 font-normal text-[#fffffff0];
+}
+
+.logout-btn {
+  border-image: none !important;
+  background: #d921011a !important;
+}

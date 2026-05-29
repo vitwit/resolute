@@ -1,0 +1,258 @@
+.card {
+  @apply flex flex-col items-start gap-4 self-stretch p-4 rounded-2xl;
+  background: rgba(255, 255, 255, 0.05);
+
+  /* &:hover {
+    background: linear-gradient(180deg, rgba(74, 162, 156, 0.40) 0%, rgba(139, 61, 167, 0.40) 100%);
+  } */
+}
+
+.selected {
+  box-sizing: border-box;
+  background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
+}
+
+.coloured-container {
+  @apply flex justify-between items-center self-stretch px-6 py-4;
+  background: linear-gradient(90deg, #704290 0.19%, #241b61 79.25%);
+}
+
+.errors-chip {
+  @apply opacity-80 rounded-lg text-[#E57575] text-center text-[12px] not-italic font-normal leading-[normal] max-w-fit py-1 px-2 truncate;
+  background: rgba(229, 117, 117, 0.2);
+}
+
+.memo-text-field {
+  @apply flex flex-1 overflow-hidden bg-[#FFFFFF0D] rounded-2xl px-4 pt-4;
+  border: 1px solid transparent;
+}
+
+.memo-text-field:focus-within {
+  border: 1px solid #ffffff4a;
+}
+
+.amount-options {
+  @apply text-sm not-italic font-normal leading-[normal] rounded-[100px];
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(2px);
+}
+
+.amount-options-default {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.amount-options-fill {
+  background:
+    linear-gradient(
+      180deg,
+      rgba(74, 162, 156, 0.9) 0%,
+      rgba(139, 61, 167, 0.9) 100%
+    ),
+    lightgray 50% / cover no-repeat;
+}
+
+.send-menu-item {
+  @apply cursor-pointer px-2 text-[18px] h-9 flex items-center pb-[14px] leading-[21.7px];
+}
+
+/* IBC Swap Styles  */
+
+.swap-btn {
+  @apply rounded-lg text-[12px] font-medium tracking-[0.48px] py-[10px] px-4 w-full flex justify-center items-center;
+}
+
+.drop-down {
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+}
+
+.multisend-input-box {
+  @apply flex justify-center items-center px-4 py-4 bg-[#FFFFFF1A] min-h-[152px] rounded-3xl w-full cursor-pointer;
+}
+
+.multisend-toggle-btn-group {
+  @apply bg-[#FFFFFF1A] rounded-2xl flex h-[34px];
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25) inset;
+}
+
+.multisend-btn {
+  @apply text-[#FFFFFF80] text-[12px] text-center px-4 min-w-[127px];
+}
+
+.multisend-btn-active {
+  @apply text-[#fffffff0] rounded-2xl;
+  background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
+  box-shadow: 0px 4px 4px 0px #100;
+}
+
+.single-send-box {
+  @apply bg-[#FFFFFF05] rounded-2xl w-full;
+}
+
+.amount-input-field {
+  @apply bg-transparent w-full border-none focus:outline-none text-[28px] font-bold placeholder:text-[#FFFFFF33];
+}
+
+.select-network {
+  @apply h-[64px] desktop:h-[80px] py-6 px-6 flex items-center;
+  border-radius: 16px 16px 0px 0px;
+  background: linear-gradient(
+    180deg,
+    rgba(136, 8, 8, 0.5) 0%,
+    rgba(18, 19, 28, 0.5) 100%
+  );
+}
+
+.upload-box {
+  @apply rounded-3xl px-6 py-[10.5px] flex items-center justify-between cursor-pointer;
+  border: 2px dashed #ffffff20;
+}
+
+.network-image-container {
+  position: relative;
+  display: inline-block;
+}
+
+.blur-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  filter: blur(15px);
+  z-index: 0;
+}
+
+.circle-background {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background-color: black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
+.network-image {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+}
+
+.dotted-line {
+  flex-grow: 1;
+  height: 1px;
+  background: repeating-linear-gradient(
+    to right,
+    #4453df,
+    #7f5ced 6px,
+    transparent 4px,
+    transparent 12px
+  );
+  margin: 0 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.dotted-line-large {
+  flex-grow: 1;
+  height: 2px;
+  background: repeating-linear-gradient(
+    to right,
+    #4453df,
+    #7f5ced 6px,
+    transparent 10px,
+    transparent 20px
+  );
+  margin: 0 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.custom-scroll {
+  animation: scroll 2s linear infinite;
+}
+
+.send-loading {
+  margin-bottom: 50px;
+}
+
+.multi-send-loading {
+  @apply flex flex-col gap-3;
+  margin-bottom: 50px;
+}
+
+@keyframes scroll {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 20px 0;
+  }
+}
+
+.tick-mark {
+  position: absolute;
+  top: -10px;
+  width: 20px;
+  height: 20px;
+}
+
+.custom-spin {
+  animation-name: custom-spin-animation;
+  animation-duration: 3000ms;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+}
+
+@keyframes custom-spin-animation {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.custom-opacity-animation {
+  animation: opacityAnimation 2s linear infinite;
+}
+
+@keyframes opacityAnimation {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.globe-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.animate-rotate-x {
+  animation: rotateY 8s linear infinite;
+}
+
+@keyframes rotateY {
+  from {
+    transform: rotateY(0deg);
+  }
+  to {
+    transform: rotateY(360deg);
+  }
+}
+
+.txn-summary {
+  @apply px-6 py-3 rounded-2xl bg-[#FFFFFF14] text-[14px] space-y-2 text-[#ffffff80] italic text-center;
+}
