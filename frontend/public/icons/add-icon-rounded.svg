@@ -1,0 +1,17 @@
+<svg width="17" height="16" viewBox="0 0 17 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="add_24dp_FILL1_wght200_GRAD0_opsz24 1">
+<rect x="1" y="0.5" width="15" height="15" rx="7.5" fill="url(#paint0_linear_3218_2832)" fill-opacity="0.1"/>
+<rect x="1" y="0.5" width="15" height="15" rx="7.5" stroke="url(#paint1_linear_3218_2832)"/>
+<path id="Vector" d="M8.16667 8.33333H4.5V7.66667H8.16667V4H8.83333V7.66667H12.5V8.33333H8.83333V12H8.16667V8.33333Z" fill="#E8EAED"/>
+</g>
+<defs>
+<linearGradient id="paint0_linear_3218_2832" x1="8.5" y1="0" x2="8.5" y2="16" gradientUnits="userSpaceOnUse">
+<stop stop-color="#4453DF"/>
+<stop offset="1" stop-color="#7F5CED"/>
+</linearGradient>
+<linearGradient id="paint1_linear_3218_2832" x1="8.5" y1="0" x2="8.5" y2="16" gradientUnits="userSpaceOnUse">
+<stop stop-color="#4453DF"/>
+<stop offset="1" stop-color="#7F5CED"/>
+</linearGradient>
+</defs>
+</svg>
