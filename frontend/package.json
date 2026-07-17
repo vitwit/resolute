@@ -41,7 +41,7 @@
     "fast-average-color": "^9.4.0",
     "jsonschema": "^1.4.1",
     "lodash": "^4.18.1",
-    "mathjs": "^12.0.0",
+    "mathjs": "^15.2.0",
     "moment": "^2.29.4",
     "next": "^14.0.1",
     "node-gzip": "^1.1.2",
